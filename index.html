@@ -105,6 +105,17 @@ body.chatting #chat{flex:1 1 auto;max-height:none}
 #mic .ic{width:26px;height:26px}
 #mic.rec{background:var(--bad);border-color:var(--bad);color:#fff;animation:pulse 1.1s infinite}
 #mic.busy{opacity:.6}
+#mic.hf{border-color:#5ff2a8;box-shadow:0 0 0 4px rgba(95,242,168,.18),0 0 26px rgba(95,242,168,.35)}
+.chip.on{background:rgba(95,242,168,.18);border-color:#5ff2a8}
+.item.done b{text-decoration:line-through;opacity:.5}
+.item input[type=checkbox]{width:22px;height:22px;accent-color:var(--accent);flex:none;pointer-events:none}
+.addrow{display:flex;gap:8px;margin-top:6px}.addrow input{flex:1;min-width:0;padding:12px 13px;border:1px solid var(--line2);border-radius:13px;background:rgba(255,255,255,.04);outline:none;color:var(--text);font-size:16px}
+.addrow button{flex:none;padding:0 16px;border-radius:13px;border:1px solid var(--line2);background:rgba(var(--accent-rgb),.2);font-weight:700}
+#tapgo{position:fixed;inset:0;z-index:60;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;background:rgba(3,10,20,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#tapgo.on{display:flex}
+#tapBtn{display:flex;flex-direction:column;align-items:center;gap:12px;padding:28px 34px;border-radius:26px;border:1px solid var(--accent);background:rgba(var(--accent-rgb),.14);box-shadow:0 0 40px rgba(var(--accent-rgb),.3);max-width:80%}
+#tapIc{font-size:46px}#tapTxt{font-size:18px;text-align:center}
+#tapNo{background:none;border:0;color:var(--muted);font-size:15px;padding:10px}
 body.writing #mic{display:none}
 body:not(.writing) #send{display:none}
 
@@ -193,7 +204,9 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
   <button class="chip" data-s="¿Cómo está el clima hoy?">🌤️ Clima</button>
   <button class="chip" id="agChip" data-s="¿Qué tengo en la agenda estos días?" hidden>📅 Agenda</button>
   <button class="chip" data-s="Contame las noticias de hoy">📰 Noticias</button>
+  <button class="chip" id="hfChip">🙌 Manos libres</button>
   <button class="chip" data-sheet="rems">⏰ Recordatorios</button>
+  <button class="chip" data-sheet="compras">🛒 Compras</button>
   <button class="chip" data-sheet="musica">🎵 Música</button>
   <button class="chip" data-s="Contame algo interesante">✨ Sorprendeme</button>
 </nav>
@@ -211,6 +224,14 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
   <button class="big" data-fill="Recordame ">＋ Nuevo recordatorio</button>
   <p class="note" id="remNote"></p>
   <button class="big sec" data-sheet="avisos">🔔 Que suenen siempre (aunque cierres todo)</button>
+</section>
+
+<!-- LISTA DE COMPRAS -->
+<section class="sheet" id="sh-compras"><div class="grab"></div><h3>🛒 Lista de compras</h3>
+  <div class="addrow"><input id="shIn" placeholder="Leche, pan, 2 kg de papa…" autocomplete="off" enterkeyhint="done"><button id="shAdd">Agregar</button></div>
+  <div id="shList"></div>
+  <div class="row2"><button class="big sec" id="shClear">Borrar lo comprado</button><button class="big sec" id="shShare">📤 Compartir</button></div>
+  <p class="note" id="shNote">Tocá algo para tacharlo. También decile: "agregá yerba a la lista" o "¿qué tengo que comprar?".</p>
 </section>
 
 <!-- AVISOS (ntfy) -->
@@ -272,6 +293,8 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
   <div class="field"><label for="cfTrato">Cómo te trata FRIDAY</label><select id="cfTrato"><option value="nombre">Por tu nombre</option><option value="jefe">"Jefe" (estilo Tony Stark)</option><option value="senor">"Señor" (bien JARVIS)</option></select></div>
   <div class="field"><label for="cfCity">Tu ciudad (para el clima)</label><input id="cfCity" placeholder="Rosario"></div>
   <button class="big sec" id="cfGeo">📍 Usar mi ubicación</button>
+  <div class="switch"><div><b>🙌 Manos libres</b><div class="note" style="margin:2px 0 0">Decí <b>"Friday"</b> y lo que necesites, sin tocar nada. Con FRIDAY abierta; la pantalla queda prendida mientras tanto (ideal con el celu cargando).</div></div><input type="checkbox" id="cfHf"></div>
+  <div class="field" id="cfHfMotorBox"><label for="cfHfMotor">Cómo escucha "Friday"</label><select id="cfHfMotor"><option value="whisper">Whisper (el más preciso, usa tu llave de Groq)</option><option value="celu">El reconocimiento del celu (gratis, sin límite)</option></select></div>
   <div class="switch"><div><b>Modo charla</b><div class="note" style="margin:2px 0 0">Cuando FRIDAY termina de hablar, te escucha de nuevo sola (sin tocar el 🎤).</div></div><input type="checkbox" id="cfConvo"></div>
   <div class="field"><label for="cfTheme">Colores</label><select id="cfTheme"><option value="jarvis">Celeste (JARVIS)</option><option value="friday">Dorado (FRIDAY)</option></select></div>
   <div class="field"><label for="cfVoice">Voz</label><select id="cfVoice"></select></div>
@@ -347,10 +370,11 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
 
 <div id="ask"><div class="box"><div id="askTxt"></div><div class="btns"><button id="askNo">No</button><button class="yes" id="askYes">Sí</button></div></div></div>
 <div id="toast"></div>
+<div id="tapgo"><button id="tapBtn"><span id="tapIc"></span><b id="tapTxt"></b></button><button id="tapNo">Ahora no</button></div>
 
 <script>
 'use strict';
-const VERSION='1.1';
+const VERSION='1.2';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fm.'+k, JSON.stringify(v)); }catch(e){} },
@@ -370,7 +394,7 @@ function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]); }
 function trato(){ return S.trato==='jefe'?'jefe':S.trato==='senor'?'señor':(S.name||''); }
 function confirmBox(text){ return new Promise(res=>{ $('askTxt').textContent=text; $('ask').classList.add('on'); const done=v=>{ $('ask').classList.remove('on'); res(v); }; $('askYes').onclick=()=>done(true); $('askNo').onclick=()=>done(false); }); }
-function setStatus(kind, txt){ $('dot').className='dot'+(kind?' '+kind:''); $('stTxt').textContent=txt; }
+function setStatus(kind, txt){ $('dot').className='dot'+(kind?' '+kind:''); $('stTxt').textContent=(txt==='Lista' && window.hfOn) ? 'Decí "Friday"…' : txt; }
 
 // ================================================================ charla en pantalla
 const chat=$('chat');
@@ -458,7 +482,7 @@ function recStop(cancel){
   try{ rec.mr.stop(); }catch(e){}
   $('mic').classList.remove('rec'); if(orbState==='listen') orbState='idle';
   // el micrófono se suelta (que no quede el punto prendido)
-  setTimeout(()=>{ if(!rec.on && rec.st){ rec.st.getTracks().forEach(t=>t.stop()); rec.st=null; } }, 1500);
+  setTimeout(()=>{ if(!rec.on && rec.st){ if(!(hf.on && rec.st===hf.st)) rec.st.getTracks().forEach(t=>t.stop()); rec.st=null; } }, 1500);
 }
 async function recDone(){
   const type=(rec.mr&&rec.mr.mimeType)||'audio/webm';
@@ -495,7 +519,7 @@ document.addEventListener('click', e=>{
 // ================================================================ hojas
 let openSheet=null;
 function showSheet(name){ closeSheets(true); const el=$('sh-'+name); if(!el) return; openSheet=name; el.classList.add('on'); $('shade').classList.add('on'); buzz();
-  ({rems:renderRems, musica:spOpen, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc})[name]?.(); }
+  ({rems:renderRems, musica:spOpen, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc, compras:renderCompras})[name]?.(); }
 function closeSheets(keep){ document.querySelectorAll('.sheet.on').forEach(s=>s.classList.remove('on')); if(!keep) $('shade').classList.remove('on'); if(openSheet==='menu') readMenu(); if(openSheet==='vinc') scanStop(); openSheet=null; clearInterval(spState.t); }
 $('shade').onclick=()=>closeSheets();
 $('menuBtn').onclick=()=>showSheet('menu');
@@ -862,12 +886,14 @@ Ahora: ${fecha}. Ciudad: ${S.city||'no la sé'}.
 Clima: ${wxText()}.
 Recordatorios pendientes: ${rems}.
 Lo que sabés del usuario: ${memory.slice(-40).join('; ')||'nada todavía'}.
+Lista de compras: ${shopPrompt()}.
 ${syncPrompt()}
 Herramientas: agregá la marca al final, en una línea aparte (no se leen):
 [[RECORDATORIO|AAAA-MM-DD HH:MM|qué recordarle]] para una hora concreta (calculala exacta desde ahora). Si se repite, cuarto campo: diario, semanal o habiles.
 [[TEMPORIZADOR|minutos|para qué]] para "avisame en X minutos" o "poné un timer".
 [[RECORDATORIO_BORRAR|de qué era]]
 [[RECORDAR|dato del usuario en tercera persona]] si te cuenta algo de sí que conviene recordar. [[OLVIDAR|dato]] si te pide que lo olvides.
+[[COMPRAS|agregar|leche; pan; 2 kg de papa]], [[COMPRAS|quitar|leche]], [[COMPRAS|comprado|pan]] (lo tacha), [[COMPRAS|vaciar]] (borra lo comprado), [[COMPRAS|ver]] (la muestra en pantalla).
 [[CLIMA]] para mostrar el pronóstico en pantalla cuando pregunta por el clima (además contalo corto).
 [[NOTICIAS|tema opcional]] cuando pide noticias o titulares: decí "dame un segundo" y esperá los titulares.
 [[BUSCAR|consulta precisa]] para cualquier cosa actual o que no sabés seguro (resultados, precios, horarios, quién es tal): decí "dame un segundo, lo busco".
@@ -953,6 +979,8 @@ async function runTags(full){
       } else if(k==='agenda'){
         if(FSync.on()) await FSync.poll();
         const t=agendaTxt(14); notes.push(t ? 'La agenda (de su Google Calendar, la trae la compu): '+t+' Contale lo que pidió, corto.' : 'No tenés su agenda: hay que vincular el celu con la FRIDAY de la compu y conectar Google allá.');
+      } else if(k==='compras' && p[1]){
+        const r=shopDo(p[1], p.slice(2).join(' ')); if(r) toast('🛒 '+r); if(/ver|mostr|list/.test(norm(p[1]))) showSheet('compras');
       } else if(k==='recordar' && p[1]) addMemory(p.slice(1).join(' '));
       else if(k==='olvidar' && p[1]) forgetMemory(p.slice(1).join(' '));
       else if(k==='clima'){ await getWeather(); wxCard(); }
@@ -975,6 +1003,7 @@ async function runTags(full){
 
 // ================================================================ ajustes
 function fillMenu(){
+  $('cfHf').checked=hf.on; if($('cfHfMotor')) $('cfHfMotor').value=(S.hfMotor==='celu'&&SRC)?'celu':'whisper';
   $('cfName').value=S.name; $('cfTrato').value=S.trato; $('cfCity').value=S.city; $('cfConvo').checked=!!S.convo; $('cfTheme').value=S.theme;
   $('cfGroq').value=S.groqKey; $('cfGem').value=S.gemKey; $('cfSpId').value=S.spId; $('spRedirect').textContent=spRedirect(); $('spOut').hidden=!spOnline();
   $('verTxt').textContent=VERSION; pickVoice(); renderInstall();
@@ -1207,11 +1236,12 @@ function syncLocal(){
   const o={}, now=Date.now();
   for(const m of memory){ const t=String(m).trim(); if(t) o['m:'+FSync.hash(t)]=t; }
   for(const r of reminders){ if(r.done && now-new Date(r.at).getTime()>2*86400000) continue; o['r:'+r.id]={at:String(r.at).slice(0,16), texto:r.texto, rep:r.rep||null, done:!!r.done, push:!!r.push}; }
+  for(const x of compras) o['l:'+x.id]={t:x.t, h:!!x.h};
   for(const p of pedidos){ if(now-p.at>3*86400000 && p.estado!=='nuevo') continue; o['p:'+p.id]={tipo:p.tipo, args:p.args, estado:p.estado, txt:p.txt||'', texto:p.texto||'', at:p.at}; }
   return o;
 }
 function syncApply(changes){
-  let memCh=false, remCh=false, now=Date.now();
+  let memCh=false, remCh=false, shopCh=false, now=Date.now();
   for(const c of changes){
     const k=c.id[0], key=c.id.slice(2);
     if(k==='m'){
@@ -1229,6 +1259,12 @@ function syncApply(changes){
       Object.assign(r,{at:v.at, texto:v.texto, rep:v.rep||null, done}); if(!r.pid) r.push=!!v.push;
       if(i<0) reminders.push(r);
       remCh=true;
+    } else if(k==='l'){
+      const i=compras.findIndex(x=>x.id===key);
+      if(c.d){ if(i>=0){ compras.splice(i,1); shopCh=true; } continue; }
+      if(!c.v || !c.v.t) continue;
+      if(i>=0) Object.assign(compras[i],{t:c.v.t, h:!!c.v.h}); else compras.push({id:key, t:c.v.t, h:!!c.v.h});
+      shopCh=true;
     } else if(k==='p'){
       const p=pedidos.find(x=>x.id===key); if(!p || c.d || !c.v) continue;
       const antes=p.estado; Object.assign(p,{estado:c.v.estado, txt:c.v.txt||''});
@@ -1242,6 +1278,7 @@ function syncApply(changes){
       if(ch){ saveS(); getWeather(true); } }
   }
   if(memCh) LS.set('memory',memory);
+  if(shopCh){ LS.set('compras',compras); if(openSheet==='compras') renderCompras(); }
   if(remCh){ saveRems(); if(openSheet==='rems') renderRems(); setTimeout(schedulePushes, 400); }
 }
 function syncPrompt(){
@@ -1287,7 +1324,7 @@ function pedirEvento(cuando, titulo, min, lugar){
 async function syncBoot(){
   if(!(window.crypto && crypto.subtle)) return;
   const name=(IOS?'iPhone':/Android/i.test(navigator.userAgent)?'Android':'Celu')+(S.name?' de '+S.name:'');
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, url:spRedirect(), kinds:['m','r','p'], pollMs:20000,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, url:spRedirect(), kinds:['m','r','p','l'], pollMs:20000,
     paused:()=>document.hidden, local:syncLocal, apply:syncApply,
     onPeer:(d,p,first)=>{ if(first && d.startsWith('pc')){ toast('💻 ¡Vinculada con tu compu!', 4500); buzz([60,40,60]); } if(openSheet==='vinc') renderVinc(); },
     onStatus:()=>{ if(openSheet==='vinc') renderVinc(); } });
@@ -1345,6 +1382,175 @@ async function buenDia(){
   await turn(extra);
 }
 $('bdChip').onclick=()=>{ closeSheets(); unlockAudio(); buenDia(); };
+
+// ================================================================ lista de compras (compartida con la compu)
+let compras=LS.get('compras',[]);
+const shopNorm=t=>norm(String(t||'')).replace(/^(un|una|unos|unas|el|la|los|las)\s+/,'');
+function shopSave(){ LS.set('compras',compras); if(openSheet==='compras') renderCompras(); }
+function shopFind(q){ const n=shopNorm(q); if(!n) return null; return compras.find(x=>shopNorm(x.t)===n) || compras.find(x=>shopNorm(x.t).includes(n) || n.includes(shopNorm(x.t))); }
+function shopAdd(txt){
+  const items=String(txt||'').split(/[;\n]|,\s*|\s+y\s+(?=\D)/).map(x=>x.trim().replace(/[.]$/,'')).filter(x=>x.length>1);
+  const added=[];
+  for(const it of items){
+    const ex=compras.find(x=>shopNorm(x.t)===shopNorm(it));
+    if(ex){ if(ex.h){ ex.h=false; added.push(it); } continue; }
+    compras.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), t:it.charAt(0).toUpperCase()+it.slice(1), h:false}); added.push(it);
+  }
+  shopSave(); return added;
+}
+function shopDo(accion, arg){
+  const a=norm(accion);
+  if(/agreg|sum|anot|pon/.test(a)){ const ad=shopAdd(arg); return ad.length?'Agregado: '+ad.join(', '):''; }
+  if(/quit|sac|borr|elimin/.test(a) && arg){ const out=[]; for(const q of String(arg).split(/[;,]/)){ const x=shopFind(q); if(x){ compras=compras.filter(y=>y!==x); out.push(x.t); } } shopSave(); return out.length?'Sacado: '+out.join(', '):''; }
+  if(/compr|tach|marc/.test(a) && arg){ const out=[]; for(const q of String(arg).split(/[;,]/)){ const x=shopFind(q); if(x){ x.h=true; out.push(x.t); } } shopSave(); return out.length?'Comprado: '+out.join(', '):''; }
+  if(/vaci|limpi/.test(a)){ const n=compras.filter(x=>x.h).length; compras=compras.filter(x=>!x.h); if(/todo/.test(norm(arg||''))) compras=[]; shopSave(); return n?'Lista limpia':''; }
+  return '';
+}
+function shopPrompt(){ const p=compras.filter(x=>!x.h).map(x=>x.t), h=compras.filter(x=>x.h).map(x=>x.t); return (p.length?p.join(', '):'vacía')+(h.length?` (ya comprado: ${h.join(', ')})`:''); }
+function renderCompras(){
+  const box=$('shList'); box.innerHTML='';
+  if(!compras.length) box.innerHTML='<div class="note">Vacía. Escribí arriba o decile a FRIDAY "agregá leche a la lista".</div>';
+  for(const x of [...compras.filter(i=>!i.h), ...compras.filter(i=>i.h)]){
+    const it=document.createElement('div'); it.className='item'+(x.h?' done':'');
+    it.innerHTML='<input type="checkbox"><div><b></b></div><button aria-label="Sacar">✕</button>';
+    it.querySelector('input').checked=!!x.h; it.querySelector('b').textContent=x.t;
+    it.onclick=e=>{ buzz(8); if(e.target.tagName==='BUTTON') compras=compras.filter(y=>y!==x); else x.h=!x.h; shopSave(); };
+    box.appendChild(it);
+  }
+  $('shClear').hidden=!compras.some(x=>x.h);
+  $('shNote').textContent = (FSync.on() ? 'Se comparte con la compu. ' : '') + 'Tocá algo para tacharlo. También decile: "agregá yerba a la lista" o "¿qué tengo que comprar?".';
+}
+$('shAdd').onclick=()=>{ const v=$('shIn').value; if(!v.trim()) return; shopAdd(v); $('shIn').value=''; $('shIn').focus(); };
+$('shIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('shAdd').click(); } });
+$('shClear').onclick=()=>{ compras=compras.filter(x=>!x.h); shopSave(); };
+$('shShare').onclick=async()=>{ const p=compras.filter(x=>!x.h).map(x=>'• '+x.t).join('\n'); if(!p){ toast('La lista está vacía'); return; } const t='🛒 Lista de compras\n'+p; try{ if(navigator.share) await navigator.share({text:t}); else { await navigator.clipboard.writeText(t); toast('Lista copiada'); } }catch(e){} };
+
+// ================================================================ manos libres: decí "Friday" y te escucha
+const hf={on:false, st:null, src:null, proc:null, z:null, pre:[], preLen:0, seg:null, segLen:0, segT0:0, lastLoud:0, loudN:0, floor:0.006, calls:[], wl:null, sending:0, sr:null, armed:0};
+const SRC=window.SpeechRecognition||window.webkitSpeechRecognition;
+const WAKE=/^(?:(?:hey|ey|oye|hola|che|dale|a ver|bueno)\s+)?(?:friday|fraidei|fraidey|fraide|fraday|fraiday|fridei|fridai|fridey|frai dei|fray dei|fray day|frayday|flaidei|fly day|frida|viernes)\b\s*(.*)$/;
+function hfRest(t){ const n=norm(t), m=n.match(WAKE); if(!m) return null; const pre=n.slice(0, n.length-m[1].length).trim(); const k=pre?pre.split(' ').length:0; return String(t).trim().split(/\s+/).slice(k).join(' ').replace(/^[\s,.:;!?-]+/,'').trim(); }
+const hfPaused=()=>rec.on || busy || isSpeaking() || document.hidden || !!document.querySelector('#setup.on');
+function ding(){ try{ if(!actx) return; const t=actx.currentTime; [[988,0],[1319,.09]].forEach(([f,d])=>{ const o=actx.createOscillator(), g=actx.createGain(); o.frequency.value=f; g.gain.setValueAtTime(0,t+d); g.gain.linearRampToValueAtTime(.18,t+d+.015); g.gain.exponentialRampToValueAtTime(.001,t+d+.25); o.connect(g); g.connect(actx.destination); o.start(t+d); o.stop(t+d+.3); }); }catch(e){} }
+async function hfStart(){
+  if(hf.on) return true;
+  if(!S.groqKey){ openSetup(2); return false; }
+  unlockAudio();
+  const motor = (S.hfMotor==='celu' && SRC) ? 'celu' : 'whisper';
+  if(motor==='whisper'){
+    if(!window.isSecureContext || !navigator.mediaDevices || !window.AudioContext && !window.webkitAudioContext){ toast('Este navegador no deja escuchar todo el tiempo'); return false; }
+    try{ hf.st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}}); }
+    catch(e){ toast('Necesito permiso para el micrófono', 4000); return false; }
+    try{
+      if(!actx){ const C=window.AudioContext||window.webkitAudioContext; actx=new C(); }
+      if(actx.state==='suspended') await actx.resume();
+      hf.src=actx.createMediaStreamSource(hf.st); hf.proc=actx.createScriptProcessor(4096,1,1); hf.z=actx.createGain(); hf.z.gain.value=0;
+      hf.proc.onaudioprocess=e=>hfFeed(e.inputBuffer.getChannelData(0), actx.sampleRate);
+      hf.src.connect(hf.proc); hf.proc.connect(hf.z); hf.z.connect(actx.destination);
+    }catch(e){ hf.st.getTracks().forEach(t=>t.stop()); hf.st=null; toast('No pude prender el oído'); return false; }
+  }
+  hf.on=true; hf.motor=motor; S.hf=true; saveS();
+  if(motor==='celu') hfSR();
+  hfWakeLock(); hfUI(); ding(); buzz([30,40,30]);
+  toast('🙌 Manos libres: decí "Friday" y lo que necesites', 3500);
+  return true;
+}
+function hfStop(){
+  hf.on=false; hf.armed=0; S.hf=false; saveS();
+  try{ hf.src&&hf.src.disconnect(); hf.proc&&hf.proc.disconnect(); hf.z&&hf.z.disconnect(); }catch(e){}
+  if(hf.st && rec.st!==hf.st) hf.st.getTracks().forEach(t=>t.stop()); hf.st=null; hf.src=hf.proc=null; hf.seg=null;
+  try{ hf.sr&&hf.sr.abort(); }catch(e){} hf.sr=null;
+  try{ hf.wl&&hf.wl.release(); }catch(e){} hf.wl=null;
+  hfUI();
+}
+function hfUI(){ window.hfOn=hf.on; $('hfChip').classList.toggle('on', hf.on); $('mic').classList.toggle('hf', hf.on); if($('cfHf')) $('cfHf').checked=hf.on; if(!busy) setStatus('ok', navigator.onLine?'Lista':'Sin internet'); }
+async function hfWakeLock(){ try{ if(hf.on && 'wakeLock' in navigator && !hf.wl && !document.hidden){ hf.wl=await navigator.wakeLock.request('screen'); hf.wl.addEventListener('release',()=>{ hf.wl=null; }); } }catch(e){} }
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden && hf.on){ hfWakeLock(); try{ if(actx && actx.state==='suspended') actx.resume(); }catch(e){} } });
+// separa lo que decís en pedacitos (con medio segundo de antes, para no cortar el "Fri…")
+function hfFeed(x, sr){
+  if(!hf.on) return;
+  let s=0; for(let i=0;i<x.length;i++) s+=x[i]*x[i]; const lv=Math.sqrt(s/x.length), now=Date.now();
+  if(hfPaused()){ hf.seg=null; hf.pre=[]; hf.preLen=0; return; }
+  const thr=Math.max(0.012, hf.floor*3.2);
+  if(!hf.seg){
+    hf.floor = lv<thr ? hf.floor*0.97+lv*0.03 : hf.floor*0.998+lv*0.002;
+    hf.pre.push(new Float32Array(x)); hf.preLen+=x.length;
+    while(hf.preLen>sr*0.5 && hf.pre.length>1) hf.preLen-=hf.pre.shift().length;
+    if(lv>thr){ hf.seg=hf.pre; hf.segLen=hf.preLen; hf.pre=[]; hf.preLen=0; hf.segT0=now; hf.lastLoud=now; hf.loudN=1; }
+  } else {
+    hf.seg.push(new Float32Array(x)); hf.segLen+=x.length;
+    if(lv>thr){ hf.lastLoud=now; hf.loudN++; orbLevel=Math.max(orbLevel,.4); }
+    const quiet = now<hf.armed ? 1100 : 700;
+    if(now-hf.lastLoud>quiet || now-hf.segT0>(now<hf.armed?12000:7000)){
+      const seg=hf.seg, len=hf.segLen, dur=now-hf.segT0; hf.seg=null; hf.segLen=0;
+      if(dur>450 && hf.loudN>=2) hfSend(seg, len, sr);
+    }
+  }
+}
+function hfWav(chunks, len, sr){
+  const r=sr/16000, n=Math.floor(len/r), pcm=new Int16Array(n); const all=new Float32Array(len); let o=0; for(const c of chunks){ all.set(c,o); o+=c.length; }
+  for(let i=0;i<n;i++){ const p=i*r, j=Math.floor(p), f=p-j, v=(all[j]||0)*(1-f)+(all[j+1]||0)*f; pcm[i]=Math.max(-32768,Math.min(32767,v*32767)); }
+  const b=new ArrayBuffer(44+n*2), d=new DataView(b), w=(o,t)=>{ for(let i=0;i<t.length;i++) d.setUint8(o+i,t.charCodeAt(i)); };
+  w(0,'RIFF'); d.setUint32(4,36+n*2,true); w(8,'WAVE'); w(12,'fmt '); d.setUint32(16,16,true); d.setUint16(20,1,true); d.setUint16(22,1,true); d.setUint32(24,16000,true); d.setUint32(28,32000,true); d.setUint16(32,2,true); d.setUint16(34,16,true); w(36,'data'); d.setUint32(40,n*2,true);
+  new Int16Array(b,44).set(pcm); return new Blob([b],{type:'audio/wav'});
+}
+async function hfSend(chunks, len, sr){
+  const now=Date.now(); hf.calls=hf.calls.filter(t=>now-t<60000);
+  if(hf.calls.length>=12 && now>hf.armed) return;   // mucho ruido: no gastamos tu llave en eso
+  const day=LS.get('hfDay',{d:'',n:0}); if(day.d!==todayISO()){ day.d=todayISO(); day.n=0; }
+  if(day.n>=700){ hfStop(); toast('Manos libres se apagó: hoy escuchó demasiado ruido. Probá de nuevo mañana o con "El reconocimiento del celu".', 6000); return; }
+  day.n++; LS.set('hfDay',day); hf.calls.push(now); hf.sending++;
+  try{
+    const fd=new FormData(); fd.append('file', hfWav(chunks,len,sr), 'voz.wav'); fd.append('model','whisper-large-v3-turbo'); fd.append('language','es'); fd.append('temperature','0');
+    fd.append('prompt', now<hf.armed ? 'Pedido para FRIDAY, en español rioplatense.' : 'Friday, ¿qué hora es? Friday, poné música. Friday, recordame…');
+    const r=await fetch(API.groq+'/audio/transcriptions',{method:'POST', headers:{Authorization:'Bearer '+S.groqKey}, body:fd});
+    if(!r.ok){ if(r.status===401){ hfStop(); toast('Tu llave de Groq no anda: revisala en Ajustes.'); } return; }
+    hfHeard(String((await r.json()).text||''));
+  }catch(e){}
+  finally{ hf.sending--; }
+}
+function hfHeard(t){
+  t=String(t||'').trim(); if(!t || /^(gracias\.?|subtítulos.*|amara.*|\W*)$/i.test(t) || busy || rec.on || isSpeaking()) return;
+  if(Date.now()<hf.armed){ hf.armed=0; $('heard').textContent=''; ask(t); return; }
+  const rest=hfRest(t); if(rest===null) return;
+  ding(); buzz(30);
+  if(rest.replace(/[^a-zñáéíóú0-9]/gi,'').length>2){ ask(rest); return; }
+  // dijiste solo "Friday": te escucho lo que sigue
+  hf.armed=Date.now()+8000; orbState='listen'; $('heard').textContent='Te escucho…';
+  setTimeout(()=>{ if(Date.now()>=hf.armed && $('heard').textContent==='Te escucho…'){ $('heard').textContent=''; if(orbState==='listen') orbState='idle'; } }, 8200);
+}
+// con el reconocimiento del celu (gratis): se reinicia solo cuando se corta
+function hfSR(){
+  if(!hf.on || hf.motor!=='celu' || hf.sr) return;
+  if(document.hidden){ setTimeout(hfSR, 1500); return; }
+  const r=new SRC(); hf.sr=r; r.lang='es-AR'; r.continuous=true; r.interimResults=false; r.maxAlternatives=1;
+  r.onresult=e=>{ for(let i=e.resultIndex;i<e.results.length;i++) if(e.results[i].isFinal) hfHeard(e.results[i][0].transcript); };
+  r.onerror=e=>{ if(e.error==='not-allowed' || e.error==='service-not-allowed'){ toast('El celu no deja escuchar todo el tiempo: probá con Whisper en Ajustes.', 5000); hfStop(); } };
+  r.onend=()=>{ hf.sr=null; if(hf.on) setTimeout(hfSR, 350); };
+  try{ r.start(); }catch(e){ hf.sr=null; setTimeout(hfSR, 1200); }
+}
+$('hfChip').onclick=()=>{ buzz(); hf.on ? (hfStop(), toast('Manos libres apagado')) : hfStart(); };
+$('cfHf').onchange=e=>{ e.target.checked ? hfStart().then(ok=>{ if(!ok) e.target.checked=false; }) : hfStop(); };
+$('cfHfMotor').onchange=e=>{ S.hfMotor=e.target.value; saveS(); if(hf.on){ hfStop(); hfStart(); } };
+if(!SRC) $('cfHfMotor').querySelector('[value=celu]').remove();
+
+// ================================================================ accesos directos (mantené apretado el ícono) y "tocá para…"
+function needTap(icon, label, fn, onNo){
+  const act=navigator.userActivation; if(act && act.isActive){ fn(); return; }
+  $('tapIc').textContent=icon; $('tapTxt').textContent=label; $('tapgo').classList.add('on');
+  $('tapBtn').onclick=()=>{ $('tapgo').classList.remove('on'); unlockAudio(); fn(); };
+  $('tapNo').onclick=()=>{ $('tapgo').classList.remove('on'); if(onNo) onNo(); };
+}
+function handleHash(){
+  const h=location.hash; if(!h || /[#&]v=/.test(h)) return false;
+  const clear=()=>window.history.replaceState(null,'',location.pathname);
+  if(h==='#buendia'){ clear(); needTap('☀️','Tocá y te cuento tu día', buenDia); return true; }
+  if(h==='#hablar'){ clear(); needTap('🎤','Tocá y hablame', ()=>recStart(false)); return true; }
+  if(h==='#manoslibres'){ clear(); needTap('🙌','Tocá para activar manos libres', hfStart); return true; }
+  if(h==='#compras'){ clear(); showSheet('compras'); return true; }
+  return false;
+}
+addEventListener('hashchange', ()=>{ if(S.groqKey) handleHash(); });
 
 // ================================================================ la cara de FRIDAY (igual que en la compu)
 function accentRGB(){ const v=getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').split(',').map(x=>+x); return v.length===3&&!v.some(isNaN)?v:[76,201,255]; }
@@ -1465,7 +1671,10 @@ function tickClock(){ const d=new Date(); $('clkT').textContent=d.toLocaleTimeSt
   await syncBoot();
   schedulePushes(); renderAgChip();
   const h=new Date().getHours();
-  if(S.groqKey && (location.hash==='#buendia' || (S.bdAuto!==false && LS.get('bdLast','')!==todayISO() && h>=5 && h<12))){ if(location.hash==='#buendia') history.replaceState(null,'',location.pathname); setTimeout(()=>buenDia(), 700); }
+  if(S.groqKey && !handleHash()){
+    if(S.bdAuto!==false && LS.get('bdLast','')!==todayISO() && h>=5 && h<12){ LS.set('bdLast', todayISO()); setTimeout(()=>needTap('☀️','Buen día. Tocá y te cuento tu día', buenDia), 600); }
+    else if(S.hf) setTimeout(()=>needTap('🙌','Tocá para seguir con manos libres', hfStart, ()=>{ S.hf=false; saveS(); }), 600);
+  }
 })();
 </script>
 </body>
