@@ -1,0 +1,50 @@
+FRIDAY MÓVIL — CÓMO PUBLICARLA (gratis, una sola vez, unos 5 minutos)
+=====================================================================
+Es una página web que funciona como app. Hay que subirla a internet (con https) para que
+anden el micrófono, el "agregar a inicio" y Spotify. Usamos GitHub Pages: es gratis y el link
+queda fijo para siempre.
+
+1. Entrá a https://github.com/signup y creá una cuenta (gratis). El nombre de usuario va a
+   quedar en el link, por ejemplo: pedrobufager.github.io/friday
+
+2. Arriba a la derecha: "+" → "New repository".
+   - Repository name: friday
+   - Dejalo en "Public"
+   - Tocá "Create repository".
+
+3. En la página que aparece, tocá el link "uploading an existing file".
+   Arrastrá TODOS los archivos de esta carpeta (index.html, manifest.json, sw.js,
+   icon-192.png, icon-512.png). No hace falta subir PUBLICAR.txt.
+   Abajo tocá "Commit changes".
+
+4. Arriba: "Settings" → a la izquierda "Pages".
+   En "Branch" elegí "main" y la carpeta "/ (root)" → "Save".
+
+5. Esperá 1 o 2 minutos y recargá esa página: arriba aparece
+   "Your site is live at https://TU-USUARIO.github.io/friday/". ¡Ese es el link de FRIDAY!
+
+DESPUÉS
+- Abrí el link en el celu. FRIDAY te guía: tu nombre, tu ciudad y la llave gratis de Groq.
+- Para tenerla como app:
+    Android (Chrome): menú ⋮ → "Agregar a la pantalla principal" (o "Instalar app").
+    iPhone (Safari): Compartir (cuadradito con flecha) → "Agregar a inicio".
+- Para pasársela a alguien: mandale el link (o en FRIDAY: Ajustes → "Pasarle FRIDAY a alguien").
+  Cada persona pone SU llave de Groq: nadie gasta la tuya, y todo queda guardado en su celu.
+
+SPOTIFY (opcional, hace falta Premium)
+- Cada uno: developer.spotify.com/dashboard → Create app → en "Redirect URIs" pegá el link
+  de FRIDAY tal cual (FRIDAY te lo muestra en Ajustes → Spotify, con botón para copiar)
+  → marcá "Web API" → guardá → copiá el "Client ID" en Ajustes → Spotify.
+- Si querés que otros usen TU app de Spotify: en tu app → "User Management" agregá su mail
+  (hasta 5 personas). Si no, cada uno crea la suya (2 minutos).
+
+ACTUALIZAR
+- Si te paso una versión nueva: en el repositorio "friday" → "Add file" → "Upload files" →
+  arrastrás los archivos nuevos → "Commit changes". Los celus la toman solos al abrirla.
+
+QUÉ PUEDE Y QUÉ NO (sin compu)
+- Sí: charla por voz o escrita, memoria, clima, recordatorios y timers, noticias, buscar en
+  internet, Spotify.
+- No: luces/Smart Life, la tele, la pantalla de la compu (eso lo hace la FRIDAY de la compu).
+- Los recordatorios suenan con FRIDAY abierta o usada hace poco. Para que suenen sí o sí,
+  en Recordatorios tocá 📅 y quedan en el calendario del celu.
