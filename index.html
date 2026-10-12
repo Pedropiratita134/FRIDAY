@@ -456,7 +456,7 @@ body.panel .sheet, body.panel #shade, body.panel #setup{display:none!important}
 
 <script>
 'use strict';
-const VERSION='1.4';
+const VERSION='1.5';
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1372,7 +1372,10 @@ const FSync={
     }
     if(o.k && !['d','h','q'].includes(o.k) && this.hooks.onMsg){
       // pedidos y avisos viejos (de cuando este aparato estaba apagado) no se hacen
-      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:120000)) try{ await this.hooks.onMsg(o); }catch(e){ console.warn(e); }
+      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:120000)){
+        // sin esperar: un pedido que tarda (por ejemplo, uno que espera tu "sí") no traba los mensajes que siguen
+        Promise.resolve().then(()=>this.hooks.onMsg(o)).catch(e=>console.warn(e));
+      }
     }
     if(o.k==='q' && o.to===this.cfg.dev){
       const out={};
