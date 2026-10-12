@@ -178,6 +178,64 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
 .okline{padding:12px;border:1px solid rgba(95,242,168,.35);background:rgba(95,242,168,.08);border-radius:14px;margin:8px 0;font-size:14.5px}
 .topic{font:600 13px monospace;word-break:break-all;padding:3px 6px;border-radius:6px;background:rgba(255,255,255,.06)}
 @media (min-width:700px){ body{max-width:560px;margin:0 auto;border-left:1px solid var(--line);border-right:1px solid var(--line)} .sheet{max-width:560px;margin:0 auto} }
+/* ---------- FRIDAY Panel (la tablet de la casa) ---------- */
+#P,#Pd,#Ps{display:none}
+body.panel > header, body.panel #stage, body.panel #chat, body.panel #quick, body.panel #bar{display:none!important}
+body.panel #P{display:grid;grid-template-rows:auto 1fr auto;position:fixed;inset:0;z-index:3;padding:18px 22px 14px;gap:14px}
+.p-top{display:flex;align-items:center;gap:18px}
+.p-top .brand{font-size:17px}
+.p-st{display:flex;align-items:center;gap:8px;color:var(--muted);font-size:15px;letter-spacing:.05em;flex:1}
+.p-clock{font-family:var(--display);font-size:30px;letter-spacing:.1em;font-variant-numeric:tabular-nums;text-shadow:0 0 18px rgba(var(--accent-rgb),.45)}
+.p-clock small{display:block;font:600 11px var(--font);letter-spacing:.28em;color:var(--muted);text-align:right}
+.p-grid{display:grid;grid-template-columns:minmax(230px,1fr) minmax(320px,1.45fr) minmax(230px,1fr);gap:18px;min-height:0}
+.p-col{display:flex;flex-direction:column;gap:12px;min-height:0;overflow:hidden}
+.p-card{border:1px solid var(--line);border-radius:20px;background:rgba(6,18,32,.62);padding:14px 16px;backdrop-filter:blur(4px)}
+.p-card:empty{display:none}
+.p-card h5{margin:0 0 8px;font:700 11.5px var(--font);letter-spacing:.24em;text-transform:uppercase;color:var(--accent)}
+.p-card ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.p-card li{display:flex;gap:9px;align-items:baseline;font-size:16.5px;line-height:1.25}
+.p-card li b{font-family:var(--display);font-size:13px;color:var(--accent);flex:none;min-width:46px;font-variant-numeric:tabular-nums}
+.p-card li.done{opacity:.45;text-decoration:line-through}
+.p-wx{display:flex;align-items:center;gap:14px}.p-wx .em{font-size:52px;line-height:1}.p-wx .t{font-family:var(--display);font-size:46px}.p-wx small{display:block;color:var(--muted);font-size:14px}
+.p-hrs{display:flex;justify-content:space-between;margin-top:10px;font-size:13px;color:var(--muted);text-align:center}.p-hrs b{display:block;font-size:18px}
+.p-center{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:0;text-align:center}
+#pFace{width:100%;flex:1 1 auto;min-height:150px;display:flex}
+#pFace canvas{width:100%!important;height:100%!important;max-height:none!important}
+#pYou{min-height:24px;color:var(--muted);font-size:18px;font-style:italic;padding:0 10px}
+#pSay{min-height:30px;font-size:clamp(20px,2.4vw,27px);line-height:1.3;padding:6px 12px 0;max-height:7.2em;overflow:hidden}
+#pStage{width:100%;max-height:42%;overflow:hidden}#pStage .card{margin:10px auto 0;max-width:560px;text-align:left}
+.p-tim{display:flex;flex-direction:column;gap:8px}.p-tim div{display:flex;justify-content:space-between;align-items:center;font-size:17px}
+.p-tim b{font-family:var(--display);font-size:24px;color:var(--warn);font-variant-numeric:tabular-nums}
+.p-hint{text-align:center;color:var(--muted);font-size:15px;letter-spacing:.03em;transition:opacity .6s}
+.p-hint b{color:var(--text)}
+.p-av{position:fixed;left:50%;top:22px;transform:translate(-50%,calc(-100% - 60px));z-index:20;display:flex;gap:14px;align-items:center;padding:14px 22px;border-radius:22px;border:1px solid var(--accent);background:var(--card2);box-shadow:0 0 40px rgba(var(--accent-rgb),.35);transition:transform .45s cubic-bezier(.2,.9,.3,1.2);max-width:80%}
+.p-av.on{transform:translate(-50%,0)}.p-av .em{font-size:34px}.p-av b{display:block;font-size:20px}.p-av small{color:var(--muted);font-size:15px}
+/* modo demo */
+body.panel #Pd.on{display:flex;flex-direction:column;align-items:center;justify-content:center;position:fixed;inset:0;z-index:8;background:radial-gradient(circle at 50% 40%,rgba(var(--accent-rgb),.10),transparent 60%),var(--ink);cursor:none}
+#Pd .ring{position:absolute;width:min(70vh,70vw);height:min(70vh,70vw);border-radius:50%;border:1px solid rgba(var(--accent-rgb),.18);box-shadow:0 0 80px rgba(var(--accent-rgb),.08) inset;animation:pdspin 60s linear infinite}
+#Pd .ring::before{content:"";position:absolute;inset:6%;border-radius:50%;border:2px dashed rgba(var(--accent-rgb),.22)}
+#Pd .ring::after{content:"";position:absolute;inset:-3%;border-radius:50%;border-top:3px solid rgba(var(--accent-rgb),.55);border-right:3px solid transparent;border-bottom:3px solid transparent;border-left:3px solid transparent}
+@keyframes pdspin{to{transform:rotate(360deg)}}
+.pd-t{font-family:var(--display);font-size:min(22vw,32vh);letter-spacing:.06em;line-height:1;font-variant-numeric:tabular-nums;text-shadow:0 0 40px rgba(var(--accent-rgb),.5);z-index:1}
+.pd-d{font-size:min(3.4vw,5vh);letter-spacing:.3em;color:var(--muted);margin-top:1.4vh;z-index:1;text-transform:uppercase}
+.pd-w{font-size:min(3.6vw,5.4vh);margin-top:2.6vh;z-index:1}
+.pd-c{margin-top:5vh;z-index:1;display:flex;gap:18px;align-items:center;max-width:76vw;padding:16px 24px;border-radius:24px;border:1px solid var(--line);background:rgba(6,18,32,.7);transition:opacity .8s,transform .8s;min-height:84px}
+.pd-c.out{opacity:0;transform:translateY(12px)}
+.pd-c img{width:110px;height:72px;object-fit:cover;border-radius:12px;flex:none}.pd-c .em{font-size:40px}
+.pd-c b{display:block;font-size:min(2.5vw,3.6vh)}.pd-c small{color:var(--muted);font-size:min(1.8vw,2.6vh);letter-spacing:.1em;text-transform:uppercase}
+#Pd.noche{filter:brightness(.42) saturate(.6)}#Pd.noche .pd-c,#Pd.noche .ring{display:none!important}
+.pd-hf{position:absolute;bottom:3vh;color:var(--muted);font-size:min(1.9vw,2.7vh);letter-spacing:.14em;z-index:1}
+/* primera vez: vincular sin escribir nada */
+body.panel #Ps.on{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;position:fixed;inset:0;z-index:9;background:var(--ink);text-align:center;padding:30px}
+#Ps h1{font-family:var(--display);letter-spacing:.4em;color:var(--accent);margin:0;font-size:34px;text-shadow:0 0 22px rgba(var(--accent-rgb),.5)}
+#Ps p{margin:0;color:var(--muted);font-size:19px;max-width:760px;line-height:1.45}#Ps p b{color:var(--text)}
+#psCode{font-family:var(--display);font-size:min(9vw,13vh);letter-spacing:.14em;color:var(--text);text-shadow:0 0 30px rgba(var(--accent-rgb),.6);margin:6px 0}
+#psSt{font-size:17px;color:var(--accent);min-height:24px}
+#psScan{padding:12px 22px;border-radius:14px;border:1px solid var(--line2);background:rgba(var(--accent-rgb),.12);font-weight:700}
+#psVideo{width:300px;height:300px;object-fit:cover;border-radius:18px;border:1px solid var(--line2)}
+@media (max-aspect-ratio:1/1){ .p-grid{grid-template-columns:1fr 1fr;grid-template-rows:auto 1fr} .p-center{grid-column:1/-1;grid-row:1;min-height:42vh} }
+@media (min-width:700px){ body.panel{max-width:none;margin:0;border:0} }
+body.panel .sheet, body.panel #shade, body.panel #setup{display:none!important}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -266,6 +324,9 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
   </div>
   <div id="vOn" hidden>
     <div class="okline" id="vSt"></div>
+    <h4>📟 Vincular otro aparato</h4>
+    <p class="note" style="margin-top:0">¿La tablet de FRIDAY (o otro celu) te muestra un código de 8 letras? Escribilo acá y queda vinculada sola.</p>
+    <div class="addrow"><input id="vInv" placeholder="XXXX-XXXX" autocomplete="off" spellcheck="false" autocapitalize="characters" maxlength="9" style="text-transform:uppercase;letter-spacing:.15em;font-weight:700"><button id="vInvGo">Vincular</button></div>
     <button class="big sec" id="vNow">🔄 Sincronizar ahora</button>
     <button class="big sec red" id="vOffBtn">Desvincular</button>
   </div>
@@ -371,11 +432,32 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
 
 <div id="ask"><div class="box"><div id="askTxt"></div><div class="btns"><button id="askNo">No</button><button class="yes" id="askYes">Sí</button></div></div></div>
 <div id="toast"></div>
+<div id="P">
+  <div class="p-top"><div class="brand">FRIDAY</div><div class="p-st"><span class="dot" id="pDot"></span><span id="pSt">Iniciando…</span></div><div class="p-clock" id="pClock"></div></div>
+  <div class="p-grid">
+    <aside class="p-col"><div class="p-card" id="pWx"></div><div class="p-card" id="pAg"></div><div class="p-card" id="pRem"></div></aside>
+    <main class="p-center"><div id="pFace"></div><div id="pYou"></div><div id="pSay"></div><div id="pStage"></div></main>
+    <aside class="p-col"><div class="p-card" id="pTim"></div><div class="p-card" id="pShop"></div><div class="p-card" id="pEco"></div></aside>
+  </div>
+  <div class="p-hint" id="pHint"></div>
+</div>
+<div class="p-av" id="pAv"><span class="em" id="pAvE"></span><div><b id="pAvT"></b><small id="pAvS"></small></div></div>
+<div id="Pd"><div class="ring"></div><div class="pd-t" id="pdT"></div><div class="pd-d" id="pdD"></div><div class="pd-w" id="pdW"></div><div class="pd-c" id="pdC"></div><div class="pd-hf" id="pdHf">DECÍ «FRIDAY»</div></div>
+<div id="Ps">
+  <h1>FRIDAY</h1>
+  <p id="psTxt">Soy la pantalla de tu casa. Para conectarme no hay que escribir nada acá:</p>
+  <p>En la <b>compu</b>: Ajustes → <b>Celular</b> → "¿Tenés la tablet de FRIDAY mostrando un código?" y escribí:<br>(o en <b>FRIDAY Móvil</b>: Ajustes → Con tu compu → Vincular otro aparato)</p>
+  <div id="psCode"></div>
+  <div id="psSt">Esperando…</div>
+  <video id="psVideo" playsinline muted hidden></video>
+  <button id="psScan" hidden>📷 O escaneá el QR de la compu</button>
+</div>
 <div id="tapgo"><button id="tapBtn"><span id="tapIc"></span><b id="tapTxt"></b></button><button id="tapNo">Ahora no</button></div>
 
 <script>
 'use strict';
-const VERSION='1.3';
+const VERSION='1.4';
+const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fm.'+k, JSON.stringify(v)); }catch(e){} },
@@ -401,8 +483,12 @@ function setStatus(kind, txt){ $('dot').className='dot'+(kind?' '+kind:''); $('s
 const chat=$('chat');
 function syncChatting(){ document.body.classList.toggle('chatting', chat.querySelectorAll('.msg:not(.sys),.card').length>0); }
 function scrollDown(){ requestAnimationFrame(()=>{ chat.scrollTop=chat.scrollHeight; }); }
-function bubble(kind, text){ const el=document.createElement('div'); el.className='msg '+kind; if(text!=null) el.textContent=text; chat.appendChild(el); syncChatting(); scrollDown(); return el; }
-function cardEl(cls, html){ const el=document.createElement('div'); el.className='card '+cls; el.innerHTML=html; chat.appendChild(el); syncChatting(); scrollDown(); return el; }
+function bubble(kind, text){ const el=document.createElement('div'); el.className='msg '+kind; if(text!=null) el.textContent=text; chat.appendChild(el); syncChatting(); scrollDown();
+  if(PANEL && text!=null){ if(kind==='yo'){ $('pYou').textContent='“'+text+'”'; $('pSay').textContent=''; } else if(kind==='fr'||kind==='sys') $('pSay').textContent=text; pTouch(); }
+  return el; }
+function cardEl(cls, html){ const el=document.createElement('div'); el.className='card '+cls; el.innerHTML=html; chat.appendChild(el); syncChatting(); scrollDown();
+  if(PANEL){ const st=$('pStage'); st.innerHTML=''; const c=el.cloneNode(true); st.appendChild(c); clearTimeout(cardEl.t); cardEl.t=setTimeout(()=>{ if(st.contains(c)) st.innerHTML=''; }, 30000); }
+  return el; }
 function typingEl(){ const el=bubble('fr'); el.innerHTML='<span class="typing"><i></i><i></i><i></i></span>'; return el; }
 
 // ================================================================ voz de FRIDAY (la del celu)
@@ -438,7 +524,10 @@ function stopVoice(){ sayGen++; try{ speechSynthesis.cancel(); }catch(e){} speak
 const isSpeaking=()=>speakingNow || ('speechSynthesis' in window && (speechSynthesis.speaking||speechSynthesis.pending));
 // modo charla: cuando termina de hablar, te escucha de nuevo
 let convoArm=false;
-function afterSpeech(){ if(convoArm && S.convo && !document.hidden){ convoArm=false; setTimeout(()=>{ if(!isSpeaking() && !rec.on && !busy) recStart(true); }, 450); } }
+function afterSpeech(){
+  // en la tablet: después de contestar, te sigue escuchando unos segundos sin decir "Friday"
+  if(PANEL && hf.on && convoArm){ convoArm=false; hf.armed=Date.now()+7000; orbState='listen'; setTimeout(()=>{ if(orbState==='listen' && Date.now()>hf.armed) orbState='idle'; }, 7300); return; }
+  if(convoArm && S.convo && !document.hidden){ convoArm=false; setTimeout(()=>{ if(!isSpeaking() && !rec.on && !busy) recStart(true); }, 450); } }
 
 // ================================================================ oído: grabación + Whisper (Groq)
 let actx=null;
@@ -676,7 +765,7 @@ function ntfyDel(server, topic, id){ if(id) fetch(`${server||NTFY}/${topic}/${id
 function remUnpush(r){ if(r.pid) ntfyDel(r.psrv, r.ptop, r.pid); r.pid=null; }
 let pushBusy=false;
 async function schedulePushes(){
-  if(pushBusy) return; const dest=avisoDest(); pushBusy=true;
+  if(PANEL || pushBusy) return; const dest=avisoDest(); pushBusy=true;
   const now=Date.now(), max=3*86400000-10*60000; let ch=false;
   try{
     for(const r of reminders){
@@ -876,7 +965,7 @@ function systemPrompt(){
   const rems=reminders.filter(r=>!r.done).sort((a,b)=>a.at<b.at?-1:1).slice(0,12).map(r=>`${remWhen(r)}: ${r.texto}`).join('; ')||'ninguno';
   const tr = S.trato==='jefe' ? 'Tratalo de "jefe" de vez en cuando.' : S.trato==='senor' ? 'Tratalo de "señor", bien estilo JARVIS.' : (S.name?`Llamalo ${S.name} de vez en cuando.`:'');
   return `Sos FRIDAY, una asistente personal con voz, como FRIDAY de Iron Man: cálida, ingeniosa, eficiente y leal. Hablás en español rioplatense (vos, dale, che), natural y con chispa, nunca forzada. ${S.name?`El usuario se llama ${S.name}.`:''} ${tr}
-Estás en una app web en el CELULAR del usuario. No manejás la compu, la tele ni las luces (eso lo hace la FRIDAY de la compu, si la tiene).
+${PANEL?`Estás en la TABLET de FRIDAY, la pantalla de la casa: todo es por voz (no hay teclado) y lo que mostrás se ve de lejos. ${FSync.on()?'Estás conectada con la FRIDAY de la compu: las luces, la aspiradora, la música (Spotify), la tele, la compu, WhatsApp, los mails y anotar en la agenda los hace ella. Para eso decí una frase corta ("dale, ya lo hago") y agregá [[COMPU|el pedido con las palabras del usuario]].':'Todavía no estás conectada con la compu.'} "modo demo" o "pantalla de reposo": [[DEMO]].`:'Estás en una app web en el CELULAR del usuario. No manejás la compu, la tele ni las luces (eso lo hace la FRIDAY de la compu, si la tiene).'}
 
 Todo lo que escribís se lee en voz alta:
 - Frases cortas y habladas. Nada de markdown, listas, emojis ni símbolos. Números como se dicen.
@@ -923,7 +1012,8 @@ let busy=false;
 function pushHistory(m){ hist.push(m); if(hist.length>30) hist=hist.slice(-30); LS.set('history',hist); }
 async function ask(text){
   text=String(text||'').trim(); if(!text) return;
-  if(!S.groqKey){ openSetup(2); return; }
+  if(PANEL && await panelAsk(text)) return;
+  if(!S.groqKey){ if(!PANEL) openSetup(2); return; }
   closeSheets(); txt.value=''; autoGrow(); stopVoice(); $('heard').textContent='';
   bubble('yo', text); pushHistory({role:'user', content:text});
   await turn(null);
@@ -939,7 +1029,7 @@ async function turn(extra, depth=0){
   try{
     for await (const c of groqStream(msgs)){
       full+=c; const v=visible(full);
-      if(v){ el.textContent=v; scrollDown(); }
+      if(v){ el.textContent=v; scrollDown(); if(PANEL) $('pSay').textContent=v; }
       // va diciendo cada oración apenas está completa
       const done=v.slice(spoken).match(/^[\s\S]*?[.!?…](\s|$)/);
       if(done && !/\[\[/.test(full.slice(-2))){ say(done[0]); spoken+=done[0].length; }
@@ -988,6 +1078,11 @@ async function runTags(full){
         const n=norm(p.slice(1).join(' ')); const a=autos.find(x=>norm(x.que).includes(n)||n.includes(norm(x.que))); if(a){ autos=autos.filter(x=>x!==a); LS.set('autos',autos); toast('Rutina borrada'); }
       } else if(k==='cumple' && p[2]){
         const c=cumpleCrearM(p[1], p[2]); if(c) toast('🎂 Anotado: '+c.nombre);
+      } else if(k==='compu' && p[1]){
+        if(PANEL){ const r=await aCompu(p.slice(1).join(' ')); if(r) notes.push('La FRIDAY de la compu respondió (contáselo con tus palabras, corto): '+r); }
+      } else if(k==='demo'){ if(PANEL) setTimeout(()=>demoOn(true), 2500);
+      } else if(k==='panel' && p[1]){
+        if(FSync.on()){ FSync.send({k:'aviso', t:'Mensaje', v:p.slice(1).join(' '), i:'📢', u:true}); toast('📢 Lo dice la tablet'); }
       } else if(k==='compras' && p[1]){
         const r=shopDo(p[1], p.slice(2).join(' ')); if(r) toast('🛒 '+r); if(/ver|mostr|list/.test(norm(p[1]))) showSheet('compras');
       } else if(k==='recordar' && p[1]) addMemory(p.slice(1).join(' '));
@@ -1081,7 +1176,7 @@ function greet(){
 // El código de vinculación (16 letras) genera la llave y el tema: ntfy solo ve texto ilegible.
 const FS_ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
 const FSync={
-  cfg:null, st:null, key:null, topic:'', hooks:null, pending:{}, pubT:null, timers:[], busy:false, started:false, lastErr:'',
+  cfg:null, st:null, key:null, topic:'', hooks:null, pending:{}, pubT:null, timers:[], busy:false, started:false, lastErr:'', ids:new Set(), streamCtl:null, live:false,
   newCode(){ const b=crypto.getRandomValues(new Uint8Array(16)); let s=''; for(const x of b) s+=FS_ALPHA[x&31]; return s; },
   pretty(c){ return String(c||'').replace(/(.{4})(?=.)/g,'$1-'); },
   // acepta "ABCD-EFGH-…", minúsculas, espacios o un link con #v=…
@@ -1094,22 +1189,45 @@ const FSync={
   },
   b64e(u8){ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
   b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const b=atob(s), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; },
-  async derive(code){
+  async keyFrom(code, salt, pre){
     const enc=new TextEncoder();
     const base=await crypto.subtle.importKey('raw', enc.encode(code), 'PBKDF2', false, ['deriveBits']);
-    const bits=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:enc.encode('friday-sync-v1'), iterations:150000, hash:'SHA-256'}, base, 384));
-    this.key=await crypto.subtle.importKey('raw', bits.slice(0,32), 'AES-GCM', false, ['encrypt','decrypt']);
-    this.topic='fy'+[...bits.slice(32,44)].map(x=>x.toString(16).padStart(2,'0')).join('');
+    const bits=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:enc.encode(salt), iterations:150000, hash:'SHA-256'}, base, 384));
+    return {key:await crypto.subtle.importKey('raw', bits.slice(0,32), 'AES-GCM', false, ['encrypt','decrypt']), topic:pre+[...bits.slice(32,44)].map(x=>x.toString(16).padStart(2,'0')).join('')};
   },
-  async seal(o){
+  async derive(code){ const k=await this.keyFrom(code,'friday-sync-v1','fy'); this.key=k.key; this.topic=k.topic; },
+  async seal(o, key){
     const iv=crypto.getRandomValues(new Uint8Array(12));
-    const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, this.key, new TextEncoder().encode(JSON.stringify(o))));
+    const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key||this.key, new TextEncoder().encode(JSON.stringify(o))));
     const all=new Uint8Array(12+ct.length); all.set(iv); all.set(ct,12);
     return 'FS1.'+this.b64e(all);
   },
-  async unseal(s){
+  async unseal(s, key){
     if(typeof s!=='string' || !s.startsWith('FS1.')) return null;
-    try{ const u=this.b64d(s.slice(4)); const pt=await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(0,12)}, this.key, u.slice(12)); return JSON.parse(new TextDecoder().decode(pt)); }catch(e){ return null; }
+    try{ const u=this.b64d(s.slice(4)); const pt=await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(0,12)}, key||this.key, u.slice(12)); return JSON.parse(new TextDecoder().decode(pt)); }catch(e){ return null; }
+  },
+  // sumar otro aparato (por ejemplo la tablet): muestra un código corto y espera que un aparato ya vinculado le mande el de verdad
+  newInvite(){ const b=crypto.getRandomValues(new Uint8Array(8)); let s=''; for(const x of b) s+=FS_ALPHA[x&31]; return s; },
+  async invite(code8, server){
+    const c=String(code8||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(c.length!==8 || !this.on()) return false;
+    const k=await this.keyFrom(c,'friday-invite-v1','fi');
+    const body=await this.seal({k:'invite', code:this.cfg.code, s:this.cfg.server, f:this.cfg.dev, n:this.hooks.name||''}, k.key);
+    try{ const r=await fetch((server||this.cfg.server)+'/'+k.topic, {method:'POST', body, headers:{'X-Firebase':'no'}}); return r.ok; }catch(e){ return false; }
+  },
+  async waitInvite(code8, server, onOk){
+    const k=await this.keyFrom(code8,'friday-invite-v1','fi'); const srv=(server||'https://ntfy.sh').replace(/\/+$/,'');
+    this.inviteT && clearInterval(this.inviteT);
+    const check=async()=>{
+      try{
+        const r=await fetch(`${srv}/${k.topic}/json?poll=1&since=15m`); if(!r.ok) return;
+        for(const ln of (await r.text()).split('\n').filter(Boolean)){
+          let m; try{ m=JSON.parse(ln); }catch(e){ continue; }
+          const o=await this.unseal(m.message, k.key);
+          if(o && o.k==='invite' && o.code){ clearInterval(this.inviteT); this.inviteT=null; await this.pair(o.code, o.s); onOk && onOk(o); return; }
+        }
+      }catch(e){}
+    };
+    this.inviteT=setInterval(check, 2500); check();
   },
   hash(t){ t=String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ]+/g,' ').trim(); let h=0x811c9dc5; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h.toString(36); },
   on(){ return !!(this.cfg && this.cfg.code && this.key); },
@@ -1135,14 +1253,34 @@ const FSync={
     return true;
   },
   unpair(){ this.stop(); this.cfg=null; this.st=this.fresh(); this.key=null; this.hooks.store('sync', null); this.status(); },
-  stop(){ this.timers.forEach(t=>clearInterval(t)); this.timers=[]; clearTimeout(this.pubT); this.started=false; },
+  stop(){ this.timers.forEach(t=>clearInterval(t)); this.timers=[]; clearTimeout(this.pubT); this.started=false; try{ this.streamCtl && this.streamCtl.abort(); }catch(e){} this.streamCtl=null; },
   start(){
     if(this.started) return; this.started=true;
     const tick=async()=>{ await this.poll(); this.scan(); };
     (async()=>{ await this.poll(); this.scan(); clearTimeout(this.pubT); await this.flush(); this.hello(); })();
     this.timers.push(setInterval(()=>this.scan(), 4000));
     this.timers.push(setInterval(()=>{ if(!this.hooks.paused || !this.hooks.paused()) tick(); }, this.hooks.pollMs||20000));
+    if(this.hooks.live) this.stream();
   },
+  // al instante: una conexión abierta con ntfy (la usan la compu y la tablet, que están siempre prendidas)
+  async stream(){
+    const gen=this.cfg && this.cfg.code;
+    while(this.started && this.on() && this.cfg.code===gen){
+      try{
+        const ctl=new AbortController(); this.streamCtl=ctl;
+        const r=await fetch(`${this.cfg.server}/${this.topic}/json?since=${encodeURIComponent(this.st.lastId||'2m')}`, {signal:ctl.signal});
+        if(r.ok && r.body){
+          this.live=true; this.status();
+          const rd=r.body.getReader(), dec=new TextDecoder(); let buf='';
+          while(true){ const {value,done}=await rd.read(); if(done) break; buf+=dec.decode(value,{stream:true}); let i; while((i=buf.indexOf('\n'))>=0){ const ln=buf.slice(0,i); buf=buf.slice(i+1); await this.line(ln); } }
+        }
+      }catch(e){}
+      this.live=false;
+      await new Promise(r=>setTimeout(r, 3000));
+    }
+  },
+  // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
+  send(head){ return this.publish(head, null); },
   status(){ try{ this.hooks.onStatus && this.hooks.onStatus(); }catch(e){} },
   // lo que cambió acá desde la última vez → se manda
   scan(){
@@ -1192,16 +1330,19 @@ const FSync={
       const r=await fetch(`${this.cfg.server}/${this.topic}/json?poll=1&since=${encodeURIComponent(this.st.lastId||'12h')}`);
       if(!r.ok){ this.lastErr='ntfy '+r.status; return; }
       const lines=(await r.text()).split('\n').filter(Boolean);
-      for(const ln of lines){
-        let m; try{ m=JSON.parse(ln); }catch(e){ continue; }
-        if(m.event && m.event!=='message') continue;
-        if(m.id) this.st.lastId=m.id;
-        const o=await this.unseal(m.message); if(!o || !o.f || o.f===this.cfg.dev) continue;
-        await this.handle(o);
-      }
+      for(const ln of lines) await this.line(ln);
       this.lastErr=''; this.save();
     }catch(e){ this.lastErr='sin conexión'; }
     finally{ this.busy=false; this.status(); }
+  },
+  async line(ln){
+    let m; try{ m=JSON.parse(ln); }catch(e){ return; }
+    if(!m || (m.event && m.event!=='message') || !m.id) return;
+    if(this.ids.has(m.id)) return; this.ids.add(m.id); if(this.ids.size>400) this.ids=new Set([...this.ids].slice(-200));
+    this.st.lastId=m.id;
+    const o=await this.unseal(m.message); if(!o || !o.f || o.f===this.cfg.dev) return;
+    o._t=(m.time||0)*1000;
+    await this.handle(o);
   },
   async handle(o){
     const first=!this.st.peers[o.f];
@@ -1229,6 +1370,10 @@ const FSync={
       if(Object.keys(out).length) await this.publish({k:'d'}, out);
       if((o.mx||0)>(this.st.seen[o.f]||0)) await this.publish({k:'q', to:o.f, since:this.st.seen[o.f]||0}, null);
     }
+    if(o.k && !['d','h','q'].includes(o.k) && this.hooks.onMsg){
+      // pedidos y avisos viejos (de cuando este aparato estaba apagado) no se hacen
+      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:120000)) try{ await this.hooks.onMsg(o); }catch(e){ console.warn(e); }
+    }
     if(o.k==='q' && o.to===this.cfg.dev){
       const out={};
       for(const [id,e] of Object.entries(this.st.items)) if(e.o===this.cfg.dev && e.t>(o.since||0)) out[id]=e;
@@ -1239,7 +1384,7 @@ const FSync={
 
 
 // ================================================================ celu y compu: lo de esta app
-const SYNC_DEV=(()=>{ let d=LS.get('syncDev',null); if(!d){ d='cel'+Math.random().toString(36).slice(2,6); LS.set('syncDev',d); } return d; })();
+const SYNC_DEV=(()=>{ const k=PANEL?'syncDevP':'syncDev'; let d=LS.get(k,null); if(!d){ d=(PANEL?'pan':'cel')+Math.random().toString(36).slice(2,6); LS.set(k,d); } return d; })();
 let pedidos=LS.get('pedidos',[]);
 function syncLocal(){
   const o={}, now=Date.now();
@@ -1295,6 +1440,11 @@ function syncApply(changes){
       LS.set('pedidos',pedidos);
     } else if(k==='a'){ LS.set('agenda', c.d?null:Object.assign({}, c.v, {rec:now})); renderAgChip(); }
     else if(k==='n'){ LS.set('pcNtfy', c.d?null:c.v); setTimeout(schedulePushes, 500); }
+    else if(c.id==='c:llaves' && c.v){
+      const v=c.v; let ch=false;
+      if(v.g && (!S.groqKey || PANEL)){ ch=ch||S.groqKey!==v.g; S.groqKey=v.g; } if(v.m && (!S.gemKey || PANEL)){ S.gemKey=v.m; }
+      saveS(); if(ch && PANEL) setTimeout(panelListo, 300);
+    }
     else if(k==='c' && c.v){ const v=c.v; let ch=false;
       if(!S.name && v.name){ S.name=v.name; ch=true; }
       if(!S.city && v.city){ S.city=v.city; S.lat=v.lat?+v.lat:null; S.lon=v.lon?+v.lon:null; weather=null; ch=true; }
@@ -1308,6 +1458,7 @@ function syncApply(changes){
 function syncPrompt(){
   if(!FSync.on()) return '';
   let s='Estás vinculada con la FRIDAY de su compu: comparten la memoria y los recordatorios.\n';
+  if(!PANEL && Object.keys(FSync.st.peers||{}).some(d=>d.startsWith('pan'))) s+='En la casa hay una TABLET de FRIDAY: para que diga algo en voz alta allá ("avisá en la tablet que llego en diez"), [[PANEL|lo que tiene que decir]].\n';
   const t=agendaTxt(7);
   if(t) s+=`Agenda (su Google Calendar, la trae la compu): ${t}
 [[EVENTO|AAAA-MM-DD HH:MM|título|minutos|lugar]] le pide a la compu que lo anote en su Google Calendar (minutos y lugar opcionales; para todo el día, solo AAAA-MM-DD). Si te dice "anotá", "agendá" o "tengo turno" con día y hora, usá EVENTO (no RECORDATORIO). Decí que queda anotado apenas la compu esté prendida.
@@ -1347,9 +1498,10 @@ function pedirEvento(cuando, titulo, min, lugar){
 }
 async function syncBoot(){
   if(!(window.crypto && crypto.subtle)) return;
-  const name=(IOS?'iPhone':/Android/i.test(navigator.userAgent)?'Android':'Celu')+(S.name?' de '+S.name:'');
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, url:spRedirect(), kinds:['m','r','p','l','u','b'], pollMs:20000,
-    paused:()=>document.hidden, local:syncLocal, apply:syncApply,
+  const name=PANEL ? 'Panel de la casa' : (IOS?'iPhone':/Android/i.test(navigator.userAgent)?'Android':'Celu')+(S.name?' de '+S.name:'');
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, url:spRedirect(), kinds:['m','r','p','l','u','b'], pollMs:PANEL?60000:20000,
+    live:PANEL, onMsg:o=>PANEL?panelMsg(o):null,
+    paused:()=>document.hidden && !PANEL, local:syncLocal, apply:syncApply,
     onPeer:(d,p,first)=>{ if(first && d.startsWith('pc')){ toast('💻 ¡Vinculada con tu compu!', 4500); buzz([60,40,60]); } if(openSheet==='vinc') renderVinc(); },
     onStatus:()=>{ if(openSheet==='vinc') renderVinc(); } });
   // vino con el link del QR (…#v=CÓDIGO)
@@ -1369,6 +1521,7 @@ function renderVinc(){
 }
 $('vGo').onclick=async()=>{ const c=$('vCode').value; if(!FSync.parseCode(c)){ toast('Revisá el código: son 16 letras y números'); return; } $('vGo').disabled=true; try{ await FSync.pair(c); toast('Vinculando…'); renderVinc(); }catch(e){ toast('No se pudo: '+e.message); } $('vGo').disabled=false; };
 $('vCode').addEventListener('input', e=>{ const v=e.target.value.toUpperCase().replace(/[^A-Z0-9]/g,'').slice(0,16); e.target.value=v.replace(/(.{4})(?=.)/g,'$1-'); });
+$('vInvGo').onclick=async()=>{ const c=$('vInv').value.toUpperCase().replace(/[^A-Z0-9]/g,''); if(c.length!==8){ toast('Son 8 letras y números'); return; } FSync.scan(); await FSync.flush(); const ok=await FSync.invite(c); toast(ok?'✔ Listo: en unos segundos la tablet queda conectada':'No pude mandarlo (¿hay internet?)', 4000); if(ok) $('vInv').value=''; };
 $('vNow').onclick=async()=>{ wakeAt=0; syncWake(); toast('Sincronizando…'); setTimeout(renderVinc, 2500); };
 $('vOffBtn').onclick=async()=>{ if(!(await confirmBox('¿Desvinculás el celu de la compu? No se borra nada, solo dejan de compartir.'))) return; FSync.unpair(); LS.set('pcNtfy',null); LS.set('agenda',null); renderVinc(); renderAgChip(); };
 // escanear el QR con la cámara (Android)
@@ -1550,7 +1703,7 @@ function hfFeed(x, sr){
   if(!hf.on) return;
   let s=0; for(let i=0;i<x.length;i++) s+=x[i]*x[i]; const lv=Math.sqrt(s/x.length), now=Date.now();
   if(hfPaused()){ hf.seg=null; hf.pre=[]; hf.preLen=0; return; }
-  const thr=Math.max(0.012, hf.floor*3.2);
+  const thr=Math.max(0.012, hf.floor*(PANEL && hf.ruido && now-hf.ruido<600000 ? 4.6 : 3.2));
   if(!hf.seg){
     hf.floor = lv<thr ? hf.floor*0.97+lv*0.03 : hf.floor*0.998+lv*0.002;
     hf.pre.push(new Float32Array(x)); hf.preLen+=x.length;
@@ -1575,9 +1728,10 @@ function hfWav(chunks, len, sr){
 }
 async function hfSend(chunks, len, sr){
   const now=Date.now(); hf.calls=hf.calls.filter(t=>now-t<60000);
-  if(hf.calls.length>=12 && now>hf.armed) return;   // mucho ruido: no gastamos tu llave en eso
+  if(hf.calls.length>=(PANEL?10:12) && now>hf.armed){ if(PANEL){ hf.ruido=Date.now(); pStatus(); } return; }   // mucho ruido: no gastamos tu llave en eso
   const day=LS.get('hfDay',{d:'',n:0}); if(day.d!==todayISO()){ day.d=todayISO(); day.n=0; }
-  if(day.n>=700){ hfStop(); toast('Manos libres se apagó: hoy escuchó demasiado ruido. Probá de nuevo mañana o con "El reconocimiento del celu".', 6000); return; }
+  if(day.n>=(PANEL?1500:700) && PANEL){ hf.ruido=Date.now(); pStatus(); return; }
+  if(day.n>=700 && !PANEL){ hfStop(); toast('Manos libres se apagó: hoy escuchó demasiado ruido. Probá de nuevo mañana o con "El reconocimiento del celu".', 6000); return; }
   day.n++; LS.set('hfDay',day); hf.calls.push(now); hf.sending++;
   try{
     const fd=new FormData(); fd.append('file', hfWav(chunks,len,sr), 'voz.wav'); fd.append('model','whisper-large-v3-turbo'); fd.append('language','es'); fd.append('temperature','0');
@@ -1590,6 +1744,7 @@ async function hfSend(chunks, len, sr){
 }
 function hfHeard(t){
   t=String(t||'').trim(); if(!t || /^(gracias\.?|subtítulos.*|amara.*|\W*)$/i.test(t) || busy || rec.on || isSpeaking()) return;
+  if(PANEL && (Date.now()<hf.armed || hfRest(t)!==null)){ demoOff(); pTouch(); }
   if(Date.now()<hf.armed){ hf.armed=0; $('heard').textContent=''; ask(t); return; }
   const rest=hfRest(t); if(rest===null) return;
   ding(); buzz(30);
@@ -1630,6 +1785,165 @@ function handleHash(){
   return false;
 }
 addEventListener('hashchange', ()=>{ if(S.groqKey) handleHash(); });
+
+// ================================================================ FRIDAY Panel: la tablet de la casa
+const pan={ idle:Date.now(), demo:false, cardI:0, avT:null, confirm:null, ped:{}, setup:false, hintI:0, started:false };
+function pTouch(){ pan.idle=Date.now(); }
+const noche=()=>{ const h=new Date().getHours(); return h>=23 || h<7; };
+function pcPeer(){ const e=Object.entries((FSync.st&&FSync.st.peers)||{}).filter(([d])=>d.startsWith('pc')).sort((a,b)=>b[1].t-a[1].t)[0]; return e?{dev:e[0], ...e[1]}:null; }
+function pStatus(){
+  if(!PANEL) return;
+  const pc=pcPeer(), live=FSync.live;
+  const ok = FSync.on() && live;
+  $('pDot').className='dot '+(ok?'ok':FSync.on()?'warn':'bad');
+  const ruido = hf.ruido && Date.now()-hf.ruido<600000;
+  $('pSt').textContent = !FSync.on() ? 'Sin vincular' : !navigator.onLine ? 'Sin internet' : busy ? 'Pensando…' : isSpeaking() ? 'Hablando…' : Date.now()<hf.armed ? 'Te escucho…' : !hf.on ? 'Tocá la pantalla para que te escuche' : ruido ? 'Mucho ruido: decí «Friday» fuerte y cerca' : `Decí «Friday»${pc?' · conectada con la compu':''}`;
+}
+// ---- primera vez: se vincula sola con la compu (sin escribir nada acá)
+function panelBoot(){
+  setInterval(pRender, 15000); setInterval(pTick, 1000); setInterval(pStatus, 1500); setInterval(pHint, 12000);
+  document.addEventListener('pointerdown', ()=>{ pTouch(); if(pan.demo) demoOff(); }, true);
+  pRender(); pHint();
+  if(!FSync.on() || !S.groqKey){ setupShow(); return; }
+  panelListo();
+}
+function setupShow(){
+  pan.setup=true; $('Ps').classList.add('on');
+  let inv=LS.get('invite',null); if(!inv || Date.now()-inv.at>20*60000){ inv={c:FSync.newInvite(), at:Date.now()}; LS.set('invite',inv); }
+  $('psCode').textContent=inv.c.replace(/(.{4})(?=.)/,'$1-');
+  if(FSync.on()) $('psSt').textContent='Conectada. Esperando tus llaves y tus datos…';
+  else FSync.waitInvite(inv.c, 'https://ntfy.sh', ()=>{ $('psSt').textContent='✔ ¡Conectada con tu compu! Trayendo tus datos…'; LS.del('invite'); setTimeout(()=>{ FSync.poll(); }, 1500); });
+  if('BarcodeDetector' in window) $('psScan').hidden=false;
+  // si se vence el código, uno nuevo
+  setTimeout(()=>{ if(pan.setup && !FSync.on()) location.reload(); }, 19*60000);
+}
+$('psScan').onclick=async()=>{
+  try{
+    const det=new BarcodeDetector({formats:['qr_code']}), v=$('psVideo');
+    const st=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); v.srcObject=st; v.hidden=false; await v.play();
+    const loop=async()=>{ try{ const c=await det.detect(v); const raw=c[0]&&c[0].rawValue; if(raw && FSync.parseCode(raw)){ st.getTracks().forEach(t=>t.stop()); v.hidden=true; await FSync.pair(raw); $('psSt').textContent='✔ ¡Conectada! Trayendo tus datos…'; return; } }catch(e){} if(!v.hidden) setTimeout(loop,250); };
+    loop();
+  }catch(e){ $('psSt').textContent='No pude usar la cámara: usá el código.'; }
+};
+function panelListo(){
+  if(!S.groqKey || !FSync.on()) return;
+  if(pan.setup){ pan.setup=false; $('Ps').classList.remove('on'); }
+  if(pan.started) return;
+  // el navegador necesita un toque para usar el micrófono y la voz (después, todo por voz)
+  needTap('🎙️', 'Tocá la pantalla para despertar a FRIDAY', async()=>{
+    pan.started=true; S.hfMotor=S.hfMotor||'whisper'; await hfStart();
+    const primera=!LS.get('panelHola',false); LS.set('panelHola',true);
+    getWeather(); pRender();
+    if(primera){ const t=`Listo${S.name?', '+S.name:''}. Soy la pantalla de tu casa. Decime «Friday» y lo que necesites: las luces, la música, tu agenda, lo que sea.`; bubble('fr',t); say(t); }
+    else if(S.bdAuto!==false && LS.get('bdLast','')!==todayISO() && new Date().getHours()>=6 && new Date().getHours()<12) buenDia();
+  });
+}
+// ---- lo que pedís y lo hace la compu (luces, música, tele, compu, WhatsApp, agenda…)
+const A_COMPU=/\b(luz|luces|lampara|velador|foco|aspiradora|robot|spotify|musica|cancion|tema de|temazo|pone|pon[eé]|pausa|pausala|segui|siguiente|volumen|subi|baja|tele|television|netflix|youtube|compu|computadora|pc|pantalla de la compu|whatsapp|mandale|manda un|mail|mails|correo|agenda|calendario|turno|evento|reunion|envio|envios|paquete|rutina|apaga|prende|prendé|apagá)\b/;
+const A_LOCAL=/\b(timer|temporizador|recordame|recorda|clima|tiempo hace|llueve|lluvia|compras|lista|noticias|hora es|que hora|modo demo|reposo)\b/;
+async function panelAsk(text){
+  pTouch(); demoOff();
+  const n=norm(text);
+  // respuesta a una confirmación que pidió la compu
+  if(pan.confirm && Date.now()-pan.confirm.at<60000){
+    const si=/^(si|sí|dale|ok|okay|hacelo|confirmo|de una|obvio|claro|si si)\b/.test(n), no=/^(no|nada|cancel|deja|dejalo|mejor no)\b/.test(n);
+    if(si||no){ FSync.send({k:'conf', cid:pan.confirm.cid, si}); pan.confirm=null; bubble('yo',text); frSay(si?'Dale.':'Ok, no lo hago.'); return true; }
+  }
+  if(/\b(modo demo|pantalla de reposo|modo reposo|descansa)\b/.test(n)){ bubble('yo',text); frSay('Modo demo.'); setTimeout(()=>demoOn(true), 1500); return true; }
+  if(FSync.on() && A_COMPU.test(n) && !A_LOCAL.test(n)){ bubble('yo',text); pushHistory({role:'user', content:text}); const r=await aCompu(text); if(r!=null){ frSay(r||'Listo.'); } return true; }
+  return false;
+}
+function frSay(t){ t=String(t||'').trim(); if(!t) return; bubble('fr',t); say(t); pushHistory({role:'assistant', content:t}); convoArm=true; if(!isSpeaking()) setTimeout(afterSpeech, 400); }
+async function aCompu(text){
+  if(!FSync.on()) return 'Todavía no estoy conectada con la compu.';
+  const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6), pc=pcPeer();
+  busy=true; orbState='think'; $('pSay').textContent='Le paso el pedido a la compu…'; pStatus();
+  const ok=await FSync.send({k:'cmd', id, to:pc?pc.dev:undefined, text});
+  if(!ok){ busy=false; orbState='idle'; return 'No pude hablar con la compu: ¿hay internet?'; }
+  return await new Promise(res=>{
+    const p=pan.ped[id]={res, done:false};
+    p.t=setTimeout(()=>{ if(!p.done){ p.done=true; delete pan.ped[id]; busy=false; orbState='idle'; res('La compu no me contesta. ¿Está prendida con FRIDAY abierta?'); } }, 12000);
+  });
+}
+async function panelMsg(o){
+  if(o.k==='ack' && pan.ped[o.id]){ const p=pan.ped[o.id]; clearTimeout(p.t); p.t=setTimeout(()=>{ if(!p.done){ p.done=true; delete pan.ped[o.id]; busy=false; orbState='idle'; p.res('La compu tardó demasiado.'); } }, 90000); }
+  else if(o.k==='res' && pan.ped[o.id]){
+    const p=pan.ped[o.id];
+    if(o.confirmar){ clearTimeout(p.t); pan.confirm={cid:o.confirmar.cid, at:Date.now()}; busy=false; orbState='idle'; frSay(o.confirmar.texto); p.t=setTimeout(()=>{ if(!p.done){ p.done=true; delete pan.ped[o.id]; p.res(''); } }, 70000); }
+    if(o.fin){ clearTimeout(p.t); p.done=true; delete pan.ped[o.id]; busy=false; orbState='idle'; p.res(o.text||'Listo.'); }
+  }
+  else if(o.k==='aviso') pAviso(o);
+}
+// ---- avisos de FRIDAY (envíos, cumples, agenda, mensajes): se ven grandes y se dicen
+function pAviso(o){
+  pTouch(); demoOff();
+  $('pYou').textContent='';
+  $('pAvE').textContent=o.i||'🔔'; $('pAvT').textContent=o.t||''; $('pAvS').textContent=o.s||'';
+  const av=$('pAv'); av.classList.add('on'); clearTimeout(pan.avT); pan.avT=setTimeout(()=>av.classList.remove('on'), 12000);
+  try{ chime(); }catch(e){}
+  if(o.v && (!noche() || o.u)){ const go=()=>{ if(busy||isSpeaking()) return setTimeout(go, 800); bubble('fr', o.v); say(o.v); }; setTimeout(go, 900); }
+}
+// ---- la pantalla
+const hh=d=>d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false});
+function pAgenda(dias){
+  const a=LS.get('agenda',null); if(!a||!a.ev) return [];
+  const hoy=new Date(); hoy.setHours(0,0,0,0); const fin=hoy.getTime()+dias*86400000;
+  return a.ev.map(e=>({...e, d0:e.d?new Date(e.i+'T00:00'):new Date(e.i)})).filter(e=>!isNaN(e.d0) && e.d0.getTime()<fin && (e.d? e.d0>=hoy : new Date(e.f||e.i)>=new Date())).sort((x,y)=>x.d0-y.d0);
+}
+function pRender(){
+  if(!PANEL) return;
+  const w=weather;
+  if(w){ const k=WMO(w.code); $('pWx').innerHTML=`<div class="p-wx"><span class="em">${w.day?k[1]:k[2]}</span><div><div class="t">${w.temp}°</div><small>${esc(k[0])} · ${w.min}° / ${w.max}°${w.rain>=30?' · lluvia '+w.rain+'%':''}</small><small>${esc(S.city||'')}</small></div></div><div class="p-hrs">${w.hours.slice(0,5).map(h=>`<div>${h.h} h<b>${WMO(h.c)[(h.h>6&&h.h<20)?1:2]}</b>${h.t}°</div>`).join('')}</div>`; }
+  else $('pWx').innerHTML='';
+  const ag=pAgenda(2), hoyD=new Date().toDateString();
+  $('pAg').innerHTML = FSync.on() ? `<h5>📅 Agenda</h5>`+(ag.length?`<ul>${ag.slice(0,5).map(e=>`<li><b>${e.d?'todo':hh(e.d0)}</b>${e.d0.toDateString()===hoyD?'':'<span style="color:var(--muted)">mañana · </span>'}${esc(e.t)}</li>`).join('')}</ul>`:'<div style="color:var(--muted)">Nada anotado para hoy ni mañana</div>') : '';
+  const rs=reminders.filter(r=>!r.done).sort((a,b)=>a.at<b.at?-1:1).slice(0,4);
+  $('pRem').innerHTML = rs.length ? `<h5>⏰ Recordatorios</h5><ul>${rs.map(r=>`<li><b>${esc(remWhen(r).replace(/^Hoy /,''))}</b>${esc(r.texto)}</li>`).join('')}</ul>` : '';
+  const sh=compras.filter(x=>!x.h);
+  $('pShop').innerHTML = sh.length ? `<h5>🛒 Compras (${sh.length})</h5><ul>${sh.slice(0,7).map(x=>`<li>• ${esc(x.t)}</li>`).join('')}${sh.length>7?`<li style="color:var(--muted)">y ${sh.length-7} más</li>`:''}</ul>` : '';
+  const eco=[...cumplesM(7).map(c=>`<li><b>🎂</b>${esc(c.nombre)} · ${c.dias===0?'¡hoy!':c.dias===1?'mañana':c.fecha.toLocaleDateString('es-AR',{weekday:'long'})}</li>`),
+    ...Object.values(LS.get('envios',{})).filter(e=>e && e.s!=='entregado' && e.s!=='cancelado').slice(0,4).map(e=>`<li><b>📦</b>${esc(e.q)} · ${esc(ENV_TXT[e.s]||e.s)}</li>`)];
+  $('pEco').innerHTML = eco.length ? `<h5>Se viene</h5><ul>${eco.join('')}</ul>` : '';
+}
+function pTick(){
+  const d=new Date();
+  $('pClock').innerHTML=`${hh(d)}<small>${d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'})}</small>`;
+  // timers y recordatorios de la próxima hora: cuenta regresiva grande
+  const now=Date.now(), pr=reminders.filter(r=>!r.done && new Date(r.at).getTime()-now<3600000 && new Date(r.at).getTime()>now-60000);
+  $('pTim').innerHTML = pr.length ? `<h5>⏱ En un rato</h5><div class="p-tim">${pr.slice(0,3).map(r=>{ const s=Math.max(0,Math.round((new Date(r.at).getTime()-now)/1000)); return `<div><span>${esc(r.texto)}</span><b>${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}</b></div>`; }).join('')}</div>` : '';
+  if(pan.demo) demoTick();
+  // si nadie habla ni toca un rato: modo demo
+  if(!pan.demo && !pan.setup && pan.started && Date.now()-pan.idle>150000 && !busy && !isSpeaking() && !rec.on && Date.now()>hf.armed) demoOn();
+}
+const HINTS=['Friday, prendé la luz del living','Friday, ¿qué tengo hoy?','Friday, poné música para cocinar','Friday, agregá leche a la lista','Friday, poné un timer de 10 minutos','Friday, ¿va a llover?','Friday, apagá todas las luces','Friday, ¿cuándo llega lo que compré?','Friday, avisale a la compu que…','Friday, modo demo'];
+function pHint(){ if(!PANEL) return; const e=$('pHint'); e.style.opacity=0; setTimeout(()=>{ e.innerHTML='Probá: <b>“'+esc(HINTS[pan.hintI++%HINTS.length])+'”</b>'; e.style.opacity=1; }, 600); }
+// ---- modo demo: reloj grande, clima y tarjetas que van rotando (de noche, tenue)
+function demoOn(force){ if(pan.demo) return; pan.demo=true; $('Pd').classList.add('on'); pan.cardI=0; pan.cardT=0; demoTick(true); }
+function demoOff(){ if(!pan.demo) return; pan.demo=false; $('Pd').classList.remove('on'); pTouch(); pRender(); }
+function demoCards(){
+  const out=[];
+  const ag=pAgenda(1); if(ag.length) out.push({em:'📅', t:ag[0].t, s:(ag[0].d?'Hoy, todo el día':'Hoy a las '+hh(ag[0].d0))});
+  const r=reminders.filter(x=>!x.done).sort((a,b)=>a.at<b.at?-1:1)[0]; if(r) out.push({em:'⏰', t:r.texto, s:remWhen(r)});
+  const c=cumplesM(3)[0]; if(c) out.push({em:'🎂', t:'Cumple '+c.nombre, s:c.dias===0?'¡Hoy!':c.dias===1?'Mañana':'En '+c.dias+' días'});
+  const e=Object.values(LS.get('envios',{})).find(x=>x && x.s!=='entregado' && x.s!=='cancelado'); if(e) out.push({em:'📦', t:e.q, s:ENV_TXT[e.s]||e.s});
+  const sh=compras.filter(x=>!x.h); if(sh.length) out.push({em:'🛒', t:sh.slice(0,3).map(x=>x.t).join(', ')+(sh.length>3?'…':''), s:'Lista de compras'});
+  for(const n of (newsCache.items||[]).slice(0,4)) out.push({img:n.img, em:'📰', t:n.titulo, s:n.fuente||'Noticias'});
+  return out;
+}
+function demoTick(first){
+  const d=new Date(); $('Pd').classList.toggle('noche', noche());
+  $('pdT').textContent=hh(d); $('pdD').textContent=d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'});
+  const w=weather; $('pdW').textContent = w ? `${w.day?WMO(w.code)[1]:WMO(w.code)[2]}  ${w.temp}° · ${WMO(w.code)[0]} · ${w.min}°/${w.max}°` : '';
+  $('pdHf').textContent = hf.on ? 'DECÍ «FRIDAY»' : 'TOCÁ LA PANTALLA';
+  pan.cardT=(pan.cardT||0)+1;
+  if(first || pan.cardT%10===0){
+    const cs=demoCards(), el=$('pdC'); if(!cs.length){ el.style.display='none'; return; } el.style.display='';
+    el.classList.add('out');
+    setTimeout(()=>{ const c=cs[pan.cardI++%cs.length]; el.innerHTML=(c.img?`<img src="${esc(c.img)}" alt="" onerror="this.remove()">`:`<span class="em">${c.em}</span>`)+`<div><small>${esc(c.s)}</small><b>${esc(c.t)}</b></div>`; el.classList.remove('out'); }, first?0:800);
+  }
+  if(pan.cardT%600===0){ getWeather(); getNews(); }
+}
+if(PANEL){ getNews().catch(()=>{}); }
 
 // ================================================================ la cara de FRIDAY (igual que en la compu)
 function accentRGB(){ const v=getComputedStyle(document.documentElement).getPropertyValue('--accent-rgb').split(',').map(x=>+x); return v.length===3&&!v.some(isNaN)?v:[76,201,255]; }
@@ -1743,13 +2057,15 @@ function tickClock(){ const d=new Date(); $('clkT').textContent=d.toLocaleTimeSt
   renderWxChip(); renderInstall();
   if('serviceWorker' in navigator && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(()=>{});
   await spBack();
-  if(!S.groqKey){ setStatus('warn','Falta configurar'); openSetup(S.name?2:1); $('suName').value=S.name; $('suCity').value=S.city; }
+  if(PANEL){ document.body.classList.add('panel'); $('pFace').appendChild($('face')); }
+  if(!S.groqKey && !PANEL){ setStatus('warn','Falta configurar'); openSetup(S.name?2:1); $('suName').value=S.name; $('suCity').value=S.city; }
   else setStatus('ok', navigator.onLine?'Lista':'Sin internet');
   getWeather(); fireReminders();
   addEventListener('online', ()=>setStatus('ok','Lista')); addEventListener('offline', ()=>setStatus('bad','Sin internet'));
   await syncBoot();
   schedulePushes(); renderAgChip();
   const h=new Date().getHours();
+  if(PANEL){ panelBoot(); return; }
   if(S.groqKey && !handleHash()){
     if(S.bdAuto!==false && LS.get('bdLast','')!==todayISO() && h>=5 && h<12){ LS.set('bdLast', todayISO()); setTimeout(()=>needTap('☀️','Buen día. Tocá y te cuento tu día', buenDia), 600); }
     else if(S.hf) setTimeout(()=>needTap('🙌','Tocá para seguir con manos libres', hfStart, ()=>{ S.hf=false; saveS(); }), 600);
