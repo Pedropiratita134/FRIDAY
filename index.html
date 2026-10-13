@@ -383,6 +383,10 @@ body.panel .sheet, body.panel #shade, body.panel #setup{display:none!important}
   <button class="big sec" data-sheet="vinc" id="vMenuBtn">💻 Vincular con la compu</button>
   <button class="big sec" data-sheet="avisos">🔔 Avisos y buen día</button>
 
+  <h4>🏠 FRIDAY Casa (la tablet)</h4>
+  <p class="note" style="margin-top:0">Si la tablet muestra un código QR, escanealo con la cámara. O tocá acá y escribí el código.</p>
+  <a class="big sec" href="tablet.html" style="display:block;text-align:center;text-decoration:none">🏠 Configurar la tablet</a>
+
   <h4>📲 Tenerla como app</h4>
   <p class="note" id="installNote"></p>
   <button class="big" id="installBtn" hidden>Instalar FRIDAY</button>
@@ -456,7 +460,7 @@ body.panel .sheet, body.panel #shade, body.panel #setup{display:none!important}
 
 <script>
 'use strict';
-const VERSION='1.6';
+const VERSION='2.0';
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },

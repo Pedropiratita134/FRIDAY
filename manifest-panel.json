@@ -1,14 +1,14 @@
 {
-  "name": "FRIDAY Panel",
-  "short_name": "FRIDAY Panel",
+  "name": "FRIDAY Casa",
+  "short_name": "FRIDAY Casa",
   "description": "La pantalla de tu casa: todo por voz.",
   "lang": "es-AR",
   "start_url": "./panel.html",
   "scope": "./",
   "display": "fullscreen",
-  "orientation": "landscape",
-  "background_color": "#030a14",
-  "theme_color": "#030a14",
+  "orientation": "any",
+  "background_color": "#F6E9DA",
+  "theme_color": "#F6E9DA",
   "icons": [
     {
       "src": "icon-192.png",

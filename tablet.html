@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Configurar la tablet · FRIDAY</title>
+<meta name="theme-color" content="#F6E9DA">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,300..700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#2B241D;--ink-2:#76685A;--ink-3:#A8998A;--card:#FFFCF8;--card-2:#F7EEE4;--edge:rgba(116,84,52,.12);--friday:#2F6BE3;--friday-soft:#E3ECFC;--leaf:#4E8A57;--alert:#C8404F;
+  --disp:"Bricolage Grotesque","Trebuchet MS",system-ui,sans-serif;--text:"Atkinson Hyperlegible",system-ui,"Segoe UI",Roboto,sans-serif}
+*{box-sizing:border-box}
+html{background:#F5EFE8;min-height:100%}body{margin:0;min-height:100vh;font:400 17px/1.45 var(--text);color:var(--ink);background:radial-gradient(130% 70% at 0% 0%,#FCE7D3,#F5EFE8 65%) fixed;-webkit-font-smoothing:antialiased}
+main{max-width:620px;margin:0 auto;padding:28px 18px 80px}
+header{display:flex;align-items:center;gap:16px;margin-bottom:22px}
+header .av{width:64px;height:64px;border-radius:22px;background:radial-gradient(90% 90% at 30% 20%,#6BA2F6,#2F6BE3);display:grid;place-items:center;flex:0 0 64px;box-shadow:0 10px 22px -10px rgba(47,107,227,.7)}
+header .av i{display:flex;gap:10px}header .av i::before,header .av i::after{content:"";width:9px;height:14px;border-radius:5px;background:#fff}
+h1{margin:0;font:600 30px/1.05 var(--disp);letter-spacing:-.01em}
+header p{margin:4px 0 0;color:var(--ink-2)}
+section{background:var(--card);border:1px solid var(--edge);border-radius:26px;padding:20px 20px 18px;margin:0 0 14px;box-shadow:0 14px 30px -24px rgba(96,62,28,.5)}
+section h2{margin:0 0 6px;font:600 21px/1.2 var(--disp);display:flex;align-items:center;gap:10px}
+section h2 .ok{margin-left:auto;font:600 14px var(--text);color:var(--leaf);background:#E7F2E6;padding:3px 10px;border-radius:999px}
+section h2 .ok.no{color:var(--ink-2);background:var(--card-2)}
+section > p{margin:0 0 12px;color:var(--ink-2)}
+label{display:block;font-weight:700;font-size:15px;margin:12px 0 6px}
+input,select{width:100%;font:inherit;padding:12px 14px;border-radius:14px;border:1.5px solid var(--edge);background:#fff;color:var(--ink)}
+input:focus,select:focus,button:focus-visible{outline:3px solid color-mix(in srgb,var(--friday) 45%,transparent);outline-offset:1px}
+input.code{font:600 26px var(--disp);letter-spacing:.14em;text-transform:uppercase;text-align:center}
+button{font:700 16px var(--text);padding:12px 18px;border-radius:14px;border:0;background:var(--friday);color:#fff;cursor:pointer;margin-top:12px}
+button.ghost{background:var(--card-2);color:var(--ink)}
+button:disabled{opacity:.55}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.row button{margin-top:12px}
+.st{margin-top:10px;font-size:15px;color:var(--ink-2);min-height:20px}.st.good{color:var(--leaf)}.st.bad{color:var(--alert)}
+ol{margin:6px 0 4px;padding-left:22px}ol li{margin:0 0 10px}ol li b{font-weight:700}
+code{font:600 14px ui-monospace,Menlo,monospace;background:var(--card-2);padding:2px 6px;border-radius:6px;word-break:break-all}
+details{margin-top:6px}summary{cursor:pointer;color:var(--friday);font-weight:700;padding:6px 0}
+.key{display:flex;gap:8px;align-items:center;margin:6px 0}.key code{flex:1}
+.key button{margin:0;padding:8px 12px;font-size:14px}
+.send{position:sticky;bottom:12px;background:var(--ink);color:#fff;border-radius:22px;padding:16px 18px;display:flex;align-items:center;gap:14px;box-shadow:0 20px 40px -18px rgba(40,25,10,.6)}
+.send p{margin:0;flex:1;font-size:15px;opacity:.9}.send button{margin:0;background:#fff;color:var(--ink)}
+.hide{display:none}
+</style>
+</head>
+<body>
+<main>
+  <header><div class="av"><i></i></div><div><h1>Configurar la tablet</h1><p>Lo hacés una vez desde acá y le llega todo cifrado a la tablet.</p></div></header>
+
+  <section id="s1"><h2>Conectar con la tablet <span class="ok no" id="ok1">Falta</span></h2>
+    <p>Son las 8 letras que muestra la tablet debajo del código QR.</p>
+    <input class="code" id="inv" maxlength="9" placeholder="XXXX-XXXX" autocomplete="off" spellcheck="false">
+    <button id="bInv">Conectar</button><div class="st" id="st1"></div></section>
+
+  <section id="s2"><h2>Tus datos <span class="ok" id="ok2">Listo</span></h2>
+    <label for="fName">Tu nombre</label><input id="fName" autocomplete="given-name">
+    <label for="fCity">Tu ciudad</label><input id="fCity" placeholder="Rosario">
+    <label for="fGroq">Llave de Groq para la tablet</label><input id="fGroq" placeholder="gsk_…" autocomplete="off" spellcheck="false">
+    <p class="st" id="stGroq"></p>
+    <details><summary>¿Por qué conviene una llave solo para la tablet?</summary><p>El plan gratis de Groq tiene un tope por minuto y por día. Si la tablet usa la misma llave que la compu y el celu, se reparten el cupo. Hacé otra cuenta gratis en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a> con otro mail, creá una llave y pegala acá.</p></details>
+    <label for="fGem">Llave de Gemini (opcional, de respaldo)</label><input id="fGem" placeholder="AIza…" autocomplete="off" spellcheck="false"></section>
+
+  <section id="s3"><h2>Luces, YouTube y Google <span class="ok no" id="ok3">Falta</span></h2>
+    <p>Para esto la tablet usa un servicio tuyo y gratis en Cloudflare: guarda tus claves de Smart Life y de Google sin que queden a la vista. Se arma una vez, en unos 10 minutos.</p>
+    <details id="dGuide"><summary>Cómo armarlo, paso a paso</summary>
+      <ol>
+        <li>Entrá a <a href="https://dash.cloudflare.com/sign-up" target="_blank" rel="noopener">dash.cloudflare.com</a> y creá una cuenta gratis.</li>
+        <li>A la izquierda: <b>Compute (Workers)</b> → <b>Create</b> → <b>Start with Hello World!</b>. Ponele de nombre <code>friday-casa</code> y tocá <b>Deploy</b>.</li>
+        <li>Tocá <b>Edit code</b>, borrá todo lo que hay y pegá este código: <button class="ghost" id="bCopyCode" type="button">Copiar el código</button> Después tocá <b>Deploy</b>.</li>
+        <li>Volvé al Worker → <b>Settings</b> → <b>Variables and Secrets</b> → <b>Add</b>, y cargá estas (tipo <b>Secret</b>):
+          <div class="key"><code>FRIDAY_KEY</code></div><div class="key"><code id="genKey"></code><button class="ghost" id="bCopyKey" type="button">Copiar</button></div>
+          <div class="key"><code>TUYA_ID</code> y <code>TUYA_SECRET</code>: el Access ID y el Access Secret de tu proyecto de Tuya (los mismos que pusiste en FRIDAY de la compu, en Ajustes → Casa).</div>
+          Tocá <b>Deploy</b> para guardar.</li>
+        <li>Copiá la dirección del Worker (algo como <code>https://friday-casa.tu-usuario.workers.dev</code>) y pegala abajo.</li>
+      </ol></details>
+    <label for="fUrl">Dirección del servicio</label><input id="fUrl" placeholder="https://friday-casa.tu-usuario.workers.dev" autocomplete="off" spellcheck="false" inputmode="url">
+    <label for="fKey">Clave (FRIDAY_KEY)</label><input id="fKey" autocomplete="off" spellcheck="false">
+    <div class="row"><button id="bPing" type="button">Probar</button></div><div class="st" id="st3"></div></section>
+
+  <section id="s4"><h2>Agenda y mails de Google <span class="ok no" id="ok4">Falta</span></h2>
+    <p>La tablet te dice lo que tenés hoy, te avisa antes y te lee los mails nuevos.</p>
+    <details><summary>Antes, una vez: el permiso en Google Cloud</summary>
+      <ol>
+        <li>Entrá a <a href="https://console.cloud.google.com/apis/credentials" target="_blank" rel="noopener">console.cloud.google.com</a>, en el mismo proyecto de FRIDAY.</li>
+        <li><b>Create credentials</b> → <b>OAuth client ID</b> → tipo <b>Web application</b>.</li>
+        <li>En <b>Authorized redirect URIs</b> agregá: <code id="redirG">—</code> y tocá <b>Create</b>.</li>
+        <li>Copiá el <b>Client ID</b> y el <b>Client secret</b> y cargalos en el Worker como <code>GOOGLE_ID</code> y <code>GOOGLE_SECRET</code> (Settings → Variables and Secrets), y tocá <b>Deploy</b>.</li>
+        <li>Para que el permiso no se venza cada 7 días: <b>Google Auth Platform</b> → <b>Audience</b> → <b>Publish app</b>. Al conectar, Google va a decir "app no verificada": es la tuya, tocá <b>Avanzado</b> → <b>Ir a FRIDAY</b>.</li>
+      </ol></details>
+    <button id="bGoogle" type="button">Conectar Google</button><div class="st" id="st4"></div></section>
+
+  <section id="s5"><h2>Spotify <span class="ok no" id="ok5">Opcional</span></h2>
+    <p>Para que la tablet maneje tu Spotify (hace falta Premium). Si no, la música suena en la tablet con YouTube.</p>
+    <label for="fSpId">Client ID de tu app de Spotify</label><input id="fSpId" autocomplete="off" spellcheck="false">
+    <details><summary>Antes, una vez: agregar la tablet en tu app de Spotify</summary>
+      <ol><li>Entrá a <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noopener">developer.spotify.com/dashboard</a> → tu app → <b>Edit</b>.</li>
+        <li>En <b>Redirect URIs</b> agregá: <code id="redirS">—</code> y guardá.</li></ol></details>
+    <button id="bSpot" type="button">Conectar Spotify</button><div class="st" id="st5"></div>
+    <label for="fMusic">Cuando le pidas música, que suene en</label>
+    <select id="fMusic"><option value="auto">Spotify si está conectado, si no en la tablet</option><option value="youtube">Siempre en la tablet (YouTube)</option><option value="spotify">Siempre en Spotify</option></select></section>
+
+  <div class="send"><p id="sendTxt">Cuando termines, mandale todo a la tablet.</p><button id="bSend" type="button">Mandar a la tablet</button></div>
+</main>
+<script>
+'use strict';
+// ================================================================ celu y compu compartidos
+// Memoria, recordatorios y agenda viajan cifrados (AES-GCM) por un tema secreto de ntfy.
+// El código de vinculación (16 letras) genera la llave y el tema: ntfy solo ve texto ilegible.
+const FS_ALPHA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+const FSync={
+  cfg:null, st:null, key:null, topic:'', hooks:null, pending:{}, pubT:null, timers:[], busy:false, started:false, lastErr:'', ids:new Set(), streamCtl:null, live:false,
+  newCode(){ const b=crypto.getRandomValues(new Uint8Array(16)); let s=''; for(const x of b) s+=FS_ALPHA[x&31]; return s; },
+  pretty(c){ return String(c||'').replace(/(.{4})(?=.)/g,'$1-'); },
+  // acepta "ABCD-EFGH-…", minúsculas, espacios o un link con #v=…
+  parseCode(txt){
+    let c=String(txt||'').trim(), server='';
+    const m=c.match(/[#?&]v=([A-Za-z0-9-]+)/); if(m){ const s=c.match(/[#?&]s=([^&#]+)/); if(s) server=decodeURIComponent(s[1]); c=m[1]; }
+    c=c.toUpperCase().replace(/[^A-Z0-9]/g,'');
+    if(c.length!==16 || [...c].some(x=>!FS_ALPHA.includes(x))) return null;
+    return {code:c, server};
+  },
+  b64e(u8){ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); },
+  b64d(s){ s=s.replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const b=atob(s), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; },
+  async keyFrom(code, salt, pre){
+    const enc=new TextEncoder();
+    const base=await crypto.subtle.importKey('raw', enc.encode(code), 'PBKDF2', false, ['deriveBits']);
+    const bits=new Uint8Array(await crypto.subtle.deriveBits({name:'PBKDF2', salt:enc.encode(salt), iterations:150000, hash:'SHA-256'}, base, 384));
+    return {key:await crypto.subtle.importKey('raw', bits.slice(0,32), 'AES-GCM', false, ['encrypt','decrypt']), topic:pre+[...bits.slice(32,44)].map(x=>x.toString(16).padStart(2,'0')).join('')};
+  },
+  async derive(code){ const k=await this.keyFrom(code,'friday-sync-v1','fy'); this.key=k.key; this.topic=k.topic; },
+  async seal(o, key){
+    const iv=crypto.getRandomValues(new Uint8Array(12));
+    const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key||this.key, new TextEncoder().encode(JSON.stringify(o))));
+    const all=new Uint8Array(12+ct.length); all.set(iv); all.set(ct,12);
+    return 'FS1.'+this.b64e(all);
+  },
+  async unseal(s, key){
+    if(typeof s!=='string' || !s.startsWith('FS1.')) return null;
+    try{ const u=this.b64d(s.slice(4)); const pt=await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(0,12)}, key||this.key, u.slice(12)); return JSON.parse(new TextDecoder().decode(pt)); }catch(e){ return null; }
+  },
+  // sumar otro aparato (por ejemplo la tablet): muestra un código corto y espera que un aparato ya vinculado le mande el de verdad
+  newInvite(){ const b=crypto.getRandomValues(new Uint8Array(8)); let s=''; for(const x of b) s+=FS_ALPHA[x&31]; return s; },
+  async invite(code8, server){
+    const c=String(code8||'').toUpperCase().replace(/[^A-Z0-9]/g,''); if(c.length!==8 || !this.on()) return false;
+    const k=await this.keyFrom(c,'friday-invite-v1','fi');
+    const body=await this.seal({k:'invite', code:this.cfg.code, s:this.cfg.server, f:this.cfg.dev, n:this.hooks.name||''}, k.key);
+    try{ const r=await fetch((server||this.cfg.server)+'/'+k.topic, {method:'POST', body, headers:{'X-Firebase':'no'}}); return r.ok; }catch(e){ return false; }
+  },
+  async waitInvite(code8, server, onOk){
+    const k=await this.keyFrom(code8,'friday-invite-v1','fi'); const srv=(server||'https://ntfy.sh').replace(/\/+$/,'');
+    this.inviteT && clearInterval(this.inviteT);
+    const check=async()=>{
+      try{
+        const r=await fetch(`${srv}/${k.topic}/json?poll=1&since=15m`); if(!r.ok) return;
+        for(const ln of (await r.text()).split('\n').filter(Boolean)){
+          let m; try{ m=JSON.parse(ln); }catch(e){ continue; }
+          const o=await this.unseal(m.message, k.key);
+          if(o && o.k==='invite' && o.code){ clearInterval(this.inviteT); this.inviteT=null; await this.pair(o.code, o.s); onOk && onOk(o); return; }
+        }
+      }catch(e){}
+    };
+    this.inviteT=setInterval(check, 2500); check();
+  },
+  hash(t){ t=String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ]+/g,' ').trim(); let h=0x811c9dc5; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h.toString(36); },
+  on(){ return !!(this.cfg && this.cfg.code && this.key); },
+  // ¿anda la conexión? (algo salió bien en los últimos 2 minutos)
+  healthy(){ return this.on() && (this.live || Date.now()-(this.okAt||0)<120000); },
+  fresh(){ return {items:{}, known:{}, seen:{}, mx:0, lastId:'', peers:{}, hAt:0}; },
+  save(){
+    const now=Date.now();
+    for(const [id,e] of Object.entries(this.st.items)) if(e.d && now-e.t>30*86400000){ delete this.st.items[id]; delete this.st.known[id]; }
+    this.hooks.store('sync', {cfg:this.cfg, st:this.st});
+  },
+  // hooks: {store(k,v), load(k), dev, name, kinds:['m','r'], local()→{id:v}, apply(changes), pollMs, onPeer(dev,peer,first), onStatus()}
+  async init(hooks){
+    this.hooks=hooks;
+    const d=hooks.load('sync')||{};
+    this.cfg=d.cfg||null; this.st=Object.assign(this.fresh(), d.st||{});
+    if(this.cfg && this.cfg.code){ try{ await this.derive(this.cfg.code); this.start(); }catch(e){ this.lastErr='cripto'; } }
+  },
+  async pair(code, server){
+    const p=this.parseCode(code); if(!p) return false;
+    this.stop();
+    this.cfg={code:p.code, server:(server||p.server||'https://ntfy.sh').replace(/\/+$/,''), dev:this.hooks.dev, at:Date.now()};
+    this.st=this.fresh();
+    await this.derive(p.code); this.save(); this.start();
+    return true;
+  },
+  unpair(){ this.stop(); this.cfg=null; this.st=this.fresh(); this.key=null; this.hooks.store('sync', null); this.status(); },
+  stop(){ this.timers.forEach(t=>clearInterval(t)); this.timers=[]; clearTimeout(this.pubT); this.started=false; try{ this.streamCtl && this.streamCtl.abort(); }catch(e){} this.streamCtl=null; },
+  start(){
+    if(this.started) return; this.started=true;
+    // con la conexión al instante abierta, preguntar "¿hay algo nuevo?" alcanza con cada 10 minutos
+    const tick=async()=>{ if(!this.live || Date.now()-(this.polledAt||0)>600000) await this.poll(); this.scan(); };
+    (async()=>{ await this.poll(); this.scan(); clearTimeout(this.pubT); await this.flush(); this.hello(); })();
+    this.timers.push(setInterval(()=>this.scan(), 4000));
+    this.timers.push(setInterval(()=>{ if(!this.hooks.paused || !this.hooks.paused()) tick(); }, this.hooks.pollMs||20000));
+    if(this.hooks.live){
+      this.stream();
+      // ntfy manda una señal cada 45 s: si pasa más de 90 s sin nada, la conexión quedó muerta (el wifi, el router):
+      // se corta y se vuelve a abrir, y trae lo que se perdió en el medio
+      this.timers.push(setInterval(()=>{ if(this.live && Date.now()-(this.okAt||0)>90000){ try{ this.streamCtl && this.streamCtl.abort(); }catch(e){} } }, 15000));
+      if(typeof window!=='undefined' && !this.onlineHook){ this.onlineHook=true; window.addEventListener('online', ()=>this.kick()); }
+    }
+  },
+  // "¡despertá!": si la conexión al instante está caída o esperando para reintentar, que se reconecte ya
+  kick(){
+    if(!this.on() || !this.hooks || !this.hooks.live) return;
+    if(this.streamWake){ const w=this.streamWake; this.streamWake=null; w(); }
+    else if(this.live && Date.now()-(this.okAt||0)>60000){ try{ this.streamCtl && this.streamCtl.abort(); }catch(e){} }
+  },
+  async waitLive(ms){ const t0=Date.now(); while(!this.live && Date.now()-t0<ms) await new Promise(r=>setTimeout(r,150)); return this.live; },
+  // al instante: una conexión abierta con ntfy (la usan la compu y la tablet, que están siempre prendidas)
+  async stream(){
+    const gen=this.cfg && this.cfg.code;
+    let back=3000;
+    while(this.started && this.on() && this.cfg.code===gen){
+      let ok=false, lines=0;
+      try{
+        const ctl=new AbortController(); this.streamCtl=ctl; this.streamAt=Date.now();
+        const r=await fetch(`${this.cfg.server}/${this.topic}/json?since=${encodeURIComponent(this.st.lastId||'2m')}`, {signal:ctl.signal});
+        if(r.ok && r.body){
+          ok=true; this.live=true; this.okAt=Date.now(); this.status();
+          const rd=r.body.getReader(), dec=new TextDecoder(); let buf='';
+          while(true){ const {value,done}=await rd.read(); if(done) break; this.okAt=Date.now(); buf+=dec.decode(value,{stream:true}); let i; while((i=buf.indexOf('\n'))>=0){ const ln=buf.slice(0,i); buf=buf.slice(i+1); lines++; await this.line(ln); } }
+        } else if(r.status===429){ back=Math.max(back, 60000); this.lastErr='ntfy 429 (muchos pedidos: espero)'; }
+      }catch(e){}
+      this.live=false;
+      // si se cortó bien, se reconecta enseguida; si falla, espera cada vez más (3 s, 6, 12… hasta 2 minutos)
+      // (si la conexión se cerró al toque y sin traer nada, cuenta como falla: así nunca martilla a ntfy)
+      if(ok && lines===0 && Date.now()-this.streamAt<5000) ok=false;
+      back = ok ? 3000 : Math.min(120000, back*2);
+      await new Promise(r=>{ this.streamWake=r; setTimeout(r, ok ? 1500 : back); }); this.streamWake=null;
+    }
+  },
+  // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
+  send(head){ return this.publish(head, null); },
+  status(){ try{ this.hooks.onStatus && this.hooks.onStatus(); }catch(e){} },
+  // lo que cambió acá desde la última vez → se manda
+  scan(){
+    if(!this.on()) return;
+    let cur; try{ cur=this.hooks.local(); }catch(e){ return; }
+    const now=Date.now(), out={}, kinds=this.hooks.kinds;
+    for(const [id,v] of Object.entries(cur)){
+      const j=JSON.stringify(v);
+      if(this.st.known[id]!==j){ this.st.known[id]=j; const it=this.st.items[id]; if(it && !it.d && JSON.stringify(it.v)===j) continue; const e={v, t:now, o:this.cfg.dev}; this.st.items[id]=e; out[id]=e; }
+    }
+    for(const id of Object.keys(this.st.known)){
+      if(kinds.includes(id[0]) && !(id in cur)){ delete this.st.known[id]; const e={d:1, t:now, o:this.cfg.dev}; this.st.items[id]=e; out[id]=e; }
+    }
+    if(Object.keys(out).length){ this.st.mx=now; this.queue(out); this.save(); }
+  },
+  // cambiar un dato a mano (por ejemplo, el resultado de un pedido)
+  put(id, v){ const e={v, t:Date.now(), o:this.cfg.dev}; this.st.items[id]=e; this.st.known[id]=JSON.stringify(v); this.st.mx=e.t; this.queue({[id]:e}); this.save(); },
+  queue(entries){ Object.assign(this.pending, entries); clearTimeout(this.pubT); this.pubT=setTimeout(()=>this.flush(), 2500); },
+  async flush(){ const p=this.pending; this.pending={}; if(Object.keys(p).length) await this.publish({k:'d'}, p); },
+  async publish(head, entries){
+    if(!this.on()) return false;
+    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||''}, head);
+    const chunks=[]; let cur={}, size=0;
+    for(const [id,e] of Object.entries(entries||{})){
+      const l=JSON.stringify(e).length+id.length+6;
+      if(l>2900) continue;   // ntfy corta a los 4 KB: algo tan grande no viaja
+      if(size && size+l>2300){ chunks.push(cur); cur={}; size=0; }
+      cur[id]=e; size+=l;
+    }
+    if(size || !chunks.length) chunks.push(cur);
+    let ok=true;
+    const single=!entries || !Object.keys(entries).length;
+    for(const c of chunks){
+      const body=await this.seal(Object.assign({}, base, Object.keys(c).length?{e:c}:{}));
+      try{
+        let r=await this.post(body, single);
+        if(!r.ok){ ok=false; this.lastErr='ntfy '+r.status; if(r.status===429){ Object.assign(this.pending, c); clearTimeout(this.pubT); this.pubT=setTimeout(()=>this.flush(), 60000); } }
+        else { this.lastErr=''; this.okAt=Date.now(); }
+      }catch(e){ ok=false; this.lastErr='sin conexión'; Object.assign(this.pending, c); clearTimeout(this.pubT); this.pubT=setTimeout(()=>this.flush(), 30000); }
+    }
+    this.status();
+    return ok;
+  },
+  // manda a ntfy; si es un mensaje suelto (un pedido o una respuesta) y falla, prueba 2 veces más
+  async post(body, retry){
+    const go=()=>fetch(this.cfg.server+'/'+this.topic, {method:'POST', body, headers:{'X-Firebase':'no'}});
+    if(!retry) return go();
+    let last=null;
+    for(const wait of [0, 1200, 5500]){
+      if(wait) await new Promise(r=>setTimeout(r, wait));
+      try{ last=await go(); if(last.ok || (last.status>=400 && last.status<429)) return last; }catch(e){ last=null; }
+    }
+    if(!last) throw new Error('sin conexión'); return last;
+  },
+  hello(){ if(!this.on()) return; this.st.hAt=Date.now(); return this.publish({k:'h', seen:this.st.seen, mx:this.st.mx}, null); },
+  async poll(){
+    if(!this.on() || this.busy) return; this.busy=true;
+    try{
+      const r=await fetch(`${this.cfg.server}/${this.topic}/json?poll=1&since=${encodeURIComponent(this.st.lastId||'12h')}`);
+      this.polledAt=Date.now();
+      if(!r.ok){ this.lastErr='ntfy '+r.status; return; }
+      this.okAt=Date.now();
+      const lines=(await r.text()).split('\n').filter(Boolean);
+      for(const ln of lines) await this.line(ln);
+      this.lastErr=''; this.save();
+    }catch(e){ this.lastErr='sin conexión'; }
+    finally{ this.busy=false; this.status(); }
+  },
+  async line(ln){
+    let m; try{ m=JSON.parse(ln); }catch(e){ return; }
+    if(!m || (m.event && m.event!=='message') || !m.id) return;
+    if(this.ids.has(m.id)) return; this.ids.add(m.id); if(this.ids.size>400) this.ids=new Set([...this.ids].slice(-200));
+    this.st.lastId=m.id;
+    const o=await this.unseal(m.message); if(!o || !o.f || o.f===this.cfg.dev) return;
+    o._t=(m.time||0)*1000;
+    await this.handle(o);
+  },
+  async handle(o){
+    const first=!this.st.peers[o.f];
+    this.st.peers[o.f]={t:Date.now(), n:o.n||'', u:o.u||''};
+    if(this.hooks.onPeer) try{ this.hooks.onPeer(o.f, this.st.peers[o.f], first); }catch(e){}
+    if(o.e){
+      const changes=[];
+      for(const [id,e] of Object.entries(o.e)){
+        if(!e || typeof e.t!=='number') continue;
+        if(e.o && e.o!==this.cfg.dev) this.st.seen[e.o]=Math.max(this.st.seen[e.o]||0, e.t);
+        const cur=this.st.items[id];
+        if(cur && (cur.t>e.t || (cur.t===e.t && String(cur.o)>=String(e.o)))) continue;
+        this.st.items[id]=e; changes.push(Object.assign({id}, e));
+      }
+      if(changes.length){
+        try{ this.hooks.apply(changes); }catch(err){ console.warn(err); }
+        // lo que ahora hay acá ya es lo de afuera: que no se reenvíe como cambio propio
+        let cur={}; try{ cur=this.hooks.local(); }catch(err){}
+        for(const c of changes){ if(c.d) delete this.st.known[c.id]; else this.st.known[c.id]=(c.id in cur)?JSON.stringify(cur[c.id]):JSON.stringify(c.v); }
+      }
+    }
+    if(o.k==='h'){
+      const seen=o.seen||{}, out={};
+      for(const [id,e] of Object.entries(this.st.items)) if(e.o!==o.f && e.t>(seen[e.o]||0)) out[id]=e;
+      if(Object.keys(out).length) await this.publish({k:'d'}, out);
+      if((o.mx||0)>(this.st.seen[o.f]||0)) await this.publish({k:'q', to:o.f, since:this.st.seen[o.f]||0}, null);
+    }
+    if(o.k && !['d','h','q'].includes(o.k) && this.hooks.onMsg){
+      // pedidos y avisos viejos (de cuando este aparato estaba apagado) no se hacen
+      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:120000)){
+        // sin esperar: un pedido que tarda (por ejemplo, uno que espera tu "sí") no traba los mensajes que siguen
+        Promise.resolve().then(()=>this.hooks.onMsg(o)).catch(e=>console.warn(e));
+      }
+    }
+    if(o.k==='q' && o.to===this.cfg.dev){
+      const out={};
+      for(const [id,e] of Object.entries(this.st.items)) if(e.o===this.cfg.dev && e.t>(o.since||0)) out[id]=e;
+      if(Object.keys(out).length) await this.publish({k:'d'}, out);
+    }
+  }
+};
+
+const WORKER_CODE="// FRIDAY \u00b7 servicio de la casa (Cloudflare Workers, plan gratis)\n// Lo usa la tablet de FRIDAY para tres cosas que una p\u00e1gina web no puede hacer sola:\n//   1) prender y apagar tus luces de Smart Life (Tuya firma cada pedido con tu clave secreta)\n//   2) buscar canciones en YouTube (para que suenen en la tablet)\n//   3) tu Google: agenda y mails (guarda la \"llave larga\" de Google sin que tu clave quede a la vista)\n//\n// Variables (Cloudflare \u2192 tu Worker \u2192 Settings \u2192 Variables and Secrets):\n//   FRIDAY_KEY      una clave larga que invent\u00e1s vos (la misma que pon\u00e9s en el celu). Obligatoria.\n//   TUYA_ID         (opcional) Access ID de tu proyecto en platform.tuya.com\n//   TUYA_SECRET     (opcional) Access Secret de ese proyecto\n//   GOOGLE_ID       (opcional) ID de cliente web de Google Cloud\n//   GOOGLE_SECRET   (opcional) secreto de ese cliente\n// Nadie m\u00e1s puede usarlo: todo pide FRIDAY_KEY.\n\nconst TUYA_HOSTS = ['https://openapi.tuyaus.com', 'https://openapi-ueaz.tuyaus.com', 'https://openapi.tuyaeu.com', 'https://openapi-weaz.tuyaeu.com', 'https://openapi.tuyain.com', 'https://openapi.tuyacn.com'];\nconst TUYA_OK = /^\\/v(1\\.0\\/iot-01\\/associated-users\\/devices|1\\.0\\/iot-03\\/devices\\/[\\w-]+\\/(functions|status|commands)|2\\.0\\/cloud\\/thing\\/device)$/;\nconst SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/gmail.readonly';\nlet tuya = { host: null, tok: '', exp: 0 };\n\nconst CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400' };\nconst json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });\nconst enc = new TextEncoder();\nconst hex = b => [...new Uint8Array(b)].map(x => x.toString(16).padStart(2, '0')).join('');\nasync function sha256(s) { return hex(await crypto.subtle.digest('SHA-256', typeof s === 'string' ? enc.encode(s) : s)); }\nasync function hmac(key, s) { const k = await crypto.subtle.importKey('raw', enc.encode(key), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']); return hex(await crypto.subtle.sign('HMAC', k, enc.encode(s))); }\nfunction same(a, b) { a = String(a || ''); b = String(b || ''); if (!a || a.length !== b.length) return false; let d = 0; for (let i = 0; i < a.length; i++) d |= a.charCodeAt(i) ^ b.charCodeAt(i); return d === 0; }\n\n// ---------------------------------------------------------------- Tuya\nasync function tuyaRaw(env, host, token, method, path, q, body) {\n  const keys = Object.keys(q || {}).sort();\n  const pq = path + (keys.length ? '?' + keys.map(k => k + '=' + q[k]).join('&') : '');\n  const b = body == null ? '' : JSON.stringify(body);\n  const t = String(Date.now());\n  const str = method + '\\n' + (await sha256(b)) + '\\n\\n' + pq;\n  const sign = (await hmac(env.TUYA_SECRET, env.TUYA_ID + token + t + str)).toUpperCase();\n  const h = { client_id: env.TUYA_ID, t, sign_method: 'HMAC-SHA256', sign, lang: 'es' };\n  if (token) h.access_token = token;\n  if (b) h['Content-Type'] = 'application/json';\n  const r = await fetch(host + pq, { method, headers: h, body: b || undefined });\n  try { return await r.json(); } catch (e) { return { success: false, code: -1, msg: 'respuesta rara de Tuya' }; }\n}\nfunction crossRegion(r) { return /cross.?region|data center/i.test(r.msg || ''); }\nasync function tuyaToken(env, force) {\n  if (!force && tuya.tok && Date.now() < tuya.exp) return null;\n  const hosts = env.TUYA_HOSTS ? env.TUYA_HOSTS.split(',') : (tuya.host ? [tuya.host, ...TUYA_HOSTS.filter(h => h !== tuya.host)] : TUYA_HOSTS);\n  let last = null;\n  for (const h of hosts) {\n    const r = await tuyaRaw(env, h, '', 'GET', '/v1.0/token', { grant_type: '1' }, null);\n    if (r.success && r.result && r.result.access_token) { tuya = { host: h, tok: r.result.access_token, exp: Date.now() + ((r.result.expire_time || 7200) - 60) * 1000 }; return null; }\n    last = r;\n    if (!crossRegion(r) && r.code !== 1004 && r.code !== 1005) break;   // un error que no es \"otra regi\u00f3n\": no sigue probando\n  }\n  return last || { success: false, msg: 'no pude conectar con Tuya' };\n}\nasync function tuyaCall(env, p) {\n  if (!env.TUYA_ID || !env.TUYA_SECRET) return { success: false, code: 'sin_tuya', msg: 'falta configurar TUYA_ID y TUYA_SECRET en el servicio' };\n  const method = p.method === 'POST' ? 'POST' : 'GET';\n  if (!TUYA_OK.test(String(p.path || ''))) return { success: false, code: 'no_permitido', msg: 'pedido no permitido' };\n  const e = await tuyaToken(env, false); if (e) return e;\n  let r = await tuyaRaw(env, tuya.host, tuya.tok, method, p.path, p.q || null, p.body == null ? null : p.body);\n  if (!r.success && (r.code === 1010 || r.code === 1011)) {   // sesi\u00f3n vencida\n    const e2 = await tuyaToken(env, true); if (e2) return e2;\n    r = await tuyaRaw(env, tuya.host, tuya.tok, method, p.path, p.q || null, p.body == null ? null : p.body);\n  }\n  return r;\n}\n\n// ---------------------------------------------------------------- YouTube: los primeros videos de una b\u00fasqueda\nfunction collectVideos(o, out, depth) {\n  if (!o || typeof o !== 'object' || out.length >= 10 || depth > 40) return;\n  if (o.videoRenderer && o.videoRenderer.videoId) {\n    const v = o.videoRenderer;\n    const title = (v.title && (v.title.runs || []).map(x => x.text).join('')) || (v.title && v.title.simpleText) || '';\n    const len = (v.lengthText && v.lengthText.simpleText) || '';\n    const by = (v.ownerText && (v.ownerText.runs || []).map(x => x.text).join('')) || '';\n    if (len) out.push({ id: v.videoId, title, len, by });   // sin duraci\u00f3n = transmisi\u00f3n en vivo: no sirve\n    return;\n  }\n  for (const k in o) collectVideos(o[k], out, depth + 1);\n}\nasync function ytSearch(env, q) {\n  const base = env.YT_BASE || 'https://www.youtube.com';\n  const r = await fetch(base + '/results?hl=es&gl=AR&search_query=' + encodeURIComponent(q), { headers: { 'Accept-Language': 'es-AR,es;q=0.9', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36' } });\n  const html = await r.text();\n  const m = html.match(/var ytInitialData\\s*=\\s*(\\{[\\s\\S]*?\\});\\s*<\\/script>/) || html.match(/ytInitialData\"\\]\\s*=\\s*(\\{[\\s\\S]*?\\});/);\n  const out = [];\n  if (m) { try { collectVideos(JSON.parse(m[1]), out, 0); } catch (e) { } }\n  if (!out.length) { const seen = new Set(); for (const x of html.matchAll(/\"videoId\":\"([\\w-]{11})\"/g)) { if (!seen.has(x[1])) { seen.add(x[1]); out.push({ id: x[1], title: '', len: '', by: '' }); } if (out.length >= 8) break; } }\n  return out;\n}\n\n// ---------------------------------------------------------------- Google (agenda y mails)\nasync function googleToken(env, form) {\n  const r = await fetch(env.GOOGLE_TOKEN || 'https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: new URLSearchParams(form) });\n  return r.json();\n}\n\nexport default {\n  async fetch(req, env) {\n    const u = new URL(req.url);\n    if (req.method === 'OPTIONS') return new Response(null, { status: 204, headers: CORS });\n    if (!env.FRIDAY_KEY) return json({ ok: false, error: 'falta la variable FRIDAY_KEY' }, 500);\n    const key = req.headers.get('X-Friday-Key') || u.searchParams.get('k');\n    const p = u.pathname.replace(/\\/+$/, '') || '/';\n\n    if (p === '/') return new Response('FRIDAY: el servicio de la casa est\u00e1 funcionando.', { headers: { 'Content-Type': 'text/plain; charset=utf-8', ...CORS } });\n\n    // Google vuelve ac\u00e1 despu\u00e9s de que acept\u00e1s (no lleva la clave: la verifica con la firma del \"state\")\n    if (p === '/google/callback') {\n      let st = null; try { st = JSON.parse(atob(u.searchParams.get('state') || '')); } catch (e) { }\n      if (!st || !st.ret || !same(st.sig, await hmac(env.FRIDAY_KEY, 'ret:' + st.ret))) return new Response('Pedido inv\u00e1lido', { status: 400 });\n      const back = (frag) => Response.redirect(st.ret.split('#')[0] + '#' + new URLSearchParams(frag), 302);\n      if (u.searchParams.get('error')) return back({ gerr: u.searchParams.get('error') });\n      const t = await googleToken(env, { code: u.searchParams.get('code') || '', client_id: env.GOOGLE_ID, client_secret: env.GOOGLE_SECRET, redirect_uri: u.origin + '/google/callback', grant_type: 'authorization_code' });\n      if (!t.refresh_token) return back({ gerr: t.error_description || t.error || 'Google no dio el permiso largo' });\n      return back({ grt: t.refresh_token });\n    }\n\n    if (!same(key, env.FRIDAY_KEY)) return json({ ok: false, error: 'clave incorrecta' }, 401);\n\n    if (p === '/ping') return json({ ok: true, v: 1, tuya: !!(env.TUYA_ID && env.TUYA_SECRET), google: !!(env.GOOGLE_ID && env.GOOGLE_SECRET) });\n\n    if (p === '/tuya' && req.method === 'POST') {\n      let b = {}; try { b = await req.json(); } catch (e) { }\n      try { return json(await tuyaCall(env, b)); } catch (e) { return json({ success: false, msg: 'no pude hablar con Tuya: ' + e.message }); }\n    }\n\n    if (p === '/yt') {\n      const q = (u.searchParams.get('q') || '').slice(0, 200);\n      if (!q) return json({ ok: false, error: 'falta q' }, 400);\n      try { return json({ ok: true, videos: await ytSearch(env, q) }); } catch (e) { return json({ ok: false, error: e.message }); }\n    }\n\n    if (p === '/google/start') {\n      if (!env.GOOGLE_ID || !env.GOOGLE_SECRET) return new Response('Falta configurar GOOGLE_ID y GOOGLE_SECRET en el servicio.', { status: 400, headers: { 'Content-Type': 'text/plain; charset=utf-8' } });\n      const ret = u.searchParams.get('ret') || '';\n      if (!/^https?:\\/\\//.test(ret)) return new Response('Falta ret', { status: 400 });\n      const state = btoa(JSON.stringify({ ret, sig: await hmac(env.FRIDAY_KEY, 'ret:' + ret) }));\n      const q = new URLSearchParams({ client_id: env.GOOGLE_ID, redirect_uri: u.origin + '/google/callback', response_type: 'code', scope: SCOPES, access_type: 'offline', prompt: 'consent', include_granted_scopes: 'true', state });\n      return Response.redirect((env.GOOGLE_AUTH || 'https://accounts.google.com/o/oauth2/v2/auth') + '?' + q, 302);\n    }\n\n    if (p === '/google/token' && req.method === 'POST') {\n      let b = {}; try { b = await req.json(); } catch (e) { }\n      if (!b.rt) return json({ ok: false, error: 'falta rt' }, 400);\n      const t = await googleToken(env, { refresh_token: b.rt, client_id: env.GOOGLE_ID, client_secret: env.GOOGLE_SECRET, grant_type: 'refresh_token' });\n      if (!t.access_token) return json({ ok: false, error: t.error === 'invalid_grant' ? 'se venci\u00f3 el permiso de Google: conectalo de nuevo desde el celu' : (t.error_description || t.error || 'Google no respondi\u00f3') });\n      return json({ ok: true, access_token: t.access_token, expires_in: t.expires_in || 3600, scope: t.scope || '' });\n    }\n\n    return json({ ok: false, error: 'no existe' }, 404);\n  }\n};\n";
+const $=id=>document.getElementById(id);
+// lo de FRIDAY Móvil (mismo sitio): llaves, nombre y vinculación
+const FM={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem('fm.'+k, JSON.stringify(v)); }catch(e){} } };
+const W={ get(k,d){ try{ const v=localStorage.getItem('fpw.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } }, set(k,v){ try{ localStorage.setItem('fpw.'+k, JSON.stringify(v)); }catch(e){} } };
+const mov=FM.get('cfg',{});
+let C=Object.assign({name:mov.name||'', city:mov.city||'', lat:mov.lat||null, lon:mov.lon||null, groq:'', gem:mov.gemKey||'', url:'', key:'', google:null, spId:mov.spId||'', spotify:null, music:'auto', paired:false}, W.get('c',{}));
+const save=()=>W.set('c',C);
+const here=location.origin+location.pathname;
+const b64url=b=>btoa(String.fromCharCode(...new Uint8Array(b))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
+function st(id, t, cls){ const e=$(id); e.textContent=t||''; e.className='st'+(cls?' '+cls:''); }
+function ok(id, on, t){ const e=$(id); e.textContent=t||(on?'Listo':'Falta'); e.className='ok'+(on?'':' no'); }
+
+// ---- la conexión: el mismo grupo cifrado que usa FRIDAY Móvil (si no tiene, se crea uno)
+let devW=W.get('dev',null); if(!devW){ devW='cfg'+Math.random().toString(36).slice(2,6); W.set('dev',devW); }
+async function syncReady(){
+  if(FSync.on()) return true;
+  let m=FM.get('sync',null);
+  if(!m || !m.cfg || !m.cfg.code){ const code=FSync.newCode(); m={cfg:{code, server:'https://ntfy.sh', dev:FM.get('syncDev',null)||('cel'+Math.random().toString(36).slice(2,6)), at:Date.now()}, st:null}; FM.set('sync', m); FM.set('syncDev', m.cfg.dev); }
+  // el asistente usa la vinculación del celu, pero guarda su propio estado aparte (así no toca los datos de la app)
+  await FSync.init({ store:(k,v)=>W.set(k,v), load:k=>k==='sync' ? {cfg:Object.assign({}, m.cfg, {dev:devW}), st:(W.get('sync',null)||{}).st||null} : W.get(k,null), dev:devW, name:'Configuración', kinds:[], pollMs:3600000, local:()=>({}), apply:()=>{} });
+  return FSync.on();
+}
+
+function fill(){
+  $('fName').value=C.name; $('fCity').value=C.city; $('fGroq').value=C.groq; $('fGem').value=C.gem; $('fUrl').value=C.url; $('fKey').value=C.key; $('fSpId').value=C.spId; $('fMusic').value=C.music;
+  st('stGroq', !C.groq && mov.groqKey ? 'Si la dejás vacía, usa la de tu FRIDAY Móvil.' : '');
+  ok('ok1', C.paired, C.paired?'Conectada':'Falta');
+  ok('ok2', !!(C.name && (C.groq||mov.groqKey)));
+  ok('ok3', !!(C.url && C.key && C.pingOk), C.pingOk?'Listo':'Falta');
+  ok('ok4', !!(C.google&&C.google.rt), C.google&&C.google.rt?'Conectado':'Falta');
+  ok('ok5', !!(C.spotify&&C.spotify.rt), C.spotify&&C.spotify.rt?'Conectado':'Opcional');
+  const u=(C.url||'https://friday-casa.tu-usuario.workers.dev').replace(/\/+$/,''); $('redirG').textContent=u+'/google/callback'; $('redirS').textContent=here;
+  if(!C.genKey){ const b=crypto.getRandomValues(new Uint8Array(24)); C.genKey=b64url(b); save(); } $('genKey').textContent=C.genKey; if(!C.key) $('fKey').placeholder=C.genKey;
+}
+['fName','fCity','fGroq','fGem','fUrl','fKey','fSpId','fMusic'].forEach(id=>$(id).addEventListener('change',()=>{
+  C.name=$('fName').value.trim(); C.city=$('fCity').value.trim(); C.groq=$('fGroq').value.trim(); C.gem=$('fGem').value.trim(); C.url=$('fUrl').value.trim().replace(/\/+$/,''); C.key=$('fKey').value.trim(); C.spId=$('fSpId').value.trim(); C.music=$('fMusic').value;
+  if(id==='fUrl'||id==='fKey') C.pingOk=false; if(id==='fCity'){ C.lat=null; C.lon=null; } save(); fill(); }));
+const copy=(t,btn)=>navigator.clipboard.writeText(t).then(()=>{ const o=btn.textContent; btn.textContent='✔ Copiado'; setTimeout(()=>btn.textContent=o,1600); },()=>prompt('Copialo de acá:', t));
+$('bCopyCode').onclick=e=>copy(WORKER_CODE, e.target);
+$('bCopyKey').onclick=e=>{ copy(C.genKey, e.target); if(!C.key){ C.key=C.genKey; save(); fill(); } };
+
+// ---- 1) conectar con la tablet
+$('bInv').onclick=async()=>{
+  const c=$('inv').value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  if(c.length!==8){ st('st1','Son 8 letras y números (por ejemplo K7QF-29MX).','bad'); return; }
+  st('st1','Conectando…');
+  if(!await syncReady()){ st('st1','No pude preparar la conexión.','bad'); return; }
+  const r=await FSync.invite(c);
+  if(r){ C.paired=true; save(); fill(); st('st1','✔ Conectada. En unos segundos la tablet dice que está lista para recibir todo.','good'); }
+  else st('st1','No pude mandarlo (¿hay internet?). Probá de nuevo.','bad');
+};
+
+// ---- 3) el servicio de Cloudflare
+$('bPing').onclick=async()=>{
+  C.url=$('fUrl').value.trim().replace(/\/+$/,''); C.key=$('fKey').value.trim()||C.genKey; save();
+  if(!/^https?:\/\//.test(C.url)){ st('st3','Pegá la dirección completa, que empieza con https://','bad'); return; }
+  st('st3','Probando…');
+  try{
+    const r=await fetch(C.url+'/ping',{headers:{'X-Friday-Key':C.key}}); const d=await r.json();
+    if(r.status===401){ st('st3','La clave no coincide con la que pusiste en FRIDAY_KEY.','bad'); C.pingOk=false; }
+    else if(d.ok){ C.pingOk=true; st('st3',`✔ Funciona. Luces: ${d.tuya?'listas':'faltan TUYA_ID y TUYA_SECRET'}. Google: ${d.google?'listo para conectar':'faltan GOOGLE_ID y GOOGLE_SECRET'}. YouTube: listo.`, 'good'); C.tuya=d.tuya; C.gok=d.google; }
+    else st('st3', d.error||'Respondió raro.','bad');
+  }catch(e){ st('st3','No responde. Revisá la dirección y que hayas tocado Deploy.','bad'); C.pingOk=false; }
+  save(); fill();
+};
+
+// ---- 4) Google
+$('bGoogle').onclick=()=>{
+  if(!C.url || !C.key){ st('st4','Primero armá y probá el servicio de arriba.','bad'); return; }
+  location.href=C.url+'/google/start?k='+encodeURIComponent(C.key)+'&ret='+encodeURIComponent(here);
+};
+// ---- 5) Spotify (con PKCE, desde el celu; la tablet después renueva sola)
+$('bSpot').onclick=async()=>{
+  C.spId=$('fSpId').value.trim(); save();
+  if(!C.spId){ st('st5','Falta el Client ID (está en tu app de Spotify, en developer.spotify.com).','bad'); return; }
+  const v=b64url(crypto.getRandomValues(new Uint8Array(48))), ch=b64url(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(v))), state=b64url(crypto.getRandomValues(new Uint8Array(12)));
+  W.set('spPend',{v, state});
+  location.href='https://accounts.spotify.com/authorize?'+new URLSearchParams({client_id:C.spId, response_type:'code', redirect_uri:here, code_challenge_method:'S256', code_challenge:ch, state,
+    scope:'user-read-playback-state user-modify-playback-state user-read-currently-playing user-library-read playlist-read-private playlist-read-collaborative'});
+};
+async function back(){
+  const h=new URLSearchParams(location.hash.slice(1)), q=new URLSearchParams(location.search);
+  if(h.get('inv')){ $('inv').value=h.get('inv').replace(/(.{4})(?=.)/,'$1-'); }
+  if(h.get('grt')){ C.google={rt:h.get('grt')}; save(); st('st4','✔ Google conectado.','good'); }
+  if(h.get('gerr')) st('st4','Google no dio permiso: '+h.get('gerr'),'bad');
+  if(q.get('code') || q.get('error')){
+    const pend=W.get('spPend',null); W.set('spPend',null);
+    if(q.get('error') || !pend || pend.state!==q.get('state')) st('st5','No se conectó Spotify.','bad');
+    else try{
+      const r=await fetch('https://accounts.spotify.com/api/token',{method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams({grant_type:'authorization_code', code:q.get('code'), redirect_uri:here, client_id:C.spId, code_verifier:pend.v})});
+      const d=await r.json(); if(!d.refresh_token) throw new Error(d.error_description||d.error||'sin permiso');
+      C.spotify={rt:d.refresh_token, cid:C.spId}; save(); st('st5','✔ Spotify conectado.','good');
+    }catch(e){ st('st5','No se conectó Spotify: '+e.message,'bad'); }
+  }
+  if(h.get('grt')||h.get('gerr')||q.get('code')||q.get('error')) history.replaceState(null,'',here+(h.get('inv')?'#inv='+h.get('inv'):''));
+  fill();
+  if(C.google&&C.google.rt) $('s4').scrollIntoView({block:'center'});
+}
+
+// ---- mandar todo
+$('bSend').onclick=async()=>{
+  const btn=$('bSend'); btn.disabled=true; $('sendTxt').textContent='Mandando…';
+  try{
+    if(!await syncReady()) throw new Error('sin conexión');
+    if(C.city && !C.lat){ try{ const g=await (await fetch('https://geocoding-api.open-meteo.com/v1/search?count=1&language=es&name='+encodeURIComponent(C.city))).json(); const r=g.results&&g.results[0]; if(r){ C.lat=r.latitude; C.lon=r.longitude; save(); } }catch(e){} }
+    const v={ cfg:{name:C.name, city:C.city, lat:C.lat, lon:C.lon}, keys:{g:C.groq||mov.groqKey||'', m:C.gem||''}, music:C.music };
+    if(C.url && C.key) v.worker={url:C.url, key:C.key};
+    if(C.google && C.google.rt) v.google={rt:C.google.rt};
+    if(C.spotify && C.spotify.rt) v.spotify={rt:C.spotify.rt, cid:C.spotify.cid};
+    if(!v.keys.g) throw new Error('falta la llave de Groq');
+    FSync.put('x:panel', v); await FSync.flush();
+    $('sendTxt').textContent='✔ Listo: la tablet ya lo tiene. Si en un minuto no cambia, tocá de nuevo.';
+  }catch(e){ $('sendTxt').textContent='No pude mandarlo: '+e.message+'.'; }
+  btn.disabled=false;
+};
+fill(); back();
+</script>
+</body>
+</html>
