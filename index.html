@@ -456,7 +456,7 @@ body.panel .sheet, body.panel #shade, body.panel #setup{display:none!important}
 
 <script>
 'use strict';
-const VERSION='1.5';
+const VERSION='1.6';
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1231,6 +1231,8 @@ const FSync={
   },
   hash(t){ t=String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ]+/g,' ').trim(); let h=0x811c9dc5; for(let i=0;i<t.length;i++){ h^=t.charCodeAt(i); h=Math.imul(h,16777619)>>>0; } return h.toString(36); },
   on(){ return !!(this.cfg && this.cfg.code && this.key); },
+  // ¿anda la conexión? (algo salió bien en los últimos 2 minutos)
+  healthy(){ return this.on() && (this.live || Date.now()-(this.okAt||0)<120000); },
   fresh(){ return {items:{}, known:{}, seen:{}, mx:0, lastId:'', peers:{}, hAt:0}; },
   save(){
     const now=Date.now();
@@ -1256,27 +1258,47 @@ const FSync={
   stop(){ this.timers.forEach(t=>clearInterval(t)); this.timers=[]; clearTimeout(this.pubT); this.started=false; try{ this.streamCtl && this.streamCtl.abort(); }catch(e){} this.streamCtl=null; },
   start(){
     if(this.started) return; this.started=true;
-    const tick=async()=>{ await this.poll(); this.scan(); };
+    // con la conexión al instante abierta, preguntar "¿hay algo nuevo?" alcanza con cada 10 minutos
+    const tick=async()=>{ if(!this.live || Date.now()-(this.polledAt||0)>600000) await this.poll(); this.scan(); };
     (async()=>{ await this.poll(); this.scan(); clearTimeout(this.pubT); await this.flush(); this.hello(); })();
     this.timers.push(setInterval(()=>this.scan(), 4000));
     this.timers.push(setInterval(()=>{ if(!this.hooks.paused || !this.hooks.paused()) tick(); }, this.hooks.pollMs||20000));
-    if(this.hooks.live) this.stream();
+    if(this.hooks.live){
+      this.stream();
+      // ntfy manda una señal cada 45 s: si pasa más de 90 s sin nada, la conexión quedó muerta (el wifi, el router):
+      // se corta y se vuelve a abrir, y trae lo que se perdió en el medio
+      this.timers.push(setInterval(()=>{ if(this.live && Date.now()-(this.okAt||0)>90000){ try{ this.streamCtl && this.streamCtl.abort(); }catch(e){} } }, 15000));
+      if(typeof window!=='undefined' && !this.onlineHook){ this.onlineHook=true; window.addEventListener('online', ()=>this.kick()); }
+    }
   },
+  // "¡despertá!": si la conexión al instante está caída o esperando para reintentar, que se reconecte ya
+  kick(){
+    if(!this.on() || !this.hooks || !this.hooks.live) return;
+    if(this.streamWake){ const w=this.streamWake; this.streamWake=null; w(); }
+    else if(this.live && Date.now()-(this.okAt||0)>60000){ try{ this.streamCtl && this.streamCtl.abort(); }catch(e){} }
+  },
+  async waitLive(ms){ const t0=Date.now(); while(!this.live && Date.now()-t0<ms) await new Promise(r=>setTimeout(r,150)); return this.live; },
   // al instante: una conexión abierta con ntfy (la usan la compu y la tablet, que están siempre prendidas)
   async stream(){
     const gen=this.cfg && this.cfg.code;
+    let back=3000;
     while(this.started && this.on() && this.cfg.code===gen){
+      let ok=false, lines=0;
       try{
-        const ctl=new AbortController(); this.streamCtl=ctl;
+        const ctl=new AbortController(); this.streamCtl=ctl; this.streamAt=Date.now();
         const r=await fetch(`${this.cfg.server}/${this.topic}/json?since=${encodeURIComponent(this.st.lastId||'2m')}`, {signal:ctl.signal});
         if(r.ok && r.body){
-          this.live=true; this.status();
+          ok=true; this.live=true; this.okAt=Date.now(); this.status();
           const rd=r.body.getReader(), dec=new TextDecoder(); let buf='';
-          while(true){ const {value,done}=await rd.read(); if(done) break; buf+=dec.decode(value,{stream:true}); let i; while((i=buf.indexOf('\n'))>=0){ const ln=buf.slice(0,i); buf=buf.slice(i+1); await this.line(ln); } }
-        }
+          while(true){ const {value,done}=await rd.read(); if(done) break; this.okAt=Date.now(); buf+=dec.decode(value,{stream:true}); let i; while((i=buf.indexOf('\n'))>=0){ const ln=buf.slice(0,i); buf=buf.slice(i+1); lines++; await this.line(ln); } }
+        } else if(r.status===429){ back=Math.max(back, 60000); this.lastErr='ntfy 429 (muchos pedidos: espero)'; }
       }catch(e){}
       this.live=false;
-      await new Promise(r=>setTimeout(r, 3000));
+      // si se cortó bien, se reconecta enseguida; si falla, espera cada vez más (3 s, 6, 12… hasta 2 minutos)
+      // (si la conexión se cerró al toque y sin traer nada, cuenta como falla: así nunca martilla a ntfy)
+      if(ok && lines===0 && Date.now()-this.streamAt<5000) ok=false;
+      back = ok ? 3000 : Math.min(120000, back*2);
+      await new Promise(r=>{ this.streamWake=r; setTimeout(r, ok ? 1500 : back); }); this.streamWake=null;
     }
   },
   // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
@@ -1312,23 +1334,37 @@ const FSync={
     }
     if(size || !chunks.length) chunks.push(cur);
     let ok=true;
+    const single=!entries || !Object.keys(entries).length;
     for(const c of chunks){
       const body=await this.seal(Object.assign({}, base, Object.keys(c).length?{e:c}:{}));
       try{
-        const r=await fetch(this.cfg.server+'/'+this.topic, {method:'POST', body, headers:{'X-Firebase':'no'}});
+        let r=await this.post(body, single);
         if(!r.ok){ ok=false; this.lastErr='ntfy '+r.status; if(r.status===429){ Object.assign(this.pending, c); clearTimeout(this.pubT); this.pubT=setTimeout(()=>this.flush(), 60000); } }
-        else this.lastErr='';
+        else { this.lastErr=''; this.okAt=Date.now(); }
       }catch(e){ ok=false; this.lastErr='sin conexión'; Object.assign(this.pending, c); clearTimeout(this.pubT); this.pubT=setTimeout(()=>this.flush(), 30000); }
     }
     this.status();
     return ok;
+  },
+  // manda a ntfy; si es un mensaje suelto (un pedido o una respuesta) y falla, prueba 2 veces más
+  async post(body, retry){
+    const go=()=>fetch(this.cfg.server+'/'+this.topic, {method:'POST', body, headers:{'X-Firebase':'no'}});
+    if(!retry) return go();
+    let last=null;
+    for(const wait of [0, 1200, 5500]){
+      if(wait) await new Promise(r=>setTimeout(r, wait));
+      try{ last=await go(); if(last.ok || (last.status>=400 && last.status<429)) return last; }catch(e){ last=null; }
+    }
+    if(!last) throw new Error('sin conexión'); return last;
   },
   hello(){ if(!this.on()) return; this.st.hAt=Date.now(); return this.publish({k:'h', seen:this.st.seen, mx:this.st.mx}, null); },
   async poll(){
     if(!this.on() || this.busy) return; this.busy=true;
     try{
       const r=await fetch(`${this.cfg.server}/${this.topic}/json?poll=1&since=${encodeURIComponent(this.st.lastId||'12h')}`);
+      this.polledAt=Date.now();
       if(!r.ok){ this.lastErr='ntfy '+r.status; return; }
+      this.okAt=Date.now();
       const lines=(await r.text()).split('\n').filter(Boolean);
       for(const ln of lines) await this.line(ln);
       this.lastErr=''; this.save();
