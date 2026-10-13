@@ -53,11 +53,22 @@ button{font:inherit;color:inherit}
 .top{display:flex;align-items:flex-start;justify-content:space-between;gap:24px}
 .greet h1{margin:0;font:600 38px/1.05 var(--disp);font-variation-settings:"opsz" 72;letter-spacing:-.01em}
 .greet p{margin:6px 0 0;color:var(--ink-2);font-size:19px}
-.now{display:flex;align-items:center;gap:22px;text-align:right}
-.clock{font:300 74px/0.9 var(--disp);font-variation-settings:"opsz" 96,"wdth" 85;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.wxnow{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:8px;color:var(--ink-2);font-size:18px}
+.now{display:flex;align-items:flex-start;gap:26px;text-align:right}
+/* el reloj: cifras firmes, los dos puntos laten despacio en el azul de FRIDAY, y abajo el arco del sol de hoy */
+.clockbox{display:flex;flex-direction:column;align-items:flex-end}
+.clock{display:flex;align-items:baseline;font:640 84px/.86 var(--disp);font-variation-settings:"opsz" 96,"wdth" 94;letter-spacing:-.045em;font-variant-numeric:tabular-nums lining-nums;color:var(--ink)}
+.clock .colon{color:var(--friday);margin:0 .015em;transform:translateY(-.06em);animation:colon 2s ease-in-out infinite}
+@keyframes colon{50%{opacity:.35}}
+@keyframes colonA{50%{opacity:.6}}
+.sun{display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--ink-2);font-size:16px;white-space:nowrap}
+.sun svg{width:58px;height:22px;overflow:visible}
+.sun .arc{fill:none;stroke:color-mix(in srgb,var(--ink-3) 70%,transparent);stroke-width:1.6;stroke-dasharray:2 4;stroke-linecap:round}
+.sun .lit{fill:none;stroke:var(--lamp);stroke-width:2.2;stroke-linecap:round}
+.sun .dot{fill:var(--lamp)} body.night .sun .dot{fill:#E9D9B8}
+.sun .hz{stroke:color-mix(in srgb,var(--ink-3) 55%,transparent);stroke-width:1.2}
+.wxnow{display:flex;align-items:center;gap:10px;justify-content:flex-end;margin-top:6px;color:var(--ink-2);font-size:18px}
 .wxnow svg{width:30px;height:30px}
-.wxnow b{color:var(--ink);font:500 24px/1 var(--disp)}
+.wxnow b{color:var(--ink);font:560 24px/1 var(--disp)}
 .timers{display:flex;flex-direction:column;gap:8px}
 .tpill{display:flex;align-items:center;gap:12px;padding:8px 18px 8px 10px;border-radius:999px;background:var(--card);box-shadow:var(--shadow);border:1px solid var(--edge)}
 .tpill svg{width:46px;height:46px;transform:rotate(-90deg)}
@@ -80,11 +91,20 @@ button{font:inherit;color:inherit}
 .status.warn{color:var(--alert)}.status.warn i{background:var(--alert)}
 .status.off i{background:var(--ink-3)}
 @keyframes pulse{50%{transform:scale(.55);opacity:.55}}
-.talk{min-width:0;max-width:820px}
-.her{margin:0;font:500 clamp(30px,3.6vw,46px)/1.16 var(--disp);font-variation-settings:"opsz" 60;letter-spacing:-.01em;text-wrap:pretty;
-  display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-.her .said{color:var(--ink)}.her .tosay{color:var(--ink-3)}
-.you{margin:16px 0 0;color:var(--ink-2);font-size:21px;min-height:28px}
+.talk{min-width:0;max-width:860px;display:flex;flex-direction:column}
+/* subtítulos: lo dicho en tinta, lo que falta tenue; una ventana de 3 líneas que se corre sola */
+.her{--fs:46px;--capY:0px;margin:0;font:560 var(--fs)/1.18 var(--disp);font-variation-settings:"opsz" 60;letter-spacing:-.012em;max-height:calc(var(--fs)*1.18*3 + 6px);overflow:hidden;transition:opacity 1.2s}
+.her.mid{--fs:40px}.her.long{--fs:34px;max-height:calc(var(--fs)*1.18*4 + 4px)}
+body.subs-big .her{--fs:56px}body.subs-big .her.mid{--fs:48px}body.subs-big .her.long{--fs:41px}
+.her .cap-in{display:block;transform:translateY(var(--capY));transition:transform .45s cubic-bezier(.25,.8,.3,1)}
+.her .w{color:color-mix(in srgb,var(--ink-3) 72%,transparent);transition:color .22s}
+body.night .her .w{color:color-mix(in srgb,var(--ink-3) 92%,transparent)}
+body.night .her .w.s{color:var(--ink)}
+body.night .clock .colon{color:var(--friday-2)}
+.her .w.s{color:var(--ink)}
+.her.fade{opacity:.4}
+.you{margin:0 0 14px;color:var(--ink-2);font-size:21px;min-height:28px;order:-1}
+body.subs-big .you{font-size:25px}
 .you q{quotes:"«" "»"}
 .you .bars{display:inline-flex;gap:4px;align-items:center;height:22px;margin-left:10px;vertical-align:middle}
 .you .bars i{width:5px;height:6px;border-radius:3px;background:var(--friday);transition:height .08s}
@@ -133,6 +153,7 @@ button{font:inherit;color:inherit}
 .cover .meta b{display:block;font:600 21px/1.15 var(--disp);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .cover .meta small{font-size:15px;opacity:.85}
 .cover .src{position:absolute;top:12px;left:12px;z-index:2;font-size:13px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.88);color:#2b241d}
+.noprog .prog{visibility:hidden}
 .prog{height:5px;border-radius:3px;background:var(--card-2);overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--friday);transition:width 1s linear}
 /* compras */
 .shop{display:flex;flex-direction:column;gap:0;overflow:hidden}
@@ -155,7 +176,9 @@ button{font:inherit;color:inherit}
 .ambient.on{opacity:1;pointer-events:auto}
 .ambient canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .ambient .over{position:absolute;left:5vw;top:7vh;color:#fff;text-shadow:0 2px 24px rgba(0,0,0,.35)}
-.ambient .aclock{font:300 clamp(90px,15vw,190px)/.9 var(--disp);font-variation-settings:"opsz" 96,"wdth" 80;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.ambient .aclock{display:flex;align-items:baseline;font:620 clamp(110px,17vw,230px)/.86 var(--disp);font-variation-settings:"opsz" 96,"wdth" 94;letter-spacing:-.05em;font-variant-numeric:tabular-nums lining-nums}
+.ambient .aclock .colon{color:#FFD49A;transform:translateY(-.06em);margin:0 .01em;animation:colonA 2s ease-in-out infinite}
+.ambient .sun{color:rgba(255,255,255,.85);font-size:20px;margin-top:16px}.ambient .sun .arc{stroke:rgba(255,255,255,.45)}.ambient .sun .hz{stroke:rgba(255,255,255,.35)}.ambient .sun .dot{fill:#FFD49A}.ambient .sun .lit{stroke:#FFD49A}.ambient .sun svg{width:76px;height:28px}
 .ambient .adate{font:400 26px var(--text);opacity:.92;margin-top:10px}
 .ambient .awx{display:flex;align-items:center;gap:12px;margin-top:16px;font:500 30px var(--disp)}
 .ambient .awx svg{width:44px;height:44px}
@@ -199,16 +222,67 @@ button{font:inherit;color:inherit}
 #face .extra{transition:opacity .35s}
 body.night #face .skin-a{stop-color:#4C7FD9}body.night #face .skin-b{stop-color:#2550A8}
 
+/* ---------- ajustes: aparecen solo cuando tocás la pantalla ---------- */
+.gear{position:fixed;left:50%;top:18px;z-index:35;display:flex;align-items:center;gap:10px;padding:11px 22px 11px 16px;border-radius:999px;border:1px solid var(--edge);background:var(--card);box-shadow:0 16px 40px -18px rgba(80,50,20,.5);
+  font:600 18px var(--text);color:var(--ink);cursor:pointer;transform:translate(-50%,-140%);opacity:0;transition:transform .45s cubic-bezier(.2,.9,.25,1.1),opacity .3s;visibility:hidden}
+.gear.on{transform:translate(-50%,0);opacity:1;visibility:visible}
+.gear svg{width:24px;height:24px;color:var(--friday)}
+.setbg{position:fixed;inset:0;z-index:54;background:rgba(40,26,14,.28);opacity:0;visibility:hidden;transition:opacity .35s}
+.setbg.on{opacity:1;visibility:visible}
+.sets{position:fixed;top:0;right:0;bottom:0;z-index:55;width:min(640px,94vw);background:var(--wall-b);border-radius:34px 0 0 34px;box-shadow:-30px 0 70px -30px rgba(60,35,15,.5);
+  display:flex;flex-direction:column;transform:translateX(104%);visibility:hidden;transition:transform .5s cubic-bezier(.2,.85,.25,1),visibility .5s;user-select:none}
+.sets.on{transform:none;visibility:visible}
+.sets>header{display:flex;align-items:center;justify-content:space-between;padding:26px 30px 14px}
+.sets h2{margin:0;font:640 34px/1 var(--disp);letter-spacing:-.02em}
+.sets .done{font:600 18px var(--text);padding:12px 26px;border-radius:999px;border:0;background:var(--ink);color:var(--wall-b);cursor:pointer}
+.sets .body{overflow-y:auto;padding:4px 30px 40px;-webkit-overflow-scrolling:touch}
+.sets section{background:var(--card);border:1px solid var(--edge);border-radius:26px;padding:18px 20px 20px;margin-top:14px}
+.sets h3{margin:0 0 4px;font:620 22px/1.2 var(--disp)}
+.sets .lbl{margin:12px 0 8px;color:var(--ink-2);font-size:16px}
+.sets .note{margin:10px 0 0;color:var(--ink-2);font-size:15px;line-height:1.4}
+.sets .note.warn{color:var(--alert)}
+.seg{display:flex;flex-wrap:wrap;gap:8px}
+.seg button{flex:1 1 auto;min-height:52px;padding:10px 16px;border-radius:16px;border:1px solid var(--edge);background:var(--card-2);font:500 17px var(--text);color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.seg button[aria-pressed="true"]{background:var(--friday);border-color:var(--friday);color:#fff}
+.sets .ghost{margin-top:12px;min-height:50px;padding:10px 20px;border-radius:16px;border:1px solid color-mix(in srgb,var(--friday) 35%,transparent);background:none;color:var(--friday);font:600 17px var(--text);cursor:pointer}
+.sets .ghost+.ghost{margin-left:8px}
+.tvrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--edge)}
+.tvrow b{font:600 18px var(--disp)}.tvrow small{display:block;color:var(--ink-2);font-size:15px}
+.tvrow .ghost{margin-top:0;white-space:nowrap}
+.conns{list-style:none;margin:8px 0 0;padding:0}
+.conns li{display:flex;align-items:baseline;gap:12px;padding:9px 0;border-top:1px solid var(--edge);font-size:17px}
+.conns li:first-child{border-top:0}
+.conns i{width:10px;height:10px;border-radius:50%;flex:0 0 10px;background:var(--ink-3);transform:translateY(-1px)}
+.conns i.ok{background:var(--leaf)}.conns i.warn{background:var(--lamp)}
+.conns span{flex:1}.conns small{color:var(--ink-2);font-size:15px;text-align:right}
+.sets .ver{color:var(--ink-3);font-size:14px;text-align:center;margin:22px 0 0}
+/* el teclado para el código de la tele */
+.pad{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(40,26,14,.4)}
+.pad[hidden]{display:none}
+.pad .box{width:min(560px,92vw);background:var(--wall-b);border-radius:34px;padding:26px 28px 24px;box-shadow:0 40px 90px -30px rgba(40,20,5,.6)}
+.pad h3{margin:0;font:640 28px/1.1 var(--disp)}
+.pad p{margin:8px 0 0;color:var(--ink-2);font-size:17px;line-height:1.4}
+.pad .digits{margin:18px 0 16px;font:600 40px/1 var(--disp);letter-spacing:.06em;font-variant-numeric:tabular-nums;text-align:center;color:var(--ink);min-height:44px}
+.pad .digits .ph{color:var(--ink-3)}
+.pad .keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.pad .keys button{min-height:62px;border-radius:18px;border:1px solid var(--edge);background:var(--card);font:600 28px var(--disp);color:var(--ink);cursor:pointer}
+.pad .keys button.fn{font:600 17px var(--text);color:var(--ink-2)}
+.pad .act{display:flex;gap:10px;margin-top:14px}
+.pad .act button{flex:1;min-height:56px;border-radius:999px;border:0;font:600 18px var(--text);cursor:pointer}
+.pad .act .go{background:var(--friday);color:#fff}.pad .act .go:disabled{opacity:.4}
+.pad .act .no{background:var(--card-2);color:var(--ink)}
+.pad .st{min-height:24px;margin-top:10px;color:var(--alert);font-size:16px;text-align:center}
+
 /* vertical (tablet parada) */
 @media (orientation:portrait){
   .app{grid-template-rows:auto auto 1fr;padding:26px 26px 24px}
   .stage{grid-template-columns:1fr;justify-items:center;text-align:center;gap:20px;padding-top:2vh}
   .hint{justify-content:center}
   .shelf{grid-template-columns:1fr 1fr;grid-auto-rows:minmax(0,1fr);height:auto;min-height:0}
-  .clock{font-size:58px} .wxnow span{display:none}
+  .clock{font-size:62px} .wxnow span{display:none} .sun{display:none}
   .setup{grid-template-columns:1fr;text-align:center;justify-items:center;gap:3vh}
 }
-@media (max-height:620px) and (orientation:landscape){ .shelf{height:44vh} #face{width:22vh} .greet h1{font-size:30px} .clock{font-size:58px} }
+@media (max-height:620px) and (orientation:landscape){ .shelf{height:44vh} #face{width:22vh} .greet h1{font-size:30px} .clock{font-size:60px} .sun{display:none} .her{--fs:38px} }
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:none;-webkit-backdrop-filter:none}
 </style>
@@ -220,14 +294,14 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
     <div class="greet"><h1 id="hello">Hola</h1><p id="today"></p></div>
     <div class="now">
       <div class="timers" id="timers"></div>
-      <div><div class="clock" id="clock">--:--</div><div class="wxnow" id="wxNow"></div></div>
+      <div class="clockbox"><div class="clock" id="clock" aria-live="off">--:--</div><div class="wxnow" id="wxNow"></div><div class="sun" id="sunNow"></div></div>
     </div>
   </header>
   <main class="stage">
     <div class="friday"><div id="face" class="fface" aria-label="FRIDAY"></div><div class="status" id="status"><i></i><span>Decí «Friday»</span></div></div>
     <div class="talk" aria-live="polite">
-      <p class="her" id="her"></p>
       <p class="you" id="you"></p>
+      <p class="her" id="her"></p>
       <div class="hint" id="hint"></div>
     </div>
   </main>
@@ -251,6 +325,44 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
   <div class="qrbox"><div id="qr"></div><div class="code" id="sCode"></div><div class="st" id="sSt">Esperando al celu…</div><button class="sclose" id="sClose" type="button" hidden>Listo</button></div>
 </div>
 <button class="tap" id="tap" hidden><b>Tocá para empezar</b><span>Una sola vez. Después, decí «Friday» y lo que necesites.</span></button>
+<button class="gear" id="gear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
+<div class="setbg" id="setBg"></div>
+<aside class="sets" id="sets" aria-label="Ajustes">
+  <header><h2>Ajustes</h2><button class="done" id="setX" type="button">Listo</button></header>
+  <div class="body">
+    <section><h3>Voz</h3>
+      <div class="seg" data-k="voz"><button type="button" data-v="elena">Elena</button><button type="button" data-v="tomas">Tomás</button><button type="button" data-v="tablet">La de la tablet</button></div>
+      <p class="note" id="vozNote"></p>
+      <p class="lbl">Velocidad</p>
+      <div class="seg" data-k="vozVel"><button type="button" data-v="lenta">Más lenta</button><button type="button" data-v="normal">Normal</button><button type="button" data-v="rapida">Más rápida</button></div>
+      <button class="ghost" id="vozTest" type="button">Probar la voz</button></section>
+    <section><h3>Subtítulos</h3>
+      <div class="seg" data-k="subs"><button type="button" data-v="normales">Normales</button><button type="button" data-v="grandes">Grandes</button></div></section>
+    <section><h3>Oído</h3>
+      <p class="lbl">Cómo es la casa</p>
+      <div class="seg" data-k="micMode"><button type="button" data-v="alta">Silenciosa</button><button type="button" data-v="normal">Normal</button><button type="button" data-v="cerca">Con mucho ruido</button></div>
+      <p class="lbl">Cuánto espera cuando hacés una pausa</p>
+      <div class="seg" data-k="patience"><button type="button" data-v="0.8">Poco</button><button type="button" data-v="1.2">Normal</button><button type="button" data-v="1.8">Bastante</button></div></section>
+    <section><h3>Música</h3>
+      <p class="lbl">Cuando le pidas música, que suene</p>
+      <div class="seg" data-k="musicOut"><button type="button" data-v="tablet">En la tablet</button><button type="button" data-v="tele">En la tele</button></div>
+      <div class="tvrow" id="tvRow"></div></section>
+    <section><h3>Pantalla</h3>
+      <p class="lbl">Mostrar el cielo cuando nadie le habla</p>
+      <div class="seg" data-k="ambMin"><button type="button" data-v="2">A los 2 min</button><button type="button" data-v="5">A los 5 min</button><button type="button" data-v="15">A los 15 min</button><button type="button" data-v="0">Nunca</button></div></section>
+    <section><h3>Conexiones</h3><ul class="conns" id="conns"></ul>
+      <button class="ghost" id="setQR" type="button">Configurar desde el celu</button><button class="ghost" id="setReload" type="button">Volver a cargar</button></section>
+    <p class="ver" id="setVer"></p>
+  </div>
+</aside>
+<div class="pad" id="tvPad" hidden><div class="box">
+  <h3>Vincular la tele</h3>
+  <p>En la tele abrí YouTube → Configuración → <b>Vincular con código de TV</b>. Escribí acá los 12 números que aparecen.</p>
+  <div class="digits" id="padD"></div>
+  <div class="keys" id="padK"></div>
+  <div class="act"><button class="no" id="padNo" type="button">Cancelar</button><button class="go" id="padGo" type="button" disabled>Vincular</button></div>
+  <div class="st" id="padSt"></div>
+</div></div>
 <div class="toast" id="toast"></div>
 <script>
 'use strict';
@@ -1049,7 +1161,7 @@ async function earStart(){
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='2.0';
+const VERSION='2.1';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -1079,7 +1191,7 @@ const palette=()=>({idle:[47,107,227]});
   }catch(e){}
   LS.set('migrado',true);
 })();
-let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', wake:true, patience:1.2, voice:'', worker:null, google:null, spotify:null, music:'auto'}, LS.get('cfg',{}));
+let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', wake:true, patience:1.2, voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const saveS=()=>LS.set('cfg',S);
 let memory=LS.get('memory',[]), reminders=LS.get('rems',[]), compras=LS.get('compras',[]), notas=LS.get('notas',[]), cumplesP=LS.get('cumples',[]);
 let timers=LS.get('timers',[]), hist=LS.get('hist',[]), avisos=LS.get('avisos',[]);
@@ -1141,6 +1253,29 @@ function applyLight(){
     document.documentElement.style.setProperty('--wall-a', hexc(A)); document.documentElement.style.setProperty('--wall-b', hexc(B));
     document.querySelector('meta[name=theme-color]').setAttribute('content', hexc(B));
   } else { document.documentElement.style.removeProperty('--wall-a'); document.documentElement.style.removeProperty('--wall-b'); document.querySelector('meta[name=theme-color]').setAttribute('content','#1B1714'); }
+}
+
+// ---------------------------------------------------------------- el reloj y el sol de hoy
+function clockPaint(el, d){ const k=hhmm(d); if(el.dataset.t===k) return; el.dataset.t=k; el.innerHTML=`<span>${z2(d.getHours())}</span><span class="colon">:</span><span>${z2(d.getMinutes())}</span>`; }
+const sunCache={};
+function sunTimes(d){
+  const key=d.toDateString()+'|'+S.lat+'|'+S.lon; if(sunCache[key]) return sunCache[key];
+  let rise=null, set=null;
+  try{ const [lat,lon]=skyLatLon(), t0=new Date(d); t0.setHours(0,0,0,0); let prev=skyBodies(t0,lat,lon).sun.el;
+    for(let m=10;m<=1440;m+=10){ const t=new Date(t0.getTime()+m*60000), el=skyBodies(t,lat,lon).sun.el;
+      if(prev<-0.83 && el>=-0.83 && !rise) rise=new Date(t.getTime()-600000*(el+0.83)/(el-prev));
+      if(prev>=-0.83 && el<-0.83 && !set) set=new Date(t.getTime()-600000*(el+0.83)/(el-prev));
+      prev=el; } }catch(e){}
+  return sunCache[key]={rise, set};
+}
+// un arquito: el sol camina de la salida a la puesta; de noche dice a qué hora amanece
+function sunPaint(el, d){
+  if(!el) return; const {rise,set}=sunTimes(d); if(!rise || !set){ el.innerHTML=''; return; }
+  const k=Math.round(d.getTime()/60000); if(el.dataset.k==k) return; el.dataset.k=k;
+  const day=d>=rise && d<set, f=Math.max(0,Math.min(1,(d-rise)/(set-rise))), a=Math.PI*(1-f), x=29+27*Math.cos(a), y=20-17*Math.sin(a);
+  let txt; if(day) txt=`El sol se pone a las ${hhmm(set)}`; else { const nx=d<rise?rise:sunTimes(new Date(d.getTime()+86400000)).rise; txt=nx?`Amanece a las ${hhmm(nx)}`:''; }
+  const arc='M2 20 A27 17 0 0 1 56 20';
+  el.innerHTML=`<svg viewBox="0 0 58 22" aria-hidden="true"><line class="hz" x1="0" y1="20.5" x2="58" y2="20.5"/><path class="arc" d="${arc}"/>${day?`<path class="lit" d="M2 20 A27 17 0 0 1 ${x.toFixed(1)} ${y.toFixed(1)}"/><circle class="dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="3.6"/>`:`<circle class="dot" cx="${d<rise?4:54}" cy="20" r="2.6"/>`}</svg><span>${txt}</span>`;
 }
 
 // ---------------------------------------------------------------- la cara de FRIDAY (rediseñada: cálida, redonda, viva)
@@ -1219,15 +1354,22 @@ function faceBlink(){
   FACE.blinkT=setTimeout(()=>{ if(!document.hidden && !['laugh','happy','love','sleepy','cool'].includes(FACE.cur)){ root.querySelectorAll('.eye').forEach(e=>e.classList.add('blink')); setTimeout(()=>root.querySelectorAll('.eye').forEach(e=>e.classList.remove('blink')), 130); } faceBlink(); }, 2600+Math.random()*3800);
 }
 function faceLook(x,y,ms){ FACE.lookX=x; FACE.lookY=y; faceApply(); clearTimeout(faceLook.t); if(ms) faceLook.t=setTimeout(()=>{ FACE.lookX=0; FACE.lookY=0; faceApply(); }, ms); }
-// la boca acompaña la voz
+// la boca acompaña la voz (con la voz de Elena, sigue el volumen de verdad)
 let talkT=null;
-function faceTalk(on){ clearInterval(talkT); if(!on){ FACE.talk=0; faceApply(); return; } talkT=setInterval(()=>{ FACE.talk = FACE.talk>0.3 ? Math.random()*0.25 : 0.35+Math.random()*0.65; faceApply(); }, 120); }
+function faceTalk(on, an){
+  clearInterval(talkT); if(!on){ FACE.talk=0; faceApply(); return; }
+  if(an){ const d=new Uint8Array(an.fftSize); talkT=setInterval(()=>{ an.getByteTimeDomainData(d); let q=0; for(let i=0;i<d.length;i++){ const x=(d[i]-128)/128; q+=x*x; } FACE.talk=Math.min(1, Math.sqrt(q/d.length)*5); faceApply(); }, 70); return; }
+  talkT=setInterval(()=>{ FACE.talk = FACE.talk>0.3 ? Math.random()*0.25 : 0.35+Math.random()*0.65; faceApply(); }, 120);
+}
 
 // ---------------------------------------------------------------- la voz (hablar)
-const tts={ q:[], on:false, epoch:0, voice:null, lastEnd:0, shown:'', said:'' };
+// Elena, la misma voz natural de la compu, llega por tu servicio de Cloudflare. Si no está, habla con la voz de la tablet.
+const VOZ_RATE={lenta:'-4%', normal:'+8%', rapida:'+18%'}, VOZ_LOCAL_RATE={lenta:.92, normal:1.04, rapida:1.16};
+const tts={ q:[], on:false, epoch:0, voice:null, lastEnd:0, shown:'', src:null, failUntil:0, cache:new Map() };
+const vozNube=()=>workerOn() && (S.workerV||0)>=2 && S.voz!=='tablet' && Date.now()>tts.failUntil;
 function pickVoice(){
   const vs=speechSynthesis.getVoices(); if(!vs.length) return null;
-  if(S.voice){ const v=vs.find(v=>v.name===S.voice); if(v) return v; }
+  if(S.voiceLocal){ const v=vs.find(v=>v.name===S.voiceLocal); if(v) return v; }
   const es=vs.filter(v=>/^es/i.test(v.lang));
   return es.find(v=>/es-AR/i.test(v.lang)) || es.find(v=>/es-US/i.test(v.lang)&&/google/i.test(v.name)) || es.find(v=>/es-(US|MX|419)/i.test(v.lang)) || es.find(v=>/google/i.test(v.name)) || es[0] || null;
 }
@@ -1237,40 +1379,114 @@ function spokenForm(t){
     .replace(/(\d+)\s?°/g,'$1 grados').replace(/(\d+)\s?%/g,'$1 por ciento').replace(/\bkm\/h\b/g,'kilómetros por hora')
     .replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]/gu,'').replace(/\s+/g,' ').trim();
 }
+const wordsOf=t=>String(t||'').split(/\s+/).filter(Boolean);
+async function fetchTTS(t){
+  const voz=S.voz==='tomas'?'tomas':'elena', key=voz+'|'+(S.vozVel||'normal')+'|'+t;
+  if(tts.cache.has(key)) return tts.cache.get(key);
+  const ctl=new AbortController(), to=setTimeout(()=>ctl.abort(), 9000);
+  try{
+    const r=await fetch(S.worker.url.replace(/\/+$/,'')+'/tts',{method:'POST', signal:ctl.signal, headers:{'X-Friday-Key':S.worker.key,'Content-Type':'application/json'}, body:JSON.stringify({text:t, voz, rate:VOZ_RATE[S.vozVel||'normal']})});
+    if(!r.ok) throw new Error('voz '+r.status);
+    let words=[]; try{ words=JSON.parse(decodeURIComponent(r.headers.get('X-Words')||'[]')); }catch(e){}
+    const ab=await audioCtx().decodeAudioData(await r.arrayBuffer());
+    const out={ab, words};
+    if(t.length<70){ tts.cache.set(key,out); if(tts.cache.size>40) tts.cache.delete(tts.cache.keys().next().value); }
+    return out;
+  } finally { clearTimeout(to); }
+}
 function speakChunk(text){
   const t=spokenForm(text); if(!t) return;
-  tts.q.push(t); if(!tts.on) speakNext();
+  const it={t, base:cap.queued, n:wordsOf(t).length};
+  cap.queued+=it.n;
+  if(vozNube()){ it.p=fetchTTS(t); it.p.catch(()=>{}); }   // la pide ya, mientras dice la frase anterior
+  tts.q.push(it); if(!tts.on) speakNext();
 }
-function speakNext(){
-  const t=tts.q.shift();
-  if(!t){ tts.on=false; tts.lastEnd=Date.now(); faceTalk(false); duck(false); setMode(state.mode==='speaking'?'idle':state.mode); stt.muteUntil=performance.now()+700; return; }
-  tts.on=true; setMode('speaking'); duck(true); faceTalk(true);
-  const u=new SpeechSynthesisUtterance(t), ep=tts.epoch;
-  u.lang='es-AR'; if(!tts.voice) tts.voice=pickVoice(); if(tts.voice){ u.voice=tts.voice; u.lang=tts.voice.lang; } u.rate=1.04; u.pitch=1.02;
-  const done=()=>{ if(ep!==tts.epoch) return; tts.said+=' '+t; showHer(); speakNext(); };
+async function speakNext(){
+  const it=tts.q.shift();
+  if(!it){ tts.on=false; tts.lastEnd=Date.now(); faceTalk(false); duck(false); capDone(); setMode(state.mode==='speaking'?'idle':state.mode); stt.muteUntil=performance.now()+700; return; }
+  tts.on=true; setMode('speaking'); duck(true);
+  const ep=tts.epoch;
+  if(it.p){
+    let a=null; try{ a=await it.p; }catch(e){ tts.failUntil=Date.now()+3*60000; }   // si Elena no contesta, unos minutos con la voz de la tablet
+    if(ep!==tts.epoch) return;
+    if(a && a.ab){ playVoice(it, a, ep); return; }
+  }
+  speakLocal(it, ep);
+}
+function playVoice(it, a, ep){
+  const ac=audioCtx(); try{ if(ac.state!=='running') ac.resume(); }catch(e){}
+  const src=ac.createBufferSource(), an=ac.createAnalyser(); src.buffer=a.ab; an.fftSize=512; src.connect(an); an.connect(ac.destination);
+  tts.src=src; faceTalk(true, an);
+  const durMs=a.ab.duration*1000;
+  capTrack(it, a.words&&a.words.length ? a.words.map(w=>w[0]) : null, durMs);
+  let fin=false; const g=setTimeout(()=>done(), durMs+1500);
+  function done(){ if(fin) return; fin=true; clearTimeout(g); if(ep!==tts.epoch) return; capChunk(it); tts.src=null; speakNext(); }
+  src.onended=done;
+  try{ src.start(); }catch(e){ done(); }
+}
+function speakLocal(it, ep){
+  faceTalk(true);
+  const u=new SpeechSynthesisUtterance(it.t), rate=VOZ_LOCAL_RATE[S.vozVel||'normal'];
+  u.lang='es-AR'; if(!tts.voice) tts.voice=pickVoice(); if(tts.voice){ u.voice=tts.voice; u.lang=tts.voice.lang; } u.rate=rate; u.pitch=1.02;
+  let fin=false, gotB=false;
+  const done=()=>{ if(fin) return; fin=true; clearTimeout(guard); if(ep!==tts.epoch) return; capChunk(it); speakNext(); };
+  u.onstart=()=>{ if(!gotB) capTrack(it, null, it.t.length*62/rate); };
+  // algunas tablets avisan cada palabra: entonces el subtítulo va justo
+  u.onboundary=e=>{ if(e.name && e.name!=='word') return; gotB=true; capStop(); capSay(it.base+wordsOf(it.t.slice(0,e.charIndex)).length+1); };
   u.onend=done; u.onerror=done;
   // si el motor de voz se cuelga (pasa en algunas tablets), sigue igual
-  const guard=setTimeout(()=>{ if(ep===tts.epoch && tts.on && tts.q[0]!==t){ try{ speechSynthesis.cancel(); }catch(e){} done(); } }, 2500+t.length*110);
-  u.onend=()=>{ clearTimeout(guard); done(); }; u.onerror=()=>{ clearTimeout(guard); done(); };
-  try{ speechSynthesis.speak(u); }catch(e){ clearTimeout(guard); done(); }
+  const guard=setTimeout(()=>{ try{ speechSynthesis.cancel(); }catch(e){} done(); }, 2500+it.t.length*110/rate);
+  try{ speechSynthesis.speak(u); }catch(e){ done(); }
 }
-function stopTalk(){ tts.epoch++; tts.q=[]; try{ speechSynthesis.cancel(); }catch(e){} tts.on=false; faceTalk(false); duck(false); tts.lastEnd=Date.now(); }
+function stopTalk(){ tts.epoch++; tts.q=[]; try{ speechSynthesis.cancel(); }catch(e){} try{ if(tts.src) tts.src.stop(); }catch(e){} tts.src=null; tts.on=false; faceTalk(false); duck(false); capStop(); tts.lastEnd=Date.now(); }
 const speakingNow=()=>tts.on || tts.q.length>0 || Date.now()-tts.lastEnd<600;
-// lo que dice se escribe grande; lo ya dicho más oscuro
-function showHer(){
-  const all=tts.shown, said=tts.said.trim();
-  let i=0; const a=norm(all), b=norm(said);
-  if(b && a.startsWith(b.slice(0,Math.max(0,b.length-2)))) i=Math.min(all.length, Math.round(all.length*b.length/Math.max(1,a.length)));
-  $('her').innerHTML=`<span class="said">${esc(all.slice(0,i))}</span><span class="tosay">${esc(all.slice(i))}</span>`;
-  if(!speakingNow()) $('her').innerHTML=`<span class="said">${esc(all)}</span>`;
-}
 function say(text, emo){
-  stopTalk(); tts.shown=spokenForm(text); tts.said=''; showHer();
+  stopTalk(); capReset(); tts.shown=spokenForm(text); capText(tts.shown);
   if(emo) faceSet(emo, 2600);
   const parts=tts.shown.match(/[^.!?¡¿]+[.!?]*\s*|.+$/g)||[tts.shown];
   for(const p of parts) speakChunk(p);
   pushHist('assistant', text);
 }
+
+// ---------------------------------------------------------------- subtítulos: siguen a la voz palabra por palabra
+// Lo ya dicho en tinta, lo que falta tenue. Las respuestas largas se corren solas hacia arriba (siempre se ve lo que está diciendo).
+const cap={ words:[], queued:0, said:0, trk:null, fadeT:null };
+function capInner(){ let i=$('her').firstElementChild; if(!i){ i=document.createElement('span'); i.className='cap-in'; $('her').appendChild(i); } return i; }
+function capReset(){ capStop(); cap.words=[]; cap.queued=0; cap.said=0; clearTimeout(cap.fadeT); const h=$('her'); h.classList.remove('fade','done'); h.innerHTML=''; h.style.removeProperty('--capY'); renderHint(); }
+function capText(t){
+  const ws=wordsOf(t), inner=capInner();
+  const same=cap.words.length && ws.length>=cap.words.length && cap.words.slice(0,-1).every((w,i)=>w===ws[i]);
+  if(!same){ inner.innerHTML=''; cap.words=[]; }
+  const spans=inner.children;
+  for(let i=0;i<ws.length;i++){
+    if(i<spans.length){ if(spans[i].textContent!==ws[i]+' ') spans[i].textContent=ws[i]+' '; continue; }
+    const sp=document.createElement('span'); sp.className='w'; sp.textContent=ws[i]+' '; inner.appendChild(sp);
+  }
+  cap.words=ws;
+  const n=t.length, h=$('her'); h.classList.toggle('long', n>150); h.classList.toggle('mid', n>70 && n<=150);
+  h.classList.remove('fade','done'); clearTimeout(cap.fadeT);
+  capPaint(); renderHint();
+}
+function capPaint(){
+  const inner=$('her').firstElementChild; if(!inner) return;
+  const sp=inner.children, n=Math.min(cap.said, sp.length);
+  for(let i=0;i<sp.length;i++){ const on=i<n; if(sp[i].classList.contains('s')!==on) sp[i].classList.toggle('s', on); }
+  // la línea de lo que está diciendo queda siempre a la vista (con una línea de contexto arriba)
+  const act=sp[Math.max(0,n-1)]; if(!act) return;
+  const h=$('her'), lh=parseFloat(getComputedStyle(h).lineHeight)||50, box=h.clientHeight;
+  const y=Math.max(0, Math.min(act.offsetTop-lh, inner.scrollHeight-box));
+  h.style.setProperty('--capY', (-Math.max(0,y)).toFixed(0)+'px');
+}
+function capSay(k){ if(k>cap.said){ cap.said=k; capPaint(); } }
+function capStop(){ clearInterval(cap.trk); cap.trk=null; }
+// marca las palabras a su tiempo: con los tiempos de la voz de Elena, o repartidos según el largo de cada palabra
+function capTrack(it, offs, durMs){
+  capStop(); const t0=performance.now();
+  if(!offs){ const ws=wordsOf(it.t), tot=ws.reduce((a,w)=>a+w.length+1,0)||1; let acc=0; offs=ws.map(w=>{ const o=acc/tot*durMs; acc+=w.length+1; return o; }); }
+  cap.trk=setInterval(()=>{ const el=performance.now()-t0; let k=0; while(k<offs.length && offs[k]<=el+60) k++; capSay(it.base+Math.min(k, it.n)); if(k>=offs.length) capStop(); }, 70);
+}
+function capChunk(it){ capStop(); capSay(it.base+it.n); }
+function capDone(){ capSay(cap.words.length); $('her').classList.add('done'); clearTimeout(cap.fadeT); cap.fadeT=setTimeout(()=>{ if(!speakingNow()) $('her').classList.add('fade'); }, 20000); }
 
 // ---------------------------------------------------------------- estado en pantalla
 function setMode(m){
@@ -1357,7 +1573,7 @@ const CASA_COLORES=/\b(rojo|roja|naranja|amarill[oa]|verde|turquesa|celeste|cian
 function fast(text, nf){
   const n0=nf.replace(/^(che |dale |bueno |eh )+/,'');
   // callate / pará
-  if(/^(callate|silencio|para|pará|basta|ya esta|stop|shh+)( friday)?$/.test(n0)){ stopTalk(); $('her').textContent=''; return true; }
+  if(/^(callate|silencio|para|pará|basta|ya esta|stop|shh+)( friday)?$/.test(n0)){ stopTalk(); capReset(); return true; }
   // hora
   if(/^(que hora es|que hora tenes|me decis la hora|hora)$/.test(n0)){ const d=new Date(); sayFast(text, `Son las ${d.getHours()}${d.getMinutes()?' y '+d.getMinutes():''}.`); return true; }
   // timers
@@ -1393,6 +1609,11 @@ function fast(text, nf){
   if(music.cur && /^(segui|seguí|play|dale play|reanuda|segui con la musica|volve a poner la musica)$/.test(n0)){ musicCtrl('seguir'); return true; }
   if(music.cur && /^(siguiente|pasa(la)?|otro tema|cambia(la)? de tema|el que sigue)$/.test(n0)){ musicCtrl('siguiente'); return true; }
   if(music.cur && /\b(subi|baja)\w* (el )?volumen\b|^volumen (al )?\d+/.test(n0)){ const v=(n0.match(/\d+/)||[])[0]; musicCtrl('volumen', v || (/subi/.test(n0)?'subir':'bajar')); return true; }
+  // la música en la tele (o de vuelta en la tablet)
+  if(/\b(pasa|pasala|pasame|manda|mandala|move|movela|lleva|llevala|pone|ponela)\w*( la musica| el tema| la cancion| esto| eso)? (a|en|para) la (tele|tv|television)$/.test(n0)){ pushHist('user', text); setMode('thinking'); musicMove('tele').then(r=>{ setMode('idle'); say(r, /^Listo/.test(r)?'happy':'worried'); focusCard('mus'); }).catch(e=>{ setMode('idle'); say('No pude: '+(e.message==='tele_apagada'?'la tele está apagada.':e.message), 'worried'); }); return true; }
+  if(music.cur && /\b(pasa|pasala|trae|traela|traeme|volve|volvela|move|movela)\w*( la musica| el tema| la cancion| esto| eso)? (a|en|para) (la tablet|aca|este parlante)$/.test(n0)){ pushHist('user', text); musicMove('tablet').then(r=>{ say(r, /^Listo/.test(r)?'happy':'worried'); focusCard('mus'); }); return true; }
+  const enTele=text.match(/^(?:friday,?\s*)?(?:pon[eé]|pon[eé]me|pon[eé]le|met[eé]|pas[aá])\s+(.+?)\s+en\s+la\s+(?:tele|tv|televisi[oó]n)[.!]*$/i);
+  if(enTele && !/^(la musica|musica|algo)$/.test(norm(enTele[1]))){ pushHist('user', text); setMode('thinking'); focusCard('mus'); playMusic(enTele[1], '', 'tele').then(r=>{ setMode('idle'); say(r, 'excited'); }).catch(e=>{ setMode('idle'); say(e.message==='tele_apagada'?'La tele está apagada: prendela y pedímelo de nuevo.':'No pude: '+e.message+'.', 'worried'); }); return true; }
   // configurar de nuevo (Cloudflare, Google, Spotify…) desde el celu
   if(/\b(configura|configurar|vincula|vincular)\w* (la tablet|el panel|a? ?friday)\b|\bmostra(me)? (el )?(codigo|qr)\b/.test(nf)){ sayFast(text, 'Dale: escaneá el código con el celu.'); setTimeout(()=>setupShow(true), 1500); return true; }
   // el cielo
@@ -1463,6 +1684,7 @@ async function wk(path, opts={}){
   if(r.status===401) throw new Error('la clave del servicio de Cloudflare no coincide');
   return d;
 }
+async function wkPing(){ if(!workerOn()) return; try{ const r=await wk('/ping'); if(r.ok){ S.workerV=r.v||1; saveS(); } }catch(e){} }
 async function tuya(method, path, q, body){ const r=await wk('/tuya',{body:{method, path, q, body}}); return r; }
 function tuyaKind(cat){ return ['dj','dd','fwd','xdd','dc','fsd','tgq','tgkg','gyd','fwl','sxd','tyndj'].includes(cat)?'luz':cat==='sd'?'aspiradora':['cz','pc','kg','tdq'].includes(cat)?'enchufe':'otro'; }
 function tuyaErrTxt(r){ const m=String(r&&r.msg||'').toLowerCase(), c=r&&r.code;
@@ -1590,19 +1812,22 @@ const devOn=d=>{ const sw=tFirst(d,'switch_led','switch_1','switch','led_switch'
 // ---------------------------------------------------------------- la compu (opcional): avisos, lo que suena, y las luces si no hay servicio de Cloudflare
 const pcq={};
 function pcDev(){ const e=Object.entries((FSync.st&&FSync.st.peers)||{}).filter(([d])=>d.startsWith('pc')).sort((a,b)=>b[1].t-a[1].t)[0]; return e?e[0]:null; }
-function pcCall(a, x){
+function pcSend(msg){
   return new Promise(async res=>{
     const to=pcDev(); if(!to || !FSync.on()) return res(null);
     const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
     const q=pcq[id]={res}; q.t=setTimeout(()=>{ delete pcq[id]; res(null); }, 12000);
     if(!FSync.live) FSync.kick();
-    const ok=await FSync.send({k:'call', a, x, id, to}); if(!ok){ clearTimeout(q.t); delete pcq[id]; res(null); }
+    const ok=await FSync.send(Object.assign({}, msg, {id, to})); if(!ok){ clearTimeout(q.t); delete pcq[id]; res(null); }
   });
 }
+const pcCall=(a, x)=>pcSend({k:'call', a, x});
+// la compu hace cosas que solo ella puede (por ejemplo, prender la tele LG por wifi)
+const pcActs=list=>pcSend({k:'acts', list});
 function onMsg(o){
   const q=o.id && pcq[o.id];
   if(o.k==='ack' && q){ clearTimeout(q.t); q.t=setTimeout(()=>{ delete pcq[o.id]; q.res(null); }, 60000); }
-  else if(o.k==='res' && q && o.fin){ clearTimeout(q.t); delete pcq[o.id]; q.res(o.r||null); if(o.r && o.r.ok) setTimeout(()=>casaLoad(true), 800); }
+  else if(o.k==='res' && q && o.fin){ clearTimeout(q.t); delete pcq[o.id]; q.res(o.r||(o.notes?{ok:true, notes:o.notes}:null)); if(o.r && o.r.ok) setTimeout(()=>casaLoad(true), 800); }
   else if(o.k==='aviso') addAviso({i:o.i, t:o.t, s:o.s, v:o.v, u:o.u}, true);
 }
 
@@ -1623,7 +1848,9 @@ async function sp(method, path, body, q){
   return d;
 }
 function spScore(q,n){ q=norm(q); n=norm(n); if(q===n) return 1; if(n.includes(q)||q.includes(n)) return .8; const w=q.split(' '); return .6*w.filter(x=>n.includes(x)).length/w.length; }
-async function spPlayQuery(que, tipo){
+const spIsTV=d=>d && (/^(tv|stb|castvideo|cast_video)$/i.test(d.type||'') || /\b(tv|tele|television|webos|lg|samsung|bravia|chromecast|android tv)\b/i.test(d.name||''));
+async function spTV(){ const dv=await sp('GET','/me/player/devices'); return ((dv&&dv.devices)||[]).find(spIsTV)||null; }
+async function spPlayQuery(que, tipo, enTele){
   let body, info;
   if(/me ?gusta|favorit|mis (temas|canciones)/.test(norm(que))){ const d=await sp('GET','/me/tracks',null,{limit:50}); const uris=(d.items||[]).map(x=>x.track&&x.track.uri).filter(Boolean).sort(()=>Math.random()-.5); if(!uris.length) throw new Error('no tenés temas en Me gusta'); body={uris}; info={nombre:'tus Me gusta'}; }
   else {
@@ -1636,6 +1863,7 @@ async function spPlayQuery(que, tipo){
     if(!c.length) throw new Error(`no encontré "${que}" en Spotify`);
     info=c.sort((a,b)=>b.s-a.s)[0].it; body=info.uri.startsWith('spotify:track:')?{uris:[info.uri]}:{context_uri:info.uri};
   }
+  if(enTele){ const tv=await spTV(); if(!tv) throw new Error('sin_tele_spotify'); await sp('PUT','/me/player/play', body, {device_id:tv.id}); music.cur={src:'spotify', title:info.nombre, artist:info.artista||'', img:'', at:Date.now(), dev:tv.name}; spPoll(); render(); return info; }
   try{ await sp('PUT','/me/player/play', body); }
   catch(e){ if(e.message!=='sin_dispositivo') throw e; const dv=await sp('GET','/me/player/devices'); const ds=(dv&&dv.devices)||[]; const dev=ds.find(x=>x.is_active)||ds[0]; if(!dev) throw new Error('sin_spotify_abierto'); await sp('PUT','/me/player/play', body, {device_id:dev.id}); }
   music.cur={src:'spotify', title:info.nombre, artist:info.artista||'', img:'', at:Date.now()}; spPoll(); render(); return info;
@@ -1650,7 +1878,7 @@ function ytLoad(){
   return new Promise(res=>{
     if(music.ytReady) return res(true);
     window.onYouTubeIframeAPIReady=()=>{ music.yt=new YT.Player('ytp',{width:'100%', height:'100%', playerVars:{autoplay:1, controls:0, playsinline:1, rel:0, modestbranding:1, disablekb:1},
-      events:{ onReady:()=>{ music.ytReady=true; res(true); }, onStateChange:e=>{ if(e.data===0) ytNext(); if(e.data===1 && music.cur){ music.cur.playing=true; render(); } if(e.data===2 && music.cur){ music.cur.playing=false; render(); } }, onError:()=>ytNext(true) } }); };
+      events:{ onReady:()=>{ music.ytReady=true; res(true); }, onStateChange:e=>{ const mine=music.cur && music.cur.src==='youtube'; if(e.data===0 && mine) ytNext(); if(e.data===1 && mine){ music.cur.playing=true; render(); } if(e.data===2 && mine){ music.cur.playing=false; render(); } }, onError:()=>{ if(music.cur && music.cur.src==='youtube') ytNext(true); } } }); };
     const s=document.createElement('script'); s.src=API.yt; s.onerror=()=>res(false); document.head.appendChild(s);
     setTimeout(()=>res(music.ytReady), 9000);
   });
@@ -1671,13 +1899,56 @@ function ytStart(){
 }
 function ytNext(err){ if(!music.list.length) return; music.idx++; if(music.idx>=music.list.length){ if(!err){ music.cur=null; render(); } return; } ytStart(); }
 function duck(on){ try{ if(music.cur && music.cur.src==='youtube' && music.yt) music.yt.setVolume(on?Math.round(music.vol*0.25):music.vol); }catch(e){} }
+// la tele: el YouTube de la tele, vinculado con su código (lo maneja el servicio de Cloudflare)
+const teleOn=()=>workerOn() && (S.workerV||0)>=2 && !!(S.tv && S.tv.screenId);
+async function tv(sc, args){ const r=await wk('/tv/cmd',{body:{screenId:S.tv.screenId, sc, args:args||{}}}); if(!r.ok) throw new Error(r.error||'la tele no respondió'); return r; }
+async function tvPlay(list, idx){
+  const pick=list.slice(idx, idx+25), ids=pick.map(v=>v.id).join(',');
+  const go=()=>tv('setPlaylist',{videoId:pick[0].id, videoIds:ids, currentIndex:0, currentTime:0, listId:''});
+  let r=await tv('estado');
+  if(!r.on && pcDev()){ toast('La tele está apagada: le pido a la compu que la prenda…', 6000); await pcActs([{accion:'tv_prender'}]); for(let i=0;i<6 && !r.on;i++){ await sleep(3000); r=await tv('estado'); } }
+  if(!r.on) throw new Error('tele_apagada');
+  await go();
+  if(music.cur && music.cur.src==='youtube'){ try{ music.yt.pauseVideo(); }catch(e){} }
+  const v=pick[0]; music.tvList=list; music.tvIdx=idx;
+  music.cur={src:'tele', title:v.title, artist:v.by||'', img:`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`, id:v.id, playing:true, at:Date.now()};
+  render(); return v;
+}
+const clean=t=>String(t||'').replace(/\s*[\(\[].*?[\)\]]/g,'').slice(0,80);
 async function playMusic(que, tipo, donde){
-  const wantYT=/youtube|tablet|aca|parlante/.test(norm(donde||'')+' '+norm(tipo||'')), wantSP=/spotify/.test(norm(donde||'')+' '+norm(tipo||''));
+  const d=norm(donde||'')+' '+norm(tipo||'');
+  const wantTV=/\b(tele|tv|television)\b/.test(d) || (S.musicOut==='tele' && !/tablet|aca|parlante/.test(d));
+  const wantYT=/youtube|tablet|aca|parlante/.test(d), wantSP=/spotify/.test(d);
   const useSP = wantSP || (!wantYT && spOn() && S.music!=='youtube');
   if(useSP && !spOn()) throw new Error('Spotify no está conectado: se conecta desde el celu, en la configuración de la tablet');
-  if(useSP){ if(music.cur && music.cur.src==='youtube'){ try{ music.yt.pauseVideo(); }catch(e){} } const i=await spPlayQuery(que, tipo); return `Dale, ${i.nombre}${i.artista?' de '+i.artista:''} en Spotify.`; }
+  if(wantTV){
+    if(useSP){ try{ const i=await spPlayQuery(que, tipo, true); return `Dale, ${i.nombre}${i.artista?' de '+i.artista:''} en la tele.`; }catch(e){ if(e.message!=='sin_tele_spotify' || !teleOn()) throw new Error(e.message==='sin_tele_spotify'?'no veo la tele en Spotify: abrí Spotify en la tele y pedímelo de nuevo':e.message); } }
+    if(!teleOn()) throw new Error((S.workerV||0)<2 && workerOn() ? 'para la tele hace falta actualizar el código del servicio de Cloudflare' : 'la tele todavía no está vinculada: tocá la pantalla, Ajustes, y vinculala con el código de la tele');
+    if(music.cur && music.cur.src==='spotify') sp('PUT','/me/player/pause').catch(()=>{});
+    const r=await wk('/yt?q='+encodeURIComponent(que)); if(!r.ok || !(r.videos||[]).length) throw new Error(`no encontré "${que}" en YouTube`);
+    const v=await tvPlay(r.videos, 0); return `Dale, pongo ${clean(v.title)||que} en la tele.`;
+  }
+  if(useSP){ if(music.cur && music.cur.src==='youtube'){ try{ music.yt.pauseVideo(); }catch(e){} } if(music.cur && music.cur.src==='tele') tv('pause').catch(()=>{}); const i=await spPlayQuery(que, tipo); return `Dale, ${i.nombre}${i.artista?' de '+i.artista:''} en Spotify.`; }
   if(music.cur && music.cur.src==='spotify'){ sp('PUT','/me/player/pause').catch(()=>{}); }
-  const v=await ytPlayQuery(que); return `Dale, pongo ${String(v.title||que).replace(/\s*[\(\[].*?[\)\]]/g,'').slice(0,80)}.`;
+  if(music.cur && music.cur.src==='tele'){ tv('pause').catch(()=>{}); }
+  const v=await ytPlayQuery(que); return `Dale, pongo ${clean(v.title)||que}.`;
+}
+// "pasá la música a la tele" / "traela a la tablet"
+async function musicMove(adonde){
+  const m=music.cur; if(!m) return 'No está sonando nada.';
+  if(adonde==='tele'){
+    if(m.src==='tele') return 'Ya está sonando en la tele.';
+    if(m.src==='spotify'){ const tvd=await spTV().catch(()=>null); if(tvd){ await sp('PUT','/me/player',{device_ids:[tvd.id], play:true}); m.dev=tvd.name; setTimeout(spPoll,900); return 'Listo, la pasé a la tele.'; }
+      if(!teleOn()) return 'No veo la tele en Spotify. Abrí Spotify en la tele y pedímelo de nuevo.';
+      const r=await wk('/yt?q='+encodeURIComponent(m.title+' '+(m.artist||''))); if(!r.ok || !r.videos.length) return 'No la encontré para la tele.';
+      sp('PUT','/me/player/pause').catch(()=>{}); await tvPlay(r.videos,0); return 'Listo, sigue en la tele.'; }
+    if(!teleOn()) return 'La tele todavía no está vinculada: tocá la pantalla, Ajustes, y vinculala con el código de la tele.';
+    try{ music.yt.pauseVideo(); }catch(e){}
+    await tvPlay(music.list, music.idx); return 'Listo, sigue en la tele.';
+  }
+  if(m.src==='tele'){ tv('pause').catch(()=>{}); music.list=music.tvList||[]; music.idx=music.tvIdx||0; if(!music.list.length || !await ytLoad()) return 'No pude traerla a la tablet.'; ytStart(); return 'Listo, ahora suena acá.'; }
+  if(m.src==='spotify'){ const r=await wk('/yt?q='+encodeURIComponent(m.title+' '+(m.artist||''))); if(!r.ok || !r.videos.length) return 'No la encontré para la tablet.'; sp('PUT','/me/player/pause').catch(()=>{}); music.list=r.videos; music.idx=0; if(!await ytLoad()) return 'YouTube no carga en esta tablet.'; ytStart(); return 'Listo, ahora suena acá.'; }
+  return 'Ya está sonando acá.';
 }
 async function musicCtrl(cmd, val){
   const c=norm(cmd), m=music.cur; if(!m){ say('No está sonando nada.'); return; }
@@ -1688,6 +1959,12 @@ async function musicCtrl(cmd, val){
       else if(/sig|pasa|next/.test(c)) ytNext();
       else if(/ant|prev/.test(c)){ music.idx=Math.max(0,music.idx-1); ytStart(); }
       else if(/vol/.test(c)){ let n=parseInt(val); if(isNaN(n)) n=/sub|mas/.test(norm(val))?music.vol+20:music.vol-20; music.vol=Math.max(5,Math.min(100,n)); music.yt.setVolume(music.vol); }
+    } else if(m.src==='tele'){
+      if(/paus|para|stop/.test(c)){ await tv('pause'); m.playing=false; }
+      else if(/segui|play|reanud/.test(c)){ await tv('play'); m.playing=true; }
+      else if(/sig|pasa|next/.test(c)){ await tv('next'); music.tvIdx=Math.min((music.tvList||[]).length-1,(music.tvIdx||0)+1); const v=(music.tvList||[])[music.tvIdx]; if(v) Object.assign(m,{title:v.title, artist:v.by||'', img:`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`, playing:true}); }
+      else if(/ant|prev/.test(c)){ await tv('previous'); music.tvIdx=Math.max(0,(music.tvIdx||0)-1); const v=(music.tvList||[])[music.tvIdx]; if(v) Object.assign(m,{title:v.title, artist:v.by||'', img:`https://i.ytimg.com/vi/${v.id}/hqdefault.jpg`, playing:true}); }
+      else if(/vol/.test(c)){ let n=parseInt(val); const cur=music.tvVol||30; if(isNaN(n)) n=/sub|mas/.test(norm(val))?cur+10:cur-10; music.tvVol=Math.max(0,Math.min(100,n)); await tv('setVolume',{volume:music.tvVol}); }
     } else {
       if(/paus|para|stop/.test(c)){ await sp('PUT','/me/player/pause'); m.playing=false; }
       else if(/segui|play|reanud/.test(c)){ await sp('PUT','/me/player/play'); m.playing=true; }
@@ -1788,7 +2065,7 @@ function prompt(){
   if(memory.length) L.push('Lo que sabés de la familia: '+memory.slice(-25).join('; '));
   const tags=['[[TIMER|segundos|para qué]]','[[RECORDAR|AAAA-MM-DDTHH:MM|qué]]','[[COMPRAS|agregar o quitar o tachar o vaciar|cosa; cosa]]','[[NOTA|texto]] (nota visible en la tablet)','[[MEMORIA|dato importante y duradero de la familia]]'];
   if(casa.devs.length) tags.push('[[CASA|qué aparato|prender o apagar o brillo 40 o color azul o blanco cálido o limpiar]]');
-  tags.push('[[MUSICA|qué poner|tema o artista o disco o playlist|spotify o youtube (si lo pidió)]]','[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
+  tags.push('[[MUSICA|qué poner|tema o artista o disco o playlist|spotify o youtube o tele (si lo pidió)]]'+(teleOn()?' (hay una tele vinculada: si pide la música "en la tele", poné tele)':''),'[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
   tags.push('[[BUSCAR|consulta]] para datos actuales (resultados, precios, horarios, noticias de algo puntual): no inventes','[[NOTICIAS]] para los titulares de hoy');
   if(googleOn()) tags.push('[[EVENTO|título|AAAA-MM-DDTHH:MM|minutos]] para anotar en la agenda de Google','[[MAILS]] para leer los mails nuevos importantes');
   tags.push('[[CARA|feliz o risa o enamorada o sorprendida o triste o preocupada o pensativa o guiño o canchera o confundida o emocionada o orgullosa]] tu cara mientras hablás');
@@ -1826,14 +2103,14 @@ async function llm(messages, onDelta){
 const TAG_RE=/\[\[([A-ZÁÉÍÓÚ_]+)(?:\|([^\]]*))?\]\]/g;
 async function brain(text, extra, depth=0){
   if(!S.groqKey && !S.gemKey){ say('Me falta la llave del cerebro: se carga desde el celu.'); return; }
-  setMode('thinking'); stopTalk(); tts.shown=''; tts.said=''; $('her').textContent='';
+  setMode('thinking'); stopTalk(); tts.shown=''; capReset();
   const msgs=[{role:'system', content:prompt()}, ...hist.slice(-8)];
   if(extra) msgs.push({role:'user', content:extra});
   let spokenUpTo=0, full='';
   const onDelta=out=>{
     full=out;
     const vis=out.replace(TAG_RE,'').replace(/\[\[[^\]]*$/,'');
-    tts.shown=spokenForm(vis); showHer();
+    tts.shown=spokenForm(vis); capText(tts.shown);
     // habla de a frases mientras piensa el resto
     const upto=vis.slice(spokenUpTo); const m=upto.match(/^[\s\S]*?[.!?](\s|$)/);
     if(m){ const chunk=m[0]; spokenUpTo+=chunk.length; if(state.mode==='thinking') setMode('speaking'); speakChunk(chunk); }
@@ -1841,7 +2118,7 @@ async function brain(text, extra, depth=0){
   try{ full=await llm(msgs, onDelta); }
   catch(e){ if(e.name==='AbortError') return; setMode('idle'); say(e.message, 'worried'); return; }
   const vis=full.replace(TAG_RE,'').trim(); const rest=vis.slice(spokenUpTo); if(rest.trim()) speakChunk(rest);
-  tts.shown=spokenForm(vis); showHer();
+  tts.shown=spokenForm(vis); capText(tts.shown);
   if(vis) pushHist('assistant', full);
   if(!tts.on && !tts.q.length) setMode('idle');
   // las marcas
@@ -1863,7 +2140,7 @@ async function brain(text, extra, depth=0){
       else if(t.k==='EVENTO'){ await agendaAdd(t.a[0], t.a[1], t.a[2]); focusCard('hoy'); }
       else if(t.k==='MAILS'){ const m=await mailsLoad(true); notes.push(m.length?'Mails nuevos: '+m.map(x=>`de ${x.de}: ${x.asunto} (${x.snip})`).join(' | '):'No hay mails nuevos importantes.'); }
       else if(t.k==='AGENDA'){ await agendaLoad(true); notes.push('Agenda: '+agendaText(t.a[0])); }
-    }catch(e){ notes.push(`No pudiste hacer ${t.k.toLowerCase()}: ${e.message==='sin_spotify_abierto'?'Spotify no está abierto en ningún aparato':e.message}`); }
+    }catch(e){ notes.push(`No pudiste hacer ${t.k.toLowerCase()}: ${e.message==='sin_spotify_abierto'?'Spotify no está abierto en ningún aparato':e.message==='tele_apagada'?'la tele está apagada (hay que prenderla)':e.message}`); }
   }
   if(notes.length && depth<1){
     const waitSpeak=async()=>{ for(let i=0;i<60 && (tts.on||tts.q.length);i++) await sleep(150); };
@@ -1898,7 +2175,7 @@ function render(){
   const now=new Date(), h=now.getHours();
   $('hello').textContent=(h<6?'Buenas noches':h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+(S.name?', '+S.name:'')+'.';
   const fecha=now.toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'}); $('today').textContent=fecha.charAt(0).toUpperCase()+fecha.slice(1);
-  $('clock').textContent=hhmm(now);
+  clockPaint($('clock'), now); sunPaint($('sunNow'), now);
   const w=weather.data, night=document.body.classList.contains('night');
   $('wxNow').innerHTML = w ? `${wxIcon(w.code, night)}<b>${w.temp}°</b><span>${esc(WMO_SHORT(w.code))} en ${esc(S.city||'tu ciudad')}</span>` : '';
   // timers arriba, grandes
@@ -1937,7 +2214,8 @@ function renderMus(){
   // (el video de YouTube vive siempre en la tarjeta: nunca se mueve, así no se corta)
   const key=m.src+'|'+m.title+'|'+(m.img||'');
   if($('mBox').dataset.k!==key){ $('mBox').dataset.k=key; $('mCover').style.backgroundImage=m.img?`url("${m.img}")`:''; $('mCover').classList.toggle('noimg', !m.img && m.src!=='youtube'); $('mTitle').textContent=m.title||''; $('mArtist').textContent=m.artist||'';
-    $('mSrc').textContent=m.src==='youtube'?'En la tablet':m.src==='spotify'?'Spotify':'En la compu'; }
+    $('mSrc').textContent=m.src==='youtube'?'En la tablet':m.src==='tele'?'En la tele':m.src==='spotify'?(m.dev?'Spotify en la tele':'Spotify'):'En la compu'; }
+  $('mBox').classList.toggle('noprog', m.src==='tele');
   $('mSt').textContent=m.playing===false?'En pausa':'';
   let pr=m.prog||0; try{ if(m.src==='youtube' && music.yt && music.yt.getDuration) pr=music.yt.getCurrentTime()/Math.max(1,music.yt.getDuration()); }catch(e){}
   $('mProg').style.width=(Math.max(0,Math.min(1,pr))*100).toFixed(1)+'%';
@@ -1947,7 +2225,7 @@ function renderShop(){
   $('cShop').innerHTML=`<h2>Para comprar<small>${p.length||''}</small></h2>`+(compras.length?`<div class="shop">${p.slice(0,6).map(x=>`<button type="button" data-shop="${esc(x.id)}"><i></i>${esc(x.t)}</button>`).join('')}${hh.slice(0,Math.max(0,6-p.length)).map(x=>`<button type="button" class="ok" data-shop="${esc(x.id)}"><i></i>${esc(x.t)}</button>`).join('')}${p.length>6?`<div class="more">y ${p.length-6} más</div>`:''}</div>`:`<p class="empty">Vacía. <q>Friday, agregá leche a la lista</q>.</p>`);
 }
 const HINTS=()=>[timers.length?'Friday, ¿cuánto falta?':'Friday, poné un timer de 10 minutos', casa.devs.length?`Friday, prendé ${(casa.devs.find(d=>d.tipo==='luz')||casa.devs[0]).nombre.toLowerCase()}`:'Friday, ¿va a llover?', 'Friday, poné música de Soda', googleOn()?'Friday, ¿qué tengo hoy?':'Friday, recordame regar las plantas a las 7', 'Friday, agregá yerba a la lista'];
-function renderHint(){ const show=!$('her').textContent.trim() && state.mode==='idle'; const el=$('hint'); if(!show){ if(el.innerHTML) el.innerHTML=''; return; } if(!el.innerHTML) el.innerHTML=HINTS().slice(0,3).map(t=>`<span>«${esc(t)}»</span>`).join(''); }
+function renderHint(){ const show=!cap.words.length && state.mode==='idle'; const el=$('hint'); if(!show){ if(el.innerHTML) el.innerHTML=''; return; } if(!el.innerHTML) el.innerHTML=HINTS().slice(0,3).map(t=>`<span>«${esc(t)}»</span>`).join(''); }
 document.addEventListener('click', e=>{
   state.lastUser=Date.now();
   if(state.amb){ ambOff(); return; }
@@ -1955,8 +2233,68 @@ document.addEventListener('click', e=>{
   if(d){ const dev=casa.devs.find(x=>x.id===d.dataset.dev); if(!dev || casa.busy) return; casaDo(dev.nombre, devOn(dev)?'apagar':'prender').then(r=>{ if(!r.ok) toast(r.txt); else faceSet('wink',1200); }); return; }
   const s=e.target.closest && e.target.closest('[data-shop]');
   if(s){ const x=compras.find(y=>y.id===s.dataset.shop); if(x){ x.h=!x.h; shopSave(); } return; }
-  if(e.target.closest && e.target.closest('#face')){ if(speakingNow()) stopTalk(); else { Ear.convoUntil=Date.now()+12000; chime('up'); faceSet('listening',3000); toast('Te escucho: hablame sin decir «Friday»'); } }
+  if(e.target.closest && e.target.closest('#face')){ if(speakingNow()) stopTalk(); else { Ear.convoUntil=Date.now()+12000; chime('up'); faceSet('listening',3000); toast('Te escucho: hablame sin decir «Friday»'); } return; }
+  if(e.target.closest && e.target.closest('#sets,#setBg,#tvPad,#gear,#tap,#setup,button,a')) return;
+  gearShow();
 });
+
+// ---------------------------------------------------------------- ajustes: aparecen solo cuando tocás la pantalla
+function gearShow(){ const g=$('gear'); g.classList.add('on'); clearTimeout(gearShow.t); gearShow.t=setTimeout(()=>g.classList.remove('on'), 6000); }
+const setsOpen=()=>$('sets').classList.contains('on');
+function setsShow(on){ $('sets').classList.toggle('on', on); $('setBg').classList.toggle('on', on); $('gear').classList.remove('on'); if(on){ ambOff(); setsRender(); } state.lastUser=Date.now(); }
+function setsApply(){ document.body.classList.toggle('subs-big', S.subs==='grandes'); }
+function setsRender(){
+  document.querySelectorAll('#sets .seg').forEach(g=>{ const v=String(S[g.dataset.k]); g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===v))); });
+  const wv=S.workerV||0, n=$('vozNote');
+  n.className='note'+(S.voz!=='tablet' && !vozNube() ? ' warn':'');
+  n.textContent = S.voz==='tablet' ? 'La voz que trae la tablet. Elena es la misma voz natural que usa FRIDAY en la compu.'
+    : !workerOn() ? 'Elena y Tomás llegan por el servicio de Cloudflare, que todavía no está armado: mientras, habla con la voz de la tablet.'
+    : wv<2 ? 'Para Elena y Tomás hay que actualizar el código del servicio de Cloudflare (en el celu: Configurar la tablet → Cómo armarlo). Mientras, habla con la voz de la tablet.'
+    : Date.now()<tts.failUntil ? 'Elena no respondió recién: por unos minutos habla con la voz de la tablet.' : 'La misma voz natural que usa FRIDAY en la compu.';
+  const tr=$('tvRow');
+  if(S.tv && S.tv.screenId) tr.innerHTML=`<div><b>${esc(S.tv.name||'La tele')}</b><small>Vinculada. Decí «Friday, poné Soda Stereo en la tele».</small></div><button class="ghost" type="button" id="tvOff">Desvincular</button>`;
+  else if(!workerOn() || wv<2) tr.innerHTML=`<div><b>La tele</b><small>${!workerOn()?'Necesita el servicio de Cloudflare (se arma desde el celu).':'Hay que actualizar el código del servicio de Cloudflare.'}</small></div>`;
+  else tr.innerHTML=`<div><b>La tele</b><small>Con el YouTube de la tele. Si tenés Spotify Premium, también usa Spotify de la tele.</small></div><button class="ghost" type="button" id="tvLink">Vincular la tele</button>`;
+  const peer=pcDev(), pcT=peer && FSync.st.peers[peer] ? FSync.st.peers[peer].t : 0;
+  const C=[['Servicio de la casa', workerOn() ? (wv>=2?['ok','Funcionando']:wv===1?['warn','Falta actualizar el código']:['warn','Sin respuesta']) : ['','No está armado']],
+    ['Cerebro (Groq)', S.groqKey ? ['ok','Con llave'] : ['warn','Falta la llave']],
+    ['Google', googleOn() ? (gapp.err?['warn',gapp.err.slice(0,40)]:['ok','Agenda y mails']) : ['','Sin conectar']],
+    ['Spotify', spOn() ? ['ok','Conectado'] : ['','Sin conectar']],
+    ['La tele', S.tv && S.tv.screenId ? ['ok', S.tv.name||'Vinculada'] : ['','Sin vincular']],
+    ['La compu', pcT && Date.now()-pcT<10*60000 ? ['ok','En línea'] : ['','No hace falta']]];
+  $('conns').innerHTML=C.map(([k,[c,t]])=>`<li><i class="${c}"></i><span>${k}</span><small>${esc(t)}</small></li>`).join('');
+  $('setVer').textContent='FRIDAY Casa '+VERSION;
+}
+function setsInit(){
+  setsApply();
+  $('gear').onclick=()=>setsShow(true); $('setX').onclick=()=>setsShow(false); $('setBg').onclick=()=>setsShow(false);
+  $('sets').addEventListener('click', e=>{
+    const b=e.target.closest('.seg button');
+    if(b){ const k=b.parentElement.dataset.k, v=b.dataset.v; S[k]=/^(patience|ambMin)$/.test(k)?+v:v; saveS();
+      if(k==='voz' || k==='vozVel'){ tts.cache.clear(); tts.failUntil=0; }
+      if(k==='subs') setsApply();
+      if(k==='musicOut' && v==='tele' && !(S.tv && S.tv.screenId)) setTimeout(()=>{ if(workerOn() && (S.workerV||0)>=2) padShow(); }, 250);
+      setsRender(); return; }
+    if(e.target.id==='vozTest'){ say(`Hola${S.name?', '+S.name:''}. Así sueno ahora. ¿Te gusta?`, 'happy'); setTimeout(setsRender, 2500); }
+    else if(e.target.id==='tvLink') padShow();
+    else if(e.target.id==='tvOff'){ S.tv=null; if(S.musicOut==='tele') S.musicOut='tablet'; saveS(); setsRender(); toast('La tele quedó desvinculada'); }
+    else if(e.target.id==='setQR'){ setsShow(false); setupShow(true); }
+    else if(e.target.id==='setReload') location.reload();
+  });
+  // el teclado del código de la tele (en la tablet no hace falta el teclado del sistema)
+  $('padK').innerHTML=[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" data-n="${n}">${n}</button>`).join('')+`<button type="button" class="fn" data-n="del">Borrar</button><button type="button" data-n="0">0</button><button type="button" class="fn" data-n="clr">Limpiar</button>`;
+  $('padK').onclick=e=>{ const b=e.target.closest('button'); if(!b) return; const n=b.dataset.n; pad.d = n==='del' ? pad.d.slice(0,-1) : n==='clr' ? '' : (pad.d.length<12 ? pad.d+n : pad.d); padPaint(); };
+  $('padNo').onclick=()=>{ $('tvPad').hidden=true; };
+  $('padGo').onclick=async()=>{
+    $('padGo').disabled=true; $('padSt').style.color='var(--ink-2)'; $('padSt').textContent='Buscando la tele…';
+    try{ const r=await wk('/tv/pair',{body:{code:pad.d}}); if(!r.ok) throw new Error(r.error||'no anduvo');
+      S.tv={screenId:r.screenId, name:r.name}; S.musicOut='tele'; saveS(); $('tvPad').hidden=true; setsRender(); say(`Listo, ${r.name&&!/youtube/i.test(r.name)?r.name:'la tele'} quedó vinculada. Pedime música en la tele cuando quieras.`, 'excited'); }
+    catch(e){ $('padSt').style.color=''; $('padSt').textContent='No pude: '+e.message; $('padGo').disabled=false; }
+  };
+}
+const pad={d:''};
+function padShow(){ pad.d=''; $('padSt').textContent=''; padPaint(); $('tvPad').hidden=false; }
+function padPaint(){ const d=(pad.d+'············').slice(0,12); $('padD').innerHTML=[0,4,8].map(i=>d.slice(i,i+4).replace(/·+/g,m=>`<span class="ph">${m}</span>`)).join(' '); $('padGo').disabled=pad.d.length!==12; }
 
 // ---------------------------------------------------------------- modo ambiente: el cielo de tu ciudad
 const amb={ on:false };
@@ -1967,7 +2305,7 @@ function ambOn(force){
 function ambOff(){ if(!amb.on) return; amb.on=false; state.amb=false; $('ambient').classList.remove('on'); skyStop(); state.lastUser=Date.now(); }
 function ambTick(){
   if(!amb.on) return; const d=new Date(), w=weather.data, night=sunNow()<-5;
-  $('aClock').textContent=hhmm(d); const f=d.toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'}); $('aDate').textContent=f.charAt(0).toUpperCase()+f.slice(1);
+  clockPaint($('aClock'), d); const f=d.toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'}); $('aDate').textContent=f.charAt(0).toUpperCase()+f.slice(1);
   $('aWx').innerHTML=w?`${wxIcon(w.code, night)}${w.temp}° · ${esc(WMO_SHORT(w.code))}`:'';
   const nx=[]; const t=[...timers].sort((a,b)=>a.end-b.end)[0]; if(t) nx.push(`<b>${esc(t.label||'Timer')}</b>faltan ${durTxt(Math.round((t.end-Date.now())/1000))}`);
   const ev=gapp.ev.find(e=>!e.d && new Date(e.i)>d && new Date(e.i)-d<12*3600000); if(ev) nx.push(`<b>${hhmm(new Date(ev.i))} ${esc(ev.t)}</b>${esc(ev.l||'')}`);
@@ -2019,7 +2357,7 @@ function applyPanelCfg(v){
   if('spotify' in v) S.spotify=v.spotify&&v.spotify.rt?Object.assign(S.spotify||{}, v.spotify):null;
   if(v.music) S.music=v.music;
   saveS(); gapp.at=''; casa.at=0;
-  setupCheck(); getWeather(true); casaLoad(true); agendaLoad(true); mailsLoad(true);
+  setupCheck(); getWeather(true); casaLoad(true); agendaLoad(true); mailsLoad(true); wkPing();
   toast('✔ Configuración del celu recibida');
 }
 
@@ -2069,14 +2407,14 @@ async function boot(){
   await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o'], pollMs:60000, live:true,
     local:syncLocal, apply:syncApply, onMsg, onStatus:renderStatus });
   if(setupCheck()) $('tap').hidden=false;
-  getWeather(); casaLoad(); agendaLoad(); mailsLoad();
+  getWeather(); casaLoad(); agendaLoad(); mailsLoad(); wkPing(); setsInit();
   $('tap').onclick=start; $('sClose').onclick=()=>{ $('setup').hidden=true; setupShow.force=false; };
   setInterval(()=>{ render(); checkTimers(); if(amb.on) ambTick(); }, 1000);
   setInterval(()=>{ applyLight(); agendaCheck(); }, 30000);
-  setInterval(()=>{ if(!amb.on && state.started && state.mode==='idle' && !speakingNow() && Date.now()-state.lastUser>150000) ambOn(); }, 5000);
+  setInterval(()=>{ const mins=+S.ambMin; if(mins && !amb.on && !setsOpen() && state.started && state.mode==='idle' && !speakingNow() && Date.now()-state.lastUser>mins*60000) ambOn(); }, 5000);
   setInterval(()=>{ getWeather(); casaLoad(); agendaLoad(); mailsLoad(); }, 5*60000);
   // si te quedó la respuesta escrita mucho rato, se limpia
-  setInterval(()=>{ if(!speakingNow() && state.mode==='idle' && Date.now()-tts.lastEnd>45000 && Date.now()-state.lastUser>45000 && $('her').textContent){ $('her').textContent=''; $('you').textContent=''; renderHint(); } }, 5000);
+  setInterval(()=>{ if(!speakingNow() && state.mode==='idle' && Date.now()-tts.lastEnd>45000 && Date.now()-state.lastUser>45000 && cap.words.length){ capReset(); $('you').textContent=''; } }, 5000);
   addEventListener('online', ()=>{ renderStatus(); FSync.kick && FSync.kick(); }); addEventListener('offline', renderStatus);
 }
 boot();
