@@ -46,5 +46,181 @@ QUÉ PUEDE Y QUÉ NO (sin compu)
 - Sí: charla por voz o escrita, memoria, clima, recordatorios y timers, noticias, buscar en
   internet, Spotify.
 - No: luces/Smart Life, la tele, la pantalla de la compu (eso lo hace la FRIDAY de la compu).
-- Los recordatorios suenan con FRIDAY abierta o usada hace poco. Para que suenen sí o sí,
-  en Recordatorios tocá 📅 y quedan en el calendario del celu.
+- Los recordatorios suenan con FRIDAY abierta. Para que suenen SÍ O SÍ (con todo cerrado):
+  Ajustes → "🔔 Avisos y buen día" → instalá la app gratis ntfy y seguí los 3 pasos.
+
+NUEVO EN LA 1.1
+- 🔔 Avisos que siempre suenan (con la app ntfy): los recordatorios quedan programados y te
+  llegan aunque FRIDAY esté cerrada y el celu bloqueado.
+- ☀️ Buen día: la primera vez que la abrís a la mañana te cuenta el clima, tu agenda, tus
+  recordatorios y los titulares (y te ofrece música). También hay un botón "☀️ Buen día" y
+  podés pedir un aviso diario a la hora que quieras.
+- 💻 Con tu compu: si tenés FRIDAY en la compu, vinculalas (Ajustes → Vincular con la compu)
+  y comparten memoria, recordatorios y tu agenda de Google. Va cifrado.
+
+PARA ACTUALIZAR A LA 1.1: subí de nuevo index.html y sw.js (los dos) como dice ACTUALIZAR.
+
+NUEVO EN LA 1.2
+- 🛒 Lista de compras: botón "Compras". Se comparte con la compu si están vinculadas.
+- 🙌 Manos libres: botón "Manos libres" (o en Ajustes). Decís "Friday, ..." y lo hace, sin
+  tocar nada. Con FRIDAY abierta; la pantalla queda prendida mientras está activo.
+- 📲 Accesos directos: en Android, mantené apretado el ícono de FRIDAY: Hablar, Manos libres,
+  Compras y Buen día. (En iPhone no existen.)
+
+PARA ACTUALIZAR A LA 1.2: subí index.html, sw.js, manifest.json y los 4 íconos nuevos
+(sc-hablar.png, sc-manos.png, sc-compras.png, sc-buendia.png). Los accesos directos
+aparecen cuando Android actualiza la app (puede tardar un día). Si querés verlos ya,
+desinstalá FRIDAY y volvé a agregarla a inicio: no se pierde nada.
+
+NUEVO EN LA 1.3
+- En Recordatorios ahora ves también tus rutinas con horario, los cumpleaños que se vienen y
+  tus envíos (los arma la FRIDAY de la compu con tus mails).
+- Le podés pedir rutinas ("todos los días a las 7 prendé la luz y contame el clima") y anotar
+  cumpleaños desde el celu. El "Buen día" te cuenta si cumple alguien o si te llega algo.
+PARA ACTUALIZAR A LA 1.3: subí index.html y sw.js.
+
+NUEVO EN LA 1.4: FRIDAY PANEL (para una tablet)
+- Es la misma FRIDAY pero hecha para quedar fija en la casa: pantalla grande, todo por voz y
+  modo demo. Se abre en: https://TU-USUARIO.github.io/FRIDAY/panel.html
+- Subí: index.html, panel.html, manifest-panel.json y sw.js.
+- En la tablet (Android, Chrome): abrí ese link → menú ⋮ → "Instalar app". Queda a pantalla
+  completa. Dejala enchufada: mientras está abierta no se apaga la pantalla.
+- La primera vez muestra un código de 8 letras: escribilo en la compu (Ajustes → Celular) o en
+  FRIDAY Móvil (Ajustes → Con tu compu → Vincular otro aparato). No hay que configurar nada más.
+
+NUEVO EN LA 1.5: FRIDAY PANEL REHECHO
+- panel.html ahora es LA MISMA FRIDAY de la compu en modo tablet: su cara, su oído (que es el que
+  mejor entiende) y su modo demo, con una vista nueva: el cielo de tu ciudad en vivo.
+- Subí panel.html y sw.js (y manifest-panel.json si no lo subiste antes).
+- En la tablet abrí https://TU-USUARIO.github.io/FRIDAY/panel.html. Si muestra un código de
+  8 letras, escribilo en la compu: Ajustes → Celular → "¿Tenés la tablet de FRIDAY mostrando
+  un código?". Después tocás la pantalla UNA vez y es todo por voz.
+- Necesita la FRIDAY de la compu actualizada a la versión 85.
+
+NUEVO EN LA 1.6
+- FRIDAY Panel: tablero completo (clima, música, agenda, timers, recordatorios, casa, compras, notas y
+  avisos), cara con expresiones, timers y notas por voz. Mucho más liviana, el micrófono ya no pierde
+  pedazos de lo que decís y la conexión con la compu se revisa sola.
+- FRIDAY Móvil: la conexión con la compu ya no se satura cuando falla internet, y los pedidos que no
+  salen por un corte se reintentan.
+- Subí panel.html, index.html y sw.js. Necesita la FRIDAY de la compu en la versión 86.
+
+=====================================================================
+NUEVO EN LA 2.0: FRIDAY CASA (la tablet, ahora es su propia app)
+=====================================================================
+La tablet ya no es una copia de la FRIDAY de la compu ni la necesita prendida.
+- Diseño nuevo "Hogar cálido": la luz de la pantalla sigue al sol de tu ciudad (durazno a la
+  mañana, miel a la tarde, cálida y oscura de noche). La cara se rediseñó y tiene 16 expresiones.
+- Sin la compu: charla por voz, timers, recordatorios, lista de compras, notas, clima, noticias,
+  música (Spotify o YouTube sonando EN la tablet), tu agenda y tus mails de Google, y tus luces
+  y aparatos de Smart Life.
+- Se sacó todo lo de manejar la compu (ventanas, programas, archivos, pantalla).
+- Si no le hablás un rato, muestra el cielo de tu ciudad con un reloj grande. Tocás y vuelve.
+
+QUÉ SUBIR A GITHUB (al repositorio FRIDAY, "Add file" → "Upload files")
+  index.html, panel.html, tablet.html, sw.js, manifest-panel.json
+  (worker.js NO se sube a GitHub: va a Cloudflare, ver abajo)
+
+CONFIGURAR LA TABLET (una sola vez, todo desde el celu)
+1. En la tablet abrí https://pedropiratita134.github.io/FRIDAY/panel.html
+   (Chrome → menú ⋮ → "Agregar a la pantalla principal" para tenerla como app).
+2. Aparece un QR. Escanealo con la cámara del celu: se abre "Configurar la tablet" con el código
+   ya puesto. (También está en FRIDAY Móvil → Ajustes → "🏠 Configurar la tablet".)
+3. Tocá "Conectar". Tu nombre, tu ciudad y la llave de Groq se completan solos desde FRIDAY Móvil.
+   Conviene una llave de Groq SOLO para la tablet (otra cuenta gratis), así no se reparten el cupo.
+4. Al final tocá "Mandar a la tablet". La tablet se configura sola, cifrado, sin escribir nada.
+5. En la tablet tocá la pantalla una vez (para dar permiso al micrófono) y decí "Friday, ...".
+
+EL SERVICIO DE CLOUDFLARE (gratis, unos 10 minutos, una sola vez)
+Hace falta para las luces, la agenda y los mails de Google, y buscar en YouTube sin la compu.
+Guarda tus claves de Smart Life y de Google en un lugar tuyo, sin que queden en la tablet.
+El plan gratis da 100.000 pedidos por día; la tablet usa unos cientos.
+1. Creá una cuenta en https://dash.cloudflare.com/sign-up (gratis, no pide tarjeta).
+2. A la izquierda: "Workers & Pages" (puede estar dentro de "Compute") → "Create application" →
+   "Start with Hello World!" (o "Create Worker").
+   Nombre: friday-casa → "Deploy".
+3. "Edit code": borrá todo y pegá el contenido de worker.js (en "Configurar la tablet" hay un
+   botón "Copiar el código" que lo copia directo). → "Deploy".
+4. Volvé al Worker → "Settings" → "Variables and Secrets" → "Add" (tipo Secret):
+     FRIDAY_KEY     la clave que te genera "Configurar la tablet" (botón Copiar)
+     TUYA_ID        el Access ID de tu proyecto de Tuya (el mismo de la compu, Ajustes → Casa)
+     TUYA_SECRET    el Access Secret de Tuya
+   → "Deploy".
+5. Copiá la dirección del Worker (https://friday-casa.TU-USUARIO.workers.dev) en "Configurar la
+   tablet" → "Dirección del servicio", y la FRIDAY_KEY en "Clave". Tocá "Probar".
+
+GOOGLE (agenda y mails en la tablet)
+1. https://console.cloud.google.com/apis/credentials, en el mismo proyecto que usa FRIDAY de la
+   compu → "Create credentials" → "OAuth client ID" → tipo "Web application".
+2. En "Authorized redirect URIs" agregá: https://friday-casa.TU-USUARIO.workers.dev/google/callback
+   (la pantalla de configurar te la muestra exacta) → "Create".
+3. Copiá el Client ID y el Client secret al Worker como GOOGLE_ID y GOOGLE_SECRET → "Deploy".
+4. Para que el permiso no se venza cada 7 días: "Google Auth Platform" → "Audience" → "Publish app".
+   Al conectar Google va a decir "app no verificada": es tu propia app, tocá "Avanzado" → "Ir a ...".
+5. En "Configurar la tablet" tocá "Conectar Google".
+
+SPOTIFY (opcional, Premium)
+- En tu app de developer.spotify.com → "Edit" → en "Redirect URIs" agregá
+  https://pedropiratita134.github.io/FRIDAY/tablet.html → guardá.
+- En "Configurar la tablet" → "Conectar Spotify". Sin Spotify, la música suena en la tablet con
+  YouTube (la tablet es el parlante).
+
+SI ALGO NO ANDA
+- "No tengo permiso para el micrófono": en Chrome de la tablet, candado de la barra → Micrófono →
+  Permitir, y recargá.
+- "Se venció el permiso de Google/Spotify": abrí "Configurar la tablet" en el celu y conectalo de
+  nuevo (la tablet muestra el QR si le decís "Friday, configurá la tablet").
+- Si tenés la FRIDAY de la compu prendida, la tablet todavía la usa de respaldo para las luces
+  cuando el servicio de Cloudflare no está armado. No es obligatoria.
+
+=====================================================================
+NUEVO EN LA 2.1: VOZ DE ELENA, SUBTÍTULOS, MÚSICA EN LA TELE, AJUSTES Y RELOJ
+=====================================================================
+- Voz: habla con Elena, la misma voz natural que FRIDAY usa en la compu (también está Tomás).
+  Llega por tu servicio de Cloudflare. Si un día no responde, sigue sola con la voz de la tablet.
+- Subtítulos: lo que dice se va marcando palabra por palabra, al ritmo de la voz. Las respuestas
+  largas se corren solas. Lo que dijiste vos aparece arriba, chiquito.
+- Música en la tele: "Friday, poné Soda Stereo en la tele", "pasá la música a la tele",
+  "traela a la tablet", "pausá", "subí el volumen". Usa el YouTube de la tele (y Spotify de la
+  tele si tenés Premium y Spotify abierto en la tele). Si la compu está prendida y la tele apagada,
+  le pide a la compu que la prenda.
+- Ajustes: tocá la pantalla en cualquier lado libre y arriba aparece "Ajustes". Ahí: voz y
+  velocidad, tamaño de subtítulos, cómo es la casa (silenciosa o con ruido), cuánto espera cuando
+  hacés una pausa, dónde suena la música, vincular la tele, cuándo mostrar el cielo, y cómo están
+  las conexiones.
+- Reloj nuevo, con el arco del sol de hoy (a qué hora se pone, o a qué hora amanece).
+
+QUÉ HACER (una vez)
+1. Subí a GitHub: panel.html, tablet.html, index.html y sw.js.
+2. Actualizá el código del servicio de Cloudflare (sin esto no hay Elena ni tele):
+   dash.cloudflare.com → Workers & Pages → friday-casa → "Edit code" → borrá todo → pegá el
+   contenido nuevo de worker.js (o en "Configurar la tablet" → "Cómo armarlo" → "Copiar el
+   código") → "Deploy". Las variables (FRIDAY_KEY, TUYA, GOOGLE) quedan como estaban.
+3. En la tablet recargá FRIDAY (o tocá la pantalla → Ajustes → "Volver a cargar").
+4. Vincular la tele: en la tele abrí YouTube → Configuración → "Vincular con código de TV".
+   En la tablet: tocá la pantalla → Ajustes → Música → "Vincular la tele" → escribí los 12 números.
+
+PARA TENER EN CUENTA
+- La voz de Elena es el servicio de lectura en voz alta de Microsoft Edge, usado por fuera de Edge
+  (como hacen muchos programas gratis). Si Microsoft lo cambia, FRIDAY habla con la voz de la tablet
+  hasta que lo actualicemos.
+- La tele se maneja igual que cuando vinculás el celu con el YouTube de la tele. Tiene que estar
+  prendida (o la compu tiene que poder prenderla).
+
+=====================================================================
+NUEVO EN LA 2.2: ARREGLOS DE VOZ, «FRIDAY» Y MÚSICA
+=====================================================================
+- La voz sale siempre: si Elena no responde, habla con la voz de la tablet y en Ajustes → Voz
+  te dice por qué (por ejemplo "el servicio tiene el código viejo").
+- Entiende «Friday» aunque Whisper lo escriba "Fraidei", "Freddy", "Fri day" o lo traduzca
+  como "Viernes". Escucha desde más lejos.
+- Decís solo «Friday» → suena un tonito, te contesta «¿Sí?» (o «Decime») y te escucha.
+  Después de contestarte, te sigue escuchando unos segundos sin repetir el nombre.
+- La música va con YouTube siempre (no hace falta abrir nada). Spotify solo si decís
+  "en Spotify" o lo elegís en Ajustes → Música.
+- Ajustes → Oído: barra del micrófono y "lo último que escuché", para saber si es el micro.
+
+QUÉ SUBIR: panel.html, tablet.html y sw.js a GitHub. Volvé a pegar worker.js en Cloudflare
+(Edit code → pegar → Deploy) y en la tablet: Ajustes → Volver a cargar.
+PROBAR LA VOZ DESDE LA COMPU: abrí https://friday-casa.TU-USUARIO.workers.dev/tts?k=TU_FRIDAY_KEY
+Si suena Elena, el servicio anda. Si muestra un error, mandámelo.

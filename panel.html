@@ -249,6 +249,10 @@ body.night #face .skin-a{stop-color:#4C7FD9}body.night #face .skin-b{stop-color:
 .tvrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--edge)}
 .tvrow b{font:600 18px var(--disp)}.tvrow small{display:block;color:var(--ink-2);font-size:15px}
 .tvrow .ghost{margin-top:0;white-space:nowrap}
+.meter{position:relative;height:16px;border-radius:9px;background:var(--card-2);overflow:hidden;border:1px solid var(--edge)}
+.meter i{position:absolute;left:0;top:0;bottom:0;width:0;background:var(--leaf);transition:width .1s linear}
+.meter i.hot{background:var(--friday)}
+.meter b{position:absolute;top:-2px;bottom:-2px;width:3px;border-radius:2px;background:var(--ink)}
 .conns{list-style:none;margin:8px 0 0;padding:0}
 .conns li{display:flex;align-items:baseline;gap:12px;padding:9px 0;border-top:1px solid var(--edge);font-size:17px}
 .conns li:first-child{border-top:0}
@@ -342,9 +346,15 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
       <p class="lbl">Cómo es la casa</p>
       <div class="seg" data-k="micMode"><button type="button" data-v="alta">Silenciosa</button><button type="button" data-v="normal">Normal</button><button type="button" data-v="cerca">Con mucho ruido</button></div>
       <p class="lbl">Cuánto espera cuando hacés una pausa</p>
-      <div class="seg" data-k="patience"><button type="button" data-v="0.8">Poco</button><button type="button" data-v="1.2">Normal</button><button type="button" data-v="1.8">Bastante</button></div></section>
+      <div class="seg" data-k="patience"><button type="button" data-v="0.8">Poco</button><button type="button" data-v="1.2">Normal</button><button type="button" data-v="1.8">Bastante</button></div>
+      <p class="lbl">Probá el micrófono: hablá y mirá la barra. Si no pasa la rayita, elegí «Silenciosa».</p>
+      <div class="meter" id="micMeter"><i id="micLv"></i><b id="micThr"></b></div>
+      <p class="note" id="micLast">Todavía no escuché nada.</p></section>
     <section><h3>Música</h3>
-      <p class="lbl">Cuando le pidas música, que suene</p>
+      <p class="lbl">Con qué</p>
+      <div class="seg" data-k="musicSrc"><button type="button" data-v="youtube">YouTube</button><button type="button" data-v="spotify">Spotify</button></div>
+      <p class="note" id="musNote"></p>
+      <p class="lbl">Dónde suena</p>
       <div class="seg" data-k="musicOut"><button type="button" data-v="tablet">En la tablet</button><button type="button" data-v="tele">En la tele</button></div>
       <div class="tvrow" id="tvRow"></div></section>
     <section><h3>Pantalla</h3>
@@ -964,7 +974,29 @@ function skyStop(){ if(sky.raf){ cancelAnimationFrame(sky.raf); sky.raf=null; } 
 const WAKE_RE=/\b(fri?day|frai?de[iy]?|fri?de[iy]|fra[iy]?day|fraide|freide[iy]?|freday|fride|friede|freddy?|fredy|fraidi|friyi|fri?dei|jfriday|jrai?de[iy]?|fraidy|freidy|fraiday|friaday|frayde|guai?de[iy]?)\b/;
 const WHISPER_JUNK=/amara|subtitulos (realizados|por|hechos)|gracias por (ver|mirar|su atencion)|suscribete|suscribanse|dale like|^gracias$|^(mmm+|eh+|ah+|hm+|uh+|ay)$|^(thank you|thanks|you|bye)$|^(musica|aplausos|risas|silencio)$|^\W*$/;
 function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim(); }
+// Whisper escribe "Friday" de mil maneras ("Fraidei", "Freddy", "Fri day"... y a veces lo traduce: "Viernes").
+const WAKE_FORMS=['friday','fraidei','fraide','fraidey','freidei','fridei','fraday','freday','fraiday','fridey'];
+function lev(a,b){ const m=a.length, n=b.length; let p=Array.from({length:n+1},(_,j)=>j); for(let i=1;i<=m;i++){ const c=[i]; for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1, c[j-1]+1, p[j-1]+(a[i-1]===b[j-1]?0:1)); p=c; } return p[n]; }
+// ¿dónde está el nombre? devuelve [desde, cuántas palabras] (entre las primeras palabras), o null
+function wakeAt(words){
+  for(let i=0;i<Math.min(words.length,4);i++){
+    const w=words[i];
+    if(WAKE_RE.test(w)) return [i,1];
+    if(w==='viernes' && (i===0 || (i===1 && /^(che|hola|ey|oye|eh|bueno|dale|ok)$/.test(words[0])))) return [i,1];
+    if(words[i+1] && WAKE_RE.test(w+words[i+1])) return [i,2];
+    for(const [cand,len] of [[w,1],[w+(words[i+1]||''),2]]){
+      if(len===2 && (!words[i+1] || words[i+1].length>3 || w.length>5)) continue;   // "fri day", "frai dei": el nombre partido en dos
+      if(cand.length<5 || cand.length>9 || !/^[fhjgv]/.test(cand)) continue;
+      if(WAKE_FORMS.some(f=>lev(cand,f)<=(len===1 && cand.length>=7 ? 2 : 1))) return [i,len];
+    }
+  }
+  return null;
+}
+function wakeHit(t){ const n=norm(t); return !!n && (WAKE_RE.test(n) || !!wakeAt(n.split(' '))); }
 function stripWake(text){
+  const orig=String(text).trim().split(/\s+/), words=orig.map(w=>norm(w));
+  const at=wakeAt(words);
+  if(at){ const restOrig=[...orig.slice(0,at[0]), ...orig.slice(at[0]+at[1])].join(' ').replace(/^[,.;:!¡?¿\s]+/,'').trim(); return {called:true, rest:norm(restOrig), restOrig}; }
   const flat=text.split('').map(ch=>(ch.toLowerCase().normalize('NFD')[0]||ch)).join('');
   const m=flat.match(WAKE_RE);
   if(!m) return {called:false, rest:text, restOrig:text};
@@ -972,8 +1004,8 @@ function stripWake(text){
   return {called:true, rest:norm(restOrig), restOrig};
 }
 const stt={sr:48000, floor:0.004, level:0, recording:false, frames:[], pre:[], loud:0, speechMs:0, silenceMs:0, wakeChecked:0, seg:0, peekYes:false, peekNo:0, peekPend:0, segPeak:0, noHist:[], bgLv:0, coolPeek:0, coolUntil:0, fails:0, worklet:false, on:false, muteUntil:0};
-const Ear={ hooks:null, calls:[], sendCalls:[], convoUntil:0 };
-function micThr(){ const m=S.micMode||'normal'; return m==='alta' ? Math.max(0.008, stt.floor*2.0) : m==='cerca' ? Math.max(0.02, stt.floor*4.2) : Math.max(0.012, stt.floor*2.8); }
+const Ear={ hooks:null, calls:[], sendCalls:[], convoUntil:0, last:null, peeks:0, sent:0 };
+function micThr(){ const m=S.micMode||'normal'; return m==='alta' ? Math.max(0.0045, stt.floor*1.9) : m==='cerca' ? Math.max(0.016, stt.floor*3.6) : Math.max(0.007, stt.floor*2.5); }
 function voicedPart(frame, sr){
   const step=Math.max(1, Math.round(sr/12000)), fs=sr/step, n=Math.floor(frame.length/step);
   const x=new Float32Array(n); let mean=0;
@@ -1045,9 +1077,9 @@ async function wakePeek(frames){
     const r=await fetch(API.groq+'/audio/transcriptions',{method:'POST', headers:{Authorization:'Bearer '+S.groqKey}, body:fd});
     if(r.status===429){ const tx=await r.text().catch(()=>''); sttCool('whisper-large-v3-turbo', retryMs(tx, r)); }
     if(!r.ok) return null;
-    const d=await r.json(), txt=norm(String(d.text||''));
-    if(txt && !WAKE_RE.test(txt)) return txt.split(' ').filter(Boolean).length>=3 ? false : null;
-    if(txt && WAKE_RE.test(txt)){ Ear.hooks.onWake(); return true; }
+    const d=await r.json(), txt=norm(String(d.text||'')); Ear.peeks++;
+    if(txt && wakeHit(txt)){ Ear.hooks.onWake(); return true; }
+    if(txt) return txt.split(' ').filter(Boolean).length>=4 ? false : null;
   }catch(e){ return null; }
   return null;
 }
@@ -1082,7 +1114,7 @@ function sttFrame(data){
       const frames=stt.frames, spoke=stt.speechMs, conv=earAttending();
       const notForHer = !conv && !stt.peekYes && stt.peekNo>0 && !stt.peekPend;
       const bajito = !conv && !stt.peekYes && !stt.wakeChecked && sttNoisy() && stt.segPeak <= stt.bgLv*1.4;
-      const skip = spoke<400 || notForHer || bajito || !sttSendBudget(conv);
+      const skip = spoke<220 || notForHer || bajito || !sttSendBudget(conv);
       const waitPeek = !skip && !conv && !stt.peekYes && stt.peekPend>0 ? stt.peekP : null;
       sttReset();
       if(skip) h.onDrop();
@@ -1120,7 +1152,8 @@ async function sttSend(frames){
       if(noVoz || dudoso) txt='';
     }
     stt.fails=0;
-    if(!txt || WHISPER_JUNK.test(norm(txt))){ h.onDrop(); return; }
+    Ear.sent++;
+    if(!txt || WHISPER_JUNK.test(norm(txt))){ Ear.last={t:txt||'(nada claro)', at:Date.now(), ok:false}; h.onDrop(); return; }
     earHeard(txt);
   }catch(e){ stt.fails++; console.warn(e); h.onDrop(true); }
 }
@@ -1129,11 +1162,13 @@ function earHeard(text){
   const h=Ear.hooks;
   if(S.wake && Date.now()>Ear.convoUntil){
     const w=stripWake(text);
+    Ear.last={t:text, at:Date.now(), ok:w.called};
     if(!w.called){ h.onNotForMe(text); return; }
     Ear.convoUntil=Date.now()+12000;
     if(!w.rest || w.rest.length<2){ h.onJustName(); return; }
     h.onText(w.restOrig||text, text); return;
   }
+  Ear.last={t:text, at:Date.now(), ok:true};
   h.onText(text, text);
 }
 async function earStart(){
@@ -1161,7 +1196,7 @@ async function earStart(){
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='2.1';
+const VERSION='2.2';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -1191,7 +1226,7 @@ const palette=()=>({idle:[47,107,227]});
   }catch(e){}
   LS.set('migrado',true);
 })();
-let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', wake:true, patience:1.2, voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
+let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', wake:true, patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const saveS=()=>LS.set('cfg',S);
 let memory=LS.get('memory',[]), reminders=LS.get('rems',[]), compras=LS.get('compras',[]), notas=LS.get('notas',[]), cumplesP=LS.get('cumples',[]);
 let timers=LS.get('timers',[]), hist=LS.get('hist',[]), avisos=LS.get('avisos',[]);
@@ -1385,12 +1420,13 @@ async function fetchTTS(t){
   if(tts.cache.has(key)) return tts.cache.get(key);
   const ctl=new AbortController(), to=setTimeout(()=>ctl.abort(), 9000);
   try{
-    const r=await fetch(S.worker.url.replace(/\/+$/,'')+'/tts',{method:'POST', signal:ctl.signal, headers:{'X-Friday-Key':S.worker.key,'Content-Type':'application/json'}, body:JSON.stringify({text:t, voz, rate:VOZ_RATE[S.vozVel||'normal']})});
-    if(!r.ok) throw new Error('voz '+r.status);
+    let r;
+    try{ r=await fetch(S.worker.url.replace(/\/+$/,'')+'/tts',{method:'POST', signal:ctl.signal, headers:{'X-Friday-Key':S.worker.key,'Content-Type':'application/json'}, body:JSON.stringify({text:t, voz, rate:VOZ_RATE[S.vozVel||'normal']})}); }
+    catch(e){ throw new Error(e.name==='AbortError'?'Elena tardó demasiado':'no llego al servicio de Cloudflare'); }
+    if(!r.ok){ let m='el servicio respondió '+r.status; try{ const j=await r.json(); if(j.error) m=j.error; }catch(e){} if(r.status===404) m='el servicio tiene el código viejo'; throw new Error(m); }
     let words=[]; try{ words=JSON.parse(decodeURIComponent(r.headers.get('X-Words')||'[]')); }catch(e){}
-    const ab=await audioCtx().decodeAudioData(await r.arrayBuffer());
-    const out={ab, words};
-    if(t.length<70){ tts.cache.set(key,out); if(tts.cache.size>40) tts.cache.delete(tts.cache.keys().next().value); }
+    const out={url:URL.createObjectURL(await r.blob()), words};
+    if(t.length<70){ tts.cache.set(key,out); if(tts.cache.size>40){ const k0=tts.cache.keys().next().value; URL.revokeObjectURL(tts.cache.get(k0).url); tts.cache.delete(k0); } } else out.once=true;
     return out;
   } finally { clearTimeout(to); }
 }
@@ -1403,26 +1439,44 @@ function speakChunk(text){
 }
 async function speakNext(){
   const it=tts.q.shift();
-  if(!it){ tts.on=false; tts.lastEnd=Date.now(); faceTalk(false); duck(false); capDone(); setMode(state.mode==='speaking'?'idle':state.mode); stt.muteUntil=performance.now()+700; return; }
+  if(!it){ tts.on=false; tts.lastEnd=Date.now(); faceTalk(false); duck(false); capDone(); setMode(state.mode==='speaking'?'idle':state.mode); stt.muteUntil=performance.now()+700;
+    // después de contestarte, te sigue escuchando unos segundos sin que digas «Friday»
+    if(Date.now()-state.lastUser<90000 && !tts.noFollow) Ear.convoUntil=Math.max(Ear.convoUntil, Date.now()+8000);
+    tts.noFollow=false; renderStatus(); return; }
   tts.on=true; setMode('speaking'); duck(true);
   const ep=tts.epoch;
   if(it.p){
-    let a=null; try{ a=await it.p; }catch(e){ tts.failUntil=Date.now()+3*60000; }   // si Elena no contesta, unos minutos con la voz de la tablet
+    let a=null; try{ a=await it.p; tts.err=''; }catch(e){ tts.err=e.message; tts.failUntil=Date.now()+3*60000; }   // si Elena no contesta, unos minutos con la voz de la tablet
     if(ep!==tts.epoch) return;
-    if(a && a.ab){ playVoice(it, a, ep); return; }
+    if(a && a.url){ playVoice(it, a, ep); return; }
   }
   speakLocal(it, ep);
 }
+const SILENCIO='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AAACABAAZGF0YQAAAAA=';
+const ACKS=['¿Sí?','Decime.','¿Qué necesitás?','Te escucho.'];
+// el reproductor de la voz: uno solo, "habilitado" con el primer toque (así Android lo deja sonar siempre)
+function voiceEl(){ if(!tts.el){ tts.el=new Audio(); tts.el.preload='auto'; } return tts.el; }
 function playVoice(it, a, ep){
-  const ac=audioCtx(); try{ if(ac.state!=='running') ac.resume(); }catch(e){}
-  const src=ac.createBufferSource(), an=ac.createAnalyser(); src.buffer=a.ab; an.fftSize=512; src.connect(an); an.connect(ac.destination);
-  tts.src=src; faceTalk(true, an);
-  const durMs=a.ab.duration*1000;
-  capTrack(it, a.words&&a.words.length ? a.words.map(w=>w[0]) : null, durMs);
-  let fin=false; const g=setTimeout(()=>done(), durMs+1500);
-  function done(){ if(fin) return; fin=true; clearTimeout(g); if(ep!==tts.epoch) return; capChunk(it); tts.src=null; speakNext(); }
-  src.onended=done;
-  try{ src.start(); }catch(e){ done(); }
+  const el=voiceEl(); let fin=false, started=false, g=null;
+  const done=(fallback)=>{ if(fin) return; fin=true; clearTimeout(g); el.onended=el.onerror=el.onplaying=null; clearInterval(tts.mouthT); if(a.once) setTimeout(()=>URL.revokeObjectURL(a.url), 2000);
+    if(ep!==tts.epoch) return;
+    if(fallback){ tts.err=tts.err||'la tablet no pudo reproducir la voz'; tts.failUntil=Date.now()+3*60000; speakLocal(it, ep); return; }
+    capChunk(it); speakNext(); };
+  el.onended=()=>done(false); el.onerror=()=>done(!started);
+  el.onplaying=()=>{ if(started) return; started=true; tts.err='';
+    const durMs=(isFinite(el.duration)&&el.duration>0?el.duration:it.t.length*0.065)*1000;
+    clearTimeout(g); g=setTimeout(()=>done(false), durMs+2000);
+    const offs=a.words&&a.words.length ? a.words.map(w=>w[0]) : null;
+    capTrack(it, offs, durMs, ()=>el.currentTime*1000);
+    // la boca: se abre en cada palabra (con los tiempos de la voz)
+    clearInterval(tts.mouthT); faceTalk(false);
+    tts.mouthT=setInterval(()=>{ const ms=el.currentTime*1000; let on=!a.words||!a.words.length;
+      if(!on) for(const w of a.words){ if(ms>=w[0] && ms<=w[0]+Math.max(120,w[1])){ on=true; break; } }
+      FACE.talk = on ? (FACE.talk>0.5 ? 0.25+Math.random()*0.25 : 0.55+Math.random()*0.45) : 0; faceApply(); }, 90);
+  };
+  g=setTimeout(()=>{ if(!started) done(true); }, 3000);   // si no arranca en 3 segundos, habla con la voz de la tablet
+  el.src=a.url; try{ el.currentTime=0; }catch(e){}
+  const p=el.play(); if(p && p.catch) p.catch(()=>done(true));
 }
 function speakLocal(it, ep){
   faceTalk(true);
@@ -1438,7 +1492,7 @@ function speakLocal(it, ep){
   const guard=setTimeout(()=>{ try{ speechSynthesis.cancel(); }catch(e){} done(); }, 2500+it.t.length*110/rate);
   try{ speechSynthesis.speak(u); }catch(e){ done(); }
 }
-function stopTalk(){ tts.epoch++; tts.q=[]; try{ speechSynthesis.cancel(); }catch(e){} try{ if(tts.src) tts.src.stop(); }catch(e){} tts.src=null; tts.on=false; faceTalk(false); duck(false); capStop(); tts.lastEnd=Date.now(); }
+function stopTalk(){ tts.epoch++; tts.q=[]; try{ speechSynthesis.cancel(); }catch(e){} try{ if(tts.el){ tts.el.pause(); } }catch(e){} clearInterval(tts.mouthT); tts.on=false; faceTalk(false); duck(false); capStop(); tts.lastEnd=Date.now(); }
 const speakingNow=()=>tts.on || tts.q.length>0 || Date.now()-tts.lastEnd<600;
 function say(text, emo){
   stopTalk(); capReset(); tts.shown=spokenForm(text); capText(tts.shown);
@@ -1480,10 +1534,10 @@ function capPaint(){
 function capSay(k){ if(k>cap.said){ cap.said=k; capPaint(); } }
 function capStop(){ clearInterval(cap.trk); cap.trk=null; }
 // marca las palabras a su tiempo: con los tiempos de la voz de Elena, o repartidos según el largo de cada palabra
-function capTrack(it, offs, durMs){
-  capStop(); const t0=performance.now();
+function capTrack(it, offs, durMs, clock){
+  capStop(); const t0=performance.now(); clock=clock||(()=>performance.now()-t0);
   if(!offs){ const ws=wordsOf(it.t), tot=ws.reduce((a,w)=>a+w.length+1,0)||1; let acc=0; offs=ws.map(w=>{ const o=acc/tot*durMs; acc+=w.length+1; return o; }); }
-  cap.trk=setInterval(()=>{ const el=performance.now()-t0; let k=0; while(k<offs.length && offs[k]<=el+60) k++; capSay(it.base+Math.min(k, it.n)); if(k>=offs.length) capStop(); }, 70);
+  cap.trk=setInterval(()=>{ const el=clock(); let k=0; while(k<offs.length && offs[k]<=el+60) k++; capSay(it.base+Math.min(k, it.n)); if(k>=offs.length) capStop(); }, 70);
 }
 function capChunk(it){ capStop(); capSay(it.base+it.n); }
 function capDone(){ capSay(cap.words.length); $('her').classList.add('done'); clearTimeout(cap.fadeT); cap.fadeT=setTimeout(()=>{ if(!speakingNow()) $('her').classList.add('fade'); }, 20000); }
@@ -1503,6 +1557,7 @@ function renderStatus(){
   else if(state.mode==='listening'){ cls='listen'; txt='Te escucho…'; }
   else if(state.mode==='thinking'){ cls='think'; txt='Pensando…'; }
   else if(state.mode==='speaking'){ cls='listen'; txt='Hablando'; }
+  else if(stt.on && Date.now()<Ear.convoUntil){ cls='listen'; txt='Te escucho: hablá nomás'; }
   else if(cool>now){ cls='warn'; txt='Sin cupo de Groq · vuelve '+(cool-now<90000?'en un minuto':'a las '+hhmm(new Date(cool))); }
   else if(sttNoisy()){ txt='Mucho ruido: decí «Friday» más fuerte'; }
   el.className='status '+cls; el.querySelector('span').textContent=txt;
@@ -1515,13 +1570,14 @@ Ear.hooks={
   speaking:()=>speakingNow(),
   lastSaid:()=>tts.shown,
   onStart:(attending)=>{ if(attending && state.mode==='idle'){ ambOff(); setMode('listening'); youBars(true); } },
-  onWake:()=>{ ambOff(); Ear.convoUntil=Date.now()+12000; setMode('listening'); youBars(true); duck(true); },
+  onWake:()=>{ ambOff(); chime('up'); Ear.convoUntil=Date.now()+12000; setMode('listening'); youBars(true); duck(true); },
   onSending:()=>{ youBars(false); if(state.mode==='listening') $('you').innerHTML='<span>…</span>'; },
   onDrop:(err)=>{ youBars(false); if(state.mode==='listening'){ setMode('idle'); $('you').textContent=''; duck(false); } },
   onNotForMe:()=>{ youBars(false); if(state.mode==='listening') setMode('idle'); $('you').textContent=''; duck(false); },
-  onJustName:()=>{ youBars(false); ambOff(); chime('up'); say('¿Sí?', 'listening'); Ear.convoUntil=Date.now()+12000; },
+  onJustName:()=>{ youBars(false); ambOff(); state.lastUser=Date.now(); const a=ACKS[ack.n++ % ACKS.length]; say(a, 'listening'); Ear.convoUntil=Date.now()+12000; $('you').innerHTML='<q>Friday</q>'; },
   onText:(text)=>{ youBars(false); userSaid(text); }
 };
+const ack={n:0};
 let barsT=null;
 function youBars(on){
   clearInterval(barsT);
@@ -1919,8 +1975,11 @@ async function playMusic(que, tipo, donde){
   const d=norm(donde||'')+' '+norm(tipo||'');
   const wantTV=/\b(tele|tv|television)\b/.test(d) || (S.musicOut==='tele' && !/tablet|aca|parlante/.test(d));
   const wantYT=/youtube|tablet|aca|parlante/.test(d), wantSP=/spotify/.test(d);
-  const useSP = wantSP || (!wantYT && spOn() && S.music!=='youtube');
+  const useSP = wantSP || (!wantYT && spOn() && S.musicSrc==='spotify');
   if(useSP && !spOn()) throw new Error('Spotify no está conectado: se conecta desde el celu, en la configuración de la tablet');
+  // si Spotify no está abierto en ningún lado, sigue con YouTube (sin vueltas)
+  if(useSP && !wantTV){ try{ if(music.cur && music.cur.src==='youtube'){ try{ music.yt.pauseVideo(); }catch(e){} } if(music.cur && music.cur.src==='tele') tv('pause').catch(()=>{}); const i=await spPlayQuery(que, tipo); return `Dale, ${i.nombre}${i.artista?' de '+i.artista:''} en Spotify.`; }
+    catch(e){ if(!/sin_spotify_abierto|sin_dispositivo|Premium/i.test(e.message) || !workerOn()) throw e; } }
   if(wantTV){
     if(useSP){ try{ const i=await spPlayQuery(que, tipo, true); return `Dale, ${i.nombre}${i.artista?' de '+i.artista:''} en la tele.`; }catch(e){ if(e.message!=='sin_tele_spotify' || !teleOn()) throw new Error(e.message==='sin_tele_spotify'?'no veo la tele en Spotify: abrí Spotify en la tele y pedímelo de nuevo':e.message); } }
     if(!teleOn()) throw new Error((S.workerV||0)<2 && workerOn() ? 'para la tele hace falta actualizar el código del servicio de Cloudflare' : 'la tele todavía no está vinculada: tocá la pantalla, Ajustes, y vinculala con el código de la tele');
@@ -1928,7 +1987,6 @@ async function playMusic(que, tipo, donde){
     const r=await wk('/yt?q='+encodeURIComponent(que)); if(!r.ok || !(r.videos||[]).length) throw new Error(`no encontré "${que}" en YouTube`);
     const v=await tvPlay(r.videos, 0); return `Dale, pongo ${clean(v.title)||que} en la tele.`;
   }
-  if(useSP){ if(music.cur && music.cur.src==='youtube'){ try{ music.yt.pauseVideo(); }catch(e){} } if(music.cur && music.cur.src==='tele') tv('pause').catch(()=>{}); const i=await spPlayQuery(que, tipo); return `Dale, ${i.nombre}${i.artista?' de '+i.artista:''} en Spotify.`; }
   if(music.cur && music.cur.src==='spotify'){ sp('PUT','/me/player/pause').catch(()=>{}); }
   if(music.cur && music.cur.src==='tele'){ tv('pause').catch(()=>{}); }
   const v=await ytPlayQuery(que); return `Dale, pongo ${clean(v.title)||que}.`;
@@ -2065,7 +2123,7 @@ function prompt(){
   if(memory.length) L.push('Lo que sabés de la familia: '+memory.slice(-25).join('; '));
   const tags=['[[TIMER|segundos|para qué]]','[[RECORDAR|AAAA-MM-DDTHH:MM|qué]]','[[COMPRAS|agregar o quitar o tachar o vaciar|cosa; cosa]]','[[NOTA|texto]] (nota visible en la tablet)','[[MEMORIA|dato importante y duradero de la familia]]'];
   if(casa.devs.length) tags.push('[[CASA|qué aparato|prender o apagar o brillo 40 o color azul o blanco cálido o limpiar]]');
-  tags.push('[[MUSICA|qué poner|tema o artista o disco o playlist|spotify o youtube o tele (si lo pidió)]]'+(teleOn()?' (hay una tele vinculada: si pide la música "en la tele", poné tele)':''),'[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
+  tags.push('[[MUSICA|qué poner|tema o artista o disco o playlist|tele o spotify (solo si lo pidió; si no, dejalo vacío: suena con YouTube)]]'+(teleOn()?' (hay una tele vinculada: si pide la música "en la tele", poné tele)':''),'[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
   tags.push('[[BUSCAR|consulta]] para datos actuales (resultados, precios, horarios, noticias de algo puntual): no inventes','[[NOTICIAS]] para los titulares de hoy');
   if(googleOn()) tags.push('[[EVENTO|título|AAAA-MM-DDTHH:MM|minutos]] para anotar en la agenda de Google','[[MAILS]] para leer los mails nuevos importantes');
   tags.push('[[CARA|feliz o risa o enamorada o sorprendida o triste o preocupada o pensativa o guiño o canchera o confundida o emocionada o orgullosa]] tu cara mientras hablás');
@@ -2241,7 +2299,7 @@ document.addEventListener('click', e=>{
 // ---------------------------------------------------------------- ajustes: aparecen solo cuando tocás la pantalla
 function gearShow(){ const g=$('gear'); g.classList.add('on'); clearTimeout(gearShow.t); gearShow.t=setTimeout(()=>g.classList.remove('on'), 6000); }
 const setsOpen=()=>$('sets').classList.contains('on');
-function setsShow(on){ $('sets').classList.toggle('on', on); $('setBg').classList.toggle('on', on); $('gear').classList.remove('on'); if(on){ ambOff(); setsRender(); } state.lastUser=Date.now(); }
+function setsShow(on){ $('sets').classList.toggle('on', on); $('setBg').classList.toggle('on', on); $('gear').classList.remove('on'); if(on){ ambOff(); setsRender(); micMeter(); } state.lastUser=Date.now(); }
 function setsApply(){ document.body.classList.toggle('subs-big', S.subs==='grandes'); }
 function setsRender(){
   document.querySelectorAll('#sets .seg').forEach(g=>{ const v=String(S[g.dataset.k]); g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===v))); });
@@ -2250,7 +2308,8 @@ function setsRender(){
   n.textContent = S.voz==='tablet' ? 'La voz que trae la tablet. Elena es la misma voz natural que usa FRIDAY en la compu.'
     : !workerOn() ? 'Elena y Tomás llegan por el servicio de Cloudflare, que todavía no está armado: mientras, habla con la voz de la tablet.'
     : wv<2 ? 'Para Elena y Tomás hay que actualizar el código del servicio de Cloudflare (en el celu: Configurar la tablet → Cómo armarlo). Mientras, habla con la voz de la tablet.'
-    : Date.now()<tts.failUntil ? 'Elena no respondió recién: por unos minutos habla con la voz de la tablet.' : 'La misma voz natural que usa FRIDAY en la compu.';
+    : Date.now()<tts.failUntil ? `Elena no anduvo (${tts.err||'sin respuesta'}): por unos minutos habla con la voz de la tablet. Tocá «Probar la voz» para reintentar.` : 'La misma voz natural que usa FRIDAY en la compu.';
+  $('musNote').textContent = S.musicSrc==='spotify' ? (spOn() ? 'Con Spotify tiene que estar abierto en algún aparato (celu, compu o tele). Si no, suena igual con YouTube.' : 'Spotify no está conectado: se conecta desde el celu. Mientras, suena con YouTube.') : 'YouTube suena en la tablet (o en la tele) sin abrir nada más.';
   const tr=$('tvRow');
   if(S.tv && S.tv.screenId) tr.innerHTML=`<div><b>${esc(S.tv.name||'La tele')}</b><small>Vinculada. Decí «Friday, poné Soda Stereo en la tele».</small></div><button class="ghost" type="button" id="tvOff">Desvincular</button>`;
   else if(!workerOn() || wv<2) tr.innerHTML=`<div><b>La tele</b><small>${!workerOn()?'Necesita el servicio de Cloudflare (se arma desde el celu).':'Hay que actualizar el código del servicio de Cloudflare.'}</small></div>`;
@@ -2265,6 +2324,15 @@ function setsRender(){
   $('conns').innerHTML=C.map(([k,[c,t]])=>`<li><i class="${c}"></i><span>${k}</span><small>${esc(t)}</small></li>`).join('');
   $('setVer').textContent='FRIDAY Casa '+VERSION;
 }
+// el medidor del micrófono (mientras están abiertos los ajustes)
+function micMeter(){
+  clearInterval(micMeter.t); if(!setsOpen()) return;
+  micMeter.t=setInterval(()=>{ if(!setsOpen()){ clearInterval(micMeter.t); return; }
+    const full=0.06, lv=Math.min(1,(stt.level||0)/full), th=Math.min(1,micThr()/full);
+    $('micLv').style.width=(lv*100).toFixed(1)+'%'; $('micLv').classList.toggle('hot', (stt.level||0)>micThr()); $('micThr').style.left=(th*100).toFixed(1)+'%';
+    const L=Ear.last; $('micLast').textContent = !stt.on ? 'El micrófono no está andando: tocá «Volver a cargar» y dale permiso.' : L ? `Lo último que escuché (hace ${Math.max(1,Math.round((Date.now()-L.at)/1000))} s): «${L.t}»${L.ok?'':' — no era para mí (no oí «Friday»)'}` : 'Todavía no escuché nada. Decí «Friday».';
+  }, 120);
+}
 function setsInit(){
   setsApply();
   $('gear').onclick=()=>setsShow(true); $('setX').onclick=()=>setsShow(false); $('setBg').onclick=()=>setsShow(false);
@@ -2275,7 +2343,7 @@ function setsInit(){
       if(k==='subs') setsApply();
       if(k==='musicOut' && v==='tele' && !(S.tv && S.tv.screenId)) setTimeout(()=>{ if(workerOn() && (S.workerV||0)>=2) padShow(); }, 250);
       setsRender(); return; }
-    if(e.target.id==='vozTest'){ say(`Hola${S.name?', '+S.name:''}. Así sueno ahora. ¿Te gusta?`, 'happy'); setTimeout(setsRender, 2500); }
+    if(e.target.id==='vozTest'){ tts.failUntil=0; tts.err=''; tts.cache.clear(); say(`Hola${S.name?', '+S.name:''}. Así sueno ahora. ¿Te gusta?`, 'happy'); setTimeout(setsRender, 2500); setTimeout(setsRender, 6000); }
     else if(e.target.id==='tvLink') padShow();
     else if(e.target.id==='tvOff'){ S.tv=null; if(S.musicOut==='tele') S.musicOut='tablet'; saveS(); setsRender(); toast('La tele quedó desvinculada'); }
     else if(e.target.id==='setQR'){ setsShow(false); setupShow(true); }
@@ -2355,7 +2423,7 @@ function applyPanelCfg(v){
   if('worker' in v) S.worker=v.worker&&v.worker.url?v.worker:null;
   if('google' in v) S.google=v.google&&v.google.rt?v.google:null;
   if('spotify' in v) S.spotify=v.spotify&&v.spotify.rt?Object.assign(S.spotify||{}, v.spotify):null;
-  if(v.music) S.music=v.music;
+  if(v.music) S.musicSrc = v.music==='spotify' ? 'spotify' : 'youtube';
   saveS(); gapp.at=''; casa.at=0;
   setupCheck(); getWeather(true); casaLoad(true); agendaLoad(true); mailsLoad(true); wkPing();
   toast('✔ Configuración del celu recibida');
@@ -2385,7 +2453,9 @@ function setupCheck(){
 async function start(){
   $('tap').hidden=true; state.started=true;
   try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){}
+  try{ const el=voiceEl(); el.src=SILENCIO; const p=el.play(); if(p && p.catch) p.catch(()=>{}); }catch(e){}
   audioCtx(); await earStart(); renderStatus();
+  if(vozNube()) for(const t of ACKS) fetchTTS(t).catch(()=>{});
   try{ if('wakeLock' in navigator){ const w=await navigator.wakeLock.request('screen'); document.addEventListener('visibilitychange', async()=>{ if(!document.hidden) try{ await navigator.wakeLock.request('screen'); }catch(e){} }); } }catch(e){}
   greet();
 }

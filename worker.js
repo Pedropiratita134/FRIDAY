@@ -235,8 +235,11 @@ export default {
       try { return json({ ok: true, videos: await ytSearch(env, q) }); } catch (e) { return json({ ok: false, error: e.message }); }
     }
 
-    if (p === '/tts' && req.method === 'POST') {
-      let b = {}; try { b = await req.json(); } catch (e) { }
+    // (se puede probar desde el navegador: /tts?k=TU_CLAVE&text=Hola — tiene que sonar Elena)
+    if (p === '/tts') {
+      let b = {};
+      if (req.method === 'POST') { try { b = await req.json(); } catch (e) { } }
+      else b = { text: u.searchParams.get('text') || 'Hola, soy FRIDAY. Así sueno.', voz: u.searchParams.get('voz') || 'elena', rate: u.searchParams.get('rate') || '' };
       const text = String(b.text || '').slice(0, 1200).trim(), voz = VOCES[b.voz] || VOCES.elena;
       const rate = /^[+-]\d{1,2}%$/.test(b.rate || '') ? b.rate : '+8%';
       if (!text) return json({ ok: false, error: 'falta el texto' }, 400);
