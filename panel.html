@@ -192,6 +192,7 @@ body.subs-big .you{font-size:25px}
 .setup .sface{width:min(260px,30vh);margin-bottom:22px}
 .setup h1{margin:0 0 14px;font:600 54px/1.02 var(--disp);letter-spacing:-.02em;color:#2B241D}
 .setup p{margin:0 0 12px;font-size:22px;line-height:1.45;color:#5C4F42;max-width:30ch}
+.setup ol{margin:0;padding-left:1.2em;font-size:20px;line-height:1.45;color:#5C4F42;max-width:34ch}.setup ol li{margin-bottom:10px}.setup ol b{color:#2B241D}
 .setup .qrbox{justify-self:center;background:#fff;border-radius:36px;padding:30px 30px 22px;box-shadow:0 30px 70px -30px rgba(90,60,30,.5);text-align:center}
 .setup .qrbox svg,.setup .qrbox img{width:min(330px,42vh);height:auto;display:block;margin:0 auto}
 .setup .code{font:600 40px/1 var(--disp);letter-spacing:.12em;margin-top:18px;color:#2B241D}
@@ -244,8 +245,7 @@ body.night #face .skin-a{stop-color:#4C7FD9}body.night #face .skin-b{stop-color:
 .seg{display:flex;flex-wrap:wrap;gap:8px}
 .seg button{flex:1 1 auto;min-height:52px;padding:10px 16px;border-radius:16px;border:1px solid var(--edge);background:var(--card-2);font:500 17px var(--text);color:var(--ink);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
 .seg button[aria-pressed="true"]{background:var(--friday);border-color:var(--friday);color:#fff}
-.sets .ghost{margin-top:12px;min-height:50px;padding:10px 20px;border-radius:16px;border:1px solid color-mix(in srgb,var(--friday) 35%,transparent);background:none;color:var(--friday);font:600 17px var(--text);cursor:pointer}
-.sets .ghost+.ghost{margin-left:8px}
+.sets .ghost{margin:12px 8px 0 0;min-height:50px;padding:10px 20px;border-radius:16px;border:1px solid color-mix(in srgb,var(--friday) 35%,transparent);background:none;color:var(--friday);font:600 17px var(--text);cursor:pointer}
 .tvrow{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:14px;padding-top:14px;border-top:1px solid var(--edge)}
 .tvrow b{font:600 18px var(--disp)}.tvrow small{display:block;color:var(--ink-2);font-size:15px}
 .tvrow .ghost{margin-top:0;white-space:nowrap}
@@ -260,6 +260,11 @@ body.night #face .skin-a{stop-color:#4C7FD9}body.night #face .skin-b{stop-color:
 .conns i.ok{background:var(--leaf)}.conns i.warn{background:var(--lamp)}
 .conns span{flex:1}.conns small{color:var(--ink-2);font-size:15px;text-align:right}
 .sets .ver{color:var(--ink-3);font-size:14px;text-align:center;margin:22px 0 0}
+/* el mapa a pantalla completa */
+.mapa{position:fixed;inset:0;z-index:42;background:var(--wall-b)}.mapa[hidden]{display:none}
+.mapa iframe{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none}
+.mapa .mcap{position:absolute;left:24px;bottom:24px;max-width:min(560px,80vw);padding:16px 22px;border-radius:24px;background:var(--card);box-shadow:0 20px 50px -20px rgba(60,35,15,.5);border:1px solid var(--edge)}
+.mapa .mcap b{display:block;font:640 30px/1.1 var(--disp)}.mapa .mcap small{display:block;color:var(--ink-2);font-size:17px;margin-top:4px}.mapa .mcap span{display:block;color:var(--ink-3);font-size:14px;margin-top:8px}
 /* el teclado para el código de la tele */
 .pad{position:fixed;inset:0;z-index:60;display:grid;place-items:center;background:rgba(40,26,14,.4)}
 .pad[hidden]{display:none}
@@ -323,10 +328,10 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
   <div class="over"><div class="aclock" id="aClock"></div><div class="adate" id="aDate"></div><div class="awx" id="aWx"></div></div>
   <div class="anext" id="aNext"></div><div class="cap" id="skyCap"></div></div>
 <div class="setup" id="setup" hidden>
-  <div><div class="sface fface" id="sFace"></div><h1>Hola, soy FRIDAY.</h1>
-    <p>Voy a ser la pantalla de tu casa: me hablás y hago.</p>
-    <p>Para configurarme, escaneá este código con la cámara de tu celu. No hay que escribir nada acá.</p></div>
-  <div class="qrbox"><div id="qr"></div><div class="code" id="sCode"></div><div class="st" id="sSt">Esperando al celu…</div><button class="sclose" id="sClose" type="button" hidden>Listo</button></div>
+  <div><div class="sface fface" id="sFace"></div><h1 id="sH">Hola, soy FRIDAY.</h1>
+    <div id="sTxt"><p>Voy a ser la pantalla de tu casa: me hablás y hago.</p>
+    <p>Para configurarme, escaneá este código con la cámara de tu celu. No hay que escribir nada acá.</p></div></div>
+  <div class="qrbox"><div id="qr"></div><div class="code" id="sCode"></div><div class="st" id="sSt">Esperando al celu…</div><button class="sclose" id="sClose" type="button" hidden>Cancelar</button></div>
 </div>
 <button class="tap" id="tap" hidden><b>Tocá para empezar</b><span>Una sola vez. Después, decí «Friday» y lo que necesites.</span></button>
 <button class="gear" id="gear" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ajustes</button>
@@ -362,7 +367,8 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
       <p class="lbl">Mostrar el cielo cuando nadie le habla</p>
       <div class="seg" data-k="ambMin"><button type="button" data-v="2">A los 2 min</button><button type="button" data-v="5">A los 5 min</button><button type="button" data-v="15">A los 15 min</button><button type="button" data-v="0">Nunca</button></div></section>
     <section><h3>Conexiones</h3><ul class="conns" id="conns"></ul>
-      <button class="ghost" id="setQR" type="button">Configurar desde el celu</button><button class="ghost" id="setReload" type="button">Volver a cargar</button></section>
+      <p class="note" id="shareNote"></p>
+      <button class="ghost" id="setLink" type="button">Compartir con la compu y el celu</button><button class="ghost" id="setQR" type="button">Configurar desde el celu</button><button class="ghost" id="setReload" type="button">Volver a cargar</button></section>
     <p class="ver" id="setVer"></p>
   </div>
 </aside>
@@ -374,6 +380,7 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
   <div class="act"><button class="no" id="padNo" type="button">Cancelar</button><button class="go" id="padGo" type="button" disabled>Vincular</button></div>
   <div class="st" id="padSt"></div>
 </div></div>
+<div class="mapa" id="mapa" hidden><iframe id="mapF" title="Mapa" src="about:blank" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><div class="mcap"><b id="mapT"></b><small id="mapS"></small><span>Tocá para cerrar</span></div></div>
 <div class="toast" id="toast"></div>
 <script>
 'use strict';
@@ -1149,10 +1156,11 @@ async function sttSend(frames){
     const segs=Array.isArray(d.segments)?d.segments:[];
     if(segs.length && txt){
       const noVoz=segs.every(x=>(x.no_speech_prob||0)>0.55);
-      const dudoso=segs.reduce((a,x)=>a+(x.avg_logprob||0),0)/segs.length < -1.1 && txt.split(/\s+/).length<4;
+      const conf=segs.reduce((a,x)=>a+(x.avg_logprob||0),0)/segs.length; Ear.conf=conf;
+      const dudoso=conf < -1.1 && txt.split(/\s+/).length<4;
       if(noVoz || dudoso) txt='';
     }
-    stt.fails=0;
+    stt.fails=0; if(!segs.length) Ear.conf=0;
     Ear.sent++;
     if(!txt || WHISPER_JUNK.test(norm(txt))){ Ear.last={t:txt||'(nada claro)', at:Date.now(), ok:false}; h.onDrop(); return; }
     earHeard(txt);
@@ -1197,7 +1205,7 @@ async function earStart(){
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='2.3';
+const VERSION='2.4';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -1230,7 +1238,7 @@ const palette=()=>({idle:[47,107,227]});
 let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', wake:true, patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const saveS=()=>LS.set('cfg',S);
 let memory=LS.get('memory',[]), reminders=LS.get('rems',[]), compras=LS.get('compras',[]), notas=LS.get('notas',[]), cumplesP=LS.get('cumples',[]);
-let timers=LS.get('timers',[]), hist=LS.get('hist',[]), avisos=LS.get('avisos',[]);
+let timers=LS.get('timers',[]), hist=LS.get('hist',[]), avisos=LS.get('avisos',[]), autos=LS.get('autos',[]);
 let pcInfo=LS.get('pcInfo',{});   // lo que cuenta la compu cuando está: {agenda, cumples, envios, np, casa}
 const weather={data:LS.get('wx',null), at:0};
 const DEV=(()=>{ let d=LS.get('dev',null); if(!d){ d='pan'+Math.random().toString(36).slice(2,6); LS.set('dev',d); } return d; })();
@@ -1591,7 +1599,7 @@ Ear.hooks={
   onDrop:(err)=>{ youBars(false); if(state.mode==='listening'){ setMode('idle'); $('you').textContent=''; duck(false); } },
   onNotForMe:()=>{ youBars(false); if(state.mode==='listening') setMode('idle'); $('you').textContent=''; duck(false); },
   onJustName:()=>{ youBars(false); ambOff(); state.lastUser=Date.now(); const a=ACKS[ack.n++ % ACKS.length]; say(a, 'listening'); Ear.convoUntil=Date.now()+12000; $('you').innerHTML='<q>Friday</q>'; },
-  onText:(text)=>{ youBars(false); userSaid(text); }
+  onText:(text)=>{ youBars(false); userSaid(text, {dudoso:(Ear.conf||0)<-0.8}); }
 };
 const ack={n:0};
 let barsT=null;
@@ -1613,15 +1621,15 @@ function chime(kind){
 }
 
 // ---------------------------------------------------------------- lo que dijiste
-function userSaid(text){
+function userSaid(text, how){
   text=String(text).trim(); if(!text) return;
-  state.lastUser=Date.now(); ambOff(); bannerOff();
+  state.lastUser=Date.now(); ambOff(); bannerOff(); if(durmiendo()){ state.sleepUntil=0; LS.set('sleepUntil',0); }
   if(timerRinging()){ timerHush(); if(/^(ok|listo|ya|gracias|dale|para|basta|callate)\b/.test(norm(text))) { say('Listo.'); return; } }
   $('you').innerHTML='<q>'+esc(text)+'</q>';
   const nf=norm(text);
   focusFromText(nf);
   if(fast(text, nf)) return;
-  pushHist('user', text);
+  pushHist('user', how && how.dudoso ? text+' (se escuchó mal: si no tiene sentido, pedí que lo repita)' : text);
   brain(text);
 }
 function sayFast(text, reply, emo){ pushHist('user', text); say(reply, emo); }
@@ -1686,6 +1694,11 @@ function fast(text, nf){
   if(music.cur && /\b(pasa|pasala|trae|traela|traeme|volve|volvela|move|movela)\w*( la musica| el tema| la cancion| esto| eso)? (a|en|para) (la tablet|aca|este parlante)$/.test(n0)){ pushHist('user', text); musicMove('tablet').then(r=>{ say(r, /^Listo/.test(r)?'happy':'worried'); focusCard('mus'); }); return true; }
   const enTele=text.match(/^(?:friday,?\s*)?(?:pon[eé]|pon[eé]me|pon[eé]le|met[eé]|pas[aá])\s+(.+?)\s+en\s+la\s+(?:tele|tv|televisi[oó]n)[.!]*$/i);
   if(enTele && !/^(la musica|musica|algo)$/.test(norm(enTele[1]))){ pushHist('user', text); setMode('thinking'); focusCard('mus'); playMusic(enTele[1], '', 'tele').then(r=>{ setMode('idle'); say(r, 'excited'); }).catch(e=>{ setMode('idle'); say(e.message==='tele_apagada'?'La tele está apagada: prendela y pedímelo de nuevo.':'No pude: '+e.message+'.', 'worried'); }); return true; }
+  // a dormir
+  if(/^(buenas noches|me voy a dormir|nos vamos a dormir|modo noche|a dormir)( friday)?$/.test(n0)){ sayFast(text, `Que descanses${S.name?', '+S.name:''}. Mañana te cuento cómo arranca el día.`, 'sleepy'); dormir(); return true; }
+  if(!$('mapa').hidden && /^(cerra|saca|sacá|cerrá|chau|listo|ok)( el)?( mapa)?$/.test(n0)){ mapaOff(); sayFast(text, 'Listo.'); return true; }
+  // unirse a la compu y el celu
+  if(/\b(comparti|compartir|conecta|conectate|vincula|vinculate|une|unite)\w* (con )?(la compu|la computadora|la pc|el celu|el celular)\b/.test(nf)){ sayFast(text, 'Dale: en la compu escribí el código que te muestro.'); setTimeout(()=>setupShow(true,'link'), 1500); return true; }
   // configurar de nuevo (Cloudflare, Google, Spotify…) desde el celu
   if(/\b(configura|configurar|vincula|vincular)\w* (la tablet|el panel|a? ?friday)\b|\bmostra(me)? (el )?(codigo|qr)\b/.test(nf)){ sayFast(text, 'Dale: escaneá el código con el celu.'); setTimeout(()=>setupShow(true), 1500); return true; }
   // el cielo
@@ -1717,14 +1730,98 @@ function checkTimers(){
       showBanner('⏰', r.texto, 'Recordatorio', 15000);
       setTimeout(()=>say(`${S.name?S.name+', te':'Te'} recuerdo: ${r.texto}.`, 'surprised'), 1200);
       const rep=norm(r.rep||'');
-      if(/dia|diari/.test(rep)){ const d=new Date(at+86400000); r.at=isoLocal(d); r.fired=false; }
+      if(/habil/.test(rep)){ const d=new Date(at+86400000); while(d.getDay()===0||d.getDay()===6) d.setDate(d.getDate()+1); r.at=isoLocal(d); r.fired=false; }
+      else if(/dia|diari/.test(rep)){ const d=new Date(at+86400000); r.at=isoLocal(d); r.fired=false; }
       else if(/seman/.test(rep)){ const d=new Date(at+7*86400000); r.at=isoLocal(d); r.fired=false; }
       else r.done=true;
       LS.set('rems',reminders); try{ FSync.scan(); }catch(e){}
     }
   }
 }
-function addReminder(at, texto){ reminders.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), at:String(at).slice(0,16), texto, rep:null, done:false}); LS.set('rems',reminders); try{ FSync.scan(); }catch(e){} render(); }
+function addReminder(at, texto, rep){ at=String(at).trim().replace(' ','T'); const r=norm(rep||''); reminders.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), at:at.slice(0,16), texto, rep:/habil/.test(r)?'habiles':/seman/.test(r)?'semanal':/dia|diari|todos/.test(r)?'diario':null, done:false}); LS.set('rems',reminders); try{ FSync.scan(); }catch(e){} render(); }
+
+// ---------------------------------------------------------------- lo mismo que la FRIDAY de la compu: memoria, cumpleaños, rutinas, agenda
+// parecido entre dos textos (para "borrá el recordatorio del dentista")
+function simil(a,b){ const A=new Set(norm(a).split(' ').filter(w=>w.length>2)), B=new Set(norm(b).split(' ').filter(w=>w.length>2)); if(!A.size||!B.size) return 0; let n=0; for(const w of A) if(B.has(w)) n++; return n/Math.min(A.size,B.size); }
+function remBorrar(q){ const n=norm(q); const r=reminders.filter(x=>!x.done).find(x=>norm(x.texto).includes(n)||n.includes(norm(x.texto))) || reminders.filter(x=>!x.done).sort((a,b)=>simil(b.texto,q)-simil(a.texto,q)).find(x=>simil(x.texto,q)>=0.5);
+  if(!r) return false; reminders=reminders.filter(x=>x!==r); LS.set('rems',reminders); try{ FSync.scan(); }catch(e){} render(); return r; }
+function olvidar(q){ const n=norm(q), b=memory.length; memory=memory.filter(m=>!(norm(m).includes(n)||n.includes(norm(m))||simil(m,q)>=0.6)); if(memory.length!==b){ LS.set('memory',memory); try{ FSync.scan(); }catch(e){} return true; } return false; }
+function cumpleAdd(nombre, fecha){
+  const m=String(fecha||'').match(/(\d{1,2})\s*[\/\-. de]+\s*(\d{1,2}|[a-z]+)/i); if(!m || !nombre) return false;
+  const MES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  let mm=+m[2]; if(isNaN(mm)) mm=MES.findIndex(x=>norm(m[2]).startsWith(x.slice(0,3)))+1; const dd=+m[1]; if(!(mm>=1&&mm<=12&&dd>=1&&dd<=31)) return false;
+  const f=z2(mm)+'-'+z2(dd), n=String(nombre).trim();
+  const ex=cumplesP.find(c=>norm(c.n)===norm(n)); if(ex) ex.f=f; else cumplesP.push({id:'b'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), n, f});
+  LS.set('cumples',cumplesP); try{ FSync.scan(); }catch(e){} render(); return true;
+}
+// rutinas con horario (las mismas de la compu y el celu). Si la compu está prendida, las hace ella; si no, la tablet.
+const DIAS_N=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+function autoDias(t){ const n=norm(t||'todos'); const f=String(t||'').match(/\d{4}-\d{2}-\d{2}/); if(f) return f[0];
+  if(/manana/.test(n) && !/todas las mananas|cada manana/.test(n)){ const d=new Date(); d.setDate(d.getDate()+1); return isoLocal(d).slice(0,10); }
+  if(/^hoy$/.test(n)) return todayISO(); if(/habil|lunes a viernes|semana laboral|entre semana/.test(n)) return 'habiles'; if(/finde|fin de semana|sabados y domingos/.test(n)) return 'finde';
+  const ds=DIAS_N.map((d,i)=>n.includes(d.slice(0,5))?i:-1).filter(i=>i>=0); return ds.length?ds.join(','):'todos'; }
+function autoHoy(a, d){ d=d||new Date(); const w=d.getDay(), x=a.dias||'todos'; if(/^\d{4}-/.test(x)) return x===isoLocal(d).slice(0,10); if(x==='todos') return true; if(x==='habiles') return w>=1&&w<=5; if(x==='finde') return w===0||w===6; return x.split(',').map(Number).includes(w); }
+function autoCuando(a){ const x=a.dias||'todos'; const d=/^\d{4}-/.test(x)?new Date(x+'T12:00').toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'}):x==='todos'?'todos los días':x==='habiles'?'de lunes a viernes':x==='finde'?'los fines de semana':'los '+x.split(',').map(i=>DIAS_N[+i]).join(', '); return `${d} a las ${a.hora}`; }
+function autoSave(){ LS.set('autos',autos); try{ FSync.scan(); }catch(e){} render(); }
+function autoCrear(hora, dias, que){
+  const m=String(hora||'').match(/(\d{1,2})[:.h]?(\d{2})?/); if(!m || +m[1]>23) return null;
+  const a={id:'u'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), hora:z2(+m[1])+':'+(m[2]||'00'), dias:autoDias(dias), que:String(que||'').trim().slice(0,240), on:true};
+  if(!a.que) return null; const dup=autos.find(x=>x.hora===a.hora && x.dias===a.dias && norm(x.que)===norm(a.que)); if(dup) return dup;
+  autos.push(a); autoSave(); return a;
+}
+function autoFind(q){ const n=norm(q); return autos.find(a=>norm(a.que).includes(n)||n.includes(norm(a.que))) || autos.find(a=>simil(a.que,q)>=0.5) || autos.find(a=>a.hora===String(q).trim()); }
+function pcOnline(){ const p=sharePeers().pc; return !!(p && Date.now()-p.t<4*60000); }
+function autoTick(){
+  if(!autos.length || !state.started) return;
+  const now=new Date(), hm=now.getHours()*60+now.getMinutes(), last=LS.get('autoLast',{});
+  for(const a of autos){
+    if(a.on===false || last[a.id]===todayISO() || !autoHoy(a, now)) continue;
+    const [h,m]=a.hora.split(':').map(Number), t=h*60+m; if(!(hm>=t && hm-t<=10)) continue;
+    last[a.id]=todayISO(); LS.set('autoLast',last);
+    if(pcOnline()) continue;   // la compu está prendida: la hace ella
+    ambOff(); showBanner('⏱', a.que.slice(0,80), 'Rutina de las '+a.hora, 8000);
+    brain(null, `(Rutina programada que pidió el usuario; no lo dijo ahora) Son las ${a.hora}: "${a.que}". Hacelo ahora con tus marcas y decí en una o dos frases lo que hiciste.`);
+  }
+}
+// la compu hace lo que solo ella puede (la tele LG por wifi, su agenda si la tablet no tiene Google)
+const COMPU_OK=/^(tv_prender|tv_apagar|tv_volumen|tv_app|tv_hdmi|tv_pausa|tv_play|tv_youtube|tv_anunciar|evento|evento_borrar|evento_mover)$/;
+async function compuHacer(list){
+  list=list.filter(x=>COMPU_OK.test(x.accion)); if(!list.length) return 'Eso no lo puedo pedir a la compu.';
+  if(!pcDev()) return 'La tablet no está compartiendo con la compu: en Ajustes, «Compartir con la compu y el celu».';
+  const r=await pcActs(list); if(!r) return 'La compu no contestó (¿está prendida?).';
+  return (r.notes||[]).join(' ').slice(0,400) || 'Listo, lo hizo la compu.';
+}
+// agenda: borrar y mover (en tu Google; si la tablet no tiene Google, por la compu)
+function evFind(q){ const n=norm(q); return gapp.ev.find(e=>norm(e.t).includes(n)||n.includes(norm(e.t))) || gapp.ev.slice().sort((a,b)=>simil(b.t,q)-simil(a.t,q)).find(e=>simil(e.t,q)>=0.5); }
+async function agendaBorrar(q){
+  if(!googleOn()) return compuHacer([{accion:'evento_borrar', a1:q}]);
+  await agendaLoad(true); const e=evFind(q); if(!e || !e.id) return `No encontré "${q}" en la agenda.`;
+  await gfetch(`${API.cal}/calendars/primary/events/${encodeURIComponent(e.id)}`,{method:'DELETE'}); gapp.evAt=0; agendaLoad(true); return `Listo, borré "${e.t}".`;
+}
+async function agendaMover(q, cuando){
+  if(!googleOn()) return compuHacer([{accion:'evento_mover', a1:q, a2:cuando}]);
+  await agendaLoad(true); const e=evFind(q); if(!e || !e.id || e.d) return `No encontré "${q}" en la agenda.`;
+  const a0=new Date(e.i), dur=(e.f?new Date(e.f):new Date(a0.getTime()+3600000))-a0; let a=new Date(String(cuando).replace(' ','T'));
+  if(/^\d{1,2}:\d{2}$/.test(String(cuando).trim())){ a=new Date(a0); const [h,m]=cuando.split(':').map(Number); a.setHours(h,m,0,0); }
+  if(isNaN(a)) return 'No entendí para cuándo moverlo.';
+  const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;
+  await gfetch(`${API.cal}/calendars/primary/events/${encodeURIComponent(e.id)}`,{method:'PATCH', body:{start:{dateTime:isoLocal(a)+':00', timeZone:tz}, end:{dateTime:isoLocal(new Date(a.getTime()+dur))+':00', timeZone:tz}}});
+  gapp.evAt=0; agendaLoad(true); return `Listo, "${e.t}" quedó para el ${a.toLocaleDateString('es-AR',{weekday:'long', day:'numeric'})} a las ${hhmm(a)}.`;
+}
+// el mapa: a pantalla completa (OpenStreetMap, gratis)
+async function mapaShow(lugar, dato){
+  let r=null; try{ const d=await (await fetch('https://nominatim.openstreetmap.org/search?'+new URLSearchParams({format:'json', limit:'1', 'accept-language':'es', q:lugar}))).json(); r=d&&d[0]; }catch(e){}
+  if(!r) return false;
+  const lat=+r.lat, lon=+r.lon, bb=r.boundingbox?r.boundingbox.map(Number):[lat-.02,lat+.02,lon-.03,lon+.03];
+  const pad=Math.max(.004,(bb[1]-bb[0])*.15), padx=Math.max(.006,(bb[3]-bb[2])*.15);
+  $('mapF').src=`https://www.openstreetmap.org/export/embed.html?bbox=${bb[2]-padx},${bb[0]-pad},${bb[3]+padx},${bb[1]+pad}&layer=mapnik&marker=${lat},${lon}`;
+  $('mapT').textContent=lugar.charAt(0).toUpperCase()+lugar.slice(1); $('mapS').textContent=dato||String(r.display_name||'').split(',').slice(1,3).join(',').trim();
+  ambOff(); $('mapa').hidden=false; clearTimeout(mapaShow.t); mapaShow.t=setTimeout(mapaOff, 90000); return true;
+}
+function mapaOff(){ $('mapa').hidden=true; $('mapF').src='about:blank'; }
+// modo noche: no habla avisos (salvo los urgentes) y muestra el cielo hasta la mañana
+function dormir(){ const d=new Date(); d.setHours(7,0,0,0); if(d<=new Date()) d.setDate(d.getDate()+1); state.sleepUntil=d.getTime(); LS.set('sleepUntil',state.sleepUntil); setTimeout(()=>ambOn(true), 3500); }
+const durmiendo=()=>Date.now()<(state.sleepUntil||LS.get('sleepUntil',0));
 
 // ---------------------------------------------------------------- compras y notas
 function shopSave(){ LS.set('compras',compras); try{ FSync.scan(); }catch(e){} render(); }
@@ -1742,7 +1839,7 @@ function bannerOff(){ $('banner').classList.remove('on'); }
 function addAviso(a, speak){
   avisos.push({i:a.i||'🔔', t:String(a.t||'').slice(0,90), s:String(a.s||'').slice(0,90), at:Date.now()}); avisos=avisos.filter(x=>Date.now()-x.at<24*3600000).slice(-8); LS.set('avisos',avisos);
   ambOff(); chime('aviso'); showBanner(a.i, a.t, a.s); render(); focusCard('hoy');
-  const h=new Date().getHours(), noche=h>=23||h<7;
+  const h=new Date().getHours(), noche=h>=23||h<7||durmiendo();
   if(speak && a.v && (!noche || a.u)) setTimeout(()=>{ if(!speakingNow()) say(a.v, a.u?'surprised':'happy'); }, 1400);
 }
 
@@ -2067,9 +2164,9 @@ async function agendaLoad(force){
   if(!googleOn()){ if(pcInfo.agenda) { gapp.ev=(pcInfo.agenda.ev||[]).map(e=>({t:e.t, i:e.i, d:!!e.d, l:e.l||''})); render(); } return gapp.ev; }
   if(!force && Date.now()-gapp.evAt<10*60000) return gapp.ev;
   try{
-    const t0=new Date(); t0.setHours(0,0,0,0); const t1=new Date(t0.getTime()+3*86400000);
-    const d=await gfetch(`${API.cal}/calendars/primary/events?`+new URLSearchParams({timeMin:t0.toISOString(), timeMax:t1.toISOString(), singleEvents:'true', orderBy:'startTime', maxResults:'15'}));
-    gapp.ev=(d.items||[]).filter(e=>e.status!=='cancelled').map(e=>({t:e.summary||'(sin título)', i:e.start.dateTime||e.start.date, d:!e.start.dateTime, l:String(e.location||'').split(',')[0]}));
+    const t0=new Date(); t0.setHours(0,0,0,0); const t1=new Date(t0.getTime()+8*86400000);
+    const d=await gfetch(`${API.cal}/calendars/primary/events?`+new URLSearchParams({timeMin:t0.toISOString(), timeMax:t1.toISOString(), singleEvents:'true', orderBy:'startTime', maxResults:'30'}));
+    gapp.ev=(d.items||[]).filter(e=>e.status!=='cancelled').map(e=>({id:e.id, t:e.summary||'(sin título)', i:e.start.dateTime||e.start.date, f:(e.end&&(e.end.dateTime||e.end.date))||'', d:!e.start.dateTime, l:String(e.location||'').split(',')[0]}));
     gapp.evAt=Date.now(); gapp.err=''; LS.set('gEv',gapp.ev);
   }catch(e){ gapp.err=e.message; }
   render(); return gapp.ev;
@@ -2077,7 +2174,7 @@ async function agendaLoad(force){
 function agendaText(cuando){
   const now=new Date(), d0=new Date(now); d0.setHours(0,0,0,0);
   const dayOf=e=>{ const x=new Date(e.d?e.i+'T00:00':e.i); x.setHours(0,0,0,0); return Math.round((x-d0)/86400000); };
-  const want=/manana/.test(norm(cuando||''))?[1]:/seman/.test(norm(cuando||''))?[0,1,2]:[0];
+  const want=/manana/.test(norm(cuando||''))?[1]:/seman/.test(norm(cuando||''))?[0,1,2,3,4,5,6]:[0];
   const ev=gapp.ev.filter(e=>want.includes(dayOf(e)));
   if(!ev.length) return want.length>1?'No hay nada en la agenda estos días.':want[0]===1?'Mañana no hay nada en la agenda.':'Hoy no hay nada en la agenda.';
   return ev.map(e=>{ const k=dayOf(e), dia=k===0?'hoy':k===1?'mañana':'pasado mañana'; return e.d?`${dia} todo el día: ${e.t}`:`${dia} a las ${hhmm(new Date(e.i))}: ${e.t}${e.l?' en '+e.l:''}`; }).join('; ')+'.';
@@ -2137,11 +2234,16 @@ function prompt(){
   if(music.cur) L.push(`Música: ${music.cur.playing===false?'en pausa':'sonando'} "${music.cur.title}"${music.cur.artist?' de '+music.cur.artist:''} (${music.cur.src}).`);
   const cs=cumplesProx(); if(cs.length) L.push('Cumpleaños próximos: '+cs.map(c=>`${c.n} (${c.dias===0?'HOY':c.dias===1?'mañana':'en '+c.dias+' días'})`).join(', '));
   if(memory.length) L.push('Lo que sabés de la familia: '+memory.slice(-25).join('; '));
-  const tags=['[[TIMER|segundos|para qué]]','[[RECORDAR|AAAA-MM-DDTHH:MM|qué]]','[[COMPRAS|agregar o quitar o tachar o vaciar|cosa; cosa]]','[[NOTA|texto]] (nota visible en la tablet)','[[MEMORIA|dato importante y duradero de la familia]]'];
+  if(autos.length) L.push('Rutinas con horario (compartidas con la compu y el celu): '+autos.map(a=>`${autoCuando(a)}: ${a.que}${a.on===false?' (pausada)':''}`).join(' · '));
+  const env=Object.values(pcInfo.envios||{}).filter(e=>e && e.s!=='entregado'); if(env.length) L.push('Envíos en camino: '+env.map(e=>`${e.q} (${e.t||''}${e.f?', llega '+e.f:''})`).join('; '));
+  L.push('Lo que te dicen llega de un reconocimiento de voz y a veces viene con palabras cambiadas. Si algo no tiene sentido, interpretá lo más probable según el contexto (las luces, la música, timers, la lista, la agenda). Si de verdad no se entiende, no inventes ni hagas nada: pedí que lo repita, en una frase corta.');
+  const tags=['[[TIMER|segundos|para qué]]','[[RECORDAR|AAAA-MM-DDTHH:MM|qué|diario o semanal o habiles (solo si se repite)]] (recordatorio: suena en la tablet, la compu y el celu)','[[RECORDATORIO_BORRAR|de qué era]]','[[COMPRAS|agregar o quitar o tachar o vaciar|cosa; cosa]]','[[NOTA|texto]] (nota de la casa, se ve en la tablet, la compu y el celu)','[[MEMORIA|dato importante y duradero de la familia]]','[[OLVIDAR|el dato viejo]]','[[CUMPLE|nombre|DD/MM]]','[[AUTOMATIZAR|HH:MM|todos o habiles o finde o lunes,martes… o AAAA-MM-DD|qué hacer, en palabras]] (rutina que se repite a una hora; avisar algo es RECORDAR)','[[AUTOMATIZAR_BORRAR|cuál]]','[[MAPA|lugar lo más preciso posible|dato breve]] (muestra el mapa a pantalla completa)','[[DORMIR]] (cuando se van a dormir: modo noche hasta la mañana)'];
   if(casa.devs.length) tags.push('[[CASA|qué aparato|prender o apagar o brillo 40 o color azul o blanco cálido o limpiar]]');
   tags.push('[[MUSICA|qué poner|tema o artista o disco o playlist|tele o spotify (solo si lo pidió; si no, dejalo vacío: suena con YouTube)]]'+(teleOn()?' (hay una tele vinculada: si pide la música "en la tele", poné tele)':''),'[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
   tags.push('[[BUSCAR|consulta]] para datos actuales (resultados, precios, horarios, noticias de algo puntual): no inventes','[[NOTICIAS]] para los titulares de hoy');
-  if(googleOn()) tags.push('[[EVENTO|título|AAAA-MM-DDTHH:MM|minutos]] para anotar en la agenda de Google','[[MAILS]] para leer los mails nuevos importantes');
+  if(googleOn() || pcDev()) tags.push('[[EVENTO|título|AAAA-MM-DDTHH:MM|minutos]] para anotar en la agenda','[[EVENTO_BORRAR|cuál]]','[[EVENTO_MOVER|cuál|AAAA-MM-DDTHH:MM o HH:MM]]');
+  if(googleOn()) tags.push('[[MAILS]] para leer los mails nuevos importantes');
+  if(pcDev()) tags.push('[[TELE_LG|prender o apagar o volumen 0-100 o subir o bajar o app Netflix o hdmi 2 o anunciar texto]] (la tele LG la maneja la compu, tiene que estar prendida)');
   tags.push('[[CARA|feliz o risa o enamorada o sorprendida o triste o preocupada o pensativa o guiño o canchera o confundida o emocionada o orgullosa]] tu cara mientras hablás');
   L.push('Para hacer cosas agregá marcas al final de tu respuesta (no se leen en voz alta): '+tags.join(' · ')+'. Usalas solo si hace falta, y confirmá en una frase corta lo que hiciste. Si no podés algo, decilo sin vueltas.');
   return L.join('\n');
@@ -2202,7 +2304,19 @@ async function brain(text, extra, depth=0){
     try{
       if(t.k==='CARA') faceSet(t.a[0], 4000);
       else if(t.k==='TIMER'){ const s=+t.a[0]||durFrom(norm(t.a[0])); if(s) addTimer(s, t.a[1]||''); }
-      else if(t.k==='RECORDAR'){ if(t.a[0] && t.a[1]) addReminder(t.a[0], t.a[1]); }
+      else if(t.k==='RECORDAR'){ if(t.a[0] && t.a[1]) addReminder(t.a[0], t.a[1], t.a[2]); }
+      else if(t.k==='RECORDATORIO_BORRAR'){ const r=remBorrar(t.a.join(' ')); if(!r) notes.push(`No encontraste el recordatorio "${t.a[0]}".`); }
+      else if(t.k==='OLVIDAR') olvidar(t.a.join(' '));
+      else if(t.k==='CUMPLE'){ if(!cumpleAdd(t.a[0], t.a[1])) notes.push('No entendiste la fecha del cumpleaños.'); }
+      else if(t.k==='AUTOMATIZAR'){ const a=autoCrear(t.a[0], t.a[1], t.a.slice(2).join(' | ')); if(a) toast(`⏱ Rutina: ${autoCuando(a)}: ${a.que}`, 5000); else notes.push('No entendiste la hora de la rutina.'); }
+      else if(t.k==='AUTOMATIZAR_BORRAR'){ const a=autoFind(t.a.join(' ')); if(a){ autos=autos.filter(x=>x!==a); autoSave(); } else notes.push('No encontraste esa rutina.'); }
+      else if(t.k==='EVENTO_BORRAR') notes.push(await agendaBorrar(t.a.join(' ')));
+      else if(t.k==='EVENTO_MOVER') notes.push(await agendaMover(t.a[0], t.a[1]));
+      else if(t.k==='MAPA'){ if(!await mapaShow(t.a[0], t.a[1])) notes.push(`No encontraste "${t.a[0]}" en el mapa.`); }
+      else if(t.k==='DORMIR') dormir();
+      else if(t.k==='TELE_LG'){ const q=norm(t.a.join(' ')), n=(q.match(/\d+/)||[])[0];
+        const acc = /apag/.test(q)?{accion:'tv_apagar'} : /prend|encend/.test(q)?{accion:'tv_prender'} : /volu|subi|baja|silen/.test(q)?{accion:'tv_volumen', a1:n||(/subi/.test(q)?'subir':/silen/.test(q)?'silencio':'bajar')} : /hdmi|entrada/.test(q)?{accion:'tv_hdmi', a1:n||'1'} : /anunci|avis|mensaje/.test(q)?{accion:'tv_anunciar', a1:t.a.slice(1).join(' ')||t.a[0]} : {accion:'tv_app', a1:t.a.slice(1).join(' ')||t.a[0].replace(/^app\s*/i,'')};
+        notes.push('La compu: '+await compuHacer([acc])); }
       else if(t.k==='COMPRAS'){ const op=norm(t.a[0]), items=(t.a[1]||'').split(/;|,/).map(s=>s.trim()).filter(Boolean); if(/vaci/.test(op)){ compras=[]; shopSave(); } else if(/quit|saca|borr/.test(op)) shopDel(items); else if(/tach|compr/.test(op)){ for(const x of compras) if(items.some(i=>norm(x.t).includes(norm(i)))) x.h=true; shopSave(); } else shopAdd(items); }
       else if(t.k==='NOTA') addNota(t.a[0]);
       else if(t.k==='MEMORIA'){ const d=t.a[0]; if(d && !memory.some(m=>norm(m)===norm(d))){ memory.push(d); memory=memory.slice(-80); LS.set('memory',memory); try{ FSync.scan(); }catch(e){} } }
@@ -2211,7 +2325,7 @@ async function brain(text, extra, depth=0){
       else if(t.k==='MUSICA_CTRL') await musicCtrl(t.a[0], t.a[1]);
       else if(t.k==='BUSCAR'){ const r=await search(t.a[0]); notes.push(r?`Lo que encontraste sobre "${t.a[0]}": ${r}`:`No encontraste nada sobre "${t.a[0]}": decilo, no inventes.`); }
       else if(t.k==='NOTICIAS'){ const n=await news(); notes.push(n.length?'Titulares de hoy: '+n.join(' | '):'No pude traer las noticias.'); }
-      else if(t.k==='EVENTO'){ await agendaAdd(t.a[0], t.a[1], t.a[2]); focusCard('hoy'); }
+      else if(t.k==='EVENTO'){ if(googleOn()) await agendaAdd(t.a[0], t.a[1], t.a[2]); else notes.push('La compu: '+await compuHacer([{accion:'evento', a1:String(t.a[1]||'').replace('T',' '), a2:t.a[0], a3:t.a[2]||'60'}])); focusCard('hoy'); }
       else if(t.k==='MAILS'){ const m=await mailsLoad(true); notes.push(m.length?'Mails nuevos: '+m.map(x=>`de ${x.de}: ${x.asunto} (${x.snip})`).join(' | '):'No hay mails nuevos importantes.'); }
       else if(t.k==='AGENDA'){ await agendaLoad(true); notes.push('Agenda: '+agendaText(t.a[0])); }
     }catch(e){ notes.push(`No pudiste hacer ${t.k.toLowerCase()}: ${e.message==='sin_spotify_abierto'?'Spotify no está abierto en ningún aparato':e.message==='tele_apagada'?'la tele está apagada (hay que prenderla)':e.message}`); }
@@ -2224,9 +2338,15 @@ async function brain(text, extra, depth=0){
 }
 
 // ---------------------------------------------------------------- cumpleaños
+// fechas de cumpleaños: "AAAA-MM-DD" (Google), "MM-DD" (como las guarda la compu) o "DD/MM" (como se dice)
+function cumpleMD(f){ f=String(f||'').trim(); let m;
+  if((m=f.match(/^\d{4}-(\d{2})-(\d{2})/))) return [+m[1], +m[2]];
+  if((m=f.match(/^(\d{1,2})-(\d{1,2})$/))) return [+m[1], +m[2]];
+  if((m=f.match(/^(\d{1,2})\/(\d{1,2})/))) return [+m[2], +m[1]];
+  return null; }
 function cumplesProx(){
   const all=[...cumplesP.map(c=>({n:c.n, f:c.f})), ...((pcInfo.cumples||[]).map(c=>({n:c[0], f:c[1]})))], out=[], t0=new Date(); t0.setHours(0,0,0,0);
-  for(const c of all){ const m=String(c.f||'').match(/(\d{1,2})[\/-](\d{1,2})|\d{4}-(\d{2})-(\d{2})/); if(!m) continue; const dd=+(m[1]||m[4]), mm=+(m[2]||m[3]);
+  for(const c of all){ const md=cumpleMD(c.f); if(!md) continue; const [mm,dd]=md;
     let d=new Date(t0.getFullYear(), mm-1, dd); if(d<t0) d=new Date(t0.getFullYear()+1, mm-1, dd); const dias=Math.round((d-t0)/86400000); if(dias<=7 && !out.some(x=>x.n===c.n)) out.push({n:c.n, dias}); }
   return out.sort((a,b)=>a.dias-b.dias);
 }
@@ -2243,6 +2363,8 @@ const IC={
   bell:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 16V11a6 6 0 1 1 12 0v5l1.5 2h-15zM10 20a2 2 0 0 0 4 0"/></svg>',
   note:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M5 4h14v11l-5 5H5z"/><path d="M14 20v-5h5"/></svg>',
   mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M4 7l8 6 8-6"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>',
+  box:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8l8-4 8 4v8l-8 4-8-4z"/><path d="M4 8l8 4 8-4M12 12v8"/></svg>',
   cake:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 20h16v-7H4zM4 15c2 1.5 4 1.5 5.3 0 1.3 1.5 4 1.5 5.4 0 1.3 1.5 3.3 1.5 5.3 0M12 13V9M12 6V5"/></svg>'
 };
 function render(){
@@ -2266,6 +2388,8 @@ function renderHoy(now){
   const items=[];
   for(const e of gapp.ev){ const at=new Date(e.d?e.i+'T00:00':e.i); if(e.d ? at>=t0 : at.getTime()>Date.now()-30*60000) items.push({at, d:e.d, t:e.t, sub:e.l||'', ic:''}); }
   for(const r of reminders) if(!r.done && r.at && new Date(r.at)>now && new Date(r.at)-now<36*3600000) items.push({at:new Date(r.at), t:r.texto, sub:'Recordatorio', ic:IC.bell});
+  for(const a of autos) if(a.on!==false && autoHoy(a, now)){ const [h,m]=a.hora.split(':').map(Number), at=new Date(now); at.setHours(h,m,0,0); if(at>now) items.push({at, t:a.que, sub:'Rutina', ic:IC.clock}); }
+  for(const e of Object.values(pcInfo.envios||{})) if(e && e.f===todayISO() && e.s!=='entregado') rows.push(`<div class="row"><span class="k">${IC.box}</span><span>Hoy llega: ${esc(e.q)}<small>${esc(e.t||'')}</small></span><i></i></div>`);
   items.sort((a,b)=>a.at-b.at);
   for(const e of items.slice(0,4)){ const k=Math.round((new Date(e.at).setHours(0,0,0,0)-t0)/86400000), dia=k===1?'Mañana':'', sub=[dia,e.sub].filter(Boolean).join(' · ');
     rows.push(`<div class="row"><time>${e.d?(k===0?'Hoy':'Mañ.'):hhmm(e.at)}</time><span>${esc(e.t)}${sub?`<small>${esc(sub)}</small>`:''}</span>${e.ic?`<span class="k">${e.ic}</span>`:'<i></i>'}</div>`); }
@@ -2308,7 +2432,7 @@ document.addEventListener('click', e=>{
   const s=e.target.closest && e.target.closest('[data-shop]');
   if(s){ const x=compras.find(y=>y.id===s.dataset.shop); if(x){ x.h=!x.h; shopSave(); } return; }
   if(e.target.closest && e.target.closest('#face')){ if(speakingNow()) stopTalk(); else { Ear.convoUntil=Date.now()+12000; chime('up'); faceSet('listening',3000); toast('Te escucho: hablame sin decir «Friday»'); } return; }
-  if(e.target.closest && e.target.closest('#sets,#setBg,#tvPad,#gear,#tap,#setup,button,a')) return;
+  if(e.target.closest && e.target.closest('#sets,#setBg,#tvPad,#gear,#tap,#setup,#mapa,button,a')) return;
   gearShow();
 });
 
@@ -2338,7 +2462,11 @@ function setsRender(){
     ['Google', googleOn() ? (gapp.err?['warn',gapp.err.slice(0,40)]:['ok','Agenda y mails']) : ['','Sin conectar']],
     ['Spotify', spOn() ? ['ok','Conectado'] : ['','Sin conectar']],
     ['La tele', S.tv && S.tv.screenId ? ['ok', S.tv.name||'Vinculada'] : ['','Sin vincular']],
-    ['La compu', pcT && Date.now()-pcT<10*60000 ? ['ok','En línea'] : ['','No hace falta']]];
+    ['La compu', pcT && Date.now()-pcT<10*60000 ? ['ok','En línea'] : sharePeers().pc ? ['','Apagada'] : ['warn','Sin compartir']],
+    ['El celu', sharePeers().cel.length ? ['ok', sharePeers().cel.length>1?sharePeers().cel.length+' celus':'Compartiendo'] : ['','Sin compartir']]];
+  const sp=sharePeers(), con=[sp.pc?'la compu':'', sp.cel.length?'el celu':''].filter(Boolean);
+  $('shareNote').className='note'+(con.length?'':' warn');
+  $('shareNote').textContent = con.length ? `Comparte la agenda, las compras, los recordatorios, las rutinas y las notas con ${con.join(' y ')}.` : 'La tablet todavía no comparte nada con la compu ni con el celu. Tocá «Compartir con la compu y el celu».';
   $('conns').innerHTML=C.map(([k,[c,t]])=>`<li><i class="${c}"></i><span>${k}</span><small>${esc(t)}</small></li>`).join('');
   $('setVer').textContent='FRIDAY Casa '+VERSION;
 }
@@ -2366,6 +2494,7 @@ function setsInit(){
     else if(e.target.id==='tvLink') padShow();
     else if(e.target.id==='tvOff'){ S.tv=null; if(S.musicOut==='tele') S.musicOut='tablet'; saveS(); setsRender(); toast('La tele quedó desvinculada'); }
     else if(e.target.id==='setQR'){ setsShow(false); setupShow(true); }
+    else if(e.target.id==='setLink'){ setsShow(false); setupShow(true, 'link'); }
     else if(e.target.id==='setReload') location.reload();
   });
   // el teclado del código de la tele (en la tablet no hace falta el teclado del sistema)
@@ -2411,6 +2540,7 @@ function syncLocal(){
   for(const x of compras) o['l:'+x.id]={t:x.t, h:!!x.h};
   for(const c of cumplesP) o['b:'+c.id]={n:c.n, f:c.f};
   for(const n of notas) o['o:'+n.id]={t:n.t, at:n.at};
+  for(const a of autos) o['u:'+a.id]={hora:a.hora, dias:a.dias, que:a.que, on:a.on!==false};
   return o;
 }
 function syncApply(changes){
@@ -2421,6 +2551,8 @@ function syncApply(changes){
     else if(k==='r'){ const i=reminders.findIndex(r=>String(r.id)===key); if(c.d){ if(i>=0) reminders.splice(i,1); } else if(v){ const r={id:key, at:v.at, texto:v.texto, rep:v.rep, done:!!v.done, push:!!v.push}; if(i>=0) reminders[i]=Object.assign(reminders[i], r); else reminders.push(r); } LS.set('rems',reminders); ch=true; }
     else if(k==='l'){ const i=compras.findIndex(x=>String(x.id)===key); if(c.d){ if(i>=0) compras.splice(i,1); } else if(v){ if(i>=0) Object.assign(compras[i],{t:v.t, h:!!v.h}); else compras.push({id:key, t:v.t, h:!!v.h}); } LS.set('compras',compras); ch=true; }
     else if(k==='b'){ const i=cumplesP.findIndex(x=>x.id===key); if(c.d){ if(i>=0) cumplesP.splice(i,1); } else if(v){ if(i>=0) cumplesP[i]={id:key, n:v.n, f:v.f}; else cumplesP.push({id:key, n:v.n, f:v.f}); } LS.set('cumples',cumplesP); ch=true; }
+    else if(k==='u'){ const i=autos.findIndex(x=>x.id===key); if(c.d){ if(i>=0) autos.splice(i,1); } else if(v && v.hora && v.que){ const a={id:key, hora:v.hora, dias:v.dias, que:v.que, on:v.on!==false}; if(i>=0) autos[i]=a; else autos.push(a); } LS.set('autos',autos); ch=true; }
+    else if(k==='e'){ pcInfo.envios=pcInfo.envios||{}; if(c.d) delete pcInfo.envios[key]; else if(v) pcInfo.envios[key]=v; ch=true; }
     else if(k==='o'){ const i=notas.findIndex(x=>x.id===key); if(c.d){ if(i>=0) notas.splice(i,1); } else if(v){ if(i>=0) notas[i]={id:key, t:v.t, at:v.at}; else notas.push({id:key, t:v.t, at:v.at}); } LS.set('notas',notas); ch=true; }
     else if(c.d){ if(c.id==='c:np'){ delete pcInfo.np; ch=true; } }
     else if(c.id==='x:panel') applyPanelCfg(v);
@@ -2450,17 +2582,34 @@ function applyPanelCfg(v){
 
 // ---------------------------------------------------------------- primera vez: QR para configurar desde el celu
 function setupUrl(code){ return location.href.replace(/[#?].*$/,'').replace(/[^\/]*$/,'')+'tablet.html#inv='+code; }
-function setupShow(force){
-  setupShow.force=!!force; $('sClose').hidden=!force;
+const SETUP_TXT=$('sTxt') ? $('sTxt').innerHTML : '';
+// mode 'link': unir la tablet al grupo de la compu y el celu (así comparten agenda, compras, recordatorios, notas…)
+function setupShow(force, mode){
+  setupShow.force=!!force; setupShow.mode=mode||''; $('sClose').hidden=!force;
   $('setup').hidden=false; $('tap').hidden=true;
   let inv=LS.get('invite',null); if(!inv || Date.now()-inv.at>20*60000){ inv={c:FSync.newInvite(), at:Date.now()}; LS.set('invite',inv); }
-  const url=setupUrl(inv.c);
-  $('sCode').innerHTML=`${inv.c.replace(/(.{4})(?=.)/,'$1-')}<small>Si no podés escanear: en el celu abrí ${esc(url.replace(/^https?:\/\//,'').replace(/#.*$/,''))} y escribí este código</small>`;
+  const url=setupUrl(inv.c), code=inv.c.replace(/(.{4})(?=.)/,'$1-');
+  if(mode==='link'){
+    $('sH').textContent='Compartir con la compu y el celu';
+    $('sTxt').innerHTML=`<ol><li>En la <b>compu</b>: FRIDAY → Ajustes → <b>Celular</b> → «¿Tenés la tablet de FRIDAY mostrando un código?» y escribí <b>${esc(code)}</b>.</li><li>O en el <b>celu</b>, con FRIDAY Móvil: escaneá este QR con la cámara.</li></ol><p>Después la agenda, las compras, los recordatorios, las notas y lo que FRIDAY sabe de ustedes son los mismos en todos lados.</p>`;
+  } else { $('sH').textContent='Hola, soy FRIDAY.'; $('sTxt').innerHTML=SETUP_TXT; }
+  $('sCode').innerHTML=`${code}<small>Si no podés escanear: en el celu abrí ${esc(url.replace(/^https?:\/\//,'').replace(/#.*$/,''))} y escribí este código</small>`;
   try{ $('qr').innerHTML=QR.svg(url); }catch(e){ $('qr').innerHTML=`<p style="max-width:320px;word-break:break-all">${esc(url)}</p>`; }
   if(!$('sFace').innerHTML){ faceBuild($('sFace')); faceApply(); }
+  $('sSt').textContent = mode==='link' ? 'Esperando a la compu o al celu…' : 'Esperando al celu…';
   if(FSync.on() && !force) $('sSt').textContent='Conectada con tu celu. Esperando la configuración…';
-  else FSync.waitInvite(inv.c, API.ntfy, ()=>{ $('sSt').textContent='✔ ¡Conectada con tu celu! Esperando la configuración…'; LS.set('invite',null); setTimeout(()=>FSync.poll(), 1200); });
+  else FSync.waitInvite(inv.c, API.ntfy, ()=>{
+    LS.set('invite',null); setTimeout(()=>FSync.poll(), 1200);
+    if(setupShow.mode==='link'){ LS.set('linked',Date.now()); $('sSt').textContent='✔ ¡Listo! Ahora comparte todo con la compu y el celu.'; setTimeout(()=>{ $('setup').hidden=true; setupShow.force=false; say('Listo, ahora comparto todo con la compu y el celu.', 'happy'); setTimeout(()=>{ FSync.scan(); FSync.flush && FSync.flush(); }, 3000); }, 2500); }
+    else $('sSt').textContent='✔ ¡Conectada con tu celu! Esperando la configuración…';
+  });
   clearTimeout(setupShow.t); setupShow.t=setTimeout(()=>{ if(!$('setup').hidden && !FSync.on()) location.reload(); }, 19*60000);
+}
+// ¿con quién comparte? (la compu y los celus que están en el mismo grupo)
+function sharePeers(){
+  const ps=Object.entries((FSync.st&&FSync.st.peers)||{}), out={pc:null, cel:[]};
+  for(const [d,p] of ps){ if(d.startsWith('pc')) { if(!out.pc || p.t>out.pc.t) out.pc=p; } else if(d.startsWith('cel')) out.cel.push(p); }
+  return out;
 }
 function setupCheck(){
   if(!S.groqKey && !S.gemKey){ setupShow(); return false; }
@@ -2493,13 +2642,14 @@ function greet(){
 async function boot(){
   faceBuild($('face')); faceSet('idle'); faceBlink(); applyLight(); render();
   try{ if(navigator.serviceWorker && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o'], pollMs:60000, live:true,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o','u'], pollMs:60000, live:true,
     local:syncLocal, apply:syncApply, onMsg, onStatus:renderStatus });
   if(setupCheck()) $('tap').hidden=false;
-  getWeather(); casaLoad(); agendaLoad(); mailsLoad(); wkPing(); setsInit();
-  $('tap').onclick=start; $('sClose').onclick=()=>{ $('setup').hidden=true; setupShow.force=false; };
+  getWeather(); casaLoad(); agendaLoad(); mailsLoad(); wkPing(); setsInit(); state.sleepUntil=LS.get('sleepUntil',0);
+  $('mapa').onclick=mapaOff;
+  $('tap').onclick=start; $('sClose').onclick=()=>{ $('setup').hidden=true; setupShow.force=false; if(!state.started) $('tap').hidden=false; };
   setInterval(()=>{ render(); checkTimers(); if(amb.on) ambTick(); }, 1000);
-  setInterval(()=>{ applyLight(); agendaCheck(); }, 30000);
+  setInterval(()=>{ applyLight(); agendaCheck(); autoTick(); }, 30000);
   setInterval(()=>{ const mins=+S.ambMin; if(mins && !amb.on && !setsOpen() && state.started && state.mode==='idle' && !speakingNow() && Date.now()-state.lastUser>mins*60000) ambOn(); }, 5000);
   setInterval(()=>{ getWeather(); casaLoad(); agendaLoad(); mailsLoad(); }, 5*60000);
   // si te quedó la respuesta escrita mucho rato, se limpia

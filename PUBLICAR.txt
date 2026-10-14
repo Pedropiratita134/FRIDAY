@@ -235,3 +235,20 @@ NUEVO EN LA 2.3: LA VOZ (403), ACENTO Y PAUSAS
 - Respeta puntos, comas, punto y coma y dos puntos: hace la pausa en cada uno.
 QUÉ SUBIR: panel.html y sw.js a GitHub; worker.js de nuevo en Cloudflare (Edit code → pegar → Deploy).
 PROBAR: https://friday-casa.TU-USUARIO.workers.dev/tts?k=TU_FRIDAY_KEY
+
+=====================================================================
+NUEVO EN LA 2.4: TODO COMPARTIDO Y LO QUE TIENE LA DE LA COMPU
+=====================================================================
+- Compartir con la compu y el celu: tocá la pantalla → Ajustes → Conexiones →
+  "Compartir con la compu y el celu". En la compu: Ajustes → Celular → "¿Tenés la tablet de
+  FRIDAY mostrando un código?" y escribí el código. Desde ahí la agenda, las compras, los
+  recordatorios, las rutinas, los cumpleaños, las notas y lo que FRIDAY sabe son los mismos en
+  los tres. (También: "Friday, compartí con la compu".)
+- Nuevo en la tablet: recordatorios que se repiten (diario, semanal, días hábiles) y borrarlos
+  por voz; rutinas con horario (las mismas de la compu; si la compu está apagada, las hace la
+  tablet); cumpleaños; "olvidate de…"; borrar o mover eventos de la agenda; mapas a pantalla
+  completa ("mostrame dónde queda…"); "buenas noches" → modo noche; prender, apagar o cambiar el
+  volumen de la tele LG (lo hace la compu, si está prendida); los envíos que llegan hoy.
+- Si escucha algo que no tiene sentido, te pide que lo repitas en vez de hacer cualquier cosa.
+- FRIDAY Móvil 2.1: las notas de la casa se ven en Recordatorios (y se pueden borrar).
+QUÉ SUBIR: panel.html, index.html, tablet.html y sw.js. En la compu: friday.html versión 87.

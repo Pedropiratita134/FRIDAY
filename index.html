@@ -460,7 +460,7 @@ body.panel .sheet, body.panel #shade, body.panel #setup{display:none!important}
 
 <script>
 'use strict';
-const VERSION='2.0';
+const VERSION='2.1';
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1080,6 +1080,7 @@ async function runTags(full){
         if(a) notes.push('Rutina creada; la compu la va a hacer a esa hora (tiene que estar prendida con FRIDAY abierta). Confirmalo en una frase.');
       } else if(k==='automatizar_borrar' && p[1]){
         const n=norm(p.slice(1).join(' ')); const a=autos.find(x=>norm(x.que).includes(n)||n.includes(norm(x.que))); if(a){ autos=autos.filter(x=>x!==a); LS.set('autos',autos); toast('Rutina borrada'); }
+      } else if(k==='nota' && p[1]){ notaAdd(p.slice(1).join(' | '));
       } else if(k==='cumple' && p[2]){
         const c=cumpleCrearM(p[1], p[2]); if(c) toast('🎂 Anotado: '+c.nombre);
       } else if(k==='compu' && p[1]){
@@ -1436,6 +1437,7 @@ function syncLocal(){
   for(const x of compras) o['l:'+x.id]={t:x.t, h:!!x.h};
   for(const a of autos) o['u:'+a.id]={hora:a.hora, dias:a.dias, que:a.que, on:a.on!==false};
   for(const c of cumplesP) o['b:'+c.id]={n:c.nombre, f:c.fecha};
+  for(const n of notasC) o['o:'+n.id]={t:n.t, at:n.at};
   for(const p of pedidos){ if(now-p.at>3*86400000 && p.estado!=='nuevo') continue; o['p:'+p.id]={tipo:p.tipo, args:p.args, estado:p.estado, txt:p.txt||'', texto:p.texto||'', at:p.at}; }
   return o;
 }
@@ -1474,6 +1476,11 @@ function syncApply(changes){
       if(c.d){ if(i>=0) cumplesP.splice(i,1); }
       else if(c.v && c.v.n){ if(i>=0) Object.assign(cumplesP[i],{nombre:c.v.n, fecha:c.v.f}); else cumplesP.push({id:key, nombre:c.v.n, fecha:c.v.f}); }
       LS.set('cumples',cumplesP); ecoCh=true;
+    } else if(k==='o'){
+      const i=notasC.findIndex(x=>x.id===key);
+      if(c.d){ if(i>=0) notasC.splice(i,1); }
+      else if(c.v && c.v.t){ if(i>=0) Object.assign(notasC[i],{t:c.v.t}); else notasC.push({id:key, t:c.v.t, at:c.v.at||Date.now()}); }
+      notasC.sort((a,b)=>(a.at||0)-(b.at||0)); notasC=notasC.slice(-12); LS.set('notasC',notasC); ecoCh=true;
     } else if(k==='k'){ LS.set('cumplesG', c.d?[]:((c.v&&c.v.l)||[]).map(x=>({nombre:x[0], fecha:x[1]}))); ecoCh=true; }
     else if(k==='e'){ const e=LS.get('envios',{}); if(c.d) delete e[key]; else e[key]=c.v; LS.set('envios',e); ecoCh=true; }
     else if(k==='p'){
@@ -1542,7 +1549,7 @@ function pedirEvento(cuando, titulo, min, lugar){
 async function syncBoot(){
   if(!(window.crypto && crypto.subtle)) return;
   const name=PANEL ? 'Panel de la casa' : (IOS?'iPhone':/Android/i.test(navigator.userAgent)?'Android':'Celu')+(S.name?' de '+S.name:'');
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, url:spRedirect(), kinds:['m','r','p','l','u','b'], pollMs:PANEL?60000:20000,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, url:spRedirect(), kinds:['m','r','p','l','u','b','o'], pollMs:PANEL?60000:20000,
     live:PANEL, onMsg:o=>PANEL?panelMsg(o):null,
     paused:()=>document.hidden && !PANEL, local:syncLocal, apply:syncApply,
     onPeer:(d,p,first)=>{ if(first && d.startsWith('pc')){ toast('💻 ¡Vinculada con tu compu!', 4500); buzz([60,40,60]); } if(openSheet==='vinc') renderVinc(); },
@@ -1607,7 +1614,8 @@ async function buenDia(){
 $('bdChip').onclick=()=>{ closeSheets(); unlockAudio(); buenDia(); };
 
 // ================================================================ rutinas, cumpleaños y envíos (los maneja la compu; acá se ven y se piden)
-let autos=LS.get('autos',[]), cumplesP=LS.get('cumples',[]);
+let autos=LS.get('autos',[]), cumplesP=LS.get('cumples',[]), notasC=LS.get('notasC',[]);   // notasC: las notas de la casa (las mismas de la tablet y la compu)
+function notaAdd(t){ t=String(t||'').replace(/^[\s:,-]+|[\s.]+$/g,''); if(!t) return false; notasC.push({id:'n'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), t:t.charAt(0).toUpperCase()+t.slice(1,160), at:Date.now()}); notasC=notasC.slice(-12); LS.set('notasC',notasC); try{ FSync.scan(); }catch(e){} try{ renderEcoM(); }catch(e){} return true; }
 const ENV_TXT={comprado:'comprado', preparando:'lo están preparando', despachado:'despachado', en_camino:'en camino', demorado:'demorado', llega_hoy:'llega hoy', para_retirar:'para retirar', entregado:'entregado', cancelado:'cancelado'};
 const MESES=['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
 function autoCrearM(hora, dias, que){
@@ -1643,6 +1651,7 @@ function ecoPromptM(){
   let s='';
   const cp=cumplesM(30);
   s+=`Cumpleaños próximos: ${cp.length?cp.slice(0,8).map(c=>`${c.nombre} (${c.dias===0?'HOY':c.dias===1?'mañana':c.fecha.toLocaleDateString('es-AR',{day:'numeric',month:'long'})})`).join(', '):'ninguno anotado'}. Si te cuenta el cumpleaños de alguien, anotalo con [[CUMPLE|nombre|DD/MM]].\n`;
+  s+=`Notas de la casa (se ven en la tablet del living y en la compu): ${notasC.length?notasC.slice(-6).map(n=>n.t).join(' | '):'ninguna'}. Para dejar una: [[NOTA|texto]].\n`;
   const env=Object.values(LS.get('envios',{})).filter(Boolean);
   if(env.length) s+=`Envíos que está esperando (los saca la compu de sus mails): ${env.map(e=>`${e.q}${e.t?' ('+e.t+')':''}: ${ENV_TXT[e.s]||e.s}${e.f&&e.s!=='entregado'?', llega '+e.f:''}`).join('; ')}.\n`;
   if(FSync.on()) s+=`Rutinas con horario (las hace la compu a esa hora): ${autos.length?autos.map(a=>`${autoCuandoM(a)}: ${a.que}${a.on===false?' (pausada)':''}`).join(' · '):'ninguna'}. Para crear una: [[AUTOMATIZAR|HH:MM|días|qué hacer]] (días: todos, habiles, finde, lunes… o AAAA-MM-DD). Para borrar: [[AUTOMATIZAR_BORRAR|cuál]]. Avisarle algo a una hora es RECORDATORIO.\n`;
@@ -1651,10 +1660,12 @@ function ecoPromptM(){
 function renderEcoM(){
   const box=$('ecoBox'); if(!box) return; let h='';
   const it=(em,t,sub,btn)=>`<div class="item"><span style="font-size:20px">${em}</span><div><b>${esc(t)}</b><small>${esc(sub)}</small></div>${btn||''}</div>`;
+  if(notasC.length) h+='<h4>📝 Notas de la casa</h4>'+notasC.slice().reverse().map(n=>it('📝',n.t,new Date(n.at).toLocaleDateString('es-AR',{weekday:'short',day:'numeric'})+' '+new Date(n.at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false}),`<button data-nota="${esc(n.id)}">✕</button>`)).join('');
   if(autos.length) h+='<h4>⏱ Rutinas con horario</h4>'+autos.map(a=>it('⏱',a.que,autoCuandoM(a)+(a.on===false?' · pausada':''),`<button data-auto="${esc(a.id)}">✕</button>`)).join('');
   const cp=cumplesM(30); if(cp.length) h+='<h4>🎂 Cumpleaños</h4>'+cp.slice(0,8).map(c=>it('🎂',c.nombre,c.dias===0?'¡Hoy!':c.dias===1?'Mañana':c.fecha.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'}))).join('');
   const env=Object.values(LS.get('envios',{})).filter(Boolean); if(env.length) h+='<h4>📦 Envíos</h4>'+env.map(e=>it('📦',e.q,[e.t, ENV_TXT[e.s]||e.s, e.f&&e.s!=='entregado'?'llega '+new Date(e.f+'T12:00').toLocaleDateString('es-AR',{weekday:'short',day:'numeric'}):''].filter(Boolean).join(' · '))).join('');
   box.innerHTML=h;
+  box.querySelectorAll('[data-nota]').forEach(b=>b.onclick=()=>{ notasC=notasC.filter(n=>n.id!==b.dataset.nota); LS.set('notasC',notasC); FSync.scan(); renderEcoM(); });
   box.querySelectorAll('[data-auto]').forEach(b=>b.onclick=()=>{ autos=autos.filter(a=>a.id!==b.dataset.auto); LS.set('autos',autos); FSync.scan(); renderEcoM(); });
 }
 

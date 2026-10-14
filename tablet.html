@@ -372,7 +372,7 @@ let devW=W.get('dev',null); if(!devW){ devW='cfg'+Math.random().toString(36).sli
 async function syncReady(){
   if(FSync.on()) return true;
   let m=FM.get('sync',null);
-  if(!m || !m.cfg || !m.cfg.code){ const code=FSync.newCode(); m={cfg:{code, server:'https://ntfy.sh', dev:FM.get('syncDev',null)||('cel'+Math.random().toString(36).slice(2,6)), at:Date.now()}, st:null}; FM.set('sync', m); FM.set('syncDev', m.cfg.dev); }
+  if(!m || !m.cfg || !m.cfg.code){ syncReady.nuevo=true; const code=FSync.newCode(); m={cfg:{code, server:'https://ntfy.sh', dev:FM.get('syncDev',null)||('cel'+Math.random().toString(36).slice(2,6)), at:Date.now()}, st:null}; FM.set('sync', m); FM.set('syncDev', m.cfg.dev); }
   // el asistente usa la vinculación del celu, pero guarda su propio estado aparte (así no toca los datos de la app)
   await FSync.init({ store:(k,v)=>W.set(k,v), load:k=>k==='sync' ? {cfg:Object.assign({}, m.cfg, {dev:devW}), st:(W.get('sync',null)||{}).st||null} : W.get(k,null), dev:devW, name:'Configuración', kinds:[], pollMs:3600000, local:()=>({}), apply:()=>{} });
   return FSync.on();
@@ -403,7 +403,9 @@ $('bInv').onclick=async()=>{
   st('st1','Conectando…');
   if(!await syncReady()){ st('st1','No pude preparar la conexión.','bad'); return; }
   const r=await FSync.invite(c);
-  if(r){ C.paired=true; save(); fill(); st('st1','✔ Conectada. En unos segundos la tablet dice que está lista para recibir todo.','good'); }
+  if(r){ C.paired=true; save(); fill(); st('st1', syncReady.nuevo
+      ? '✔ Conectada. Ojo: este navegador no tiene FRIDAY Móvil vinculada con la compu, así que la tablet todavía no comparte la agenda ni las compras. Al terminar, en la tablet: Ajustes → «Compartir con la compu y el celu».'
+      : '✔ Conectada. En unos segundos la tablet dice que está lista para recibir todo.', 'good'); }
   else st('st1','No pude mandarlo (¿hay internet?). Probá de nuevo.','bad');
 };
 
