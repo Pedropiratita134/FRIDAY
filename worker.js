@@ -3,7 +3,7 @@
 //   1) prender y apagar tus luces de Smart Life (Tuya firma cada pedido con tu clave secreta)
 //   2) buscar canciones en YouTube (para que suenen en la tablet o en la tele)
 //   3) tu Google: agenda y mails (guarda la "llave larga" de Google sin que tu clave quede a la vista)
-//   4) la voz de FRIDAY: Elena, la misma voz natural que usa en la compu (la de Microsoft Edge)
+//   4) la voz de FRIDAY: Elena, la misma voz natural que usa en la compu (la de Microsoft Edge / Translator)
 //   5) la tele: pone música en el YouTube de tu tele (vinculada con el código de la tele)
 //
 // Variables (Cloudflare → tu Worker → Settings → Variables and Secrets):
@@ -19,8 +19,8 @@ const TUYA_OK = /^\/v(1\.0\/iot-01\/associated-users\/devices|1\.0\/iot-03\/devi
 const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/gmail.readonly';
 let tuya = { host: null, tok: '', exp: 0 };
 
-const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words' };
-const VERSION = 2;
+const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words, X-Voz-Via' };
+const VERSION = 3;
 const form = o => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });
 const enc = new TextEncoder();
@@ -156,6 +156,51 @@ async function edgeSpeak(env, text, voz, rate) {
   return { audio: out, words };
 }
 
+// Segunda forma de pedir la misma voz (la que usa la app de Microsoft Translator): si la de Edge da 403, se usa esta.
+const MS_KEY = 'oik6PdDdMnOXemTbwvMn9de/h9lFnfBaCWbGMMZqqoSaQaqUOqjVGm5NqsmjcBI1x+sS9ugjB55HEJWRiFXYFw==';
+let msTok = { t: '', r: '', exp: 0 };
+const b64 = buf => { let s = ''; const b = new Uint8Array(buf); for (let i = 0; i < b.length; i++) s += String.fromCharCode(b[i]); return btoa(s); };
+const unb64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+async function msSign(urlStr) {
+  const enc8 = encodeURIComponent(urlStr.split('://')[1]);
+  const id = hex32(), date = (new Date().toUTCString().replace(/GMT/, '').trim() + ' GMT').toLowerCase();
+  const key = await crypto.subtle.importKey('raw', unb64(MS_KEY), { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']);
+  const sig = b64(await crypto.subtle.sign('HMAC', key, enc.encode(('MSTranslatorAndroidApp' + enc8 + date + id).toLowerCase())));
+  return `MSTranslatorAndroidApp::${sig}::${date}::${id}`;
+}
+async function msToken(env) {
+  if (msTok.t && Date.now() < msTok.exp) return msTok;
+  const url = env.MS_ENDPOINT || 'https://dev.microsofttranslator.com/apps/endpoint?api-version=1.0';
+  const r = await fetch(url, { method: 'POST', headers: { 'Accept-Language': 'es-AR', 'X-ClientVersion': '4.0.530a 5fe1dc6c', 'X-UserId': hex32().slice(0, 16), 'X-HomeGeographicRegion': 'es-AR',
+    'X-ClientTraceId': hex32(), 'X-MT-Signature': await msSign(url), 'User-Agent': 'okhttp/4.5.0', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '0' } });
+  if (!r.ok) throw new Error('Microsoft Translator respondió ' + r.status);
+  const j = await r.json();
+  if (!j.t || !j.r) throw new Error('Microsoft Translator no dio permiso');
+  msTok = { t: j.t, r: j.r, exp: Date.now() + 8 * 60000 };
+  return msTok;
+}
+async function msSpeak(env, text, voz, rate) {
+  const tk = await msToken(env);
+  const url = env.MS_TTS ? env.MS_TTS : `https://${tk.r}.tts.speech.microsoft.com/cognitiveservices/v1`;
+  const ssml = `<speak xmlns="http://www.w3.org/2001/10/synthesis" xmlns:mstts="http://www.w3.org/2001/mstts" version="1.0" xml:lang="es-AR"><voice name="${voz}"><prosody rate="${rate}" pitch="+0%">${xmlEsc(text)}</prosody></voice></speak>`;
+  const r = await fetch(url, { method: 'POST', headers: { Authorization: tk.t, 'Content-Type': 'application/ssml+xml', 'User-Agent': 'okhttp/4.5.0', 'X-Microsoft-OutputFormat': 'audio-24khz-48kbitrate-mono-mp3' }, body: ssml });
+  if (r.status === 401) msTok.exp = 0;
+  if (!r.ok) throw new Error('Microsoft respondió ' + r.status);
+  const audio = new Uint8Array(await r.arrayBuffer());
+  if (!audio.length) throw new Error('la voz vino vacía');
+  return { audio, words: [] };
+}
+let viaOk = '';   // la forma que anduvo la última vez va primero
+async function speakAny(env, text, voz, rate, via) {
+  const order = via === 'edge' ? ['edge'] : via === 'ms' ? ['ms'] : viaOk === 'ms' ? ['ms', 'edge'] : ['edge', 'ms'];
+  const errs = [];
+  for (const w of order) {
+    try { const out = w === 'edge' ? await edgeSpeak(env, text, voz, rate) : await msSpeak(env, text, voz, rate); viaOk = w; out.via = w; return out; }
+    catch (e) { errs.push((w === 'edge' ? 'Edge: ' : 'Translator: ') + e.message); }
+  }
+  throw new Error(errs.join(' · '));
+}
+
 // ---------------------------------------------------------------- la tele: el YouTube de la tele, vinculado con su código
 // (en la tele: YouTube → Configuración → "Vincular con código de TV")
 const loungeBase = env => env.YT_LOUNGE || 'https://www.youtube.com/api/lounge';
@@ -239,7 +284,7 @@ export default {
     if (p === '/tts') {
       let b = {};
       if (req.method === 'POST') { try { b = await req.json(); } catch (e) { } }
-      else b = { text: u.searchParams.get('text') || 'Hola, soy FRIDAY. Así sueno.', voz: u.searchParams.get('voz') || 'elena', rate: u.searchParams.get('rate') || '' };
+      else b = { text: u.searchParams.get('text') || 'Hola, soy FRIDAY. Así sueno.', voz: u.searchParams.get('voz') || 'elena', rate: u.searchParams.get('rate') || '', via: u.searchParams.get('via') || '' };
       const text = String(b.text || '').slice(0, 1200).trim(), voz = VOCES[b.voz] || VOCES.elena;
       const rate = /^[+-]\d{1,2}%$/.test(b.rate || '') ? b.rate : '+8%';
       if (!text) return json({ ok: false, error: 'falta el texto' }, 400);
@@ -248,8 +293,8 @@ export default {
       const ck = cache && new Request('https://friday-tts.cache/' + (await sha256(voz + '|' + rate + '|' + text)));
       if (cache) { const hit = await cache.match(ck); if (hit) { const h = new Headers(hit.headers); for (const [k, v] of Object.entries(CORS)) h.set(k, v); return new Response(hit.body, { headers: h }); } }
       try {
-        const { audio, words } = await edgeSpeak(env, text, voz, rate);
-        const res = new Response(audio, { headers: { 'Content-Type': 'audio/mpeg', 'X-Words': encodeURIComponent(JSON.stringify(words)), 'Cache-Control': 'public, max-age=2592000', ...CORS } });
+        const { audio, words, via } = await speakAny(env, text, voz, rate, b.via);
+        const res = new Response(audio, { headers: { 'Content-Type': 'audio/mpeg', 'X-Words': encodeURIComponent(JSON.stringify(words)), 'X-Voz-Via': via, 'Cache-Control': 'public, max-age=2592000', ...CORS } });
         if (cache && text.length < 160) { try { await cache.put(ck, res.clone()); } catch (e) { } }
         return res;
       } catch (e) { return json({ ok: false, error: e.message }, 502); }

@@ -224,3 +224,14 @@ QUÉ SUBIR: panel.html, tablet.html y sw.js a GitHub. Volvé a pegar worker.js e
 (Edit code → pegar → Deploy) y en la tablet: Ajustes → Volver a cargar.
 PROBAR LA VOZ DESDE LA COMPU: abrí https://friday-casa.TU-USUARIO.workers.dev/tts?k=TU_FRIDAY_KEY
 Si suena Elena, el servicio anda. Si muestra un error, mandámelo.
+
+=====================================================================
+NUEVO EN LA 2.3: LA VOZ (403), ACENTO Y PAUSAS
+=====================================================================
+- Si Microsoft rechaza la voz de Edge (error 403), el servicio pide la misma voz de Elena por otro
+  camino (el de la app Microsoft Translator).
+- La voz de respaldo de la tablet ahora es latina (antes Android elegía la de España).
+  Se puede cambiar en Ajustes → Voz → "Voz de la tablet".
+- Respeta puntos, comas, punto y coma y dos puntos: hace la pausa en cada uno.
+QUÉ SUBIR: panel.html y sw.js a GitHub; worker.js de nuevo en Cloudflare (Edit code → pegar → Deploy).
+PROBAR: https://friday-casa.TU-USUARIO.workers.dev/tts?k=TU_FRIDAY_KEY

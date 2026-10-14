@@ -339,6 +339,7 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
       <p class="note" id="vozNote"></p>
       <p class="lbl">Velocidad</p>
       <div class="seg" data-k="vozVel"><button type="button" data-v="lenta">Más lenta</button><button type="button" data-v="normal">Normal</button><button type="button" data-v="rapida">Más rápida</button></div>
+      <div id="vozLocal"></div>
       <button class="ghost" id="vozTest" type="button">Probar la voz</button></section>
     <section><h3>Subtítulos</h3>
       <div class="seg" data-k="subs"><button type="button" data-v="normales">Normales</button><button type="button" data-v="grandes">Grandes</button></div></section>
@@ -1196,7 +1197,7 @@ async function earStart(){
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='2.2';
+const VERSION='2.3';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -1402,11 +1403,15 @@ function faceTalk(on, an){
 const VOZ_RATE={lenta:'-4%', normal:'+8%', rapida:'+18%'}, VOZ_LOCAL_RATE={lenta:.92, normal:1.04, rapida:1.16};
 const tts={ q:[], on:false, epoch:0, voice:null, lastEnd:0, shown:'', src:null, failUntil:0, cache:new Map() };
 const vozNube=()=>workerOn() && (S.workerV||0)>=2 && S.voz!=='tablet' && Date.now()>tts.failUntil;
+// la voz de la tablet: siempre latina (en Android la de "España" viene por defecto si no se elige otra)
+const langOf=v=>String(v&&v.lang||'').replace('_','-').toLowerCase();
+const VOZ_REG={'es-ar':'Argentina','es-419':'Latina','es-us':'Latina (EE. UU.)','es-mx':'México','es-co':'Colombia','es-cl':'Chile','es-uy':'Uruguay','es-pe':'Perú','es-es':'España'};
+function esVoices(){ let vs=[]; try{ vs=speechSynthesis.getVoices(); }catch(e){} const rank=v=>{ const l=langOf(v); return l==='es-ar'?0: l==='es-419'?1: l==='es-us'?2: l==='es-mx'?3: /^es-(co|cl|uy|pe|ve)/.test(l)?4: l==='es-es'?9: 6; };
+  return vs.filter(v=>/^es/.test(langOf(v))).sort((a,b)=>rank(a)-rank(b) || (/google|network|natural|online|neural/i.test(b.name)-/google|network|natural|online|neural/i.test(a.name))); }
 function pickVoice(){
-  const vs=speechSynthesis.getVoices(); if(!vs.length) return null;
-  if(S.voiceLocal){ const v=vs.find(v=>v.name===S.voiceLocal); if(v) return v; }
-  const es=vs.filter(v=>/^es/i.test(v.lang));
-  return es.find(v=>/es-AR/i.test(v.lang)) || es.find(v=>/es-US/i.test(v.lang)&&/google/i.test(v.name)) || es.find(v=>/es-(US|MX|419)/i.test(v.lang)) || es.find(v=>/google/i.test(v.name)) || es[0] || null;
+  const es=esVoices(); if(!es.length) return null;
+  if(S.voiceLocal){ const v=es.find(v=>v.name===S.voiceLocal); if(v) return v; }
+  return es[0];
 }
 try{ speechSynthesis.onvoiceschanged=()=>{ tts.voice=pickVoice(); }; }catch(e){}
 function spokenForm(t){
@@ -1480,17 +1485,28 @@ function playVoice(it, a, ep){
 }
 function speakLocal(it, ep){
   faceTalk(true);
-  const u=new SpeechSynthesisUtterance(it.t), rate=VOZ_LOCAL_RATE[S.vozVel||'normal'];
-  u.lang='es-AR'; if(!tts.voice) tts.voice=pickVoice(); if(tts.voice){ u.voice=tts.voice; u.lang=tts.voice.lang; } u.rate=rate; u.pitch=1.02;
-  let fin=false, gotB=false;
-  const done=()=>{ if(fin) return; fin=true; clearTimeout(guard); if(ep!==tts.epoch) return; capChunk(it); speakNext(); };
-  u.onstart=()=>{ if(!gotB) capTrack(it, null, it.t.length*62/rate); };
-  // algunas tablets avisan cada palabra: entonces el subtítulo va justo
-  u.onboundary=e=>{ if(e.name && e.name!=='word') return; gotB=true; capStop(); capSay(it.base+wordsOf(it.t.slice(0,e.charIndex)).length+1); };
-  u.onend=done; u.onerror=done;
-  // si el motor de voz se cuelga (pasa en algunas tablets), sigue igual
-  const guard=setTimeout(()=>{ try{ speechSynthesis.cancel(); }catch(e){} done(); }, 2500+it.t.length*110/rate);
-  try{ speechSynthesis.speak(u); }catch(e){ done(); }
+  const rate=VOZ_LOCAL_RATE[S.vozVel||'normal'];
+  if(!tts.voice) tts.voice=pickVoice();
+  // de a partes: cada coma, punto y coma o dos puntos es una pausa de verdad
+  const parts=[]; for(const p of it.t.split(/(?<=[,;:])\s+/)){ if(parts.length && wordsOf(parts[parts.length-1]).length<2) parts[parts.length-1]+=' '+p; else parts.push(p); }
+  let k=0, base=it.base, fin=false;
+  const allDone=()=>{ if(fin) return; fin=true; if(ep!==tts.epoch) return; capChunk(it); speakNext(); };
+  const next=()=>{
+    if(ep!==tts.epoch) return; if(k>=parts.length){ allDone(); return; }
+    const txt=parts[k++], pit={t:txt, base, n:wordsOf(txt).length}; base+=pit.n;
+    const u=new SpeechSynthesisUtterance(txt.replace(/[;:]\s*$/,'.'));
+    if(tts.voice){ u.voice=tts.voice; u.lang=tts.voice.lang.replace('_','-'); } else u.lang='es-US';
+    u.rate=rate; u.pitch=1.02;
+    let ok=false, gotB=false;
+    const one=()=>{ if(ok) return; ok=true; clearTimeout(guard); capStop(); capSay(pit.base+pit.n); next(); };
+    u.onstart=()=>{ if(!gotB) capTrack(pit, null, txt.length*62/rate); };
+    u.onboundary=e=>{ if(e.name && e.name!=='word') return; gotB=true; capStop(); capSay(pit.base+wordsOf(txt.slice(0,e.charIndex)).length+1); };
+    u.onend=one; u.onerror=one;
+    // si el motor de voz se cuelga (pasa en algunas tablets), sigue igual
+    const guard=setTimeout(()=>{ try{ speechSynthesis.cancel(); }catch(e){} one(); }, 2500+txt.length*110/rate);
+    try{ speechSynthesis.speak(u); }catch(e){ one(); }
+  };
+  next();
 }
 function stopTalk(){ tts.epoch++; tts.q=[]; try{ speechSynthesis.cancel(); }catch(e){} try{ if(tts.el){ tts.el.pause(); } }catch(e){} clearInterval(tts.mouthT); tts.on=false; faceTalk(false); duck(false); capStop(); tts.lastEnd=Date.now(); }
 const speakingNow=()=>tts.on || tts.q.length>0 || Date.now()-tts.lastEnd<600;
@@ -2310,6 +2326,8 @@ function setsRender(){
     : wv<2 ? 'Para Elena y Tomás hay que actualizar el código del servicio de Cloudflare (en el celu: Configurar la tablet → Cómo armarlo). Mientras, habla con la voz de la tablet.'
     : Date.now()<tts.failUntil ? `Elena no anduvo (${tts.err||'sin respuesta'}): por unos minutos habla con la voz de la tablet. Tocá «Probar la voz» para reintentar.` : 'La misma voz natural que usa FRIDAY en la compu.';
   $('musNote').textContent = S.musicSrc==='spotify' ? (spOn() ? 'Con Spotify tiene que estar abierto en algún aparato (celu, compu o tele). Si no, suena igual con YouTube.' : 'Spotify no está conectado: se conecta desde el celu. Mientras, suena con YouTube.') : 'YouTube suena en la tablet (o en la tele) sin abrir nada más.';
+  const vs=esVoices().slice(0,6), cur=(pickVoice()||{}).name;
+  $('vozLocal').innerHTML = vs.length ? `<p class="lbl">Voz de la tablet (la que usa si no está Elena)</p><div class="seg" data-k="voiceLocal">${vs.map(v=>`<button type="button" data-v="${esc(v.name)}" aria-pressed="${v.name===cur}">${esc(VOZ_REG[langOf(v)]||v.name)}</button>`).join('')}</div>` : '';
   const tr=$('tvRow');
   if(S.tv && S.tv.screenId) tr.innerHTML=`<div><b>${esc(S.tv.name||'La tele')}</b><small>Vinculada. Decí «Friday, poné Soda Stereo en la tele».</small></div><button class="ghost" type="button" id="tvOff">Desvincular</button>`;
   else if(!workerOn() || wv<2) tr.innerHTML=`<div><b>La tele</b><small>${!workerOn()?'Necesita el servicio de Cloudflare (se arma desde el celu).':'Hay que actualizar el código del servicio de Cloudflare.'}</small></div>`;
@@ -2340,6 +2358,7 @@ function setsInit(){
     const b=e.target.closest('.seg button');
     if(b){ const k=b.parentElement.dataset.k, v=b.dataset.v; S[k]=/^(patience|ambMin)$/.test(k)?+v:v; saveS();
       if(k==='voz' || k==='vozVel'){ tts.cache.clear(); tts.failUntil=0; }
+      if(k==='voiceLocal'){ tts.voice=null; say('Así sueno con esta voz.', 'happy'); }
       if(k==='subs') setsApply();
       if(k==='musicOut' && v==='tele' && !(S.tv && S.tv.screenId)) setTimeout(()=>{ if(workerOn() && (S.workerV||0)>=2) padShow(); }, 250);
       setsRender(); return; }
