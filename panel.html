@@ -84,6 +84,8 @@ button{font:inherit;color:inherit}
 .friday{display:flex;flex-direction:column;align-items:center;gap:16px}
 #face{width:min(250px,26vh);aspect-ratio:1;position:relative;cursor:pointer}
 #face svg,.fface svg{width:100%;height:100%;overflow:visible;display:block}
+.eye{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:color-mix(in srgb,var(--friday) 12%,transparent);color:var(--friday);font-size:15px}
+.eye[hidden]{display:none}.eye svg{width:20px;height:20px}.eye.look{background:var(--friday);color:#fff}
 .status{display:inline-flex;align-items:center;gap:10px;padding:9px 18px;border-radius:999px;background:var(--card);border:1px solid var(--edge);box-shadow:var(--shadow);color:var(--ink-2);font-size:17px;white-space:nowrap}
 .status i{width:10px;height:10px;border-radius:50%;background:var(--leaf);flex:0 0 10px}
 .status.listen{color:var(--friday)}.status.listen i{background:var(--friday);animation:pulse 1s ease-in-out infinite}
@@ -148,6 +150,7 @@ body.subs-big .you{font-size:25px}
 .dev.off{opacity:.5}.dev.busy{animation:busy .9s ease-in-out infinite}
 @keyframes busy{50%{opacity:.55}}
 /* música */
+.music[hidden]{display:none}
 .music{display:flex;flex-direction:column;gap:12px;min-height:0;flex:1}
 .cover{flex:1;min-height:0;border-radius:var(--r-mid);background:radial-gradient(90% 90% at 25% 15%, var(--friday-2), var(--friday) 70%) center/cover;position:relative;overflow:hidden}
 .cover.noimg::before{content:"♪";position:absolute;right:18px;top:6px;font:600 84px/1 var(--disp);color:rgba(255,255,255,.35)}
@@ -201,6 +204,14 @@ body.subs-big .you{font-size:25px}
 body.ambvid #ytbox{position:fixed;z-index:41;display:block;border-radius:22px;overflow:hidden;pointer-events:none}
 body.ambvid #ytbox iframe{transform:none}
 @media (orientation:portrait){ .ambient .anow{left:5vw;right:5vw;width:auto;bottom:10vh} }
+
+/* ---------- el arranque: como un sistema propio ---------- */
+.boot{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;background:radial-gradient(120% 90% at 50% 30%,#FCE9D6,#F2E6DA 70%);transition:opacity .7s .1s,visibility .8s}
+.boot.off{opacity:0;visibility:hidden}
+.boot .bface{width:150px;margin-bottom:18px;animation:bootIn 1s cubic-bezier(.2,.9,.3,1.2) both}
+.boot b{font:680 44px/1 var(--disp);letter-spacing:.14em;color:#2B241D;animation:bootUp .8s .25s both}
+.boot small{font:500 18px var(--text);letter-spacing:.3em;text-transform:uppercase;color:#9A8877;animation:bootUp .8s .4s both}
+@keyframes bootIn{from{transform:scale(.6);opacity:0}}@keyframes bootUp{from{transform:translateY(10px);opacity:0}}
 
 /* ---------- primera vez: escaneá con el celu ---------- */
 .setup{position:fixed;inset:0;z-index:50;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:6vw;padding:6vh 7vw;background:radial-gradient(120% 100% at 10% 0%,#FCE9D6,#F4EEE6 70%)}
@@ -320,6 +331,7 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
 </head>
 <body>
 <div id="wall"></div>
+<div class="boot" id="boot"><div class="bface fface" id="bFace"></div><b>FRIDAY</b><small>Casa</small></div>
 <div class="app" id="app">
   <header class="top">
     <div class="greet"><h1 id="hello">Hola</h1><p id="today"></p></div>
@@ -329,7 +341,7 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
     </div>
   </header>
   <main class="stage">
-    <div class="friday"><div id="face" class="fface" aria-label="FRIDAY"></div><div class="status" id="status"><i></i><span>Decí «Friday»</span></div></div>
+    <div class="friday"><div id="face" class="fface" aria-label="FRIDAY"></div><div class="status" id="status"><i></i><span>Decí «Friday»</span></div><div class="eye" id="eye" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>FRIDAY está mirando</span></div></div>
     <div class="talk" aria-live="polite">
       <p class="you" id="you"></p>
       <p class="her" id="her"></p>
@@ -368,6 +380,11 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
       <label class="fl">Familia <input id="famApe" placeholder="Apellido (por ejemplo: Bufager)" autocomplete="off" spellcheck="false"></label>
       <div class="chips" id="famList"></div>
       <div class="frow"><input id="famIn" placeholder="Nombre (por ejemplo: Mamá, Pedro, Sofi)" autocomplete="off" spellcheck="false"><button class="ghost" id="famAdd" type="button">Agregar</button></div></section>
+    <section><h3>Videollamadas</h3>
+      <p class="lbl">Llamá a otro aparato de la familia, o decí «Friday, llamá a la compu».</p>
+      <div class="seg" id="callList"></div>
+      <p class="lbl">Cuando llaman a la tablet</p>
+      <div class="seg" data-k="autoAns"><button type="button" data-v="no">Hay que atender</button><button type="button" data-v="si">Atiende sola (avisa 5 segundos antes)</button></div></section>
     <section><h3>Voz</h3>
       <div class="seg" data-k="voz"><button type="button" data-v="elena">Elena</button><button type="button" data-v="tomas">Tomás</button><button type="button" data-v="tablet">La de la tablet</button></div>
       <p class="note" id="vozNote"></p>
@@ -375,6 +392,12 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
       <div class="seg" data-k="vozVel"><button type="button" data-v="lenta">Más lenta</button><button type="button" data-v="normal">Normal</button><button type="button" data-v="rapida">Más rápida</button></div>
       <div id="vozLocal"></div>
       <button class="ghost" id="vozTest" type="button">Probar la voz</button></section>
+    <section><h3>FRIDAY mira</h3>
+      <p class="lbl">Con la cámara de la tablet, de vez en cuando (solo si algo cambió) y te avisa si ve algo que valga la pena. Las fotos no se guardan. Mientras está prendido se ve el ojito abajo de la cara.</p>
+      <div class="seg" data-k="mira"><button type="button" data-v="no">No</button><button type="button" data-v="si">Sí, que mire</button></div>
+      <p class="lbl">Cada cuánto</p>
+      <div class="seg" data-k="miraMin"><button type="button" data-v="2">2 min</button><button type="button" data-v="5">5 min</button><button type="button" data-v="15">15 min</button></div>
+      <p class="note">Además, cuando quieras: «Friday, ¿qué ves?», «mirá esto», «¿cómo me queda?».</p></section>
     <section><h3>Subtítulos</h3>
       <div class="seg" data-k="subs"><button type="button" data-v="normales">Normales</button><button type="button" data-v="grandes">Grandes</button></div></section>
     <section><h3>Oído</h3>
@@ -1233,10 +1256,281 @@ async function earStart(){
   }catch(e){ console.warn('mic', e); return false; }
 }
 
+// ================================================================ FRIDAY LLAMADAS (inicio)
+// Videollamadas entre los aparatos de la familia (la compu, la tablet, después los celus).
+// El video y la voz van directo de un aparato al otro (WebRTC, cifrado). El "timbre" y los datos
+// para conectarse viajan por el mismo grupo cifrado de FRIDAY (nadie más los puede leer).
+const Call=(()=>{
+  const C={ active:null, ring:null, opts:{}, inbox:{}, seen:{}, autoT:null };
+  const STUN=[{urls:['stun:stun.l.google.com:19302','stun:stun.cloudflare.com:3478']}];
+  const $c=id=>document.getElementById(id);
+  const normC=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim();
+  const rid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+  const me=()=>FSync.cfg && FSync.cfg.dev;
+  const devName=d=>d.startsWith('pc')?'la compu':d.startsWith('pan')?'la tablet':d.startsWith('cel')?'el celu':'otro aparato';
+  function label(dev, n){ n=String(n||'').trim(); if(!n || /^compu$|^configuraci/i.test(n)) return devName(dev); if(/tablet|panel/i.test(n)) return 'la tablet'; return n; }
+  function peers(){ return Object.entries((FSync.st&&FSync.st.peers)||{}).filter(([d])=>d!==me() && !d.startsWith('cfg')).map(([d,p])=>({dev:d, name:label(d,p.n), t:p.t||0})).sort((a,b)=>b.t-a.t); }
+  function findPeer(q){ const n=normC(q), ps=peers();
+    return ps.find(p=>/compu|computadora|\bpc\b/.test(n) && p.dev.startsWith('pc')) || ps.find(p=>/tablet|living|panel/.test(n) && p.dev.startsWith('pan'))
+      || ps.find(p=>/celu|celular|telefono/.test(n) && p.dev.startsWith('cel')) || ps.find(p=>normC(p.name).length>2 && n.includes(normC(p.name).replace(/^(la|el) /,''))); }
+  // ---- el aviso (cifrado) al otro aparato; lo largo (los datos de conexión) va comprimido y en partes
+  const send=(to, o)=>FSync.send(Object.assign({k:'rtc', to}, o));
+  const b64=u=>{ let s=''; for(let i=0;i<u.length;i++) s+=String.fromCharCode(u[i]); return btoa(s); };
+  const ub64=s=>Uint8Array.from(atob(s), c=>c.charCodeAt(0));
+  async function pack(s){ try{ const cs=new Blob([s]).stream().pipeThrough(new CompressionStream('deflate-raw')); return 'z'+b64(new Uint8Array(await new Response(cs).arrayBuffer())); }catch(e){ return 'r'+s; } }
+  async function unpack(s){ if(s[0]==='r') return s.slice(1); const ds=new Blob([ub64(s.slice(1))]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return new Response(ds).text(); }
+  async function sendBig(to, t, id, obj){ const p=await pack(JSON.stringify(obj)), n=Math.ceil(p.length/1600); for(let i=0;i<n;i++) await send(to, {t, id, i, n, d:p.slice(i*1600,(i+1)*1600)}); }
+  // ---- pantalla
+  function ui(){
+    if($c('fcall')) return;
+    const st=document.createElement('style'); st.textContent=`
+#fcall{position:fixed;inset:0;z-index:90;display:none;background:#1A1411;color:#FBF1E6;font-family:var(--text,system-ui,sans-serif)}
+#fcall.on{display:block}
+#fcall video{position:absolute;background:#2A211C}
+#fcRemote{inset:0;width:100%;height:100%;object-fit:cover}
+#fcLocal{right:24px;bottom:120px;width:min(26vw,240px);aspect-ratio:3/4;object-fit:cover;border-radius:22px;box-shadow:0 18px 40px -16px rgba(0,0,0,.7);border:2px solid rgba(255,255,255,.18);transform:scaleX(-1)}
+#fcall.nocam #fcLocal,#fcall.inc #fcLocal{display:none}
+#fcall.wait #fcLocal{inset:0;width:100%;height:100%;border-radius:0;border:0;filter:brightness(.55) saturate(.9);aspect-ratio:auto}
+#fcTop{position:absolute;left:28px;top:24px;right:28px;display:flex;align-items:baseline;gap:14px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+#fcTop b{font:640 32px/1.1 var(--disp,system-ui,sans-serif)}#fcTop span{font-size:20px;opacity:.85}
+#fcMid{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);text-align:center;display:none}
+#fcall.wait #fcMid,#fcall.inc #fcMid{display:block}
+#fcAv{width:150px;height:150px;margin:0 auto 22px;border-radius:44px;display:grid;place-items:center;font:640 64px var(--disp,system-ui,sans-serif);background:linear-gradient(160deg,#5E98F6,#2D63D8);color:#fff;box-shadow:0 0 0 0 rgba(94,152,246,.6);animation:fcPulse 1.6s ease-out infinite}
+@keyframes fcPulse{70%{box-shadow:0 0 0 34px rgba(94,152,246,0)}100%{box-shadow:0 0 0 0 rgba(94,152,246,0)}}
+#fcMid h2{margin:0;font:640 44px/1.1 var(--disp,system-ui,sans-serif)}#fcMid p{margin:10px 0 0;font-size:22px;opacity:.8}
+#fcBar{position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:18px}
+#fcBar button{min-width:76px;height:76px;border-radius:38px;border:0;font:600 17px var(--text,system-ui,sans-serif);color:#fff;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;padding:0 24px;display:flex;align-items:center;gap:10px}
+#fcBar button svg{width:28px;height:28px}
+#fcBar .off{background:#FBF1E6;color:#1A1411}
+#fcBar .end{background:#D2475C}#fcBar .ok{background:#3E9B5A}
+#fcall.inc{background:radial-gradient(120% 90% at 50% 20%,#3A2C24,#1A1411)}
+@media (prefers-reduced-motion:reduce){#fcAv{animation:none}}`;
+    document.head.appendChild(st);
+    const d=document.createElement('div'); d.id='fcall'; d.innerHTML=`<video id="fcRemote" autoplay playsinline></video><video id="fcLocal" autoplay playsinline muted></video>
+<div id="fcTop"><b id="fcName"></b><span id="fcState"></span></div>
+<div id="fcMid"><div id="fcAv"></div><h2 id="fcMidT"></h2><p id="fcMidS"></p></div><div id="fcBar"></div>`;
+    document.body.appendChild(d);
+  }
+  const IC={ mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
+    cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="M16 10l5-3v10l-5-3z"/></svg>',
+    end:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 14.5c5-5 13-5 18 0l-2.4 2.6-3.6-1.6v-2.6a12 12 0 0 0-6 0v2.6l-3.6 1.6z"/></svg>',
+    ok:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>' };
+  function show(mode, name, sub){
+    ui(); const f=$c('fcall'); f.className='on '+mode+(C.active && C.active.stream && C.active.stream.sinCamara ? ' nocam':''); $c('fcName').textContent=mode==='live'?cap(name):''; $c('fcState').textContent='';
+    $c('fcAv').textContent=(String(name).replace(/^(la|el) /i,'')[0]||'?').toUpperCase();
+    $c('fcMidT').textContent = mode==='inc' ? `Te llama ${name}` : `Llamando a ${name}…`; $c('fcMidS').textContent=sub||'';
+    const bar=$c('fcBar');
+    if(mode==='inc') bar.innerHTML=`<button type="button" id="fcNo">No ahora</button><button type="button" class="ok" id="fcYes">${IC.ok}Atender</button>`;
+    else bar.innerHTML=`<button type="button" id="fcMic" aria-label="Micrófono">${IC.mic}</button><button type="button" id="fcCam" aria-label="Cámara">${IC.cam}</button><button type="button" class="end" id="fcEnd">${IC.end}Colgar</button>`;
+    const on=(id,fn)=>{ const b=$c(id); if(b) b.onclick=fn; };
+    on('fcNo', ()=>reject()); on('fcYes', ()=>accept()); on('fcEnd', ()=>hangup());
+    on('fcMic', ()=>toggle('audio','fcMic')); on('fcCam', ()=>toggle('video','fcCam'));
+  }
+  function hide(){ const f=$c('fcall'); if(f) f.className=''; ['fcRemote','fcLocal'].forEach(id=>{ const v=$c(id); if(v) v.srcObject=null; }); }
+  function toggle(kind, id){ const a=C.active; if(!a || !a.stream) return; const tr=a.stream.getTracks().filter(t=>t.kind===kind); const off=tr.some(t=>t.enabled); tr.forEach(t=>t.enabled=!off); $c(id).classList.toggle('off', off); }
+  // ---- el timbre
+  let ringAC=null, ringT=null;
+  function ringStart(incoming){
+    ringStop(); try{ ringAC=new (window.AudioContext||window.webkitAudioContext)(); }catch(e){ return; }
+    const beep=()=>{ if(!ringAC) return; const t=ringAC.currentTime; (incoming?[[784,0],[988,.18],[784,.6],[988,.78]]:[[440,0],[440,.45]]).forEach(([f,d])=>{ const o=ringAC.createOscillator(), g=ringAC.createGain(); o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(ringAC.destination); g.gain.setValueAtTime(0,t+d); g.gain.linearRampToValueAtTime(incoming?.28:.1,t+d+.03); g.gain.exponentialRampToValueAtTime(.001,t+d+.35); o.start(t+d); o.stop(t+d+.4); }); };
+    beep(); ringT=setInterval(beep, incoming?2400:3200);
+  }
+  function ringStop(){ clearInterval(ringT); ringT=null; try{ ringAC && ringAC.close(); }catch(e){} ringAC=null; }
+  // ---- la conexión
+  // con cámara si hay; si el aparato no tiene cámara (muchas compus), igual habla y ve al otro
+  async function media(){ const au={echoCancellation:true, noiseSuppression:true, autoGainControl:true};
+    try{ return await navigator.mediaDevices.getUserMedia({audio:au, video:{facingMode:'user', width:{ideal:1280}, height:{ideal:720}}}); }
+    catch(e){ if(/NotAllowed|Security/.test(e.name)) throw e; const s=await navigator.mediaDevices.getUserMedia({audio:au}); s.sinCamara=true; return s; } }
+  async function iceList(extra){ let mine=null; try{ mine=C.opts.ice ? await C.opts.ice() : null; }catch(e){} return [...STUN, ...(mine||[]), ...(extra||[])]; }
+  function waitIce(pc){ return new Promise(res=>{ if(pc.iceGatheringState==='complete') return res(); const t=setTimeout(res, 2500); pc.addEventListener('icegatheringstatechange', ()=>{ if(pc.iceGatheringState==='complete'){ clearTimeout(t); res(); } }); }); }
+  async function makePC(a){
+    const pc=new RTCPeerConnection({iceServers:a.ice}); a.pc=pc;
+    a.stream.getTracks().forEach(t=>pc.addTrack(t, a.stream));
+    pc.ontrack=e=>{ const v=$c('fcRemote'); if(v.srcObject!==e.streams[0]){ v.srcObject=e.streams[0]; v.play && v.play().catch(()=>{}); } };
+    pc.onconnectionstatechange=()=>{ const s=pc.connectionState;
+      if(s==='connected' && a.state!=='live'){ a.state='live'; clearTimeout(a.giveUp); ringStop(); show('live', a.name); $c('fcLocal').srcObject=a.stream; a.t0=Date.now(); a.clock=setInterval(()=>{ const s2=Math.floor((Date.now()-a.t0)/1000); $c('fcState').textContent=`${Math.floor(s2/60)}:${String(s2%60).padStart(2,'0')}`; }, 1000); C.opts.onLive && C.opts.onLive(a.name); }
+      else if(s==='failed') end('No se pudo conectar el video (la red no dejó). Probá de nuevo.', true);
+      else if(s==='disconnected'){ clearTimeout(a.dropT); a.dropT=setTimeout(()=>{ if(pc.connectionState==='disconnected') end('Se cortó la llamada.', true); }, 8000); } };
+    return pc;
+  }
+  async function start(peer){
+    if(C.active || C.ring) return 'Ya hay una llamada.';
+    if(!peer) return 'No encuentro ese aparato en la familia.';
+    if(!FSync.on || !FSync.on()) return 'Este aparato no está unido a la familia todavía.';
+    const a=C.active={id:rid(), peer:peer.dev, name:peer.name, role:'caller', state:'calling'};
+    C.opts.onStart && C.opts.onStart();
+    show('wait', peer.name, 'Esperando que atiendan'); ringStart(false);
+    try{ a.stream=await media(); if(C.active!==a){ a.stream.getTracks().forEach(t=>t.stop()); return ''; } $c('fcLocal').srcObject=a.stream; }
+    catch(e){ end('No pude usar la cámara o el micrófono: '+(e.message||e.name)); return 'No pude usar la cámara.'; }
+    a.ice=await iceList();
+    await send(a.peer, {t:'ring', id:a.id, ts:Date.now(), ice:a.ice.filter(s=>s.username)});
+    a.giveUp=setTimeout(()=>{ if(C.active===a && a.state!=='live'){ send(a.peer,{t:'cancel', id:a.id}); end(`${cap(peer.name)} no atendió.`); } }, 45000);
+    return '';
+  }
+  const cap=s=>String(s).charAt(0).toUpperCase()+String(s).slice(1);
+  async function accept(){
+    const r=C.ring; if(!r) return; C.ring=null; clearTimeout(r.to); clearTimeout(C.autoT); ringStop();
+    const a=C.active={id:r.id, peer:r.from, name:r.name, role:'callee', state:'connecting'};
+    C.opts.onStart && C.opts.onStart();
+    show('wait', r.name, 'Conectando…'); $c('fcMidT').textContent=`Conectando con ${r.name}…`;
+    try{ a.stream=await media(); $c('fcLocal').srcObject=a.stream; }
+    catch(e){ send(a.peer,{t:'no', id:a.id}); end('No pude usar la cámara o el micrófono: '+(e.message||e.name)); return; }
+    a.ice=await iceList(r.ice); await makePC(a);
+    await send(a.peer, {t:'acc', id:a.id, ice:a.ice.filter(s=>s.username)});
+    a.giveUp=setTimeout(()=>{ if(C.active===a && a.state!=='live') end('No se pudo conectar.', true); }, 30000);
+  }
+  function reject(){ const r=C.ring; if(!r) return; C.ring=null; clearTimeout(r.to); clearTimeout(C.autoT); ringStop(); hide(); send(r.from,{t:'no', id:r.id}); C.opts.onEnd && C.opts.onEnd(''); }
+  function hangup(){ const a=C.active; if(!a) return; send(a.peer,{t:'bye', id:a.id}); end(''); }
+  function end(why, tell){
+    const a=C.active; if(a && tell) send(a.peer,{t:'bye', id:a.id});
+    C.active=null; ringStop();
+    if(a){ clearTimeout(a.giveUp); clearInterval(a.clock); clearTimeout(a.dropT); try{ a.pc && a.pc.close(); }catch(e){} try{ a.stream && a.stream.getTracks().forEach(t=>t.stop()); }catch(e){} }
+    hide(); C.opts.onEnd && C.opts.onEnd(why||'');
+  }
+  // ---- lo que llega del otro aparato
+  async function onMsg(o){
+    if(o.k!=='rtc' || o.to!==me()) return;
+    const key=o.t+'|'+o.id+'|'+(o.i||0); if(C.seen[key]) return; C.seen[key]=Date.now();
+    const a=C.active;
+    if(o.t==='ring'){
+      if(Date.now()-(o.ts||0)>45000) return;   // un timbre viejo (el aparato estaba apagado) no suena
+      if(a || C.ring){ send(o.f,{t:'busy', id:o.id}); return; }
+      const name=label(o.f, o.n);
+      C.ring={id:o.id, from:o.f, name, ice:o.ice||[]};
+      show('inc', name, 'Videollamada'); ringStart(true);
+      C.ring.to=setTimeout(()=>{ if(C.ring && C.ring.id===o.id){ C.ring=null; ringStop(); hide(); C.opts.onMissed && C.opts.onMissed(name); } }, 45000);
+      C.opts.onRing && C.opts.onRing(name);
+      if(C.opts.autoAnswer && C.opts.autoAnswer()){ $c('fcMidS').textContent='Atiendo sola en 5 segundos…'; clearTimeout(C.autoT); C.autoT=setTimeout(()=>{ if(C.ring && C.ring.id===o.id) accept(); }, 5000); }
+      return;
+    }
+    if(o.t==='cancel'){ if(C.ring && C.ring.id===o.id){ clearTimeout(C.ring.to); clearTimeout(C.autoT); const n=C.ring.name; C.ring=null; ringStop(); hide(); C.opts.onMissed && C.opts.onMissed(n); } return; }
+    if(!a || a.id!==o.id) return;
+    if(o.t==='acc' && a.role==='caller' && !a.pc){
+      a.state='connecting'; $c('fcMidS').textContent='Conectando…'; ringStop();
+      if(o.ice && o.ice.length) a.ice=[...a.ice, ...o.ice];
+      const pc=await makePC(a); await pc.setLocalDescription(await pc.createOffer()); await waitIce(pc);
+      await sendBig(a.peer, 'offer', a.id, {type:'offer', sdp:pc.localDescription.sdp});
+    }
+    else if(o.t==='offer' || o.t==='answer'){
+      const box=C.inbox[o.id+o.t]=C.inbox[o.id+o.t]||[]; box[o.i]=o.d; if(box.filter(x=>x!=null).length<o.n) return;
+      delete C.inbox[o.id+o.t]; const desc=JSON.parse(await unpack(box.join('')));
+      if(o.t==='offer' && a.role==='callee'){ await a.pc.setRemoteDescription(desc); await a.pc.setLocalDescription(await a.pc.createAnswer()); await waitIce(a.pc); await sendBig(a.peer, 'answer', a.id, {type:'answer', sdp:a.pc.localDescription.sdp}); }
+      else if(o.t==='answer' && a.role==='caller' && a.pc && !a.pc.currentRemoteDescription) await a.pc.setRemoteDescription(desc);
+    }
+    else if(o.t==='no'){ end(`${cap(a.name)} no puede atender ahora.`); }
+    else if(o.t==='busy'){ end(`${cap(a.name)} está en otra llamada.`); }
+    else if(o.t==='bye'){ end(a.state==='live'?'Terminó la llamada.':''); }
+  }
+  // ---- por voz: "llamá a la tablet", "atendé", "no atiendas"
+  function fromText(text){
+    const n=normC(text);
+    if(C.ring){ if(/^(si |dale |ok )?(atende|atender|atendela|contesta|contestale|si|dale|pasa)( la llamada)?$/.test(n)){ accept(); return true; }
+      if(/^(no|no atiendas|rechaza|rechazala|ahora no|corta|colga|despues)( la llamada)?$/.test(n)){ reject(); return true; } }
+    if(C.active && /^(colga|colgar|corta|cortala|corta la llamada|terminar la llamada|chau)$/.test(n)){ hangup(); return true; }
+    const m=n.match(/\b(?:llama|llamame|llamar|hace(?:me)? una videollamada|videollamada|comunicame|conectame)\w* (?:a|con) (.+)$/);
+    if(m && /compu|computadora|\bpc\b|tablet|living|celu|celular|telefono/.test(m[1]) || (m && findPeer(m[1]))){
+      const p=findPeer(m[1]);
+      if(!p){ C.opts.say && C.opts.say('No encuentro ese aparato en la familia. Primero hay que unirlo desde Ajustes.'); return true; }
+      start(p).then(err=>{ if(err && C.opts.say) C.opts.say(err); });
+      return true;
+    }
+    return false;
+  }
+  function init(o){ C.opts=o||{}; setInterval(()=>{ const t=Date.now()-120000; for(const k in C.seen) if(C.seen[k]<t) delete C.seen[k]; }, 60000); }
+  return { init, onMsg, start, accept, reject, hangup, fromText, peers, findPeer, get active(){ return !!C.active; }, get ringing(){ return !!C.ring; }, _C:C };
+})();
+// ================================================================ FRIDAY LLAMADAS (fin)
+
+// ================================================================ FRIDAY MIRA (inicio)
+// FRIDAY mira de reojo (la pantalla de la compu y/o la cámara) y solo habla si ve algo que valga la pena:
+// un error en lo que estás escribiendo, la cama mal tendida, algo peligroso, algo en lo que puede ayudar.
+// Mira cada tanto y solo cuando algo cambió; las fotos van al modelo de visión (Gemini o Groq) y no se guardan.
+// También responde al momento: "¿qué ves?", "mirá esto", "¿cómo me queda?".
+const Mira=(()=>{
+  const M={ on:false, t:null, busy:false, prev:{}, lastSay:0, said:[], h:{}, lastAt:0 };
+  const GEM=['gemini-2.5-flash','gemini-2.0-flash','gemini-2.5-flash-lite'];
+  const GROQ=['meta-llama/llama-4-scout-17b-16e-instruct','meta-llama/llama-4-maverick-17b-128e-instruct'];
+  const b64toImg=b64=>new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src='data:image/jpeg;base64,'+b64; });
+  // una foto chiquita en grises, para saber si algo cambió desde la última vez
+  async function huella(b64){
+    const im=await b64toImg(b64); if(!im) return null;
+    const c=document.createElement('canvas'); c.width=32; c.height=18; const x=c.getContext('2d'); x.drawImage(im,0,0,32,18);
+    const d=x.getImageData(0,0,32,18).data, g=new Uint8Array(32*18); for(let i=0;i<g.length;i++) g[i]=(d[i*4]*0.3+d[i*4+1]*0.59+d[i*4+2]*0.11)|0; return g;
+  }
+  function cambio(a,b){ if(!a||!b) return 255; let s=0; for(let i=0;i<a.length;i++) s+=Math.abs(a[i]-b[i]); return s/a.length; }
+  // una foto de la cámara (si ya hay un video prendido, de ese; si no, la prende un segundo y la apaga)
+  async function fotoCam(video){
+    let v=video, st=null;
+    try{
+      if(!v || v.readyState<2 || !v.videoWidth){ st=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:960}, height:{ideal:540}, facingMode:'user'}, audio:false}); v=document.createElement('video'); v.muted=true; v.playsInline=true; v.srcObject=st; await v.play(); await new Promise(r=>setTimeout(r,900)); }
+      const w=Math.min(960, v.videoWidth||640), h=Math.round(w*(v.videoHeight||360)/(v.videoWidth||640));
+      const c=document.createElement('canvas'); c.width=w; c.height=h; c.getContext('2d').drawImage(v,0,0,w,h);
+      return c.toDataURL('image/jpeg',0.72).split(',')[1];
+    }catch(e){ return null; }
+    finally{ try{ st && st.getTracks().forEach(t=>t.stop()); }catch(e){} }
+  }
+  // el modelo de visión: Gemini si hay llave; si no, Groq (la misma llave del cerebro)
+  async function ver(imgs, prompt){
+    const k=M.h.keys ? M.h.keys() : {};
+    if(k.gem){
+      for(const model of GEM){
+        try{ const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${encodeURIComponent(k.gem)}`,{method:'POST', headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({contents:[{role:'user', parts:[...imgs.map(b=>({inline_data:{mime_type:'image/jpeg', data:b}})), {text:prompt}]}]})});
+          if(!r.ok) continue; const d=await r.json(); const t=(d.candidates?.[0]?.content?.parts||[]).map(p=>p.text||'').join('').trim(); if(t) return t; }catch(e){}
+      }
+    }
+    if(k.groq){
+      for(const model of GROQ){
+        try{ const r=await fetch('https://api.groq.com/openai/v1/chat/completions',{method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+k.groq},
+            body:JSON.stringify({model, temperature:0.4, max_completion_tokens:220, messages:[{role:'user', content:[{type:'text', text:prompt}, ...imgs.map(b=>({type:'image_url', image_url:{url:'data:image/jpeg;base64,'+b}}))]}]})});
+          if(!r.ok) continue; const d=await r.json(); const t=(d.choices?.[0]?.message?.content||'').trim(); if(t) return t; }catch(e){}
+      }
+    }
+    return '';
+  }
+  const ahora=()=>new Date().toLocaleString('es-AR',{weekday:'long', hour:'2-digit', minute:'2-digit', hour12:false});
+  // el vistazo de cada tanto
+  async function vistazo(force){
+    if(M.busy || !M.on) return; const h=M.h;
+    if(!force && h.idle && !h.idle()) return;
+    M.busy=true; M.lastAt=Date.now(); h.onLook && h.onLook(true);
+    try{
+      const want=h.what(), imgs=[], que=[];
+      if(want.screen && h.screen){ const b=await h.screen(); if(b){ const g=await huella(b); if(force || cambio(g, M.prev.s)>6){ imgs.push(b); que.push('la pantalla de su compu'); } M.prev.s=g; } }
+      if(want.cam){ const b=await fotoCam(h.video && h.video()); if(b){ const g=await huella(b); if(force || cambio(g, M.prev.c)>9){ imgs.push(b); que.push(h.camLabel||'lo que ve la cámara'); } M.prev.c=g; } }
+      if(!imgs.length) return;
+      const prompt=`Sos FRIDAY, ${h.who||'la asistente'}. Hablás en español rioplatense, cálida y directa. Son las ${ahora()}. Te paso ${que.join(' y ')} (en ese orden). ${h.ctx?h.ctx():''}
+Lo último que ya comentaste (no lo repitas): ${M.said.slice(-4).join(' | ')||'nada'}.
+Decidí si vale la pena decir algo AHORA: un error en lo que está escribiendo o haciendo (un resumen con datos mal, una falta, una cuenta mal hecha), algo que quedó mal hecho (por ejemplo la cama mal tendida), algo peligroso, o una ayuda muy concreta y oportuna. La mayoría de las veces NO hay nada que decir: entonces respondé exactamente NADA.
+Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo diría una amiga, sin decir "en la imagen", "en la foto" ni "veo que".`;
+      const t=(await ver(imgs, prompt)).replace(/\*\*/g,'').trim();
+      if(!t || /^nada\b/i.test(t) || t.length<6) return;
+      if(Date.now()-M.lastSay < (h.gapMs?h.gapMs():8*60000)) return;   // no te llena de comentarios
+      M.lastSay=Date.now(); M.said.push(t); M.said=M.said.slice(-8);
+      h.say && h.say(t);
+    }catch(e){ console.warn('mira', e); }
+    finally{ M.busy=false; h.onLook && h.onLook(false); }
+  }
+  // "¿qué ves?", "mirá esto": al momento, con la cámara (o la pantalla si la nombrás)
+  async function preguntar(q, donde){
+    const h=M.h, imgs=[]; let que='';
+    if(donde==='screen' && h.screen){ const b=await h.screen(); if(b){ imgs.push(b); que='la pantalla de su compu'; } }
+    else { h.onLook && h.onLook(true); const b=await fotoCam(h.video && h.video()); h.onLook && h.onLook(false); if(b){ imgs.push(b); que=h.camLabel||'lo que ve la cámara'; } }
+    if(!imgs.length) return 'No pude usar la cámara. Fijate que le hayas dado permiso.';
+    const t=await ver(imgs, `Sos FRIDAY. Te paso ${que} ahora mismo. Te pregunta: "${q}". Respondé en español rioplatense, natural y concreto, en 1 a 3 frases, como si lo estuvieras mirando (sin decir "en la imagen"). Si te pide opinión (cómo le queda algo, si está bien hecho), sé honesta y amable.`);
+    return t ? t.replace(/\*\*/g,'').trim() : 'No pude mirar bien: no me contestó el modelo de visión (hace falta la llave de Gemini o de Groq).';
+  }
+  function start(){ stop(); M.on=true; const tick=()=>{ const ms=M.h.every?M.h.every():180000; M.t=setTimeout(async()=>{ await vistazo(false); if(M.on) tick(); }, ms); }; tick(); M.h.onState && M.h.onState(true); }
+  function stop(){ M.on=false; clearTimeout(M.t); M.t=null; M.h.onState && M.h.onState(false); }
+  const PREG=/\b(que (ves|estas viendo)|que hay (aca|en la camara)|mira(me)? (esto|aca|esta|este|lo que tengo)|como me (queda|veo|ves)|que (tengo|es esto) en la mano|me ves\b|que te parece (esto|como)|esta bien (tendida|hecha|hecho|ordenado))/;
+  return { init(h){ M.h=h||{}; }, start, stop, vistazo, preguntar, get on(){ return M.on; }, get busy(){ return M.busy; }, esPregunta:n=>PREG.test(n), _M:M };
+})();
+// ================================================================ FRIDAY MIRA (fin)
+
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='2.5';
+const VERSION='2.6';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -1266,7 +1560,7 @@ const palette=()=>({idle:[47,107,227]});
   }catch(e){}
   LS.set('migrado',true);
 })();
-let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', wake:true, patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
+let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const saveS=()=>LS.set('cfg',S);
 // la tablet es de toda la familia: saluda a la familia, no a una persona
 const FAM=()=>Object.assign({apellido:'', miembros:[]}, S.familia||{});
@@ -1412,7 +1706,7 @@ function faceSet(name, ms){
 }
 function faceApply(){
   if(Date.now()>FACE.until) FACE.cur=FACE.base;
-  document.querySelectorAll('.fface').forEach(root=>faceApplyTo(root, root.id==='sFace' ? EXPR.happy : (EXPR[FACE.cur]||EXPR.idle)));
+  document.querySelectorAll('.fface').forEach(root=>faceApplyTo(root, (root.id==='sFace'||root.id==='bFace') ? EXPR.happy : (EXPR[FACE.cur]||EXPR.idle)));
 }
 function faceApplyTo(root, e){
   if(!root.querySelector('.eyes')) return;
@@ -1625,7 +1919,7 @@ function pushHist(role, content){ hist.push({role, content:String(content).slice
 
 // ---------------------------------------------------------------- el oído conectado a la pantalla
 Ear.hooks={
-  ready:()=>state.started && !!S.groqKey,
+  ready:()=>state.started && !!S.groqKey && !Call.active,
   speaking:()=>speakingNow(),
   musicOn:()=>!!(music.cur && music.cur.playing!==false && music.cur.src==='youtube'),
   lastSaid:()=>tts.shown,
@@ -1687,6 +1981,11 @@ function durFrom(nf){
 function durTxt(secs){ const h=Math.floor(secs/3600), m=Math.floor(secs%3600/60), x=secs%60; const p=[]; if(h) p.push(h===1?'una hora':h+' horas'); if(m) p.push(m===1?'un minuto':m+' minutos'); if(x) p.push(x+' segundos'); return p.join(' y ') || '0 segundos'; }
 const CASA_COLORES=/\b(rojo|roja|naranja|amarill[oa]|verde|turquesa|celeste|cian|azul|violeta|lila|morado|purpura|rosa|rosado|fucsia|magenta)\b/;
 function fast(text, nf){
+  // videollamadas: "llamá a la compu", "atendé", "no atiendas"
+  if(Call.fromText(text)){ pushHist('user', text); return true; }
+  if(Mira.esPregunta(nf)){ pushHist('user', text); setMode('thinking'); faceSet('listening', 3000); Mira.preguntar(text, 'cam').then(r=>{ setMode('idle'); say(r, 'happy'); }); return true; }
+  if(/\b(deja de mirar|no mires mas|apaga(la)? la camara|cerra los ojos)\b/.test(nf)){ S.mira='no'; saveS(); miraApply(); sayFast(text, 'Listo, dejo de mirar.'); return true; }
+  if(/\b(mira(me)? (de vez en cuando|siempre)|prende(la)? la camara|empeza a mirar)\b/.test(nf)){ S.mira='si'; saveS(); miraApply(); sayFast(text, 'Dale, miro de vez en cuando y te aviso si veo algo.'); return true; }
   const n0=nf.replace(/^(che |dale |bueno |eh |friday )+/,'');
   // callate / pará
   if(/^(callate|silencio|para|pará|basta|ya esta|stop|shh+)( friday)?$/.test(n0)){ stopTalk(); capReset(); return true; }
@@ -2067,6 +2366,7 @@ const pcCall=(a, x)=>pcSend({k:'call', a, x});
 // la compu hace cosas que solo ella puede (por ejemplo, prender la tele LG por wifi)
 const pcActs=list=>pcSend({k:'acts', list});
 function onMsg(o){
+  if(o.k==='rtc'){ Call.onMsg(o); return; }
   const q=o.id && pcq[o.id];
   if(o.k==='ack' && q){ clearTimeout(q.t); q.t=setTimeout(()=>{ delete pcq[o.id]; q.res(null); }, 60000); }
   else if(o.k==='res' && q && o.fin){ clearTimeout(q.t); delete pcq[o.id]; q.res(o.r||(o.notes?{ok:true, notes:o.notes}:null)); if(o.r && o.r.ok) setTimeout(()=>casaLoad(true), 800); }
@@ -2559,8 +2859,21 @@ document.addEventListener('click', e=>{
   const s=e.target.closest && e.target.closest('[data-shop]');
   if(s){ const x=compras.find(y=>y.id===s.dataset.shop); if(x){ x.h=!x.h; shopSave(); } return; }
   if(e.target.closest && e.target.closest('#face')){ if(speakingNow()) stopTalk(); else { Ear.convoUntil=Date.now()+12000; duck(true); setTimeout(()=>{ if(state.mode==='idle' && !speakingNow()) duck(false); }, 12000); chime('up'); faceSet('listening',3000); toast('Te escucho: hablame sin decir «Friday»'); } return; }
-  if(e.target.closest && e.target.closest('#sets,#setBg,#tvPad,#gear,#tap,#setup,#mapa,button,a')) return;
+  if(e.target.closest && e.target.closest('#sets,#setBg,#tvPad,#gear,#tap,#setup,#mapa,#fcall,button,a')) return;
   gearShow();
+});
+
+// ---------------------------------------------------------------- FRIDAY mira (con la cámara de la tablet)
+function miraApply(){ if(S.mira==='si' && state.started) Mira.start(); else Mira.stop(); }
+Mira.init({
+  who:'la asistente de la familia, que vive en una tablet en el living', camLabel:'lo que ve la cámara de la tablet (el living)',
+  what:()=>({cam:true}), every:()=>Math.max(1,+S.miraMin||5)*60000, gapMs:()=>10*60000,
+  idle:()=>state.mode==='idle' && !speakingNow() && !Call.active && !amb.on && !durmiendo() && !setsOpen(),
+  keys:()=>({gem:S.gemKey, groq:S.groqKey}),
+  ctx:()=>{ const f=FAM(); return f.miembros.length?`En la casa viven ${f.miembros.join(', ')}.`:''; },
+  say:t=>{ state.lastUser=Date.now(); say(t, 'happy'); },
+  onState:on=>{ $('eye').hidden=!on; },
+  onLook:on=>{ $('eye').classList.toggle('look', on); }
 });
 
 // ---------------------------------------------------------------- ajustes: aparecen solo cuando tocás la pantalla
@@ -2579,6 +2892,8 @@ function setsRender(){
   $('musNote').textContent = S.musicSrc==='spotify' ? (spOn() ? 'Con Spotify tiene que estar abierto en algún aparato (celu, compu o tele). Si no, suena igual con YouTube.' : 'Spotify no está conectado: se conecta desde el celu. Mientras, suena con YouTube.') : 'YouTube suena en la tablet (o en la tele) sin abrir nada más.';
   const vs=esVoices().slice(0,6), cur=(pickVoice()||{}).name;
   $('vozLocal').innerHTML = vs.length ? `<p class="lbl">Voz de la tablet (la que usa si no está Elena)</p><div class="seg" data-k="voiceLocal">${vs.map(v=>`<button type="button" data-v="${esc(v.name)}" aria-pressed="${v.name===cur}">${esc(VOZ_REG[langOf(v)]||v.name)}</button>`).join('')}</div>` : '';
+  const ps=Call.peers().filter(p=>p.dev.startsWith('pc')||p.dev.startsWith('pan')||p.dev.startsWith('cel'));
+  $('callList').innerHTML = ps.length ? ps.map(p=>`<button type="button" data-call="${esc(p.dev)}">📹 Llamar a ${esc(p.name)}</button>`).join('') : '<p class="note">Todavía no hay otros aparatos unidos: abajo, «Compartir con la compu y el celu».</p>';
   const tr=$('tvRow');
   if(S.tv && S.tv.screenId) tr.innerHTML=`<div><b>${esc(S.tv.name||'La tele')}</b><small>Vinculada. Decí «Friday, poné Soda Stereo en la tele».</small></div><button class="ghost" type="button" id="tvOff">Desvincular</button>`;
   else if(!workerOn() || wv<2) tr.innerHTML=`<div><b>La tele</b><small>${!workerOn()?'Necesita el servicio de Cloudflare (se arma desde el celu).':'Hay que actualizar el código del servicio de Cloudflare.'}</small></div>`;
@@ -2617,16 +2932,18 @@ function setsInit(){
   $('gear').onclick=()=>setsShow(true); $('setX').onclick=()=>setsShow(false); $('setBg').onclick=()=>setsShow(false);
   $('sets').addEventListener('click', e=>{
     const b=e.target.closest('.seg button');
-    if(b){ const k=b.parentElement.dataset.k, v=b.dataset.v; S[k]=/^(patience|ambMin)$/.test(k)?+v:v; saveS();
+    if(b){ const k=b.parentElement.dataset.k, v=b.dataset.v; S[k]=/^(patience|ambMin|miraMin)$/.test(k)?+v:v; saveS();
       if(k==='voz' || k==='vozVel'){ tts.cache.clear(); tts.failUntil=0; }
       if(k==='voiceLocal'){ tts.voice=null; say('Así sueno con esta voz.', 'happy'); }
       if(k==='subs') setsApply();
+      if(k==='mira' || k==='miraMin') miraApply();
       if(k==='musicOut' && v==='tele' && !(S.tv && S.tv.screenId)) setTimeout(()=>{ if(workerOn() && (S.workerV||0)>=2) padShow(); }, 250);
       setsRender(); return; }
     if(e.target.id==='vozTest'){ tts.failUntil=0; tts.err=''; tts.cache.clear(); say('Hola. Así sueno ahora. ¿Les gusta?', 'happy'); setTimeout(setsRender, 2500); setTimeout(setsRender, 6000); }
     else if(e.target.id==='tvLink') padShow();
     else if(e.target.id==='tvOff'){ S.tv=null; if(S.musicOut==='tele') S.musicOut='tablet'; saveS(); setsRender(); toast('La tele quedó desvinculada'); }
     else if(e.target.id==='setQR'){ setsShow(false); setupShow(true); }
+    else if(e.target.closest('[data-call]')){ const p=Call.peers().find(x=>x.dev===e.target.closest('[data-call]').dataset.call); setsShow(false); Call.start(p).then(err=>{ if(err) say(err,'worried'); }); }
     else if(e.target.id==='setLink'){ setsShow(false); setupShow(true, 'link'); }
     else if(e.target.id==='setReload') location.reload();
   });
@@ -2755,9 +3072,10 @@ function setupCheck(){
 // ---------------------------------------------------------------- arranque
 async function start(){
   $('tap').hidden=true; state.started=true;
+  try{ if(!document.fullscreenElement && !matchMedia('(display-mode: fullscreen)').matches) document.documentElement.requestFullscreen({navigationUI:'hide'}).catch(()=>{}); }catch(e){}
   try{ const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); }catch(e){}
   try{ const el=voiceEl(); el.src=SILENCIO; const p=el.play(); if(p && p.catch) p.catch(()=>{}); }catch(e){}
-  audioCtx(); await earStart(); renderStatus();
+  audioCtx(); await earStart(); renderStatus(); miraApply();
   if(vozNube()) for(const t of ACKS) fetchTTS(t).catch(()=>{});
   try{ if('wakeLock' in navigator){ const w=await navigator.wakeLock.request('screen'); document.addEventListener('visibilitychange', async()=>{ if(!document.hidden) try{ await navigator.wakeLock.request('screen'); }catch(e){} }); } }catch(e){}
   greet();
@@ -2765,22 +3083,35 @@ async function start(){
 // el buen día: armado acá mismo (rápido y sin gastar el cerebro)
 function greet(){
   const today=todayISO(), h=new Date().getHours();
-  if(LS.get('greet','')===today || h<6){ say(conFam('Hola')+'. Cuando me necesiten, digan «Friday».', 'happy'); return; }
+  if(LS.get('greet','')===today || h<6){ say(conFam('Hola')+'. Cuando me necesiten, digan «Friday».', 'happy'); tts.noFollow=true; return; }
   LS.set('greet', today);
   const w=weather.data, parts=[conFam(h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+'.'];
   if(w) parts.push(`En ${S.city||'la ciudad'} hay ${w.temp} grados, ${WMO_LARGO(w.code)}; hoy entre ${w.min} y ${w.max}${w.rainP>=40?', y puede llover':''}.`);
   const ev=gapp.ev.filter(e=>String(e.i).startsWith(today)); if(ev.length) parts.push('En la agenda: '+ev.slice(0,3).map(e=>e.d?e.t:`a las ${hhmm(new Date(e.i))}, ${e.t}`).join('; ')+'.');
   const cs=cumplesProx().filter(c=>c.dias===0); if(cs.length) parts.push(`Hoy cumple ${listaY(cs.map(c=>c.n))}.`);
   parts.push('Cuando me necesiten, digan «Friday».');
-  say(parts.join(' '), 'happy');
+  say(parts.join(' '), 'happy'); tts.noFollow=true;
 }
 async function boot(){
+  try{ faceBuild($('bFace')); }catch(e){}
+  setTimeout(()=>$('boot').classList.add('off'), 1400);
+  // como un sistema propio: el botón "atrás" de Android no la cierra (cierra lo que esté abierto)
+  try{ history.pushState({f:1},''); addEventListener('popstate', ()=>{ history.pushState({f:1},''); if(setsOpen()) setsShow(false); else if(!$('mapa').hidden) mapaOff(); else if(amb.on) ambOff(); }); }catch(e){}
   faceBuild($('face')); faceSet('idle'); faceBlink(); applyLight(); render();
   try{ if(navigator.serviceWorker && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
   await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o','u'], pollMs:60000, live:true,
     local:syncLocal, apply:syncApply, onMsg, onStatus:renderStatus });
   if(setupCheck()) $('tap').hidden=false;
-  getWeather(); casaLoad(); agendaLoad(); wkPing(); setsInit(); state.sleepUntil=LS.get('sleepUntil',0);
+  getWeather(); casaLoad(); agendaLoad(); wkPing(); setsInit();
+  Call.init({
+    say:t=>say(t,'worried'),
+    ice:async()=>{ if(!workerOn() || (S.workerV||0)<4) return null; const r=await wk('/turn'); return r.ok ? r.iceServers : null; },
+    autoAnswer:()=>S.autoAns==='si',
+    onRing:name=>{ ambOff(); setsShow(false); stopTalk(); state.lastUser=Date.now(); faceSet('surprised', 3000); },
+    onStart:()=>{ stopTalk(); ambOff(); setsShow(false); if(music.cur && music.cur.src==='youtube' && music.cur.playing!==false){ try{ music.yt.pauseVideo(); }catch(e){} } },
+    onEnd:why=>{ state.lastUser=Date.now(); if(why) toast(why, 5000); },
+    onMissed:name=>addAviso({i:'📹', t:'Llamada perdida', s:'De '+name, v:'Te llamó '+name+'.'}, false)
+  }); state.sleepUntil=LS.get('sleepUntil',0);
   $('mapa').onclick=mapaOff;
   $('tap').onclick=start; $('sClose').onclick=()=>{ $('setup').hidden=true; setupShow.force=false; if(!state.started) $('tap').hidden=false; };
   setInterval(()=>{ render(); checkTimers(); if(amb.on) ambTick(); }, 1000);

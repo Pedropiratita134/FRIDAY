@@ -5,6 +5,8 @@
 //   3) tu Google: agenda y mails (guarda la "llave larga" de Google sin que tu clave quede a la vista)
 //   4) la voz de FRIDAY: Elena, la misma voz natural que usa en la compu (la de Microsoft Edge / Translator)
 //   5) la tele: pone música en el YouTube de tu tele (vinculada con el código de la tele)
+//   6) videollamadas: el "puente" de Cloudflare para cuando dos aparatos no se pueden ver directo (opcional:
+//      TURN_KEY_ID y TURN_KEY_TOKEN, de Cloudflare → Realtime → TURN Server; gratis hasta 1000 GB por mes)
 //
 // Variables (Cloudflare → tu Worker → Settings → Variables and Secrets):
 //   FRIDAY_KEY      una clave larga que inventás vos (la misma que ponés en el celu). Obligatoria.
@@ -20,7 +22,7 @@ const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.goog
 let tuya = { host: null, tok: '', exp: 0 };
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words, X-Voz-Via' };
-const VERSION = 3;
+const VERSION = 4;
 const form = o => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });
 const enc = new TextEncoder();
@@ -267,7 +269,7 @@ export default {
 
     if (!same(key, env.FRIDAY_KEY)) return json({ ok: false, error: 'clave incorrecta' }, 401);
 
-    if (p === '/ping') return json({ ok: true, v: VERSION, tts: true, tele: true, tuya: !!(env.TUYA_ID && env.TUYA_SECRET), google: !!(env.GOOGLE_ID && env.GOOGLE_SECRET) });
+    if (p === '/ping') return json({ ok: true, v: VERSION, tts: true, tele: true, turn: !!(env.TURN_KEY_ID && env.TURN_KEY_TOKEN), tuya: !!(env.TUYA_ID && env.TUYA_SECRET), google: !!(env.GOOGLE_ID && env.GOOGLE_SECRET) });
 
     if (p === '/tuya' && req.method === 'POST') {
       let b = {}; try { b = await req.json(); } catch (e) { }
@@ -298,6 +300,17 @@ export default {
         if (cache && text.length < 160) { try { await cache.put(ck, res.clone()); } catch (e) { } }
         return res;
       } catch (e) { return json({ ok: false, error: e.message }, 502); }
+    }
+
+    if (p === '/turn') {
+      if (!env.TURN_KEY_ID || !env.TURN_KEY_TOKEN) return json({ ok: false, error: 'sin_turn' });
+      try {
+        const r = await fetch((env.TURN_API || 'https://rtc.live.cloudflare.com/v1/turn/keys/') + env.TURN_KEY_ID + '/credentials/generate-ice-servers', { method: 'POST', headers: { Authorization: 'Bearer ' + env.TURN_KEY_TOKEN, 'Content-Type': 'application/json' }, body: JSON.stringify({ ttl: 86400 }) });
+        const j = await r.json(); let ice = j.iceServers;
+        if (ice && !Array.isArray(ice)) ice = [ice];
+        if (!ice || !ice.length) return json({ ok: false, error: 'Cloudflare no dio el puente (' + r.status + ')' });
+        return json({ ok: true, iceServers: ice });
+      } catch (e) { return json({ ok: false, error: e.message }); }
     }
 
     if (p === '/tv/pair' && req.method === 'POST') {

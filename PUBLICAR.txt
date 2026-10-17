@@ -268,3 +268,26 @@ NUEVO EN LA 2.5: ESCUCHA CON MÚSICA, VIDEO Y LETRA, BORRAR, TABLET DE LA FAMILI
 - Tablet de la familia: Ajustes → «La familia»: apellido y quiénes viven en la casa. Saluda a la
   familia, no lee mails y no da por hecho quién le habla.
 QUÉ SUBIR: panel.html y sw.js.
+
+=====================================================================
+NUEVO EN LA 2.6: VIDEOLLAMADAS, FRIDAY MIRA Y LA TABLET COMO SISTEMA PROPIO
+=====================================================================
+- Videollamadas entre la compu y la tablet: "Friday, llamá a la compu" (en la tablet) o
+  "Friday, llamá a la tablet" (en la compu). Del otro lado suena y se atiende tocando o diciendo
+  "atendé" ("ahora no" para rechazar). La imagen y la voz van directo entre los dos, cifradas.
+  Si algún día no conectan (redes raras), se puede sumar el "puente" gratis de Cloudflare:
+  Cloudflare → Realtime → TURN Server → crear una clave, y cargar en el Worker TURN_KEY_ID y
+  TURN_KEY_TOKEN (y volver a pegar worker.js).
+- FRIDAY mira (tablet): Ajustes → "FRIDAY mira" → "Sí, que mire". Con la cámara, cada tanto y solo
+  si algo cambió, y avisa si ve algo que valga la pena. Mientras está prendido se ve el ojito
+  "FRIDAY está mirando" abajo de la cara. Cuando quieras: "¿qué ves?", "mirá esto", "¿cómo me
+  queda?". "Dejá de mirar" lo apaga. Necesita la llave de Gemini o la de Groq (la del cerebro).
+- Como un sistema propio: arranca con la pantalla de FRIDAY, va a pantalla completa y el botón
+  "atrás" de Android no la cierra.
+  Para que en la tablet solo esté FRIDAY (gratis, sin apps extra):
+    1. Instalala: Chrome → menú ⋮ → "Agregar a la pantalla principal" → abrila desde ese ícono.
+    2. Ajustes de Android → Seguridad (o "Más seguridad") → "Fijar apps" (o "Fijación de pantalla")
+       → activado. Abrí FRIDAY → botón de apps recientes → ícono de FRIDAY → "Fijar".
+       Para salir: mantener apretados "atrás" y "recientes" a la vez.
+    3. Ajustes → Pantalla → Tiempo de espera: el máximo (FRIDAY igual pide que no se apague).
+QUÉ SUBIR: panel.html, sw.js y worker.js (este último en Cloudflare, solo si querés el puente).
