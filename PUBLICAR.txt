@@ -252,3 +252,19 @@ NUEVO EN LA 2.4: TODO COMPARTIDO Y LO QUE TIENE LA DE LA COMPU
 - Si escucha algo que no tiene sentido, te pide que lo repitas en vez de hacer cualquier cosa.
 - FRIDAY Móvil 2.1: las notas de la casa se ven en Recordatorios (y se pueden borrar).
 QUÉ SUBIR: panel.html, index.html, tablet.html y sw.js. En la compu: friday.html versión 87.
+
+=====================================================================
+NUEVO EN LA 2.5: ESCUCHA CON MÚSICA, VIDEO Y LETRA, BORRAR, TABLET DE LA FAMILIA
+=====================================================================
+- Con música sonando te escucha: la voz tiene que sobresalir un poco de la música (decí «Friday»
+  un poco más fuerte que la canción); cuando la oye, baja la música y te escucha. Tocar la cara
+  también baja la música y escucha.
+- Arreglado: si decías «Friday, pausá la música» con la charla abierta, le llegaba el «Friday»
+  pegado y no lo entendía como orden.
+- Modo cielo con música: el video de YouTube (o la tapa) y la letra al ritmo de la canción
+  (letras de lrclib.net, gratis; si la canción no tiene letra sincronizada, solo título).
+- Borrar: tocá cualquier renglón de «Hoy» y aparece «Borrar». Por voz: «borrá lo de las 22:30»,
+  «borrá lo de las diez y media», «borrá todos los recordatorios».
+- Tablet de la familia: Ajustes → «La familia»: apellido y quiénes viven en la casa. Saluda a la
+  familia, no lee mails y no da por hecho quién le habla.
+QUÉ SUBIR: panel.html y sw.js.
