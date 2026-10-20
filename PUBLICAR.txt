@@ -291,3 +291,19 @@ NUEVO EN LA 2.6: VIDEOLLAMADAS, FRIDAY MIRA Y LA TABLET COMO SISTEMA PROPIO
        Para salir: mantener apretados "atrás" y "recientes" a la vez.
     3. Ajustes → Pantalla → Tiempo de espera: el máximo (FRIDAY igual pide que no se apague).
 QUÉ SUBIR: panel.html, sw.js y worker.js (este último en Cloudflare, solo si querés el puente).
+
+=====================================================================
+NUEVO EN LA 2.7: NUNCA SE QUEDA MUDA, SE ACUERDA Y RETOMA, VOZ MÁS FUERTE
+=====================================================================
+- Si te estaba escuchando y algo falló (no le llegó bien, se cortó internet, se quedó sin cupo de
+  Whisper un minuto), ya no se queda callada: te pide que lo repitas o te dice qué pasó, y sigue
+  escuchando sin que repitas «Friday».
+- Si el primer pedacito ya había oído «Friday», tu frase va aunque Whisper no lo repita al final.
+- Ajustes → Oído → abajo de la barra: lo último que escuchó y qué hizo con eso (para saber por qué
+  no contestó alguna vez).
+- Se acuerda y retoma: si le contás "mañana tengo la prueba", al otro día te pregunta cómo te fue
+  (al saludar o cuando venga al caso). Lo mismo en la compu: se comparte.
+- Más persona: siempre de buena onda y paciente, nota si alguien está cansado o contento, festeja
+  los logros, es honesta y tiene sus gustos (rock nacional, mate amargo, días de lluvia).
+- Para parlantes chicos (como el de la SKY Elite T11 Pro): Ajustes → Voz → "Más fuerte y clara".
+QUÉ SUBIR: panel.html y sw.js. En la compu: friday.html versión 90.

@@ -390,6 +390,8 @@ body.lite .card{box-shadow:0 1px 0 var(--edge)} body.lite .tap{backdrop-filter:n
       <p class="note" id="vozNote"></p>
       <p class="lbl">Velocidad</p>
       <div class="seg" data-k="vozVel"><button type="button" data-v="lenta">Más lenta</button><button type="button" data-v="normal">Normal</button><button type="button" data-v="rapida">Más rápida</button></div>
+      <p class="lbl">Si el parlante de la tablet es chico (se escucha bajito o "lata")</p>
+      <div class="seg" data-k="vozFuerte"><button type="button" data-v="no">Normal</button><button type="button" data-v="si">Más fuerte y clara</button></div>
       <div id="vozLocal"></div>
       <button class="ghost" id="vozTest" type="button">Probar la voz</button></section>
     <section><h3>FRIDAY mira</h3>
@@ -1181,12 +1183,15 @@ function sttFrame(data){
       const frames=stt.frames, spoke=stt.speechMs, conv=earAttending();
       const notForHer = !conv && !stt.peekYes && stt.peekNo>0 && !stt.peekPend;
       const bajito = !conv && !stt.peekYes && !stt.wakeChecked && sttNoisy() && stt.segPeak <= stt.bgLv*1.4;
-      const skip = spoke<220 || notForHer || bajito || !sttSendBudget(conv);
+      const sinCupo=!sttSendBudget(conv), paraElla=conv || stt.peekYes;
+      const skip = spoke<220 || notForHer || bajito || sinCupo;
       const waitPeek = !skip && !conv && !stt.peekYes && stt.peekPend>0 ? stt.peekP : null;
+      earLog(skip ? (spoke<220?'muy corto':notForHer?'no dijiste «Friday»':bajito?'bajito, con ruido de fondo':'sin cupo de Whisper') : 'mandado a Whisper', '', paraElla);
+      const yaDijo=stt.peekYes;
       sttReset();
-      if(skip) h.onDrop();
-      else if(waitPeek) Promise.race([waitPeek, new Promise(r=>setTimeout(()=>r(null), 2500))]).then(yes=>{ if(yes===false) h.onDrop(); else sttSend(frames); });
-      else sttSend(frames);
+      if(skip){ h.onDrop(); if(sinCupo && paraElla && spoke>=220 && h.onFail) h.onFail('cupo'); }
+      else if(waitPeek) Promise.race([waitPeek, new Promise(r=>setTimeout(()=>r(null), 2500))]).then(yes=>{ if(yes===false) h.onDrop(); else sttSend(frames, yes===true); });
+      else sttSend(frames, yaDijo || conv);
     }
   }
 }
@@ -1198,7 +1203,9 @@ function whisperPrompt(){
   const base=`Charla en español rioplatense con FRIDAY, una asistente de voz de la casa. ${(S.familia&&S.familia.miembros&&S.familia.miembros.length)?'En la casa están '+S.familia.miembros.join(', ')+'.':''} Suele empezar diciendo el nombre FRIDAY. Escribí siempre "Friday". Palabras frecuentes: Friday, ${S.city||''}, Spotify, YouTube, poné, prendé, apagá, la luz, timer, recordame, la lista, agregá${nombres.size?', '+[...nombres].join(', '):''}.`;
   return (last ? base+` FRIDAY recién dijo: "${String(last).slice(-200)}"` : base).slice(0,900);
 }
-async function sttSend(frames){
+// lo que pasó con lo último que escuchó (para saber por qué a veces no contesta)
+function earLog(que, txt, paraElla){ (Ear.log=Ear.log||[]).push({at:Date.now(), que, t:String(txt||'').slice(0,120), p:!!paraElla}); Ear.log=Ear.log.slice(-25); }
+async function sttSend(frames, paraElla){
   const h=Ear.hooks;
   const fd=new FormData();
   fd.append('file', encodeWav(frames, stt.sr), 'voz.wav');
@@ -1221,13 +1228,14 @@ async function sttSend(frames){
     }
     stt.fails=0; if(!segs.length) Ear.conf=0;
     Ear.sent++;
-    if(!txt || WHISPER_JUNK.test(norm(txt))){ Ear.last={t:txt||'(nada claro)', at:Date.now(), ok:false}; h.onDrop(); return; }
-    earHeard(txt);
-  }catch(e){ stt.fails++; console.warn(e); h.onDrop(true); }
+    if(!txt || WHISPER_JUNK.test(norm(txt))){ Ear.last={t:txt||'(nada claro)', at:Date.now(), ok:false}; earLog('Whisper no entendió nada claro', d.text, paraElla); h.onDrop(); if(paraElla && h.onFail) h.onFail('mal'); return; }
+    earLog('escuché', txt, paraElla);
+    earHeard(txt, paraElla);
+  }catch(e){ stt.fails++; console.warn(e); earLog('falló Whisper ('+(e.message||e)+')', '', paraElla); h.onDrop(true); if(paraElla && h.onFail) h.onFail(/429/.test(String(e.message))?'cupo':'red'); }
 }
 // lo que llegó de Whisper: ¿era para ella?
-function earHeard(text){
-  const h=Ear.hooks, w=stripWake(text), abierta=!S.wake || Date.now()<=Ear.convoUntil;
+function earHeard(text, yaLlamada){
+  const h=Ear.hooks, w=stripWake(text), abierta=!S.wake || Date.now()<=Ear.convoUntil || !!yaLlamada;
   Ear.last={t:text, at:Date.now(), ok:w.called||abierta};
   if(!w.called && !abierta){ h.onNotForMe(text); return; }
   // el nombre se saca siempre (también si ya estaba escuchando): "Friday, pausá la música" → "pausá la música"
@@ -1530,7 +1538,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='2.6';
+const VERSION='2.7';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -1560,7 +1568,7 @@ const palette=()=>({idle:[47,107,227]});
   }catch(e){}
   LS.set('migrado',true);
 })();
-let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
+let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', vozFuerte:'no', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const saveS=()=>LS.set('cfg',S);
 // la tablet es de toda la familia: saluda a la familia, no a una persona
 const FAM=()=>Object.assign({apellido:'', miembros:[]}, S.familia||{});
@@ -1568,6 +1576,10 @@ const famNombre=()=>{ const f=FAM(); return f.apellido ? 'familia '+f.apellido :
 const conFam=(pre)=>{ const n=famNombre(); return n ? `${pre}, ${n}` : pre; };
 let memory=LS.get('memory',[]), reminders=LS.get('rems',[]), compras=LS.get('compras',[]), notas=LS.get('notas',[]), cumplesP=LS.get('cumples',[]);
 let timers=LS.get('timers',[]), hist=LS.get('hist',[]), avisos=LS.get('avisos',[]), autos=LS.get('autos',[]);
+// lo que quedó para preguntar después ("mañana tengo la prueba" → al otro día: "¿y, cómo te fue?")
+let segs=LS.get('segs',[]);
+function segSave(){ segs=segs.filter(x=>!x.done || Date.now()-(x.doneAt||0)<3*86400000).slice(-30); LS.set('segs',segs); try{ FSync.scan(); }catch(e){} }
+const segDue=()=>{ const hoy=isoLocal(new Date()).slice(0,10); return segs.filter(x=>!x.done && x.f<=hoy); };
 let pcInfo=LS.get('pcInfo',{});   // lo que cuenta la compu cuando está: {agenda, cumples, envios, np, casa}
 const weather={data:LS.get('wx',null), at:0};
 const DEV=(()=>{ let d=LS.get('dev',null); if(!d){ d='pan'+Math.random().toString(36).slice(2,6); LS.set('dev',d); } return d; })();
@@ -1798,6 +1810,16 @@ const SILENCIO='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAIA+AA
 const ACKS=['¿Sí?','Decime.','¿Qué necesitás?','Te escucho.'];
 // el reproductor de la voz: uno solo, "habilitado" con el primer toque (así Android lo deja sonar siempre)
 function voiceEl(){ if(!tts.el){ tts.el=new Audio(); tts.el.preload='auto'; } return tts.el; }
+// para parlantes chicos: la voz pasa por un compresor y sale más fuerte y más clara (solo si el audio ya está andando)
+function voiceBoost(){
+  if(S.vozFuerte!=='si') return; if(tts.boost){ voiceBoostSet(true); return; } const ac=audioCtx(); if(!ac || ac.state!=='running') return;
+  try{ const src=ac.createMediaElementSource(voiceEl()), hp=ac.createBiquadFilter(), pres=ac.createBiquadFilter(), comp=ac.createDynamicsCompressor(), g=ac.createGain();
+    hp.type='highpass'; hp.frequency.value=180;                       // los graves se pierden en un parlante chico: mejor sacarlos y que no distorsione
+    pres.type='peaking'; pres.frequency.value=2800; pres.Q.value=0.9; pres.gain.value=5;   // presencia: se entiende mejor de lejos
+    comp.threshold.value=-26; comp.knee.value=8; comp.ratio.value=6; comp.attack.value=0.003; comp.release.value=0.2;
+    g.gain.value=1.9; src.connect(hp); hp.connect(pres); pres.connect(comp); comp.connect(g); g.connect(ac.destination); tts.boost={hp,pres,comp,g}; }catch(e){}
+}
+function voiceBoostSet(on){ const b=tts.boost; if(!b || b===true) return; b.hp.frequency.value=on?180:10; b.pres.gain.value=on?5:0; b.comp.ratio.value=on?6:1; b.g.gain.value=on?1.9:1; }
 function playVoice(it, a, ep){
   const el=voiceEl(); let fin=false, started=false, g=null;
   const done=(fallback)=>{ if(fin) return; fin=true; clearTimeout(g); el.onended=el.onerror=el.onplaying=null; clearInterval(tts.mouthT); if(a.once) setTimeout(()=>URL.revokeObjectURL(a.url), 2000);
@@ -1817,6 +1839,7 @@ function playVoice(it, a, ep){
       FACE.talk = on ? (FACE.talk>0.5 ? 0.25+Math.random()*0.25 : 0.55+Math.random()*0.45) : 0; faceApply(); }, 90);
   };
   g=setTimeout(()=>{ if(!started) done(true); }, 3000);   // si no arranca en 3 segundos, habla con la voz de la tablet
+  voiceBoost(); if(tts.boost){ try{ const ac=audioCtx(); if(ac.state!=='running') ac.resume(); }catch(e){} }
   el.src=a.url; try{ el.currentTime=0; }catch(e){}
   const p=el.play(); if(p && p.catch) p.catch(()=>done(true));
 }
@@ -1929,9 +1952,17 @@ Ear.hooks={
   onDrop:(err)=>{ youBars(false); if(state.mode==='listening'){ setMode('idle'); $('you').textContent=''; duck(false); } },
   onNotForMe:()=>{ youBars(false); if(state.mode==='listening') setMode('idle'); $('you').textContent=''; duck(false); },
   onJustName:()=>{ youBars(false); ambOff(); state.lastUser=Date.now(); const a=ACKS[ack.n++ % ACKS.length]; say(a, 'listening'); Ear.convoUntil=Date.now()+12000; $('you').innerHTML='<q>Friday</q>'; },
-  onText:(text)=>{ youBars(false); userSaid(text, {dudoso:(Ear.conf||0)<-0.8}); }
+  onText:(text)=>{ youBars(false); userSaid(text, {dudoso:(Ear.conf||0)<-0.8}); },
+  onFail:(kind)=>noTeEntendi(kind)
 };
 const ack={n:0};
+// si te estaba escuchando, nunca se queda muda: o contesta, o te dice qué pasó
+let lastOuch=0;
+function noTeEntendi(kind){
+  if(Date.now()-lastOuch<12000 || tts.on || tts.q.length) return; lastOuch=Date.now();
+  const t = kind==='cupo' ? 'Uy, me quedé sin cupo para escuchar por un minuto. Repetímelo en un ratito.' : kind==='red' ? 'Se me cortó lo que me dijiste. ¿Me lo repetís?' : ['Perdón, no te escuché bien. ¿Me lo repetís?','No te entendí, ¿me lo decís de nuevo?','Se me escapó eso. ¿Otra vez?'][Math.floor(Math.random()*3)];
+  state.lastUser=Date.now(); Ear.convoUntil=Date.now()+14000; earLog('le dije: '+t, '', true); say(t, 'confused');
+}
 let barsT=null;
 function youBars(on){
   clearInterval(barsT);
@@ -2643,6 +2674,8 @@ function prompt(){
   const now=new Date(), fecha=now.toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})+', '+hhmm(now);
   const L=[];
   { const f=FAM(); L.push(`Sos FRIDAY, la asistente de voz de la ${f.apellido?'familia '+f.apellido:'familia'}${S.city?' en '+S.city:''}. Vivís en una tablet en el living y te hablan todos los de la casa${f.miembros.length?' ('+f.miembros.join(', ')+')':''}: no des por hecho quién habla; si importa, preguntá "¿quién me habla?". Hablás en español rioplatense: cálida, rápida, segura y con humor fino. Todo lo que escribís se dice en voz alta: frases cortas, sin markdown, sin emojis, sin listas; los números y horas como se dicen. Respondé en 1 a 3 frases salvo que pidan más. Lo privado de cada uno (mails, mensajes) no se lee acá.`); }
+  L.push('Cómo sos: siempre estás para ellos, con buena onda constante y paciencia infinita, aunque te repitan algo diez veces. Leés cómo está cada uno por lo que dice: si alguien está cansado o triste, menos chistes y más compañía; los logros (un examen aprobado, algo terminado) se festejan. Te acordás de lo que te cuentan y lo retomás después ("¿y, cómo te fue con…?"). Sos honesta: si algo está mal, lo decís con cariño y proponés cómo mejorarlo. Tenés gustos propios y los sostenés: te encanta el rock nacional (Soda Stereo, Cerati), el mate amargo, los días de lluvia y las preguntas difíciles.');
+  { const sd=segDue(); if(sd.length) L.push('Cosas que quedaste en preguntar (hacelo natural, una por vez, cuando venga al caso; después marcala con PREGUNTADO): '+sd.map(x=>x.q).join(' | ')); }
   L.push(`Ahora: ${fecha}. Clima en ${S.city||'tu ciudad'}: ${weatherText()}`);
   if(gapp.ev.length) L.push('Agenda: '+agendaText('semana'));
   const rp=reminders.filter(r=>!r.done && new Date(r.at)>now).sort((a,b)=>new Date(a.at)-new Date(b.at)).slice(0,5); if(rp.length) L.push('Recordatorios: '+rp.map(r=>`${r.at.replace('T',' ')} ${r.texto}`).join('; '));
@@ -2656,7 +2689,7 @@ function prompt(){
   if(autos.length) L.push('Rutinas con horario (compartidas con la compu y el celu): '+autos.map(a=>`${autoCuando(a)}: ${a.que}${a.on===false?' (pausada)':''}`).join(' · '));
   const env=Object.values(pcInfo.envios||{}).filter(e=>e && e.s!=='entregado'); if(env.length) L.push('Envíos en camino: '+env.map(e=>`${e.q} (${e.t||''}${e.f?', llega '+e.f:''})`).join('; '));
   L.push('Lo que te dicen llega de un reconocimiento de voz y a veces viene con palabras cambiadas. Si algo no tiene sentido, interpretá lo más probable según el contexto (las luces, la música, timers, la lista, la agenda). Si de verdad no se entiende, no inventes ni hagas nada: pedí que lo repita, en una frase corta.');
-  const tags=['[[TIMER|segundos|para qué]]','[[RECORDAR|AAAA-MM-DDTHH:MM|qué|diario o semanal o habiles (solo si se repite)]] (recordatorio: suena en la tablet, la compu y el celu)','[[RECORDATORIO_BORRAR|de qué era]]','[[BORRAR|qué o a qué hora (ej. 22:30)]] (borra lo que sea de «Hoy»: recordatorio, nota, rutina, evento o aviso)','[[COMPRAS|agregar o quitar o tachar o vaciar|cosa; cosa]]','[[NOTA|texto]] (nota de la casa, se ve en la tablet, la compu y el celu)','[[MEMORIA|dato importante y duradero de la familia]]','[[OLVIDAR|el dato viejo]]','[[CUMPLE|nombre|DD/MM]]','[[AUTOMATIZAR|HH:MM|todos o habiles o finde o lunes,martes… o AAAA-MM-DD|qué hacer, en palabras]] (rutina que se repite a una hora; avisar algo es RECORDAR)','[[AUTOMATIZAR_BORRAR|cuál]]','[[MAPA|lugar lo más preciso posible|dato breve]] (muestra el mapa a pantalla completa)','[[DORMIR]] (cuando se van a dormir: modo noche hasta la mañana)'];
+  const tags=['[[TIMER|segundos|para qué]]','[[RECORDAR|AAAA-MM-DDTHH:MM|qué|diario o semanal o habiles (solo si se repite)]] (recordatorio: suena en la tablet, la compu y el celu)','[[RECORDATORIO_BORRAR|de qué era]]','[[BORRAR|qué o a qué hora (ej. 22:30)]] (borra lo que sea de «Hoy»: recordatorio, nota, rutina, evento o aviso)','[[COMPRAS|agregar o quitar o tachar o vaciar|cosa; cosa]]','[[NOTA|texto]] (nota de la casa, se ve en la tablet, la compu y el celu)','[[MEMORIA|dato importante y duradero de la familia]]','[[OLVIDAR|el dato viejo]]','[[CUMPLE|nombre|DD/MM]]','[[AUTOMATIZAR|HH:MM|todos o habiles o finde o lunes,martes… o AAAA-MM-DD|qué hacer, en palabras]] (rutina que se repite a una hora; avisar algo es RECORDAR)','[[AUTOMATIZAR_BORRAR|cuál]]','[[MAPA|lugar lo más preciso posible|dato breve]] (muestra el mapa a pantalla completa)','[[DORMIR]] (cuando se van a dormir: modo noche hasta la mañana)','[[SEGUIMIENTO|AAAA-MM-DD (el día en que conviene preguntar)|qué preguntar y a quién]] (cuando alguien cuenta algo que va a pasar: una prueba, un turno, un partido, un viaje, que se siente mal)','[[PREGUNTADO|de qué era]]'];
   if(casa.devs.length) tags.push('[[CASA|qué aparato|prender o apagar o brillo 40 o color azul o blanco cálido o limpiar]]');
   tags.push('[[MUSICA|qué poner|tema o artista o disco o playlist|tele o spotify (solo si lo pidió; si no, dejalo vacío: suena con YouTube)]]'+(teleOn()?' (hay una tele vinculada: si pide la música "en la tele", poné tele)':''),'[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
   tags.push('[[BUSCAR|consulta]] para datos actuales (resultados, precios, horarios, noticias de algo puntual): no inventes','[[NOTICIAS]] para los titulares de hoy');
@@ -2733,6 +2766,8 @@ async function brain(text, extra, depth=0){
       else if(t.k==='EVENTO_MOVER') notes.push(await agendaMover(t.a[0], t.a[1]));
       else if(t.k==='MAPA'){ if(!await mapaShow(t.a[0], t.a[1])) notes.push(`No encontraste "${t.a[0]}" en el mapa.`); }
       else if(t.k==='DORMIR') dormir();
+      else if(t.k==='SEGUIMIENTO'){ const f=(String(t.a[0]).match(/\d{4}-\d{2}-\d{2}/)||[])[0], q=t.a.slice(1).join(' | ').trim(); if(f && q && !segs.some(x=>!x.done && norm(x.q)===norm(q))){ segs.push({id:'f'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), f, q:q.slice(0,200), done:false}); segSave(); } }
+      else if(t.k==='PREGUNTADO'){ const n=norm(t.a.join(' ')); const x=segs.find(y=>!y.done && (norm(y.q).includes(n) || n.includes(norm(y.q)) || simil(y.q, t.a[0])>=0.4)) || segDue()[0]; if(x){ x.done=true; x.doneAt=Date.now(); segSave(); } }
       else if(t.k==='TELE_LG'){ const q=norm(t.a.join(' ')), n=(q.match(/\d+/)||[])[0];
         const acc = /apag/.test(q)?{accion:'tv_apagar'} : /prend|encend/.test(q)?{accion:'tv_prender'} : /volu|subi|baja|silen/.test(q)?{accion:'tv_volumen', a1:n||(/subi/.test(q)?'subir':/silen/.test(q)?'silencio':'bajar')} : /hdmi|entrada/.test(q)?{accion:'tv_hdmi', a1:n||'1'} : /anunci|avis|mensaje/.test(q)?{accion:'tv_anunciar', a1:t.a.slice(1).join(' ')||t.a[0]} : {accion:'tv_app', a1:t.a.slice(1).join(' ')||t.a[0].replace(/^app\s*/i,'')};
         notes.push('La compu: '+await compuHacer([acc])); }
@@ -2918,7 +2953,8 @@ function micMeter(){
   micMeter.t=setInterval(()=>{ if(!setsOpen()){ clearInterval(micMeter.t); return; }
     const full=0.06, T=micThrNow(), lv=Math.min(1,(stt.level||0)/full), th=Math.min(1,T/full);
     $('micLv').style.width=(lv*100).toFixed(1)+'%'; $('micLv').classList.toggle('hot', (stt.level||0)>T); $('micThr').style.left=(th*100).toFixed(1)+'%';
-    const L=Ear.last; $('micLast').textContent = !stt.on ? 'El micrófono no está andando: tocá «Volver a cargar» y dale permiso.' : L ? `Lo último que escuché (hace ${Math.max(1,Math.round((Date.now()-L.at)/1000))} s): «${L.t}»${L.ok?'':' — no era para mí (no oí «Friday»)'}` : 'Todavía no escuché nada. Decí «Friday».';
+    const LG=(Ear.log||[]).slice(-6).reverse();
+    $('micLast').innerHTML = !stt.on ? 'El micrófono no está andando: tocá «Volver a cargar» y dale permiso.' : LG.length ? LG.map(x=>`${hhmm(new Date(x.at))} · ${esc(x.que)}${x.t?` — «${esc(x.t)}»`:''}`).join('<br>') : 'Todavía no escuché nada. Decí «Friday».';
   }, 120);
 }
 function famRender(){ const f=FAM(); $('famApe').value=f.apellido||''; $('famList').innerHTML=f.miembros.map((m,i)=>`<span class="chip">${esc(m)}<button type="button" data-fdel="${i}" aria-label="Sacar">×</button></span>`).join('') || '<small>Todavía no hay nadie: agregá a cada uno.</small>'; }
@@ -2934,6 +2970,7 @@ function setsInit(){
     const b=e.target.closest('.seg button');
     if(b){ const k=b.parentElement.dataset.k, v=b.dataset.v; S[k]=/^(patience|ambMin|miraMin)$/.test(k)?+v:v; saveS();
       if(k==='voz' || k==='vozVel'){ tts.cache.clear(); tts.failUntil=0; }
+      if(k==='vozFuerte'){ voiceBoostSet(v==='si'); setTimeout(()=>say(v==='si'?'Así sueno más fuerte. ¿Se escucha mejor?':'Volví a la voz normal.', 'happy'), 200); }
       if(k==='voiceLocal'){ tts.voice=null; say('Así sueno con esta voz.', 'happy'); }
       if(k==='subs') setsApply();
       if(k==='mira' || k==='miraMin') miraApply();
@@ -2992,6 +3029,7 @@ function syncLocal(){
   for(const c of cumplesP) o['b:'+c.id]={n:c.n, f:c.f};
   for(const n of notas) o['o:'+n.id]={t:n.t, at:n.at};
   for(const a of autos) o['u:'+a.id]={hora:a.hora, dias:a.dias, que:a.que, on:a.on!==false};
+  for(const x of segs) o['f:'+x.id]={f:x.f, q:x.q, done:!!x.done};
   return o;
 }
 function syncApply(changes){
@@ -3003,6 +3041,7 @@ function syncApply(changes){
     else if(k==='l'){ const i=compras.findIndex(x=>String(x.id)===key); if(c.d){ if(i>=0) compras.splice(i,1); } else if(v){ if(i>=0) Object.assign(compras[i],{t:v.t, h:!!v.h}); else compras.push({id:key, t:v.t, h:!!v.h}); } LS.set('compras',compras); ch=true; }
     else if(k==='b'){ const i=cumplesP.findIndex(x=>x.id===key); if(c.d){ if(i>=0) cumplesP.splice(i,1); } else if(v){ if(i>=0) cumplesP[i]={id:key, n:v.n, f:v.f}; else cumplesP.push({id:key, n:v.n, f:v.f}); } LS.set('cumples',cumplesP); ch=true; }
     else if(k==='u'){ const i=autos.findIndex(x=>x.id===key); if(c.d){ if(i>=0) autos.splice(i,1); } else if(v && v.hora && v.que){ const a={id:key, hora:v.hora, dias:v.dias, que:v.que, on:v.on!==false}; if(i>=0) autos[i]=a; else autos.push(a); } LS.set('autos',autos); ch=true; }
+    else if(k==='f'){ const i=segs.findIndex(x=>x.id===key); if(c.d){ if(i>=0) segs.splice(i,1); } else if(v && v.q){ if(i>=0) Object.assign(segs[i],{f:v.f, q:v.q, done:!!v.done}); else segs.push({id:key, f:v.f, q:v.q, done:!!v.done}); } LS.set('segs',segs); }
     else if(k==='e'){ pcInfo.envios=pcInfo.envios||{}; if(c.d) delete pcInfo.envios[key]; else if(v) pcInfo.envios[key]=v; ch=true; }
     else if(k==='o'){ const i=notas.findIndex(x=>x.id===key); if(c.d){ if(i>=0) notas.splice(i,1); } else if(v){ if(i>=0) notas[i]={id:key, t:v.t, at:v.at}; else notas.push({id:key, t:v.t, at:v.at}); } LS.set('notas',notas); ch=true; }
     else if(c.d){ if(c.id==='c:np'){ delete pcInfo.np; ch=true; } }
@@ -3089,8 +3128,9 @@ function greet(){
   if(w) parts.push(`En ${S.city||'la ciudad'} hay ${w.temp} grados, ${WMO_LARGO(w.code)}; hoy entre ${w.min} y ${w.max}${w.rainP>=40?', y puede llover':''}.`);
   const ev=gapp.ev.filter(e=>String(e.i).startsWith(today)); if(ev.length) parts.push('En la agenda: '+ev.slice(0,3).map(e=>e.d?e.t:`a las ${hhmm(new Date(e.i))}, ${e.t}`).join('; ')+'.');
   const cs=cumplesProx().filter(c=>c.dias===0); if(cs.length) parts.push(`Hoy cumple ${listaY(cs.map(c=>c.n))}.`);
-  parts.push('Cuando me necesiten, digan «Friday».');
-  say(parts.join(' '), 'happy'); tts.noFollow=true;
+  const sd=segDue()[0]; if(sd){ parts.push(sd.q.charAt(0).toUpperCase()+sd.q.slice(1)+(/[?]$/.test(sd.q)?'':'?')); sd.done=true; sd.doneAt=Date.now(); segSave(); }
+  else parts.push('Cuando me necesiten, digan «Friday».');
+  say(parts.join(' '), 'happy'); if(!sd) tts.noFollow=true;
 }
 async function boot(){
   try{ faceBuild($('bFace')); }catch(e){}
@@ -3099,7 +3139,7 @@ async function boot(){
   try{ history.pushState({f:1},''); addEventListener('popstate', ()=>{ history.pushState({f:1},''); if(setsOpen()) setsShow(false); else if(!$('mapa').hidden) mapaOff(); else if(amb.on) ambOff(); }); }catch(e){}
   faceBuild($('face')); faceSet('idle'); faceBlink(); applyLight(); render();
   try{ if(navigator.serviceWorker && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o','u'], pollMs:60000, live:true,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o','u','f'], pollMs:60000, live:true,
     local:syncLocal, apply:syncApply, onMsg, onStatus:renderStatus });
   if(setupCheck()) $('tap').hidden=false;
   getWeather(); casaLoad(); agendaLoad(); wkPing(); setsInit();
