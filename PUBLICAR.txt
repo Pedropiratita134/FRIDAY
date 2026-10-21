@@ -307,3 +307,38 @@ NUEVO EN LA 2.7: NUNCA SE QUEDA MUDA, SE ACUERDA Y RETOMA, VOZ MÁS FUERTE
   los logros, es honesta y tiene sus gustos (rock nacional, mate amargo, días de lluvia).
 - Para parlantes chicos (como el de la SKY Elite T11 Pro): Ajustes → Voz → "Más fuerte y clara".
 QUÉ SUBIR: panel.html y sw.js. En la compu: friday.html versión 90.
+
+=====================================================================
+NUEVO EN LA 3.0: FRIDAY OS (by BUFALABS) — LA TABLET COMO UN SISTEMA PROPIO
+=====================================================================
+- Pantalla nueva, oscura como la de la compu: a la izquierda la hora, el clima y «Hoy»; a la
+  derecha las apps: Casa, Música, Llamar, Intercom, Estudio, Compras, Agenda, Cielo, Cámara y
+  Ajustes. Las apps están "vivas": Casa brilla si hay luces prendidas, Música si suena algo,
+  Intercom muestra cuántos mensajes nuevos hay, Estudio cuántas fichas tocan hoy.
+- Cada app se abre en su ventana con «‹ Inicio» para volver (o el botón atrás de Android, o
+  "Friday, volvé al inicio"). Por voz: "Friday, abrí la música / la casa / las compras…".
+- Cuando FRIDAY hace algo, abre sola la app que corresponde (prendés una luz → se ve Casa) y a
+  los 25 segundos vuelve sola al inicio. Si la abriste vos, vuelve a los 3 minutos.
+- FRIDAY vive abajo. Cuando la llamás o habla, sube y ocupa media pantalla con los subtítulos
+  grandes; si hay una app abierta, habla en una franja para que se siga viendo la app.
+  Tocar abajo = hablarle sin decir «Friday».
+- Intercom: "Friday, avisale a la compu que la comida está lista" (o "a todos"). En la app:
+  elegís a dónde, tocás el micrófono y decís el mensaje, o usás las frases rápidas
+  ("¡A comer!", "Vengan un minuto"…). Se dice en voz alta allá. Lo que manda la compu
+  ("Friday, avisá en la tablet que…") queda en la app con el globito.
+- Estudio: "Friday, modo estudio de historia" → tandas de 25 minutos y pausas, con el reloj
+  grande. Fichas: "Friday, hacé fichas de la Revolución de Mayo", y "tomame las fichas":
+  pregunta de a una, te corrige con buena onda y las que sabés vuelven más adelante (las que
+  no, mañana). También se repasan tocando: "La sabía / No la sabía". En la pausa del modo
+  estudio te toma una. Cuando estudiás en la compu, FRIDAY arma fichas sola con lo que vio.
+- Compras: la lista entera (se puede agregar escribiendo) y "Precios que sigo":
+  "Friday, seguí el precio de las zapatillas Nike Revolution y avisame si bajan de 80 mil".
+  La compu revisa Mercado Libre cada unas horas y avisa en la compu y en la tablet cuando baja.
+  "Friday, buscame en Mercado Libre auriculares bluetooth" → los busca la compu de verdad y
+  aparecen con foto y precio (la compu tiene que estar prendida con FRIDAY abierta).
+- Cámara: se ve lo que ve FRIDAY y le preguntás "¿qué ves?", "¿cómo me queda?".
+- El domingo a la noche (19 a 22 h) FRIDAY cuenta cómo fue la semana y qué viene. Cuando
+  quieras: "Friday, ¿cómo fue la semana?".
+QUÉ SUBIR: panel.html, sw.js y manifest-panel.json. En la compu: friday.html versión 92
+(FRIDAY.exe sigue en 3.5). Si la tablet sigue mostrando lo viejo: cerrala del todo y abrila de
+nuevo (o Ajustes → Conexiones → «Volver a cargar»).
