@@ -125,9 +125,9 @@ body.inapp .inicio{opacity:0;transform:scale(.96);pointer-events:none}
 
 /* las apps: íconos vivos */
 .apps{display:flex;flex-direction:column;gap:18px;min-height:0;padding-top:4px}
-.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:22px 14px;align-content:start}
+.grid{display:grid;grid-template-columns:repeat(6,1fr);gap:20px 10px;align-content:start}
 .app-ic{--t:var(--friday);display:flex;flex-direction:column;align-items:center;gap:9px;padding:0;border:0;background:none;cursor:pointer;min-width:0}
-.app-ic .tile{position:relative;width:100%;max-width:118px;aspect-ratio:1;border-radius:32%;display:grid;place-items:center;
+.app-ic .tile{position:relative;width:100%;max-width:108px;aspect-ratio:1;border-radius:32%;display:grid;place-items:center;
   background:linear-gradient(155deg, color-mix(in srgb,var(--t) 30%, #12203a) 0%, #0D1830 78%);
   border:1px solid color-mix(in srgb,var(--t) 34%, transparent);
   box-shadow:0 1px 0 rgba(255,255,255,.08) inset, 0 18px 34px -22px color-mix(in srgb,var(--t) 70%, #000);
@@ -330,6 +330,69 @@ body.inapp .talk .fwrap{width:120px}
 body.inapp .her{--fs:34px;max-height:calc(var(--fs)*1.16*2 + 4px)}body.inapp .her.mid{--fs:30px}body.inapp .her.long{--fs:28px;max-height:calc(var(--fs)*1.16*3 + 4px)}
 body.inapp .you{font-size:18px;margin-bottom:8px}body.inapp .hint{display:none}
 body.inapp.talking .win{bottom:calc(var(--dock) + 110px)}
+/* ---------- FRIDAY que pasea ---------- */
+.dface{visibility:hidden}
+#buddy{position:fixed;left:0;top:0;width:64px;height:64px;z-index:8;transition-property:transform,width,height,opacity;transition-timing-function:cubic-bezier(.45,.05,.3,1);touch-action:none;cursor:grab;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(76,201,255,.25))}
+#buddy.hid{opacity:0;pointer-events:none}
+#buddy.held{cursor:grabbing;filter:drop-shadow(0 22px 26px rgba(0,0,0,.6)) drop-shadow(0 0 30px rgba(76,201,255,.5))}
+#buddy .bwrap,#buddy .bi{width:100%;height:100%}
+#buddy.walk .bi{animation:bWalk .42s ease-in-out infinite}
+#buddy.dance .bi{animation:bDance .9s ease-in-out infinite}
+#buddy.ring .bi{animation:bShake .35s ease-in-out infinite}
+@keyframes bWalk{50%{transform:translateY(-12%) rotate(-4deg)}}
+@keyframes bDance{25%{transform:rotate(-12deg) translateY(-6%)}50%{transform:translateY(0)}75%{transform:rotate(12deg) translateY(-6%)}}
+.bwrap.a-hop{animation:aHop .9s cubic-bezier(.3,.7,.4,1)}
+@keyframes aHop{20%{transform:translateY(-38%) scale(.95,1.06)}40%{transform:translateY(0) scale(1.08,.92)}60%{transform:translateY(-18%)}80%{transform:translateY(0) scale(1.04,.96)}}
+.bwrap.a-hop2{animation:aHop2 1.1s cubic-bezier(.3,.7,.4,1)}
+@keyframes aHop2{15%{transform:translateY(-55%) rotate(-12deg)}30%{transform:translateY(0) scale(1.1,.9)}50%{transform:translateY(-55%) rotate(12deg)}65%{transform:translateY(0) scale(1.1,.9)}80%{transform:translateY(-20%)}}
+.bwrap.a-giggle{animation:aGig .9s ease-in-out}
+@keyframes aGig{20%,60%{transform:rotate(-10deg) scale(1.05)}40%,80%{transform:rotate(10deg) scale(1.05)}}
+.bwrap.a-float{animation:aFloat 1.6s ease-in-out}
+@keyframes aFloat{30%{transform:translateY(-22%) rotate(-6deg)}60%{transform:translateY(-26%) rotate(6deg)}}
+.bwrap.a-pop{animation:aPop .7s cubic-bezier(.2,1.6,.4,1)}
+@keyframes aPop{30%{transform:scale(1.32) translateY(-10%)}}
+.bwrap.a-shake{animation:aShake .7s ease-in-out}
+@keyframes aShake{15%,45%,75%{transform:translateX(-12%) rotate(-6deg)}30%,60%,90%{transform:translateX(12%) rotate(6deg)}}
+.bwrap.a-droop{animation:aDroop 1.6s ease-in-out}
+@keyframes aDroop{40%,70%{transform:translateY(14%) scale(.92) rotate(-8deg)}}
+.bwrap.a-tilt{animation:aTilt .9s ease-in-out}
+@keyframes aTilt{40%{transform:rotate(-16deg) translateY(-8%)}}
+.bwrap.a-sway{animation:aSway 1.6s ease-in-out}
+@keyframes aSway{25%{transform:translateX(-10%) rotate(-8deg)}75%{transform:translateX(10%) rotate(8deg)}}
+.bwrap.a-perk{animation:aPerk .6s ease-out}
+@keyframes aPerk{40%{transform:translateY(-14%) scale(1.06)}}
+.bfx{position:absolute;inset:-30% -20% 20%;pointer-events:none}
+.bfx i{position:absolute;bottom:30%;font-style:normal;font-size:22px;opacity:0}
+.bfx.hearts i{color:#FF7A90;animation:fxUp 1.6s ease-out forwards}.bfx.stars i{color:#FFD36B;animation:fxUp 1.4s ease-out forwards}
+.bfx i:nth-child(1){left:10%}.bfx i:nth-child(2){left:45%;animation-delay:.2s!important}.bfx i:nth-child(3){left:80%;animation-delay:.4s!important}
+@keyframes fxUp{0%{opacity:0;transform:translateY(0) scale(.6)}20%{opacity:1}100%{opacity:0;transform:translateY(-120%) scale(1.1)}}
+/* ---------- enseñarle una cara o una voz ---------- */
+.enr{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:rgba(2,6,12,.72);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.enr .ebox{width:min(620px,92vw);background:#0A1424;border:1px solid var(--edge-2);border-radius:34px;padding:26px 28px;text-align:center}
+.enr h3{margin:0 0 8px;font:640 28px/1.15 var(--disp)}.enr p{margin:0;color:var(--ink-2);font-size:19px;line-height:1.4}
+.enr .evid{margin:18px auto 0;width:min(420px,70vw);aspect-ratio:4/3;border-radius:24px;overflow:hidden;background:#000}.enr video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1)}
+.enr .emic{width:120px;height:120px;margin:22px auto 0;border-radius:50%;display:grid;place-items:center;color:#04121f;background:var(--friday);animation:recp 1.1s ease-in-out infinite}.enr .emic svg{width:52px;height:52px}
+.enr .edots{display:flex;justify-content:center;gap:8px;margin:18px 0 6px}.enr .edots i{width:14px;height:14px;border-radius:50%;background:var(--card-3)}.enr .edots i.ok{background:var(--leaf);box-shadow:0 0 10px var(--leaf)}
+.enr .est{min-height:24px;color:var(--lamp);font-size:16px}.enr .eact{margin-top:14px}
+.qrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--edge)}.qrow:first-child{border-top:0}.qrow b{flex:1 1 90px;font:600 18px var(--text)}.qrow .ghost{margin:0}.qrow .x{min-width:50px;color:var(--alert);border-color:rgba(255,107,125,.4)}
+/* ---------- cocina ---------- */
+.coc{display:grid;grid-template-columns:minmax(300px,.9fr) 1.4fr;gap:24px;height:100%}
+.porc{display:flex;align-items:center;gap:12px;margin:4px 0 14px}.porc button{width:48px;height:48px;border-radius:50%;border:1px solid var(--edge-2);background:var(--card-2);font:700 24px var(--disp);cursor:pointer}.porc b{font:640 30px var(--disp)}.porc span{color:var(--ink-2)}
+.ings{display:flex;flex-direction:column}.ings button{display:flex;align-items:center;gap:12px;padding:9px 0;border:0;border-top:1px solid var(--edge);background:none;text-align:left;font-size:18px;cursor:pointer}.ings button:first-child{border-top:0}
+.ings i{width:24px;height:24px;border-radius:7px;border:2px solid var(--ink-3);flex:0 0 24px}.ings .ok i{background:#A3E635;border-color:#A3E635}.ings .ok span{color:var(--ink-3);text-decoration:line-through}.ings b{color:#C5F07A}
+.paso{display:flex;flex-direction:column;justify-content:center;gap:18px;padding:26px 30px;border-radius:30px;background:linear-gradient(160deg,rgba(163,230,53,.16),rgba(163,230,53,.03));border:1px solid rgba(163,230,53,.35)}
+.paso small{color:#C5F07A;font-size:17px}.paso p{margin:0;font:600 34px/1.25 var(--disp);letter-spacing:-.01em}
+.pnav{display:flex;gap:12px;flex-wrap:wrap}.pnav .big-btn[disabled]{opacity:.35}
+.pbar{display:flex;gap:6px}.pbar i{flex:1;height:6px;border-radius:3px;background:var(--card-3)}.pbar i.d{background:#A3E635}.pbar i.c{background:#E9FCC8;box-shadow:0 0 10px #A3E635}
+/* ---------- tareas ---------- */
+.tars{display:flex;flex-direction:column;gap:12px}
+.tar{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:22px;background:var(--card-2);border:1px solid var(--edge)}
+.tar .av{width:52px;height:52px;border-radius:16px;display:grid;place-items:center;font:700 24px var(--disp);background:linear-gradient(150deg,#FDE68A,#EAB308);color:#2a1f00;flex:0 0 52px}
+.tar div{flex:1;min-width:0}.tar b{display:block;font:620 20px/1.2 var(--disp)}.tar small{color:var(--ink-2);font-size:15px}
+.tall .trow{display:flex;align-items:baseline;gap:10px;padding:8px 0;border-top:1px solid var(--edge)}.tall .trow:first-child{border-top:0}.trow span{flex:1}.trow small{color:var(--ink-2);font-size:14px}.trow button{border:0;background:none;color:var(--alert);font-size:22px;cursor:pointer}
+.podio{display:flex;flex-direction:column;gap:14px;margin-top:8px}
+.pod{display:grid;grid-template-columns:110px 1fr 60px;align-items:center;gap:12px}.pod span{font:600 19px var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pod i{height:18px;border-radius:9px;background:linear-gradient(90deg,#A16207,#FACC15);min-width:8px}.pod b{font:640 24px var(--disp);text-align:right}
+.pod.gold i{box-shadow:0 0 16px rgba(250,204,21,.6)}
 /* ---------- aviso grande ---------- */
 .banner{visibility:hidden;position:fixed;left:50%;top:16px;z-index:30;display:flex;align-items:center;gap:18px;padding:16px 28px 16px 16px;border-radius:28px;background:rgba(17,30,52,.95);box-shadow:0 30px 60px -20px #000, 0 0 0 1px var(--edge-2);
   transform:translate(-50%,-160%);transition:transform .6s cubic-bezier(.2,.9,.25,1.15);max-width:min(860px,92vw)}
@@ -478,8 +541,9 @@ body.ambvid #ytbox iframe{transform:none}
   .clock{font-size:108px;grid-row:1/4}
   .date{margin:0}.wxrow{margin:8px 0 0}
   #cHoy{grid-column:1/3;margin-top:20px;max-height:34vh}
-  .grid{grid-template-columns:repeat(5,1fr);gap:18px 10px}
-  .app-ic .tile{max-width:112px}
+  .grid{grid-template-columns:repeat(6,1fr);gap:18px 8px}
+  .app-ic .tile{max-width:100px}
+  .coc{grid-template-columns:1fr}
   .tips{display:none}
   .talk{grid-template-columns:1fr;justify-items:center;text-align:center;gap:20px;height:min(66vh,760px);padding:30px 36px 40px}
   .cols{grid-template-columns:1fr}
@@ -536,6 +600,8 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="pane" data-app="shop"><div class="cols"><div><article class="card" id="cShop" data-k="shop"></article><div class="addrow"><input id="shopIn" placeholder="Agregar a la lista…" autocomplete="off" spellcheck="false"><button class="big-btn" id="shopAdd" type="button">Agregar</button></div></div><div id="pPrecios"></div></div></div>
       <div class="pane" data-app="agenda"><article class="card" id="cAgenda"></article></div>
       <div class="pane" data-app="cam" id="pCam"></div>
+      <div class="pane" data-app="cocina" id="pCoc"></div>
+      <div class="pane" data-app="tareas" id="pTar"></div>
     </div>
   </section>
   <footer class="dock" id="dock"><div class="dface fface" id="dFace"></div><div class="status" id="status"><i></i><span>Decí «Friday»</span></div><div class="dline" id="dline"></div></footer>
@@ -564,6 +630,12 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <label class="fl">Familia <input id="famApe" placeholder="Apellido (por ejemplo: Bufager)" autocomplete="off" spellcheck="false"></label>
       <div class="chips" id="famList"></div>
       <div class="frow"><input id="famIn" placeholder="Nombre (por ejemplo: Mamá, Pedro, Sofi)" autocomplete="off" spellcheck="false"><button class="ghost" id="famAdd" type="button">Agregar</button></div></section>
+    <section><h3>Quién es quién</h3>
+      <p class="lbl">FRIDAY reconoce a cada uno por la cara (con la cámara) y por la voz, para saludarlos por su nombre y saber de quién son las tareas. Las caras y las voces quedan solo en esta tablet.</p>
+      <div id="quienList"></div>
+      <p class="lbl">Cuándo mira quién es</p>
+      <div class="seg" data-k="reconocer"><button type="button" data-v="no">Nunca</button><button type="button" data-v="hablar">Cuando le hablan</button><button type="button" data-v="siempre">Siempre (saluda al que llega)</button></div>
+      <p class="note">También alcanza con decirle «soy Sofi». La voz la va aprendiendo sola cada vez que te reconoce por la cara.</p></section>
     <section><h3>Videollamadas</h3>
       <p class="lbl">Llamá a otro aparato de la familia, o decí «Friday, llamá a la compu».</p>
       <div class="seg" id="callList"></div>
@@ -602,6 +674,8 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="seg" data-k="musicOut"><button type="button" data-v="tablet">En la tablet</button><button type="button" data-v="tele">En la tele</button></div>
       <div class="tvrow" id="tvRow"></div></section>
     <section><h3>Pantalla</h3>
+      <p class="lbl">FRIDAY se mueve por la pantalla (pasea, salta, se asoma, baila con la música)</p>
+      <div class="seg" data-k="mueve"><button type="button" data-v="si">Sí</button><button type="button" data-v="no">Quieta abajo</button></div>
       <p class="lbl">Mostrar el cielo cuando nadie le habla</p>
       <div class="seg" data-k="ambMin"><button type="button" data-v="2">A los 2 min</button><button type="button" data-v="5">A los 5 min</button><button type="button" data-v="15">A los 15 min</button><button type="button" data-v="0">Nunca</button></div></section>
     <section><h3>Conexiones</h3><ul class="conns" id="conns"></ul>
@@ -1391,6 +1465,7 @@ function whisperPrompt(){
 function earLog(que, txt, paraElla){ (Ear.log=Ear.log||[]).push({at:Date.now(), que, t:String(txt||'').slice(0,120), p:!!paraElla}); Ear.log=Ear.log.slice(-25); }
 async function sttSend(frames, paraElla){
   const h=Ear.hooks;
+  try{ h.onAudio && h.onAudio(frames, stt.sr); }catch(e){}
   const fd=new FormData();
   fd.append('file', encodeWav(frames, stt.sr), 'voz.wav');
   const wm=whisperModel();
@@ -1722,7 +1797,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='3.0';
+const VERSION='3.1';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -1752,7 +1827,7 @@ const palette=()=>({idle:[47,107,227]});
   }catch(e){}
   LS.set('migrado',true);
 })();
-let S=Object.assign({name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', vozFuerte:'no', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
+let S=Object.assign({mueve:'si', reconocer:'hablar', name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', vozFuerte:'no', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const saveS=()=>LS.set('cfg',S);
 // la tablet es de toda la familia: saluda a la familia, no a una persona
 const FAM=()=>Object.assign({apellido:'', miembros:[]}, S.familia||{});
@@ -1896,11 +1971,11 @@ function faceBuild(target){
 function faceSet(name, ms){
   name=EXPR_ALIAS[name]||name; if(!EXPR[name]) name='idle';
   if(ms){ FACE.cur=name; FACE.until=Date.now()+ms; } else { FACE.base=name; if(Date.now()>FACE.until) FACE.cur=name; }
-  faceApply();
+  faceApply(); if(ms) try{ budEmote(name); }catch(e){}
 }
 function faceApply(){
   if(Date.now()>FACE.until) FACE.cur=FACE.base;
-  document.querySelectorAll('.fface').forEach(root=>faceApplyTo(root, (root.id==='sFace'||root.id==='bFace') ? EXPR.happy : (EXPR[FACE.cur]||EXPR.idle)));
+  document.querySelectorAll('.fface').forEach(root=>faceApplyTo(root, (root.id==='sFace'||root.id==='bFace') ? EXPR.happy : (root.id==='bFaceB' && bud.sleep && FACE.cur==='idle') ? EXPR.sleepy : (EXPR[FACE.cur]||EXPR.idle)));
 }
 function faceApplyTo(root, e){
   if(!root.querySelector('.eyes')) return;
@@ -1917,8 +1992,8 @@ function faceApplyTo(root, e){
   q('.head')[0].style.transform=`rotate(${e.tilt||0}deg)`;
 }
 function faceBlink(){
-  const root=$('face'); clearTimeout(FACE.blinkT);
-  FACE.blinkT=setTimeout(()=>{ if(!document.hidden && !['laugh','happy','love','sleepy','cool'].includes(FACE.cur)){ root.querySelectorAll('.eye').forEach(e=>e.classList.add('blink')); setTimeout(()=>root.querySelectorAll('.eye').forEach(e=>e.classList.remove('blink')), 130); } faceBlink(); }, 2600+Math.random()*3800);
+  clearTimeout(FACE.blinkT);
+  FACE.blinkT=setTimeout(()=>{ const es=document.querySelectorAll('#face .eye, #bFaceB .eye'); if(!document.hidden && !['laugh','happy','love','sleepy','cool'].includes(FACE.cur) && !bud.sleep){ es.forEach(e=>e.classList.add('blink')); setTimeout(()=>es.forEach(e=>e.classList.remove('blink')), 130); } faceBlink(); }, 2600+Math.random()*3800);
 }
 function faceLook(x,y,ms){ FACE.lookX=x; FACE.lookY=y; faceApply(); clearTimeout(faceLook.t); if(ms) faceLook.t=setTimeout(()=>{ FACE.lookX=0; FACE.lookY=0; faceApply(); }, ms); }
 // la boca acompaña la voz (con la voz de Elena, sigue el volumen de verdad)
@@ -2128,8 +2203,9 @@ Ear.hooks={
   speaking:()=>speakingNow(),
   musicOn:()=>!!(music.cur && music.cur.playing!==false && music.cur.src==='youtube'),
   lastSaid:()=>tts.shown,
-  onStart:(attending)=>{ if(attending && state.mode==='idle'){ ambOff(); setMode('listening'); youBars(true); duck(true); } },
-  onWake:()=>{ ambOff(); chime('up'); Ear.convoUntil=Date.now()+12000; setMode('listening'); youBars(true); duck(true); },
+  onAudio:(frames, sr)=>{ try{ quienOyo(frames, sr); }catch(e){ console.warn(e); } },
+  onStart:(attending)=>{ if(attending && S.reconocer!=='no' && conCara().length) quienMira(); if(attending && state.mode==='idle'){ ambOff(); setMode('listening'); youBars(true); duck(true); } },
+  onWake:()=>{ if(S.reconocer!=='no' && conCara().length) quienMira(); ambOff(); chime('up'); Ear.convoUntil=Date.now()+12000; setMode('listening'); youBars(true); duck(true); },
   onSending:()=>{ youBars(false); if(state.mode==='listening') $('you').innerHTML='<span>…</span>'; },
   onDrop:(err)=>{ youBars(false); if(state.mode==='listening'){ setMode('idle'); $('you').textContent=''; duck(false); } },
   onNotForMe:()=>{ youBars(false); if(state.mode==='listening') setMode('idle'); $('you').textContent=''; duck(false); },
@@ -2170,6 +2246,8 @@ function userSaid(text, how){
   if(timerRinging()){ timerHush(); if(/^(ok|listo|ya|gracias|dale|para|basta|callate)\b/.test(norm(text))) { say('Listo.'); return; } }
   $('you').innerHTML='<q>'+esc(text)+'</q>';
   const nf=norm(text);
+  if(quien.enroll) return;
+  quienDecide();
   if(osFast(text, nf)) return;
   focusFromText(nf);
   if(fast(text, nf)) return;
@@ -2870,6 +2948,9 @@ function prompt(){
   const cs=cumplesProx(); if(cs.length) L.push('Cumpleaños próximos: '+cs.map(c=>`${c.n} (${c.dias===0?'HOY':c.dias===1?'mañana':'en '+c.dias+' días'})`).join(', '));
   if(memory.length) L.push('Lo que sabés de la familia: '+memory.slice(-25).join('; '));
   if(autos.length) L.push('Rutinas con horario (compartidas con la compu y el celu): '+autos.map(a=>`${autoCuando(a)}: ${a.que}${a.on===false?' (pausada)':''}`).join(' · '));
+  { const qp=quienPrompt(); if(qp) L.push(qp); }
+  if(tareas.length){ const pt=puntosSemana(); L.push('Tareas de la casa (con turnos y puntos): '+tareas.map(t=>`${t.t} (${t.cada||'diaria'}${t.hora?' '+t.hora:''}; ${tareaToca(t)?(tareaHechaHoy(t)?'hoy ya está hecha':'hoy le toca a '+(tareaTurno(t)||'cualquiera')):'hoy no toca'}; ${t.pts} puntos)`).join('; ')+'. Puntos de la semana: '+(pt.length?pt.map(([n,v])=>n+' '+v).join(', '):'nadie sumó todavía')+'. Si alguien dice que hizo una tarea, marcala con TAREA_HECHA (si no sabés quién fue, preguntá antes).'); }
+  if(cocina) L.push(`MODO COCINA: están haciendo ${cocina.titulo} para ${cocina.porciones} (paso ${cocina.i+1} de ${cocina.pasos.length}${cocina.i>=0?': '+cocina.pasos[cocina.i].t:''}). Si preguntan algo de la receta (reemplazos, cantidades, cómo se hace algo), ayudá como una buena cocinera, corto.`);
   if(est.on) L.push(`MODO ESTUDIO andando: ${est.tema} (${est.pausado?'en pausa':est.fase==='foco'?'tanda '+est.ciclo:'pausa entre tandas'}). Si preguntan algo del tema, explicá como una buena profe: simple y con un ejemplo.`);
   if(fichas.length) L.push(`Fichas de estudio: ${fichas.length} (${fichasHoy().length} para repasar hoy; temas: ${[...new Set(fichas.map(f=>f.tema).filter(Boolean))].slice(0,6).join(', ')}).`);
   if(precios.length) L.push('Precios que seguís en Mercado Libre (los revisa la compu): '+precios.map(x=>`${x.title||x.q}: ${x.last?fmtP(x.last):'todavía sin revisar'}${x.max?' (avisar si baja de '+fmtP(x.max)+')':''}`).join('; '));
@@ -2883,6 +2964,7 @@ function prompt(){
   tags.push('[[BUSCAR|consulta]] para datos actuales (resultados, precios, horarios, noticias de algo puntual): no inventes','[[NOTICIAS]] para los titulares de hoy');
   if(googleOn() || pcDev()) tags.push('[[EVENTO|título|AAAA-MM-DDTHH:MM|minutos]] para anotar en la agenda','[[EVENTO_BORRAR|cuál]]','[[EVENTO_MOVER|cuál|AAAA-MM-DDTHH:MM o HH:MM]]');
   if(pcDev()) tags.push('[[TELE_LG|prender o apagar o volumen 0-100 o subir o bajar o app Netflix o hdmi 2 o anunciar texto]] (la tele LG la maneja la compu, tiene que estar prendida)');
+  tags.push('[[COCINA|plato|porciones (opcional)]] (receta paso a paso en la pantalla, manos libres)','[[TAREA_NUEVA|qué|diaria o semanal o lun,mie,vie|HH:MM (opcional)|quiénes se turnan, separados por coma|puntos (10 si no dice)]]','[[TAREA_HECHA|cuál|quién la hizo]]','[[TAREA_BORRAR|cuál]]');
   tags.push('[[AVISAR|compu o celu o todos|mensaje]] (intercom: lo dice en voz alta en el otro aparato)','[[APP|casa o musica o llamar o intercom o estudio o compras o agenda o camara]] (muestra esa app en la pantalla)','[[ESTUDIO|tema|minutos en total (opcional)]] arranca el modo estudio (tandas de 25 y pausas); [[ESTUDIO|terminar]]','[[FICHAS|tema|cantidad]] arma fichas de estudio','[[TOMAR_FICHAS|tema (opcional)]] le toma las fichas en voz alta','[[RESUMEN_SEMANA]]');
   if(pcDev()) tags.push('[[MERCADOLIBRE|producto|precio (solo si quiere lo más barato)]] busca publicaciones REALES de Mercado Libre (con la compu)','[[PRECIO|producto|precio máximo (opcional)]] sigue el precio en Mercado Libre y avisa cuando baja');
   tags.push('[[CARA|feliz o risa o enamorada o sorprendida o triste o preocupada o pensativa o guiño o canchera o confundida o emocionada o orgullosa]] tu cara mientras hablás');
@@ -2971,6 +3053,10 @@ async function brain(text, extra, depth=0){
       else if(t.k==='NOTICIAS'){ const n=await news(); notes.push(n.length?'Titulares de hoy: '+n.join(' | '):'No pude traer las noticias.'); }
       else if(t.k==='EVENTO'){ if(googleOn()) await agendaAdd(t.a[0], t.a[1], t.a[2]); else notes.push('La compu: '+await compuHacer([{accion:'evento', a1:String(t.a[1]||'').replace('T',' '), a2:t.a[0], a3:t.a[2]||'60'}])); focusCard('hoy'); }
       else if(t.k==='MAILS'){ const m=await mailsLoad(true); notes.push(m.length?'Mails nuevos: '+m.map(x=>`de ${x.de}: ${x.asunto} (${x.snip})`).join(' | '):'No hay mails nuevos importantes.'); }
+      else if(t.k==='COCINA'){ cocinaStart(t.a[0], t.a[1]); }
+      else if(t.k==='TAREA_NUEVA'){ notes.push(tareaNueva(t.a[0], t.a[1], t.a[2], t.a[3], t.a[4])); focusCard('tareas'); }
+      else if(t.k==='TAREA_HECHA'){ const x=tareaBuscar(t.a[0]||''); if(!x) notes.push(`No hay una tarea "${t.a[0]}" anotada.`); else { const r=tareaMarcar(x, t.a[1]||quien.cur); notes.push(`Marcaste «${x.t}» hecha por ${r.n}: suma ${r.pts} puntos${r.ayudo?` (le tocaba a ${r.toca}: 5 de yapa por ayudar)`:''}. Felicitalo/a. Puntos de la semana: ${puntosSemana().map(([n,v])=>n+' '+v).join(', ')}.`); focusCard('tareas'); } }
+      else if(t.k==='TAREA_BORRAR'){ const x=tareaBuscar(t.a[0]||''); if(x){ tareas=tareas.filter(y=>y!==x); tareasSave(); notes.push('Borraste la tarea '+x.t+'.'); } else notes.push('No encontraste esa tarea.'); }
       else if(t.k==='AVISAR'){ const w=norm(t.a[0]||''); const pe=/todo/.test(w)||!w?null:Call.findPeer(w); notes.push(pe||/todo/.test(w)||!w ? icomSend(t.a.slice(1).join(' | ')||t.a[0], pe?pe.dev:'') : 'No encontraste ese aparato unido a la tablet.'); focusCard('icom'); }
       else if(t.k==='APP'){ const m={casa:'casa',musica:'mus',llamar:'llamar',intercom:'icom',estudio:'estudio',fichas:'estudio',compras:'shop',precios:'shop',agenda:'agenda',camara:'cam'}[norm(t.a[0]||'')]; if(m) osOpen(m, {auto:true}); }
       else if(t.k==='ESTUDIO'){ const a=norm(t.a[0]||''); if(/termin|fin|cort|basta/.test(a)) estFin(); else if(/paus/.test(a)) estPausa(true); else if(/segu|reanud/.test(a)) estPausa(false); else estStart(t.a[0], t.a[1], t.a[2]); }
@@ -3148,7 +3234,7 @@ function setsRender(){
   $('shareNote').className='note'+(con.length?'':' warn');
   $('shareNote').textContent = con.length ? `Comparte la agenda, las compras, los recordatorios, las rutinas y las notas con ${con.join(' y ')}.` : 'La tablet todavía no comparte nada con la compu ni con el celu. Tocá «Compartir con la compu y el celu».';
   $('conns').innerHTML=C.map(([k,[c,t]])=>`<li><i class="${c}"></i><span>${k}</span><small>${esc(t)}</small></li>`).join('');
-  $('setVer').textContent='FRIDAY Casa '+VERSION; famRender();
+  $('setVer').textContent='FRIDAY Casa '+VERSION; famRender(); quienRender();
 }
 // el medidor del micrófono (mientras están abiertos los ajustes)
 function micMeter(){
@@ -3161,7 +3247,7 @@ function micMeter(){
   }, 120);
 }
 function famRender(){ const f=FAM(); $('famApe').value=f.apellido||''; $('famList').innerHTML=f.miembros.map((m,i)=>`<span class="chip">${esc(m)}<button type="button" data-fdel="${i}" aria-label="Sacar">×</button></span>`).join('') || '<small>Todavía no hay nadie: agregá a cada uno.</small>'; }
-function famSave(f){ S.familia=f; saveS(); famRender(); render(); try{ FSync.put && FSync.put('c:familia', f); }catch(e){} }
+function famSave(f){ S.familia=f; saveS(); famRender(); quienRender(); render(); try{ FSync.put && FSync.put('c:familia', f); }catch(e){} }
 function setsInit(){
   setsApply();
   $('famApe').addEventListener('change', ()=>{ const f=FAM(); f.apellido=$('famApe').value.trim().replace(/^familia\s+/i,''); famSave(f); });
@@ -3205,7 +3291,7 @@ function padPaint(){ const d=(pad.d+'············').slice(0,12); $('
 // ---------------------------------------------------------------- modo ambiente: el cielo de tu ciudad
 const amb={ on:false };
 function ambOn(force){
-  if(amb.on || (!force && (speakingNow() || state.mode!=='idle' || ringing || est.on || quiz.on || Call.active || timers.some(t=>t.end-Date.now()<60000)))) return;
+  if(amb.on || (!force && (speakingNow() || state.mode!=='idle' || ringing || est.on || quiz.on || cocina || Call.active || timers.some(t=>t.end-Date.now()<60000)))) return;
   if(os.cur && os.cur!=='mus') osClose();
   amb.on=true; state.amb=true; document.querySelectorAll('.card.hot').forEach(c=>c.classList.remove('hot')); $('ambient').classList.add('on'); ambTick.nk=null; ambTick(); skyStart();
 }
@@ -3235,6 +3321,7 @@ function syncLocal(){
   for(const a of autos) o['u:'+a.id]={hora:a.hora, dias:a.dias, que:a.que, on:a.on!==false};
   for(const x of segs) o['f:'+x.id]={f:x.f, q:x.q, done:!!x.done};
   for(const f of fichas) o['y:'+f.id]={q:f.q, a:f.a, tema:f.tema||'', box:f.box||1, due:f.due||''};
+  for(const t of tareas) o['z:'+t.id]={t:t.t, cada:t.cada||'diaria', hora:t.hora||'', rota:t.rota||[], pts:t.pts||10, turno:t.turno||0, hechos:(t.hechos||[]).slice(-40)};
   for(const p of precios) o['w:'+p.id]={q:p.q, max:p.max||0, last:p.last||0, min:p.min||0, title:p.title||'', url:p.url||'', img:p.img||'', at:p.at||0, hist:(p.hist||[]).slice(-10)};
   return o;
 }
@@ -3249,6 +3336,7 @@ function syncApply(changes){
     else if(k==='u'){ const i=autos.findIndex(x=>x.id===key); if(c.d){ if(i>=0) autos.splice(i,1); } else if(v && v.hora && v.que){ const a={id:key, hora:v.hora, dias:v.dias, que:v.que, on:v.on!==false}; if(i>=0) autos[i]=a; else autos.push(a); } LS.set('autos',autos); ch=true; }
     else if(k==='f'){ const i=segs.findIndex(x=>x.id===key); if(c.d){ if(i>=0) segs.splice(i,1); } else if(v && v.q){ if(i>=0) Object.assign(segs[i],{f:v.f, q:v.q, done:!!v.done}); else segs.push({id:key, f:v.f, q:v.q, done:!!v.done}); } LS.set('segs',segs); }
     else if(k==='y'){ const i=fichas.findIndex(x=>x.id===key); if(c.d){ if(i>=0) fichas.splice(i,1); } else if(v && v.q){ const f={id:key, q:v.q, a:v.a, tema:v.tema, box:v.box||1, due:v.due||''}; if(i>=0) Object.assign(fichas[i], f); else fichas.push(f); } LS.set('fichas',fichas); ch=true; }
+    else if(k==='z'){ const i=tareas.findIndex(x=>x.id===key); if(c.d){ if(i>=0) tareas.splice(i,1); } else if(v && v.t){ const t=Object.assign({id:key}, v); if(i>=0) tareas[i]=t; else tareas.push(t); } LS.set('tareas',tareas); ch=true; }
     else if(k==='w'){ const i=precios.findIndex(x=>x.id===key); if(c.d){ if(i>=0) precios.splice(i,1); } else if(v && v.q){ const p=Object.assign({id:key}, v); if(i>=0) precios[i]=p; else precios.push(p); } LS.set('precios',precios); ch=true; }
     else if(k==='e'){ pcInfo.envios=pcInfo.envios||{}; if(c.d) delete pcInfo.envios[key]; else if(v) pcInfo.envios[key]=v; ch=true; }
     else if(k==='o'){ const i=notas.findIndex(x=>x.id===key); if(c.d){ if(i>=0) notas.splice(i,1); } else if(v){ if(i>=0) notas[i]={id:key, t:v.t, at:v.at}; else notas.push({id:key, t:v.t, at:v.at}); } LS.set('notas',notas); ch=true; }
@@ -3354,6 +3442,8 @@ const OSI={
   agenda:SV('<rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M8 14h3"/>'),
   cielo:SV('<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/><path d="M17 3.5v3M15.5 5h3"/>'),
   cam:SV('<path d="M4 8h3l1.6-2.5h6.8L17 8h3a1 1 0 0 1 1 1v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.2" r="3.6"/>'),
+  cocina:SV('<path d="M6 13.5h12v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2z"/><path d="M4 13.5h16"/><path d="M8.5 10.5c0-1.5 1-1.5 1-3s-1-1.5-1-3M12 10.5c0-1.5 1-1.5 1-3s-1-1.5-1-3M15.5 10.5c0-1.5 1-1.5 1-3s-1-1.5-1-3"/>'),
+  tareas:SV('<path d="M9 5h10M9 12h10M9 19h10"/><path d="M3.5 5.2l1.4 1.4 2.4-2.6M3.5 12.2l1.4 1.4 2.4-2.6"/><circle cx="5" cy="19" r="1.4"/>'),
   ajustes:SV('<path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2.2"/><circle cx="10" cy="17" r="2.2"/>'),
   play:SV('<path d="M7 4.5v15l12.5-7.5z" fill="currentColor"/>'), pause:SV('<path d="M7 4.5h3.5v15H7zM13.5 4.5H17v15h-3.5z" fill="currentColor"/>'),
   next:SV('<path d="M5 5v14l10-7zM18 5v14" fill="currentColor"/>'), prev:SV('<path d="M19 5v14L9 12zM6 5v14" fill="currentColor"/>'),
@@ -3361,8 +3451,8 @@ const OSI={
   mic:SV('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',2)
 };
 const APPS=[
-  {id:'casa', n:'Casa', t:'#FFB547'}, {id:'mus', n:'Música', t:'#FF5FA2'}, {id:'llamar', n:'Llamar', t:'#4ADE80'}, {id:'icom', n:'Intercom', t:'#FF8A3D'}, {id:'estudio', n:'Estudio', t:'#A78BFA'},
-  {id:'shop', n:'Compras', t:'#34D3C4'}, {id:'agenda', n:'Agenda', t:'#4CC9FF'}, {id:'cielo', n:'Cielo', t:'#7C8BFF'}, {id:'cam', n:'Cámara', t:'#F87171'}, {id:'ajustes', n:'Ajustes', t:'#94A3B8'}
+  {id:'casa', n:'Casa', t:'#FFB547'}, {id:'mus', n:'Música', t:'#FF5FA2'}, {id:'cocina', n:'Cocina', t:'#A3E635'}, {id:'tareas', n:'Tareas', t:'#FACC15'}, {id:'estudio', n:'Estudio', t:'#A78BFA'}, {id:'shop', n:'Compras', t:'#34D3C4'},
+  {id:'agenda', n:'Agenda', t:'#4CC9FF'}, {id:'icom', n:'Intercom', t:'#FF8A3D'}, {id:'llamar', n:'Llamar', t:'#4ADE80'}, {id:'cam', n:'Cámara', t:'#F87171'}, {id:'cielo', n:'Cielo', t:'#7C8BFF'}, {id:'ajustes', n:'Ajustes', t:'#94A3B8'}
 ];
 const os={ cur:null, auto:false, at:0, talkHide:false, cam:null };
 const appOf=id=>APPS.find(a=>a.id===id);
@@ -3376,6 +3466,8 @@ function appSub(id){
   if(id==='shop'){ const p=compras.filter(x=>!x.h).length; return [p?p+(p>1?' cosas':' cosa'):(precios.length?precios.length+' precios':''), false]; }
   if(id==='agenda'){ const e=gapp.ev.filter(e=>!e.d && new Date(e.i)>now).sort((a,b)=>new Date(a.i)-new Date(b.i))[0]; return [e?hhmm(new Date(e.i))+' '+e.t:'', false]; }
   if(id==='cielo') return [amb.on?'':'Modo cielo', false];
+  if(id==='cocina') return cocina ? [cocina.i>=0?`Paso ${cocina.i+1} de ${cocina.pasos.length}`:cocina.titulo, true] : ['', false];
+  if(id==='tareas'){ const h=tareasHoy().length; const p=puntosSemana()[0]; return [h?h+(h>1?' para hoy':' para hoy'):(p?'👑 '+p[0]:''), false, h]; }
   if(id==='cam') return [Mira.on?'Mirando':'', Mira.on];
   return ['', false];
 }
@@ -3415,7 +3507,7 @@ function osClose(){
 }
 // FRIDAY muestra lo que está haciendo: la app se abre sola y vuelve al inicio al rato
 function focusCard(k){
-  const map={casa:'casa', mus:'mus', shop:'shop', estudio:'estudio', icom:'icom', agenda:'agenda'};
+  const map={casa:'casa', mus:'mus', shop:'shop', estudio:'estudio', icom:'icom', agenda:'agenda', cocina:'cocina', tareas:'tareas'};
   if(k==='hoy'){ if(os.cur && os.auto) osClose(); const el=$('cHoy'); if(os.cur){ const ag=$('cAgenda'); ag.classList.add('hot'); setTimeout(()=>ag.classList.remove('hot'), 5000); return; }
     el.classList.add('hot'); clearTimeout(focusCard.h); focusCard.h=setTimeout(()=>el.classList.remove('hot'), 5000); return; }
   if(map[k] && !amb.on && !setsOpen()) osOpen(map[k], {auto:!os.cur || os.auto});
@@ -3425,6 +3517,7 @@ function renderPane(id){
   if(id==='llamar') renderLlamar(); else if(id==='icom') renderIcom(); else if(id==='estudio') renderEst();
   else if(id==='shop') renderPrecios(); else if(id==='cam') renderCam(); else if(id==='mus') renderMusCtl();
   else if(id==='agenda') renderHoyTo($('cAgenda'), 14, true);
+  else if(id==='cocina') renderCocina(); else if(id==='tareas') renderTareas();
 }
 // ---------------------------------------------------------------- FRIDAY sube cuando escucha o habla
 function talkSync(){
@@ -3625,6 +3718,8 @@ async function resumenSemana(){
   const fh=fichasHoy().length; if(fichas.length) datos.push(`Fichas de estudio: ${fichas.length} en total, ${fh} para repasar.`);
   const pr=precios.filter(x=>x.last); if(pr.length) datos.push('Precios que sigue: '+pr.map(x=>`${x.title||x.q}: ${fmtP(x.last)}${x.min&&x.min<x.last?' (el más bajo fue '+fmtP(x.min)+')':''}`).join('; '));
   const ic=icom.log.filter(x=>x.at>hace7).length; if(ic) datos.push(`Se mandaron ${ic} mensajes por el intercom.`);
+  const pt=puntosSemana(); if(pt.length) datos.push('Puntos de las tareas de la casa esta semana (anunciá quién ganó y felicitalo): '+pt.map(([n,v])=>`${n} ${v}`).join(', '));
+  const cc=recetas.slice(0,3).map(r=>r.titulo); if(cc.length) datos.push('Recetas que cocinaron hace poco: '+cc.join(', '));
   if(!datos.length) return 'Fue una semana tranquila: no tengo nada anotado para contarles. ¡Que arranquen bien la semana!';
   let t=''; try{ t=await llm([{role:'system', content:'Sos FRIDAY, la asistente de la familia. Armá el resumen del domingo a la noche: cómo fue la semana y qué viene. Español rioplatense, cálido, para decir en voz alta: 4 a 6 frases cortas, sin listas ni emojis. Usá SOLO los datos que te paso; no inventes nada. Si algo da para festejar (mucho estudio), festejalo.'},{role:'user', content:datos.join('\n')}], ()=>{}); }catch(e){}
   return (t||'').replace(TAG_RE,'').trim() || 'Resumen de la semana. '+datos.join('. ')+'.';
@@ -3637,12 +3732,20 @@ function resumenTick(){
 }
 // ---------------------------------------------------------------- lo que se dice para manejar el sistema
 function osFast(text, nf){
+  if(quien.enroll) return true;
+  if(quienSoy(text, nf)) return true;
   if(state.icomTo){ const to=state.icomTo.to; state.icomTo=null; youBars(false); const r=icomSend(text, to); sayFast(text, r, 'happy'); return true; }
   if(quiz.on && !/^(friday|che)\b/.test(nf)){ pushHist('user', text); quizAnswer(text); return true; }
+  if(cocFast(text, nf)) return true;
+  if(tareasFast(text, nf)) return true;
+  const cm=String(text).match(/^(?:friday,?\s*)?(?:¿\s*)?(?:c[oó]mo (?:hago|se hace|se hacen|preparo|cocino)|receta (?:de|para)|quiero (?:hacer|cocinar|preparar)|ense[ñn]ame a (?:hacer|cocinar)|vamos a (?:hacer|cocinar))\s+(.+?)(?:\s+para\s+(\d+)\s*(?:personas|porciones)?)?[?.!\s]*$/i);
+  if(cm && !/\b(tarea|fichas|timer|recordatorio)\b/.test(nf)){ pushHist('user', text); cocinaStart(cm[1], cm[2]); return true; }
+  if(/^(quedate quieta|no te muevas|deja de moverte)$/.test(nf)){ S.mueve='no'; saveS(); sayFast(text, 'Listo, me quedo quietita acá abajo.', 'wink'); return true; }
+  if(/^(movete|podes moverte|move te|pasea|anda a pasear)$/.test(nf)){ S.mueve='si'; saveS(); bud.next=0; state.lastUser=Date.now()-45000; sayFast(text, '¡Yupi! Me voy a dar una vuelta.', 'excited'); return true; }
   // volver al inicio / abrir apps
   if(/^(volve|anda|ir|volver|vamos)( al| a la)? (inicio|pantalla de inicio|principio)$|^(inicio|cerra (eso|la app|esto))$/.test(nf)){ osClose(); sayFast(text, 'Listo.'); return true; }
-  const ab=nf.match(/^(?:abri|abrime|mostrame|mostra|anda a|entra a|pone)\s+(?:la |el |las |los )?(casa|luces|musica|llamadas|llamar|intercom|intercomunicador|estudio|fichas|compras|lista|precios|agenda|calendario|camara|cielo|ajustes)$/);
-  if(ab){ const m={casa:'casa',luces:'casa',musica:'mus',llamadas:'llamar',llamar:'llamar',intercom:'icom',intercomunicador:'icom',estudio:'estudio',fichas:'estudio',compras:'shop',lista:'shop',precios:'shop',agenda:'agenda',calendario:'agenda',camara:'cam',cielo:'cielo',ajustes:'ajustes'}[ab[1]]; osOpen(m); sayFast(text, ['Ahí está.','Listo.','Dale.'][Math.floor(Math.random()*3)]); return true; }
+  const ab=nf.match(/^(?:abri|abrime|mostrame|mostra|anda a|entra a|pone)\s+(?:la |el |las |los )?(casa|luces|musica|llamadas|llamar|intercom|intercomunicador|estudio|fichas|compras|lista|precios|agenda|calendario|camara|cielo|ajustes|cocina|recetas|tareas)$/);
+  if(ab){ const m={casa:'casa',luces:'casa',musica:'mus',llamadas:'llamar',llamar:'llamar',intercom:'icom',intercomunicador:'icom',estudio:'estudio',fichas:'estudio',compras:'shop',lista:'shop',precios:'shop',agenda:'agenda',calendario:'agenda',camara:'cam',cielo:'cielo',ajustes:'ajustes',cocina:'cocina',recetas:'cocina',tareas:'tareas'}[ab[1]]; osOpen(m); sayFast(text, ['Ahí está.','Listo.','Dale.'][Math.floor(Math.random()*3)]); return true; }
   // intercom por voz
   const ic=String(text).match(/^(?:friday,?\s*)?(?:avis[aá]le|avis[aá]|dec[ií]le|decile|mand[aá]le|anunci[aá]le|anunci[aá])\s+(?:a\s+)?(?:la\s+|el\s+)?(compu|computadora|pc|celu|celular|tel[eé]fono|todos|todo el mundo|toda la casa)\s+(?:que\s+)?(.+)$/i);
   if(ic){ const w=norm(ic[1]); const p=/todo/.test(w)?null:Call.findPeer(w); if(!/todo/.test(w) && !p){ sayFast(text, 'No encuentro '+(/celu|tel/.test(w)?'el celu':'la compu')+' unida a la tablet.'); return true; } sayFast(text, icomSend(ic[2], p?p.dev:''), 'happy'); return true; }
@@ -3689,20 +3792,407 @@ document.addEventListener('click', e=>{
   if(t.closest('[data-cam="mira"]')){ S.mira=Mira.on?'no':'si'; saveS(); miraApply(); renderCam(); return; }
   const pc=t.closest('.person[data-call]'); if(pc){ const p=Call.peers().find(x=>x.dev===pc.dataset.call); if(p) Call.start(p).then(err=>{ if(err) say(err,'worried'); }); return; }
   if(t.closest('#shopAdd')){ const v=$('shopIn').value.trim(); if(v){ shopAdd(v.split(/,|;/).map(s=>s.trim()).filter(Boolean)); $('shopIn').value=''; } return; }
-  if(t.closest('#dock')){ if(speakingNow()) stopTalk(); else { Ear.convoUntil=Date.now()+12000; duck(true); setTimeout(()=>{ if(state.mode==='idle' && !speakingNow()) duck(false); }, 12000); chime('up'); faceSet('listening',3000); setMode('listening'); youBars(true); setTimeout(()=>{ if(state.mode==='listening' && Date.now()>Ear.convoUntil-500){ setMode('idle'); youBars(false); } }, 12500); } return; }
+  if(t.closest('#dock')){ escuchaYa(); return; }
   if(t.closest('#talk') && !t.closest('#face')){ os.talkHide=true; talkSync(); return; }
 }, true);
 document.addEventListener('keydown', e=>{ if(e.key==='Enter' && e.target && e.target.id==='shopIn'){ $('shopAdd').click(); } });
 // ================================================================ FRIDAY OS (fin)
+
+// ================================================================ FRIDAY VIVA (tablet)
+// 1) FRIDAY se mueve: pasea por la pantalla, salta cuando está contenta, se asoma por el borde,
+//    baila si suena música, duerme de noche en un rincón. La podés agarrar y llevar.
+// 2) Quién es quién: reconoce a la familia por la cara (local, en la tablet) y por la voz.
+// 3) Cocina: recetas paso a paso, manos libres, con timers.
+// 4) Tareas de la casa: turnos, recordatorios, puntos y ranking de la semana.
+
+// ---------------------------------------------------------------- 1) FRIDAY se mueve
+const bud={ x:0, y:0, s:64, mode:'home', next:0, free:0, drag:null, sleep:false, el:null, moving:0, spot:'' };
+function budInit(){
+  if(bud.el) return;
+  const b=document.createElement('div'); b.id='buddy'; b.setAttribute('aria-hidden','true');
+  b.innerHTML='<div class="bwrap"><div class="bi fface" id="bFaceB"></div></div><div class="bfx" id="bFx"></div>';
+  document.body.appendChild(b); bud.el=b; faceBuild(b.querySelector('.bi')); faceApply();
+  const h=budHome(); budPut(h.x, h.y, h.s, 0);
+  let down=null;
+  b.addEventListener('pointerdown', e=>{ const r=b.getBoundingClientRect(); budPut(r.left, r.top, bud.s, 0); down={x:e.clientX, y:e.clientY, ox:e.clientX-r.left, oy:e.clientY-r.top, moved:false}; b.setPointerCapture(e.pointerId); e.preventDefault(); e.stopPropagation(); });
+  b.addEventListener('pointermove', e=>{ if(!down) return; if(!down.moved && Math.hypot(e.clientX-down.x, e.clientY-down.y)>10){ down.moved=true; bud.drag=true; faceSet('surprised', 1400); b.classList.add('held'); }
+    if(down.moved){ const s=bud.s; budPut(Math.max(0,Math.min(innerWidth-s, e.clientX-down.ox)), Math.max(0,Math.min(innerHeight-s, e.clientY-down.oy)), s, 0); } });
+  const up=e=>{ if(!down) return; const moved=down.moved; down=null; bud.drag=false; b.classList.remove('held'); e.stopPropagation();
+    state.lastUser=Date.now();
+    if(moved){ bud.free=Date.now()+25000; bud.mode='free'; faceSet('happy', 1600); budEmote('happy'); }
+    else { budEmote('happy'); escuchaYa(); } };
+  b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+  b.addEventListener('click', e=>e.stopPropagation());
+  addEventListener('resize', ()=>{ bud.next=0; });
+}
+function budHome(){ const r=$('dFace') ? $('dFace').getBoundingClientRect() : {left:20, top:innerHeight-80, width:64, height:64}; return {x:r.left, y:r.top, s:r.width||64}; }
+function budPut(x, y, s, ms, rot){
+  const b=bud.el; if(!b) return; bud.x=x; bud.y=y; bud.s=s;
+  b.style.transitionDuration=(ms||0)+'ms';
+  b.style.width=s+'px'; b.style.height=s+'px';
+  b.style.transform=`translate3d(${x.toFixed(1)}px,${y.toFixed(1)}px,0) rotate(${rot||0}deg)`;
+  if(ms){ b.classList.add('walk'); clearTimeout(budPut.t); budPut.t=setTimeout(()=>b.classList.remove('walk'), ms); }
+}
+const BUD_ANIM={happy:'hop', proud:'hop', laugh:'giggle', excited:'hop2', love:'float', surprised:'pop', sad:'droop', worried:'shake', confused:'tilt', angry:'shake', wink:'tilt', cool:'tilt', thinking:'sway', listening:'perk', sleepy:'droop'};
+function budEmote(name){
+  const b=bud.el; if(!b || S.mueve==='no') return; const a=BUD_ANIM[EXPR_ALIAS[name]||name]; if(!a) return;
+  const w=b.querySelector('.bwrap'); w.classList.remove('a-'+(w.dataset.a||'x')); void w.offsetWidth; w.dataset.a=a; w.classList.add('a-'+a);
+  clearTimeout(budEmote.t); budEmote.t=setTimeout(()=>w.classList.remove('a-'+a), 1700);
+  if(a==='float'){ const fx=$('bFx'); fx.innerHTML='<i>♥</i><i>♥</i><i>♥</i>'; fx.className='bfx hearts'; setTimeout(()=>{ fx.className='bfx'; fx.innerHTML=''; }, 1800); }
+  if(a==='hop2'){ const fx=$('bFx'); fx.innerHTML='<i>✦</i><i>✦</i><i>✦</i>'; fx.className='bfx stars'; setTimeout(()=>{ fx.className='bfx'; fx.innerHTML=''; }, 1600); }
+}
+// a dónde va cuando pasea
+function budSpot(){
+  const s=Math.round(Math.min(96, Math.max(70, innerWidth*0.065))), W=innerWidth, H=innerHeight, r=Math.random();
+  const icons=[...document.querySelectorAll('#grid .app-ic .tile')];
+  if(r<0.35 && icons.length){ const t=icons[Math.floor(Math.random()*icons.length)].getBoundingClientRect(); return {x:t.left+t.width/2-s/2, y:Math.max(60, t.top-s*0.78), s, rot:0, spot:'icono'}; }
+  if(r<0.55){ return {x:W-s*0.52, y:90+Math.random()*(H-300), s, rot:-16, spot:'borde'}; }
+  if(r<0.65){ const c=$('clock').getBoundingClientRect(); return {x:Math.min(W-s-10, c.right+8), y:c.top+c.height*0.2, s, rot:0, spot:'reloj'}; }
+  return {x:40+Math.random()*(W-s-80), y:80+Math.random()*(H-s-240), s, rot:(Math.random()-.5)*10, spot:'paseo'};
+}
+function budTick(){
+  const b=bud.el; if(!b) return;
+  const hide=document.body.classList.contains('talking') || amb.on || setsOpen() || Call.active || !$('setup').hidden || !$('tap').hidden || !$('mapa').hidden || !!$('enr');
+  b.classList.toggle('hid', hide); if(hide || bud.drag) return;
+  const now=Date.now(), h=new Date().getHours(), quieto=now-state.lastUser, sonando=!!(music.cur && music.cur.playing!==false);
+  b.classList.toggle('dance', sonando && !os.cur && quieto>8000 && S.mueve!=='no');
+  const night=(durmiendo() || h>=23 || h<7) && quieto>5*60000;
+  if(night!==bud.sleep){ bud.sleep=night; faceApply(); }
+  let want;
+  if(S.mueve==='no') want='home';
+  else if(timerRinging()) want='alarma';
+  else if(now<bud.free && bud.mode==='free') return;
+  else if(os.cur || state.mode!=='idle') want='home';
+  else if(night) want='dormir';
+  else if(quieto>40000 && state.started) want='paseo';
+  else want='home';
+  if(want==='home'){ const hm=budHome(); if(bud.mode!=='home' || Math.abs(bud.x-hm.x)>2 || Math.abs(bud.y-hm.y)>2){ bud.mode='home'; budPut(hm.x, hm.y, hm.s, 700); } return; }
+  if(want==='alarma'){ if(bud.mode!=='alarma'){ bud.mode='alarma'; const t=$('timers').getBoundingClientRect(); budPut(Math.min(innerWidth-90, t.right+10), 6, 52, 600); b.classList.add('ring'); setTimeout(()=>b.classList.remove('ring'), 6000); } return; }
+  if(want==='dormir'){ if(bud.mode!=='dormir'){ bud.mode='dormir'; budPut(innerWidth-120, innerHeight-190, 70, 2600); } return; }
+  if(bud.mode!=='paseo' || now>bud.next){
+    bud.mode='paseo'; const sp=budSpot(); bud.spot=sp.spot; const d=Math.hypot(sp.x-bud.x, sp.y-bud.y);
+    budPut(sp.x, sp.y, sp.s, Math.max(900, Math.min(3200, d*4.5)), sp.rot);
+    bud.next=now+7000+Math.random()*9000;
+    if(Math.random()<0.3) setTimeout(()=>budEmote(['happy','wink','love','thinking'][Math.floor(Math.random()*4)]), 2600);
+  }
+}
+// tocarla (o tocar abajo) = te escucha sin decir «Friday»
+function escuchaYa(){
+  if(speakingNow()){ stopTalk(); return; }
+  Ear.convoUntil=Date.now()+12000; duck(true); setTimeout(()=>{ if(state.mode==='idle' && !speakingNow()) duck(false); }, 12000);
+  chime('up'); faceSet('listening',3000); setMode('listening'); youBars(true);
+  setTimeout(()=>{ if(state.mode==='listening' && Date.now()>Ear.convoUntil-500){ setMode('idle'); youBars(false); } }, 12500);
+}
+
+// ---------------------------------------------------------------- 2) quién es quién (cara y voz)
+// Las huellas de las caras y de las voces quedan SOLO en esta tablet (no se mandan a ningún lado).
+const quien={ cur:null, curAt:0, via:'', caras:LS.get('caras',{}), voces:LS.get('voces',{}), vistos:{at:0, n:[]}, saludo:LS.get('saludos',{}), voz:null, stream:null, video:null, api:null, loading:null, busy:false, enroll:null };
+const FACE_CDN=['https://cdn.jsdelivr.net/npm/@vladmandic/face-api@1.7.13/','https://unpkg.com/@vladmandic/face-api@1.7.13/'];
+function quienSave(){ LS.set('caras', quien.caras); LS.set('voces', quien.voces); }
+const conCara=()=>Object.keys(quien.caras).filter(n=>(quien.caras[n]||[]).length);
+const conVoz=()=>Object.keys(quien.voces).filter(n=>(quien.voces[n]||[]).length>=2);
+function loadScript(src){ return new Promise((res,rej)=>{ const s=document.createElement('script'); s.src=src; s.async=true; s.onload=()=>res(); s.onerror=()=>{ s.remove(); rej(new Error('no cargó')); }; document.head.appendChild(s); }); }
+async function caraApi(){
+  if(quien.api) return quien.api; if(quien.loading) return quien.loading;
+  quien.loading=(async()=>{
+    for(const base of FACE_CDN){
+      try{
+        if(!window.faceapi) await loadScript(base+'dist/face-api.js');
+        const fa=window.faceapi; const m=base+'model/';
+        await fa.nets.tinyFaceDetector.loadFromUri(m); await fa.nets.faceLandmark68Net.loadFromUri(m); await fa.nets.faceRecognitionNet.loadFromUri(m);
+        quien.api=fa; return fa;
+      }catch(e){ console.warn('face-api', base, e); }
+    }
+    throw new Error('No pude cargar el reconocimiento de caras (¿hay internet?).');
+  })();
+  try{ return await quien.loading; } finally { quien.loading=null; }
+}
+async function camVideo(){
+  if(os.cam && $('camV') && $('camV').readyState>=2) return $('camV');
+  if(!quien.stream || quien.stream.getVideoTracks().every(t=>t.readyState==='ended')){
+    quien.stream=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640}, height:{ideal:480}, facingMode:'user'}, audio:false});
+    const v=document.createElement('video'); v.muted=true; v.playsInline=true; v.srcObject=quien.stream; quien.video=v; await v.play().catch(()=>{});
+    for(let i=0;i<30 && v.readyState<2;i++) await sleep(100);
+  }
+  clearTimeout(camVideo.t); camVideo.t=setTimeout(camSuelta, 45000);   // si no se usa, apaga la cámara
+  return quien.video;
+}
+function camSuelta(){ if(S.reconocer==='siempre' && state.started) return; try{ quien.stream && quien.stream.getTracks().forEach(t=>t.stop()); }catch(e){} quien.stream=null; quien.video=null; }
+async function carasAhora(){
+  const fa=await caraApi(), v=await camVideo();
+  const ds=await fa.detectAllFaces(v, new fa.TinyFaceDetectorOptions({inputSize:320, scoreThreshold:0.5})).withFaceLandmarks().withFaceDescriptors();
+  return (ds||[]).map(d=>Array.from(d.descriptor));
+}
+function caraMatch(desc){
+  let best=null, bd=9, second=9;
+  for(const [n,list] of Object.entries(quien.caras)){ let m=9; for(const x of list){ let s=0; for(let i=0;i<x.length;i++){ const d=x[i]-desc[i]; s+=d*d; } m=Math.min(m, Math.sqrt(s)); } if(m<bd){ second=bd; bd=m; best=n; } else if(m<second) second=m; }
+  return bd<0.5 && second-bd>0.05 ? best : null;
+}
+async function quienMira(){
+  if(quien.busy || !conCara().length || S.reconocer==='no') return quien.vistos.n;
+  quien.busy=true;
+  try{ const ds=await carasAhora(); const ns=[...new Set(ds.map(caraMatch).filter(Boolean))]; quien.vistos={at:Date.now(), n:ns, caras:ds.length}; return ns; }
+  catch(e){ quien.err=e.message; return []; }
+  finally{ quien.busy=false; }
+}
+// --- la voz: una huella simple (timbre y tono) de cada uno; aprende sola cuando te reconoce por la cara
+function fft(re, im){ const n=re.length; for(let i=1,j=0;i<n;i++){ let b=n>>1; for(;j&b;b>>=1) j^=b; j^=b; if(i<j){ [re[i],re[j]]=[re[j],re[i]]; [im[i],im[j]]=[im[j],im[i]]; } }
+  for(let len=2;len<=n;len<<=1){ const a=-2*Math.PI/len, wr=Math.cos(a), wi=Math.sin(a); for(let i=0;i<n;i+=len){ let cr=1, ci=0; for(let j=0;j<len/2;j++){ const ur=re[i+j], ui=im[i+j], vr=re[i+j+len/2]*cr-im[i+j+len/2]*ci, vi=re[i+j+len/2]*ci+im[i+j+len/2]*cr; re[i+j]=ur+vr; im[i+j]=ui+vi; re[i+j+len/2]=ur-vr; im[i+j+len/2]=ui-vi; const t=cr*wr-ci*wi; ci=cr*wi+ci*wr; cr=t; } } } }
+function vozFeat(frames, sr){
+  let len=0; for(const f of frames) len+=f.length; if(!len) return null;
+  const ratio=Math.max(1, Math.round(sr/16000)), N=Math.floor(len/ratio), x=new Float32Array(N); { let k=0, acc=0, c=0; for(const f of frames) for(let i=0;i<f.length;i++){ acc+=f[i]; c++; if(c===ratio){ if(k<N) x[k++]=acc/ratio; acc=0; c=0; } } }
+  const fs=sr/ratio, W=512, HOP=256, NB=26, NC=12;
+  const mel=f=>2595*Math.log10(1+f/700), imel=m=>700*(Math.pow(10,m/2595)-1), lo=mel(100), hi=mel(Math.min(7000, fs/2-100));
+  const edges=Array.from({length:NB+2},(_,i)=>Math.floor(imel(lo+(hi-lo)*i/(NB+1))/fs*W));
+  const win=Float32Array.from({length:W},(_,i)=>0.5-0.5*Math.cos(2*Math.PI*i/(W-1)));
+  const fr=[], en=[], f0s=[];
+  for(let s=0;s+W<=N;s+=HOP){
+    const re=new Float64Array(W), im=new Float64Array(W); let e=0; for(let i=0;i<W;i++){ re[i]=x[s+i]*win[i]; e+=x[s+i]*x[s+i]; } en.push(e);
+    fft(re, im); const p=new Float64Array(W/2); for(let i=0;i<W/2;i++) p[i]=re[i]*re[i]+im[i]*im[i];
+    const lb=[]; for(let b=1;b<=NB;b++){ let acc=1e-10; for(let k=edges[b-1];k<edges[b+1];k++){ const w=k<edges[b]?(k-edges[b-1])/Math.max(1,edges[b]-edges[b-1]):(edges[b+1]-k)/Math.max(1,edges[b+1]-edges[b]); acc+=p[k]*Math.max(0,w); } lb.push(Math.log(acc)); }
+    const c=[]; for(let k=1;k<=NC;k++){ let a=0; for(let b=0;b<NB;b++) a+=lb[b]*Math.cos(Math.PI*k*(b+0.5)/NB); c.push(a); } fr.push(c);
+    // el tono (autocorrelación, 70 a 450 Hz)
+    let best=0, bl=0, e0=0; for(let i=0;i<W;i++) e0+=x[s+i]*x[s+i];
+    for(let l=Math.floor(fs/450); l<=Math.floor(fs/70); l++){ let a=0; for(let i=0;i+l<W;i++) a+=x[s+i]*x[s+i+l]; if(a>best){ best=a; bl=l; } }
+    if(e0>0 && best/e0>0.45 && bl) f0s.push(fs/bl);
+  }
+  if(fr.length<6) return null;
+  const ord=en.slice().sort((a,b)=>a-b), thr=ord[Math.floor(ord.length*0.4)];
+  const v=fr.filter((_,i)=>en[i]>=thr); if(v.length<4) return null;
+  const mean=Array(NC).fill(0), sd=Array(NC).fill(0); for(const c of v) c.forEach((y,k)=>mean[k]+=y/v.length); for(const c of v) c.forEach((y,k)=>sd[k]+=(y-mean[k])**2/v.length);
+  const f0=f0s.length ? f0s.sort((a,b)=>a-b)[Math.floor(f0s.length/2)] : 0;
+  return [...mean, ...sd.map(Math.sqrt), f0?Math.log(f0)*12:0].map(n=>+n.toFixed(3));
+}
+function vozMatch(f){
+  const ns=conVoz(); if(!f || !ns.length) return null;
+  const all=ns.flatMap(n=>quien.voces[n]); const D=f.length;
+  const mu=Array(D).fill(0), sd=Array(D).fill(0); for(const v of all) v.forEach((y,k)=>mu[k]+=y/all.length); for(const v of all) v.forEach((y,k)=>sd[k]+=(y-mu[k])**2/all.length);
+  const s=sd.map((q,k)=>Math.max(Math.sqrt(q), k===D-1?1.2:0.3));
+  const dist=(a,b)=>{ let t=0; for(let k=0;k<D;k++){ const w=k===D-1?2.5:1; t+=w*((a[k]-b[k])/s[k])**2; } return Math.sqrt(t/D); };
+  const sc=ns.map(n=>{ const L=quien.voces[n]; const c=Array(D).fill(0); L.forEach(v=>v.forEach((y,k)=>c[k]+=y/L.length)); const intra=L.reduce((a,v)=>a+dist(v,c),0)/L.length; return {n, d:dist(f,c), intra}; }).sort((a,b)=>a.d-b.d);
+  const b=sc[0], o=sc[1];
+  if(o ? (b.d<o.d*0.75 && b.d<Math.max(1.6, b.intra*2.2)) : b.d<Math.max(1.1, b.intra*1.8)) return {n:b.n, d:+b.d.toFixed(2)};
+  return null;
+}
+function vozAprende(n, f){ if(!f || !n) return; const L=quien.voces[n]=(quien.voces[n]||[]); L.push(f); if(L.length>14) L.splice(0, L.length-14); quienSave(); }
+// lo que se escucha: la huella de la voz de esta frase
+function quienOyo(frames, sr){
+  if(quien.enroll && quien.enroll.tipo==='voz'){ const f=vozFeat(frames, sr); if(f){ quien.enroll.got.push(f); enrPaint(); if(quien.enroll.got.length>=3) enrFin(true); } return; }
+  if(S.reconocer==='no') return;
+  const f=vozFeat(frames, sr); quien.voz={f, at:Date.now(), m:vozMatch(f)};
+}
+// ¿quién me está hablando? (la cara manda; si no, la voz; si no, lo que te dijo)
+function quienDecide(){
+  const now=Date.now(), v=quien.voz && now-quien.voz.at<15000 ? quien.voz : null, caras=now-quien.vistos.at<12000 ? quien.vistos.n : [];
+  let n=null, via='';
+  if(caras.length===1 && (quien.vistos.caras||1)===1){ n=caras[0]; via='cara'; if(v && v.f) vozAprende(n, v.f); }
+  else if(v && v.m && (!caras.length || caras.includes(v.m.n))){ n=v.m.n; via='voz'; }
+  else if(caras.length===1){ n=caras[0]; via='cara'; }
+  if(n){ quien.cur=n; quien.curAt=now; quien.via=via; }
+  else if(now-quien.curAt>4*60000) quien.cur=null;
+  return quien.cur;
+}
+function quienPrompt(){
+  if(!quien.cur || Date.now()-quien.curAt>5*60000) return '';
+  return `Ahora te habla ${quien.cur} (lo reconociste por ${quien.via==='cara'?'la cara':quien.via==='voz'?'la voz':'lo que te dijo'}). Llamalo por su nombre de vez en cuando y tené en cuenta lo suyo.`;
+}
+// «soy Sofi»
+function quienSoy(text, nf){
+  const m=nf.match(/^(?:friday,? )?(?:soy|habla|te habla) (?:yo,? )?([a-zñ]+)$/); if(!m) return false;
+  const f=FAM(); const n=f.miembros.find(x=>norm(x)===m[1]) || (m[1].length>2 ? m[1].charAt(0).toUpperCase()+m[1].slice(1) : null); if(!n) return false;
+  quien.cur=n; quien.curAt=Date.now(); quien.via='dicho'; if(quien.voz && Date.now()-quien.voz.at<15000) vozAprende(n, quien.voz.f);
+  const t=tareasDe(n);
+  sayFast(text, `¡Hola, ${n}!${t.length?` Hoy te toca ${listaY(t.map(x=>x.t.toLowerCase()))}.`:''} ¿En qué te ayudo?`, 'happy'); return true;
+}
+// "siempre": saluda a cada uno cuando llega (una vez cada unas horas)
+async function quienRonda(){
+  if(S.reconocer!=='siempre' || !state.started || !conCara().length || state.mode!=='idle' || speakingNow() || Call.active || durmiendo() || os.cam) return;
+  const ns=await quienMira(); const now=Date.now();
+  const nuevos=ns.filter(n=>now-(quien.saludo[n]||0)>3*3600000); if(!nuevos.length) return;
+  nuevos.forEach(n=>quien.saludo[n]=now); LS.set('saludos', quien.saludo);
+  if(ns.length===1){ quien.cur=ns[0]; quien.curAt=now; quien.via='cara'; }
+  ambOff(); const h=new Date().getHours(), hola=h<13?'¡Buen día':h<20?'¡Hola':'¡Buenas noches';
+  const extra=nuevos.length===1 ? (()=>{ const t=tareasDe(nuevos[0]); return t.length?` Hoy te toca ${listaY(t.map(x=>x.t.toLowerCase()))}.`:''; })() : '';
+  say(`${hola}, ${listaY(nuevos)}!${extra}`, 'happy'); budEmote('excited');
+}
+// --- enseñarle a reconocer: la cara (8 fotos) o la voz (3 frases)
+function enrShow(nombre, tipo){
+  enrCierra();
+  const d=document.createElement('div'); d.id='enr'; d.className='enr';
+  d.innerHTML=`<div class="ebox"><h3>${tipo==='cara'?'Que FRIDAY conozca tu cara':'Que FRIDAY conozca tu voz'}</h3><p id="enrT"></p>${tipo==='cara'?'<div class="evid"><video id="enrV" autoplay playsinline muted></video></div>':'<div class="emic">'+OSI.mic+'</div>'}<div class="edots" id="enrD"></div><p class="est" id="enrS"></p><div class="eact"><button class="big-btn alt" type="button" id="enrX">Cancelar</button></div></div>`;
+  document.body.appendChild(d); $('enrX').onclick=()=>enrFin(false);
+  quien.enroll={nombre, tipo, got:[], at:Date.now()}; enrPaint();
+  if(tipo==='cara') enrCara(); else enrVoz();
+}
+function enrPaint(){ const e=quien.enroll; if(!e || !$('enrD')) return; const need=e.tipo==='cara'?8:3; $('enrD').innerHTML=Array.from({length:need},(_,i)=>`<i class="${i<e.got.length?'ok':''}"></i>`).join('');
+  $('enrT').textContent = e.tipo==='cara' ? `${e.nombre}, mirá a la cámara y mové un poquito la cabeza para los costados.` : `${e.nombre}, después del pitido decí en voz alta: «${['Hola Friday, soy '+e.nombre,'Me gusta el mate con amigos','Hoy es un lindo día'][Math.min(2,e.got.length)]}».`; }
+async function enrCara(){
+  const e=quien.enroll; $('enrS').textContent='Preparando la cámara…';
+  try{ const fa=await caraApi(); const v=await camVideo(); const pv=$('enrV'); if(pv){ pv.srcObject=quien.stream||($('camV')&&$('camV').srcObject); pv.play().catch(()=>{}); }
+    $('enrS').textContent='';
+    while(quien.enroll===e && e.got.length<8 && Date.now()-e.at<40000){
+      const ds=await fa.detectAllFaces(v, new fa.TinyFaceDetectorOptions({inputSize:320, scoreThreshold:0.5})).withFaceLandmarks().withFaceDescriptors();
+      if(ds && ds.length===1){ e.got.push(Array.from(ds[0].descriptor).map(n=>+n.toFixed(4))); enrPaint(); $('enrS').textContent=''; }
+      else $('enrS').textContent = ds && ds.length>1 ? 'Que haya una sola persona en la cámara.' : 'No te veo bien: acercate un poco y que haya luz.';
+      await sleep(450);
+    }
+    if(quien.enroll===e) enrFin(e.got.length>=8);
+  }catch(err){ if($('enrS')) $('enrS').textContent=err.message||'No pude usar la cámara.'; }
+}
+function enrVoz(){ if(!stt.on){ $('enrS').textContent='El micrófono no está andando.'; return; } chime('up'); Ear.convoUntil=Date.now()+40000; $('enrS').textContent='Te escucho…'; clearTimeout(enrVoz.t); enrVoz.t=setTimeout(()=>{ if(quien.enroll && quien.enroll.tipo==='voz') enrFin(false); }, 45000); }
+function enrFin(ok){
+  const e=quien.enroll; quien.enroll=null; enrCierra(); if(!e) return;
+  if(ok){ if(e.tipo==='cara') quien.caras[e.nombre]=e.got.slice(0,10); else quien.voces[e.nombre]=(quien.voces[e.nombre]||[]).concat(e.got).slice(-14);
+    quienSave(); if(S.reconocer==='no' || !S.reconocer){ S.reconocer='hablar'; saveS(); }
+    say(e.tipo==='cara'?`¡Listo! Ya te conozco la cara, ${e.nombre}.`:`¡Listo! Ya conozco tu voz, ${e.nombre}.`, 'happy'); }
+  else if(e.got.length) toast('Quedó a medias: probá de nuevo.');
+  if(setsOpen()) setsRender();
+  Ear.convoUntil=0;
+}
+function enrCierra(){ const d=$('enr'); if(d) d.remove(); }
+function quienRender(){
+  const el=$('quienList'); if(!el) return; const f=FAM();
+  el.innerHTML = f.miembros.length ? f.miembros.map(n=>{ const c=(quien.caras[n]||[]).length, v=(quien.voces[n]||[]).length;
+    return `<div class="qrow"><b>${esc(n)}</b><button class="ghost" type="button" data-enr-cara="${esc(n)}">${c?'✓ Cara':'Enseñar la cara'}</button><button class="ghost" type="button" data-enr-voz="${esc(n)}">${v>=2?'✓ Voz':'Enseñar la voz'}</button>${c||v?`<button class="ghost x" type="button" data-enr-del="${esc(n)}" aria-label="Olvidar">×</button>`:''}</div>`; }).join('') : '<p class="note">Primero agregá a la familia (arriba).</p>';
+}
+
+// ---------------------------------------------------------------- 3) cocina: la receta paso a paso, manos libres
+let cocina=LS.get('cocina',null), recetas=LS.get('recetas',[]);
+const cocSave=()=>LS.set('cocina', cocina);
+const FR={'½':.5,'¼':.25,'¾':.75,'⅓':1/3,'⅔':2/3};
+function cantEscala(c, k){
+  if(k===1) return c;
+  return String(c).replace(/(\d+)\s+(\d)\/(\d)|(\d)\/(\d)|(\d+(?:[.,]\d+)?)|[½¼¾⅓⅔]/g, (m,a,b,cc,fa,fb,dec)=>{
+    let v = a ? +a + b/cc : fa ? fa/fb : dec ? parseFloat(dec.replace(',','.')) : FR[m];
+    v*=k; if(v>=10) return String(Math.round(v)); const ent=Math.floor(v), fr=v-ent, q=Math.round(fr*4)/4;
+    const fs={0:'',0.25:'¼',0.5:'½',0.75:'¾',1:''}[q]; const e=ent+(q===1?1:0); return (e?String(e):'')+(fs?(e?' ':'')+fs:'') || '¼'; });
+}
+async function cocinaStart(plato, porciones){
+  plato=String(plato||'').trim().replace(/^(unas?|unos?|el|la|los|las)\s+/i,''); if(!plato) return;
+  const pr=parseInt(porciones)||0;
+  const guard=recetas.find(r=>norm(r.titulo).includes(norm(plato)) || norm(plato).includes(norm(r.titulo)));
+  let r=guard ? JSON.parse(JSON.stringify(guard)) : null;
+  if(!r){
+    setMode('thinking');
+    let raw=''; try{ raw=await llm([{role:'system', content:'Sos una cocinera argentina con mucha paciencia. Respondé SOLO un JSON con esta forma: {"titulo":"…","porciones":4,"tiempo":"40 minutos","ingredientes":[{"c":"500 g","n":"nalga"}],"pasos":[{"t":"Un paso corto, una o dos frases.","min":0}]}. Medidas y nombres de Argentina. Máximo 10 pasos; "min" son los minutos que hay que esperar en ese paso (horno, hervor, reposo), 0 si no hay que esperar.'},{role:'user', content:`Receta de ${plato}${pr?' para '+pr+' personas':''}`}], ()=>{}); }catch(e){}
+    setMode('idle');
+    try{ r=JSON.parse((raw.match(/\{[\s\S]*\}/)||['null'])[0]); }catch(e){ r=null; }
+    if(!r || !Array.isArray(r.pasos) || !r.pasos.length){ say('No pude armar la receta. ¿Probamos de nuevo?', 'worried'); return; }
+  }
+  cocina={titulo:r.titulo||plato, base:r.porciones||4, porciones:pr||r.porciones||4, tiempo:r.tiempo||'', ingredientes:(r.ingredientes||[]).map(x=>({c:x.c||'', n:x.n||String(x), ok:false})), pasos:r.pasos.map(p=>({t:p.t||String(p), min:+p.min||0})), i:-1};
+  cocSave(); osOpen('cocina');
+  const ing=cocina.ingredientes.slice(0,7).map(x=>x.n.toLowerCase());
+  say(`¡Dale! ${cocina.titulo} para ${cocina.porciones}${cocina.tiempo?', más o menos '+cocina.tiempo:''}. Vas a necesitar ${listaY(ing)}${cocina.ingredientes.length>7?' y un par de cosas más que tenés en la pantalla':''}. Cuando tengas todo, decí «empezamos».`, 'excited');
+  cocOye();
+}
+function cocOye(extra){ const ms=Math.min(30000, 9000+((tts.shown||'').length*65)+(extra||0)); Ear.convoUntil=Date.now()+ms; }
+function cocPaso(i, decir){
+  if(!cocina) return; i=Math.max(0, Math.min(cocina.pasos.length-1, i)); cocina.i=i; cocSave(); renderCocina();
+  const p=cocina.pasos[i], ult=i===cocina.pasos.length-1;
+  if(decir!==false) say(`Paso ${i+1}${ult?', el último':''}: ${cantEscala(p.t, cocina.porciones/cocina.base)}${p.min?` Cuando lo pongas, decí «timer» y te aviso a los ${durTxt(p.min*60)}.`:''}`, 'happy');
+  cocOye();
+}
+function cocTimer(){ if(!cocina || cocina.i<0) return 'Todavía no empezamos.'; const p=cocina.pasos[cocina.i]; if(!p.min) return 'Este paso no tiene tiempo de espera.'; addTimer(p.min*60, cocina.titulo.split(' ').slice(0,3).join(' ').toLowerCase()); return `Listo, te aviso en ${durTxt(p.min*60)}.`; }
+function cocFin(){ if(!cocina) return; const r={titulo:cocina.titulo, porciones:cocina.base, tiempo:cocina.tiempo, ingredientes:cocina.ingredientes.map(x=>({c:x.c, n:x.n})), pasos:cocina.pasos}; recetas=[r].concat(recetas.filter(x=>norm(x.titulo)!==norm(r.titulo))).slice(0,12); LS.set('recetas', recetas); cocina=null; cocSave(); renderCocina(); }
+function cocFast(text, nf){
+  if(!cocina) return false;
+  if(/^(empezamos|empecemos|arranquemos|arrancamos|vamos|listo empezamos|ya tengo todo)$/.test(nf) && cocina.i<0){ pushHist('user', text); cocPaso(0); return true; }
+  if(/^(siguiente|el siguiente|proximo|proximo paso|el que sigue|seguimos|sigamos|ya esta|listo|hecho|dale)( paso)?$/.test(nf)){ pushHist('user', text); if(cocina.i>=cocina.pasos.length-1){ say(`¡Terminamos! Que les salga riquísimo ${cocina.titulo.toLowerCase()}.`, 'proud'); cocFin(); } else cocPaso(cocina.i+1); return true; }
+  if(/^(anterior|el anterior|volve|volve atras|atras|paso anterior)( paso| un paso)?$/.test(nf)){ pushHist('user', text); cocPaso(cocina.i-1); return true; }
+  if(/^(repeti|repetime|repetilo|otra vez|que dijiste|como era|como sigue)$/.test(nf)){ pushHist('user', text); if(cocina.i<0) cocinaIngredientes(); else cocPaso(cocina.i); return true; }
+  if(/^(timer|pone(me)? (el |un )?timer|arranca el timer|ya lo puse|ya esta en el horno|ya hierve)$/.test(nf)){ sayFast(text, cocTimer(), 'happy'); cocOye(); return true; }
+  if(/\b(que ingredientes|los ingredientes|que necesito|que lleva)\b/.test(nf)){ pushHist('user', text); cocinaIngredientes(); return true; }
+  const pp=nf.match(/\bpara (\d+|dos|tres|cuatro|cinco|seis|siete|ocho|diez|doce) (personas|porciones)\b/); if(pp){ const n=+pp[1]||NUM_W[pp[1]]; if(n){ cocina.porciones=n; cocSave(); renderCocina(); sayFast(text, `Listo, ahora es para ${n}. Ya cambié las cantidades en la pantalla.`, 'happy'); } return true; }
+  if(/\b(terminamos|termine|terminé) de cocinar|^(chau cocina|salir de la receta|cortala con la receta)$/.test(nf)){ cocFin(); sayFast(text, '¡Listo! La receta queda guardada por si la quieren repetir.', 'happy'); return true; }
+  return false;
+}
+function cocinaIngredientes(){ if(!cocina) return; const k=cocina.porciones/cocina.base; say('Para '+cocina.porciones+': '+cocina.ingredientes.map(x=>`${cantEscala(x.c,k)} de ${x.n}`.replace(/^ de /,'')).join(', ')+'.'); cocOye(); }
+function renderCocina(){
+  const el=$('pCoc'); if(!el) return;
+  let html;
+  if(!cocina){ html=`<div class="cols"><div><h3>¿Qué cocinamos?</h3><p class="lbl">Decí <q>Friday, ¿cómo hago milanesas?</q> y te la dicto paso a paso, sin tocar la pantalla: «siguiente», «repetí», «timer», «para 6 personas».</p><div class="chips">${['Milanesas al horno','Fideos con tuco','Tarta de jamón y queso','Torta de banana','Guiso de lentejas','Panqueques'].map(x=>`<button type="button" data-coc="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>
+      <div><h3>Las que ya hicimos</h3>${recetas.length?`<div class="chips">${recetas.map(r=>`<button type="button" data-coc="${esc(r.titulo)}">${esc(r.titulo)}</button>`).join('')}</div>`:'<p class="empty">Todavía ninguna. Cada receta que terminen queda acá.</p>'}</div></div>`; }
+  else { const k=cocina.porciones/cocina.base, p=cocina.i>=0?cocina.pasos[cocina.i]:null;
+    html=`<div class="coc"><div class="box"><h3>${esc(cocina.titulo)}</h3><div class="porc"><button type="button" data-porc="-1" aria-label="Menos">−</button><b>${cocina.porciones}</b><span>porciones</span><button type="button" data-porc="1" aria-label="Más">+</button></div>
+      <div class="ings">${cocina.ingredientes.map((x,i)=>`<button type="button" class="${x.ok?'ok':''}" data-ing="${i}"><i></i><span><b>${esc(cantEscala(x.c,k))}</b> ${esc(x.n)}</span></button>`).join('')}</div></div>
+      <div class="paso">${p?`<small>Paso ${cocina.i+1} de ${cocina.pasos.length}</small><p>${esc(cantEscala(p.t,k))}</p>${p.min?`<button class="big-btn" type="button" data-cocx="timer" style="background:#A3E635;color:#132003">⏱ Timer de ${durTxt(p.min*60)}</button>`:''}`:`<small>Cuando tengas todo</small><p>Decí «empezamos» o tocá «Empezar».</p>`}
+      <div class="pnav"><button class="big-btn alt" type="button" data-cocx="ant"${!p||cocina.i===0?' disabled':''}>◀ Anterior</button><button class="big-btn alt" type="button" data-cocx="rep">Repetir</button><button class="big-btn" type="button" data-cocx="sig">${!p?'Empezar':cocina.i>=cocina.pasos.length-1?'Terminar':'Siguiente ▶'}</button></div>
+      <div class="pbar">${cocina.pasos.map((_,i)=>`<i class="${i<cocina.i?'d':i===cocina.i?'c':''}"></i>`).join('')}</div></div></div>`; }
+  if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
+}
+
+// ---------------------------------------------------------------- 4) tareas de la casa: turnos y puntos
+let tareas=LS.get('tareas',[]);
+const DIAS_C=['dom','lun','mar','mie','jue','vie','sab'];
+function tareasSave(){ LS.set('tareas', tareas); try{ FSync.scan(); }catch(e){} if(os.cur==='tareas') renderTareas(); }
+function semIni(d){ d=new Date(d||Date.now()); d.setHours(0,0,0,0); d.setDate(d.getDate()-((d.getDay()+6)%7)); return d.getTime(); }
+function tareaToca(t, d){ d=d||new Date(); const c=norm(t.cada||'diaria'); if(/diar|todos/.test(c)) return true; if(/seman/.test(c)) return true; return c.split(/[ ,]+/).some(x=>DIAS_C.indexOf(x.slice(0,3))===d.getDay()); }
+function tareaHechaHoy(t, d){ d=d||new Date(); const c=norm(t.cada||''); const ini=/seman/.test(c)?semIni(d):new Date(d).setHours(0,0,0,0); return (t.hechos||[]).some(h=>h[1]>=ini); }
+const tareaTurno=t=>(t.rota&&t.rota.length)?t.rota[(t.turno||0)%t.rota.length]:'';
+function tareasHoy(){ return tareas.filter(t=>tareaToca(t) && !tareaHechaHoy(t)); }
+function tareasDe(n){ return tareasHoy().filter(t=>norm(tareaTurno(t))===norm(n)); }
+function tareaBuscar(q){ const n=norm(q); return tareas.find(t=>norm(t.t)===n) || tareas.find(t=>norm(t.t).includes(n)||n.includes(norm(t.t))) || tareas.map(t=>[t, simil(t.t, q)]).filter(x=>x[1]>=0.5).sort((a,b)=>b[1]-a[1]).map(x=>x[0])[0]; }
+function tareaNueva(texto, cada, hora, personas, pts){
+  texto=String(texto||'').trim(); if(!texto) return 'No entendí la tarea.';
+  const f=FAM(); let rota=String(personas||'').split(/,|\by\b/).map(s=>s.trim()).filter(Boolean).map(p=>f.miembros.find(m=>norm(m)===norm(p))||p.charAt(0).toUpperCase()+p.slice(1));
+  if(!rota.length && /todos|familia/.test(norm(personas||''))) rota=f.miembros.slice();
+  const h=(String(hora||'').match(/(\d{1,2})(?::(\d{2}))?/)||[]); const hh=h[1]?z2(Math.min(23,+h[1]))+':'+(h[2]||'00'):'';
+  const ex=tareaBuscar(texto); const t=ex||{id:'z'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), hechos:[], turno:0};
+  Object.assign(t, {t:texto.charAt(0).toUpperCase()+texto.slice(1), cada:cada||'diaria', hora:hh, rota, pts:Math.max(1,Math.min(100,parseInt(pts)||10))}); if(!ex) tareas.push(t);
+  tareasSave(); return `Anoté «${t.t}»${rota.length?`: se turnan ${listaY(rota)}`:''}${hh?`, a las ${hh}`:''}, y vale ${t.pts} puntos.`;
+}
+function tareaMarcar(t, n){
+  const f=FAM(); n=n?(f.miembros.find(m=>norm(m)===norm(n))||n):tareaTurno(t)||quien.cur||'Alguien';
+  const toca=tareaTurno(t), ayudo=toca && norm(toca)!==norm(n);
+  t.hechos=(t.hechos||[]).concat([[n, Date.now(), t.pts+(ayudo?5:0)]]).slice(-60); t.turno=(t.turno||0)+1; tareasSave(); renderApps();
+  return {n, pts:t.pts+(ayudo?5:0), ayudo, toca};
+}
+function puntosSemana(){ const ini=semIni(), out={}; for(const t of tareas) for(const h of t.hechos||[]) if(h[1]>=ini) out[h[0]]=(out[h[0]]||0)+(h[2]||t.pts||10); return Object.entries(out).sort((a,b)=>b[1]-a[1]); }
+function tareasTick(){
+  if(!state.started || durmiendo()) return; const now=new Date(), hm=hhmm(now), hoy=todayISO(), av=LS.get('tareasAv',{});
+  for(const t of tareasHoy()){ if(!t.hora || hm<t.hora) continue; const k=t.id+'|'+hoy, n=av[k]||0; const due=new Date(hoy+'T'+t.hora).getTime();
+    if(n===0 || (n===1 && Date.now()-due>90*60000)){ av[k]=n+1; LS.set('tareasAv', av); const q=tareaTurno(t);
+      addAviso({i:'🧹', t:q?`${q}: ${t.t.toLowerCase()}`:t.t, s:n?'Todavía no está hecha':'Le toca hoy', v:q?`${q}, ${n?'te recuerdo que':''} te toca ${t.t.toLowerCase()}. Cuando la termines, avisame y te sumo ${t.pts} puntos.`:`Hoy toca ${t.t.toLowerCase()}.`}, true); return; } }
+}
+function tareasFast(text, nf){
+  if(/\b(quien va ganando|como van los puntos|tabla de puntos|ranking|cuantos puntos tengo)\b/.test(nf)){ const p=puntosSemana(); sayFast(text, p.length?`Esta semana: ${p.map(([n,v])=>`${n}, ${v}`).join('; ')}. ${p.length>1&&p[0][1]>p[1][1]?`Va ganando ${p[0][0]}.`:'¡Van parejos!'}`:'Esta semana todavía nadie sumó puntos. ¡A ponerse las pilas!', 'happy'); focusCard('tareas'); return true; }
+  const qt=nf.match(/^a quien le toca (.+)$/); if(qt){ const t=tareaBuscar(qt[1]); sayFast(text, t?(tareaTurno(t)?`Le toca a ${tareaTurno(t)}${tareaHechaHoy(t)?', pero ya está hecha':''}.`:'Esa no tiene turnos: la hace cualquiera.'):'No tengo esa tarea anotada.'); return true; }
+  if(/\b(que (me )?toca( hacer)?( hoy)?|mis tareas|que tareas hay)\b/.test(nf)){ const n=quien.cur, l=n?tareasDe(n):tareasHoy(); sayFast(text, l.length?(n?`${n}, hoy te toca ${listaY(l.map(x=>x.t.toLowerCase()))}.`:'Hoy toca: '+l.map(x=>`${x.t.toLowerCase()}${tareaTurno(x)?' ('+tareaTurno(x)+')':''}`).join(', ')+'.'):(n?`${n}, hoy no tenés nada. ¡Libre!`:'Hoy no queda ninguna tarea.'), 'happy'); focusCard('tareas'); return true; }
+  return false;
+}
+function renderTareas(){
+  const el=$('pTar'); if(!el) return; const hoy=tareasHoy(), p=puntosSemana(), max=Math.max(1,...p.map(x=>x[1]));
+  const html=`<div class="cols"><div><h3>Hoy</h3>${hoy.length?`<div class="tars">${hoy.map(t=>{ const q=tareaTurno(t); return `<div class="tar"><span class="av">${esc((q||'?')[0])}</span><div><b>${esc(t.t)}</b><small>${q?'Le toca a '+esc(q):'Cualquiera'}${t.hora?' · '+t.hora:''} · ${t.pts} puntos</small></div><button class="big-btn" type="button" data-tdone="${esc(t.id)}" style="background:#FACC15;color:#1f1802">Hecha</button></div>`; }).join('')}</div>`:`<p class="empty">${tareas.length?'¡Todo hecho por hoy! 🎉':'Todavía no hay tareas. Decí <q>Friday, agregá la tarea lavar los platos todos los días a las 21, entre Sofi y Pedro</q>.'}</p>`}
+      ${tareas.length?`<h3 style="margin-top:22px">Todas</h3><div class="tall">${tareas.map(t=>`<div class="trow"><span>${esc(t.t)}</span><small>${esc(t.cada||'diaria')}${t.hora?' '+t.hora:''}${t.rota&&t.rota.length?' · '+esc(t.rota.join(', ')):''}</small><button type="button" data-tdel="${esc(t.id)}" aria-label="Borrar">×</button></div>`).join('')}</div>`:''}</div>
+    <div class="box"><h3>Puntos de la semana</h3>${p.length?`<div class="podio">${p.map(([n,v],i)=>`<div class="pod${i===0?' gold':''}"><span>${i===0?'👑':''}${esc(n)}</span><i style="width:${Math.round(v/max*100)}%"></i><b>${v}</b></div>`).join('')}</div>`:'<p class="empty">Nadie sumó todavía esta semana. Cada tarea hecha suma puntos; si hacés la de otro, ¡5 de yapa! El domingo se anuncia quién ganó.</p>'}</div></div>`;
+  if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
+}
+
+// ---------------------------------------------------------------- toques
+document.addEventListener('click', e=>{
+  const t=e.target.closest ? e.target : null; if(!t) return;
+  const c=t.closest('[data-coc]'); if(c){ cocinaStart(c.dataset.coc); return; }
+  const cx=t.closest('[data-cocx]'); if(cx && cocina){ const a=cx.dataset.cocx; state.lastUser=Date.now();
+    if(a==='sig'){ if(cocina.i>=cocina.pasos.length-1){ say(`¡Terminamos! Que les salga riquísimo.`, 'proud'); cocFin(); } else cocPaso(cocina.i+1); }
+    else if(a==='ant') cocPaso(cocina.i-1); else if(a==='rep'){ if(cocina.i<0) cocinaIngredientes(); else cocPaso(cocina.i); } else if(a==='timer') say(cocTimer()); return; }
+  const pr=t.closest('[data-porc]'); if(pr && cocina){ cocina.porciones=Math.max(1, Math.min(30, cocina.porciones+(+pr.dataset.porc))); cocSave(); renderCocina(); return; }
+  const ig=t.closest('[data-ing]'); if(ig && cocina){ const x=cocina.ingredientes[+ig.dataset.ing]; if(x){ x.ok=!x.ok; cocSave(); renderCocina(); } return; }
+  const td=t.closest('[data-tdone]'); if(td){ const x=tareas.find(y=>y.id===td.dataset.tdone); if(x){ const r=tareaMarcar(x); say(`¡Bien, ${r.n}! Sumaste ${r.pts} puntos.`, 'excited'); } return; }
+  const tx=t.closest('[data-tdel]'); if(tx){ tareas=tareas.filter(y=>y.id!==tx.dataset.tdel); tareasSave(); return; }
+  const ec=t.closest('[data-enr-cara]'); if(ec){ setsShow(false); enrShow(ec.dataset.enrCara, 'cara'); return; }
+  const ev=t.closest('[data-enr-voz]'); if(ev){ setsShow(false); enrShow(ev.dataset.enrVoz, 'voz'); return; }
+  const ed=t.closest('[data-enr-del]'); if(ed){ delete quien.caras[ed.dataset.enrDel]; delete quien.voces[ed.dataset.enrDel]; quienSave(); quienRender(); toast('Olvidé la cara y la voz de '+ed.dataset.enrDel); return; }
+}, true);
+// ================================================================ FRIDAY VIVA (fin)
 
 async function boot(){
   try{ faceBuild($('bFace')); }catch(e){}
   setTimeout(()=>$('boot').classList.add('off'), 1400);
   // como un sistema propio: el botón "atrás" de Android no la cierra (cierra lo que esté abierto)
   try{ history.pushState({f:1},''); addEventListener('popstate', ()=>{ history.pushState({f:1},''); if(setsOpen()) setsShow(false); else if(!$('mapa').hidden) mapaOff(); else if(amb.on) ambOff(); else if(os.cur) osClose(); }); }catch(e){}
-  faceBuild($('face')); faceBuild($('dFace')); faceSet('idle'); faceBlink(); applyLight(); render();
+  faceBuild($('face')); faceSet('idle'); budInit(); faceBlink(); applyLight(); render();
   try{ if(navigator.serviceWorker && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o','u','f','y','w'], pollMs:60000, live:true,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kinds:['m','r','l','b','o','u','f','y','w','z'], pollMs:60000, live:true,
     local:syncLocal, apply:syncApply, onMsg, onStatus:renderStatus });
   if(setupCheck()) $('tap').hidden=false;
   getWeather(); casaLoad(); agendaLoad(); wkPing(); setsInit();
@@ -3719,8 +4209,8 @@ async function boot(){
   $('tap').onclick=start; $('sClose').onclick=()=>{ $('setup').hidden=true; setupShow.force=false; if(!state.started) $('tap').hidden=false; };
   setInterval(()=>{ render(); checkTimers(); estTick(); if(amb.on) ambTick();
     // la app vuelve sola al inicio (enseguida si la abrió FRIDAY; a los 3 minutos si la abriste vos)
-    if(os.cur && state.mode==='idle' && !speakingNow() && !(os.cur==='estudio' && (est.on||quiz.on)) && !(os.cur==='icom' && state.icomTo) && Date.now()-Math.max(state.lastUser, os.at)>(os.auto?25000:180000)) osClose(); }, 1000);
-  setInterval(talkSync, 250); setInterval(resumenTick, 30000);
+    if(os.cur && state.mode==='idle' && !speakingNow() && !(os.cur==='estudio' && (est.on||quiz.on)) && !(os.cur==='icom' && state.icomTo) && !(os.cur==='cocina' && cocina) && Date.now()-Math.max(state.lastUser, os.at)>(os.auto?25000:180000)) osClose(); }, 1000);
+  setInterval(talkSync, 250); setInterval(resumenTick, 30000); setInterval(budTick, 450); setInterval(tareasTick, 30000); setInterval(()=>{ quienRonda().catch(()=>{}); }, 6000);
   setInterval(()=>{ applyLight(); agendaCheck(); autoTick(); }, 30000);
   setInterval(()=>{ const mins=+S.ambMin; if(mins && !amb.on && !setsOpen() && !(os.cur && !os.auto) && state.started && state.mode==='idle' && !speakingNow() && Date.now()-state.lastUser>mins*60000) ambOn(); }, 5000);
   setInterval(()=>{ getWeather(); casaLoad(); agendaLoad(); }, 5*60000);

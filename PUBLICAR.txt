@@ -342,3 +342,30 @@ NUEVO EN LA 3.0: FRIDAY OS (by BUFALABS) — LA TABLET COMO UN SISTEMA PROPIO
 QUÉ SUBIR: panel.html, sw.js y manifest-panel.json. En la compu: friday.html versión 92
 (FRIDAY.exe sigue en 3.5). Si la tablet sigue mostrando lo viejo: cerrala del todo y abrila de
 nuevo (o Ajustes → Conexiones → «Volver a cargar»).
+
+=====================================================================
+NUEVO EN LA 3.1: FRIDAY VIVA — SE MUEVE, RECONOCE A LA FAMILIA, COCINA Y TAREAS CON PUNTOS
+=====================================================================
+- FRIDAY se mueve: vive abajo a la izquierda, pero si nadie le habla sale a pasear por la
+  pantalla, se sienta arriba de las apps, se asoma por el borde, baila si suena música y de
+  noche se va a dormir a un rincón. Las emociones se le notan: salta cuando está contenta,
+  tiembla si está preocupada, le salen corazones… La podés agarrar con el dedo y llevarla a
+  otro lado; tocarla = hablarle sin decir «Friday». "Friday, quedate quieta" / "movete", o en
+  Ajustes → Pantalla.
+- Quién es quién (Ajustes → Quién es quién): para cada uno, «Enseñar la cara» (mira a la cámara
+  unos segundos) y «Enseñar la voz» (dice 3 frases). Después FRIDAY sabe quién le habla: por la
+  cara, por la voz o porque le dijiste «soy Sofi». En «Siempre», saluda al que llega por su
+  nombre y le dice sus tareas. Las caras y las voces quedan SOLO en la tablet (no se mandan a
+  ningún lado). La voz la va aprendiendo sola cada vez que te reconoce por la cara.
+  La primera vez que usa la cara descarga el reconocimiento (unos 7 MB, gratis).
+- Cocina: "Friday, ¿cómo hago milanesas al horno?" → la receta en grande, con los ingredientes
+  para tildar. Manos libres: «empezamos», «siguiente», «anterior», «repetí», «timer» (cuando un
+  paso tiene horno o hervor), «para 6 personas» (cambia las cantidades), «¿qué ingredientes?».
+  Después de cada paso escucha sin que digas «Friday». Las recetas que terminan quedan
+  guardadas en la app.
+- Tareas: "Friday, agregá la tarea lavar los platos todos los días a las 21 entre Sofi y Pedro".
+  A esa hora le avisa al que le toca (y otra vez si a la hora y media sigue sin hacer). "Ya lavé
+  los platos" → suma puntos y el turno pasa al otro; si hacés la de otro, 5 puntos de yapa.
+  "¿Quién va ganando?", "¿qué me toca hoy?". En la app: lo de hoy con «Hecha» y la tabla de la
+  semana. El domingo, en el resumen, anuncia quién ganó. La compu también las ve.
+QUÉ SUBIR: panel.html y sw.js (ya está subido en GitHub). En la compu: friday.html versión 93.
