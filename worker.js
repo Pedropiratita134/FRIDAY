@@ -22,7 +22,7 @@ const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.goog
 let tuya = { host: null, tok: '', exp: 0 };
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words, X-Voz-Via' };
-const VERSION = 4;
+const VERSION = 5;
 const form = o => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });
 const enc = new TextEncoder();
@@ -73,25 +73,47 @@ async function tuyaCall(env, p) {
 
 // ---------------------------------------------------------------- YouTube: los primeros videos de una búsqueda
 function collectVideos(o, out, depth) {
-  if (!o || typeof o !== 'object' || out.length >= 10 || depth > 40) return;
-  if (o.videoRenderer && o.videoRenderer.videoId) {
-    const v = o.videoRenderer;
+  if (!o || typeof o !== 'object' || out.length >= 10 || depth > 45) return;
+  const v = o.videoRenderer || o.compactVideoRenderer;
+  if (v && v.videoId) {
     const title = (v.title && (v.title.runs || []).map(x => x.text).join('')) || (v.title && v.title.simpleText) || '';
-    const len = (v.lengthText && v.lengthText.simpleText) || '';
-    const by = (v.ownerText && (v.ownerText.runs || []).map(x => x.text).join('')) || '';
-    if (len) out.push({ id: v.videoId, title, len, by });   // sin duración = transmisión en vivo: no sirve
+    const len = (v.lengthText && (v.lengthText.simpleText || (v.lengthText.runs || []).map(x => x.text).join(''))) || '';
+    const by = ((v.ownerText || v.longBylineText || v.shortBylineText) && ((v.ownerText || v.longBylineText || v.shortBylineText).runs || []).map(x => x.text).join('')) || '';
+    if (len && title && !out.some(x => x.id === v.videoId)) out.push({ id: v.videoId, title, len, by });   // sin duración = transmisión en vivo: no sirve
+    return;
+  }
+  const l = o.lockupViewModel;
+  if (l && l.contentId && /VIDEO/.test(l.contentType || 'VIDEO')) {
+    const md = l.metadata && l.metadata.lockupMetadataViewModel; const title = md && md.title && md.title.content || '';
+    const rows = JSON.stringify(md && md.metadata || {}); const by = (rows.match(/"content":"([^"]+)"/) || [])[1] || '';
+    const len = (JSON.stringify(l.contentImage || {}).match(/"text":"(\d+:\d{2}(?::\d{2})?)"/) || [])[1] || '';
+    if (title && len && !out.some(x => x.id === l.contentId)) out.push({ id: l.contentId, title, len, by });
     return;
   }
   for (const k in o) collectVideos(o[k], out, depth + 1);
 }
+// YouTube desde los servidores de Cloudflare a veces devuelve la página de "aceptar cookies" o la de inicio
+// (con videos que no tienen nada que ver). Por eso: 1) la búsqueda por la API interna (JSON), con el
+// permiso de cookies ya aceptado; 2) la página de resultados; y NUNCA "cualquier video que aparezca".
+const YT_CLIENT = '2.20250925.01.00';
+const YT_COOKIE = 'CONSENT=YES+cb.20240101-00-p0.es+FX+000; SOCS=CAI; PREF=hl=es&gl=AR';
 async function ytSearch(env, q) {
   const base = env.YT_BASE || 'https://www.youtube.com';
-  const r = await fetch(base + '/results?hl=es&gl=AR&search_query=' + encodeURIComponent(q), { headers: { 'Accept-Language': 'es-AR,es;q=0.9', 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36' } });
-  const html = await r.text();
-  const m = html.match(/var ytInitialData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/) || html.match(/ytInitialData"\]\s*=\s*(\{[\s\S]*?\});/);
+  const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36';
   const out = [];
-  if (m) { try { collectVideos(JSON.parse(m[1]), out, 0); } catch (e) { } }
-  if (!out.length) { const seen = new Set(); for (const x of html.matchAll(/"videoId":"([\w-]{11})"/g)) { if (!seen.has(x[1])) { seen.add(x[1]); out.push({ id: x[1], title: '', len: '', by: '' }); } if (out.length >= 8) break; } }
+  try {
+    const r = await fetch(base + '/youtubei/v1/search?prettyPrint=false', { method: 'POST', headers: { 'Content-Type': 'application/json', 'User-Agent': UA, 'Accept-Language': 'es-AR,es;q=0.9', Cookie: YT_COOKIE, 'X-Youtube-Client-Name': '1', 'X-Youtube-Client-Version': YT_CLIENT, Origin: 'https://www.youtube.com' },
+      body: JSON.stringify({ context: { client: { clientName: 'WEB', clientVersion: YT_CLIENT, hl: 'es', gl: 'AR' } }, query: q, params: 'EgIQAQ%3D%3D' }) });
+    if (r.ok) collectVideos(await r.json(), out, 0);
+  } catch (e) { }
+  if (!out.length) {
+    try {
+      const r = await fetch(base + '/results?hl=es&gl=AR&search_query=' + encodeURIComponent(q), { headers: { 'Accept-Language': 'es-AR,es;q=0.9', 'User-Agent': UA, Cookie: YT_COOKIE } });
+      const html = await r.text();
+      const m = html.match(/var ytInitialData\s*=\s*(\{[\s\S]*?\});\s*<\/script>/) || html.match(/ytInitialData"\]\s*=\s*(\{[\s\S]*?\});/);
+      if (m) { try { collectVideos(JSON.parse(m[1]), out, 0); } catch (e) { } }
+    } catch (e) { }
+  }
   return out;
 }
 

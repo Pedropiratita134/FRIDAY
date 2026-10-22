@@ -1459,7 +1459,7 @@ function whisperPrompt(){
   try{ for(const m of (memory||[]).slice(-40)) (String(m).match(/\b[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}\b/g)||[]).forEach(w=>{ if(nombres.size<12) nombres.add(w); }); }catch(e){}
   try{ for(const d of ((casa.devs)||[]).slice(0,10)) nombres.add(d.nombre); }catch(e){}
   const last=(Ear.hooks && Ear.hooks.lastSaid && Ear.hooks.lastSaid()) || '';
-  const base=`Charla en español rioplatense con FRIDAY, una asistente de voz de la casa. ${(S.familia&&S.familia.miembros&&S.familia.miembros.length)?'En la casa están '+S.familia.miembros.join(', ')+'.':''} Suele empezar diciendo el nombre FRIDAY. Escribí siempre "Friday". Palabras frecuentes: Friday, ${S.city||''}, Spotify, YouTube, poné, prendé, apagá, la luz, timer, recordame, la lista, agregá${nombres.size?', '+[...nombres].join(', '):''}.`;
+  const base=`Charla en español rioplatense con FRIDAY, una asistente de voz de la casa. ${(S.familia&&S.familia.miembros&&S.familia.miembros.length)?'En la casa están '+S.familia.miembros.join(', ')+'.':''} Suele empezar diciendo el nombre FRIDAY. Escribí siempre "Friday". Palabras frecuentes: Friday, ${S.city||''}, Spotify, YouTube, Soda Stereo, Duki, Tini, Bizarrap, Los Redondos, Emilia, María Becerra, Ca7riel, cumbia, cuarteto, reggaetón, ${(typeof music!=='undefined' && music.cur && music.cur.title)?String(music.cur.title).slice(0,40)+', ':''}poné, prendé, apagá, la luz, timer, recordame, la lista, agregá${nombres.size?', '+[...nombres].join(', '):''}.`;
   return (last ? base+` FRIDAY recién dijo: "${String(last).slice(-200)}"` : base).slice(0,900);
 }
 // lo que pasó con lo último que escuchó (para saber por qué a veces no contesta)
@@ -1798,7 +1798,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='3.2';
+const VERSION='3.3';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2718,13 +2718,19 @@ function ytLoad(){
     setTimeout(()=>res(music.ytReady), 9000);
   });
 }
+// busca en YouTube: primero con el servicio de la casa; si no anda (o no trae nada), le pide a la compu
+async function ytBuscar(que){
+  let vs=[], err='';
+  if(workerOn()){ try{ const r=await wk('/yt?q='+encodeURIComponent(que)); vs=((r&&r.videos)||[]).filter(v=>v && v.id && v.title); if(!vs.length) err=r&&r.error||'no trajo nada'; }catch(e){ err=e.message; } }
+  if(!vs.length && pcDev()){ try{ const r=await pcCall('yt_buscar',{q:que}); vs=((r&&r.videos)||[]).filter(v=>v && v.id && v.title); }catch(e){} }
+  if(!vs.length){ if(!workerOn() && !pcDev()) throw new Error('para poner música en la tablet me falta el servicio de la casa o la compu prendida'); throw new Error(`no encontré "${que}" en YouTube`); }
+  return vs;
+}
 async function ytPlayQuery(que){
-  if(!workerOn()) throw new Error('para poner música en la tablet me falta el servicio de la casa (se arma desde el celu)');
-  const r=await wk('/yt?q='+encodeURIComponent(que));
-  if(!r.ok || !(r.videos||[]).length) throw new Error(`no encontré "${que}" en YouTube`);
-  music.list=r.videos; music.idx=0;
+  const vs=await ytBuscar(que);
+  music.list=vs; music.idx=0;
   if(!await ytLoad()) throw new Error('YouTube no carga en esta tablet');
-  ytStart(); return r.videos[0];
+  ytStart(); return vs[0];
 }
 function ytStart(){
   const v=music.list[music.idx]; if(!v) return;
@@ -2763,8 +2769,8 @@ async function playMusic(que, tipo, donde){
     if(useSP){ try{ const i=await spPlayQuery(que, tipo, true); return `Dale, ${i.nombre}${i.artista?' de '+i.artista:''} en la tele.`; }catch(e){ if(e.message!=='sin_tele_spotify' || !teleOn()) throw new Error(e.message==='sin_tele_spotify'?'no veo la tele en Spotify: abrí Spotify en la tele y pedímelo de nuevo':e.message); } }
     if(!teleOn()) throw new Error((S.workerV||0)<2 && workerOn() ? 'para la tele hace falta actualizar el código del servicio de Cloudflare' : 'la tele todavía no está vinculada: tocá la pantalla, Ajustes, y vinculala con el código de la tele');
     if(music.cur && music.cur.src==='spotify') sp('PUT','/me/player/pause').catch(()=>{});
-    const r=await wk('/yt?q='+encodeURIComponent(que)); if(!r.ok || !(r.videos||[]).length) throw new Error(`no encontré "${que}" en YouTube`);
-    const v=await tvPlay(r.videos, 0); return `Dale, pongo ${clean(v.title)||que} en la tele.`;
+    const vids=await ytBuscar(que);
+    const v=await tvPlay(vids, 0); return `Dale, pongo ${clean(v.title)||que} en la tele.`;
   }
   if(music.cur && music.cur.src==='spotify'){ sp('PUT','/me/player/pause').catch(()=>{}); }
   if(music.cur && music.cur.src==='tele'){ tv('pause').catch(()=>{}); }
@@ -2777,14 +2783,14 @@ async function musicMove(adonde){
     if(m.src==='tele') return 'Ya está sonando en la tele.';
     if(m.src==='spotify'){ const tvd=await spTV().catch(()=>null); if(tvd){ await sp('PUT','/me/player',{device_ids:[tvd.id], play:true}); m.dev=tvd.name; setTimeout(spPoll,900); return 'Listo, la pasé a la tele.'; }
       if(!teleOn()) return 'No veo la tele en Spotify. Abrí Spotify en la tele y pedímelo de nuevo.';
-      const r=await wk('/yt?q='+encodeURIComponent(m.title+' '+(m.artist||''))); if(!r.ok || !r.videos.length) return 'No la encontré para la tele.';
-      sp('PUT','/me/player/pause').catch(()=>{}); await tvPlay(r.videos,0); return 'Listo, sigue en la tele.'; }
+      let vids=[]; try{ vids=await ytBuscar(m.title+' '+(m.artist||'')); }catch(e){ return 'No la encontré para la tele.'; }
+      sp('PUT','/me/player/pause').catch(()=>{}); await tvPlay(vids,0); return 'Listo, sigue en la tele.'; }
     if(!teleOn()) return 'La tele todavía no está vinculada: tocá la pantalla, Ajustes, y vinculala con el código de la tele.';
     try{ music.yt.pauseVideo(); }catch(e){}
     await tvPlay(music.list, music.idx); return 'Listo, sigue en la tele.';
   }
   if(m.src==='tele'){ tv('pause').catch(()=>{}); music.list=music.tvList||[]; music.idx=music.tvIdx||0; if(!music.list.length || !await ytLoad()) return 'No pude traerla a la tablet.'; ytStart(); return 'Listo, ahora suena acá.'; }
-  if(m.src==='spotify'){ const r=await wk('/yt?q='+encodeURIComponent(m.title+' '+(m.artist||''))); if(!r.ok || !r.videos.length) return 'No la encontré para la tablet.'; sp('PUT','/me/player/pause').catch(()=>{}); music.list=r.videos; music.idx=0; if(!await ytLoad()) return 'YouTube no carga en esta tablet.'; ytStart(); return 'Listo, ahora suena acá.'; }
+  if(m.src==='spotify'){ let vids=[]; try{ vids=await ytBuscar(m.title+' '+(m.artist||'')); }catch(e){ return 'No la encontré para la tablet.'; } sp('PUT','/me/player/pause').catch(()=>{}); music.list=vids; music.idx=0; if(!await ytLoad()) return 'YouTube no carga en esta tablet.'; ytStart(); return 'Listo, ahora suena acá.'; }
   return 'Ya está sonando acá.';
 }
 async function musicCtrl(cmd, val){
@@ -3023,6 +3029,7 @@ async function brain(text, extra, depth=0){
   if(!tts.on && !tts.q.length) setMode('idle');
   // las marcas
   const tags=[...full.matchAll(TAG_RE)].map(m=>({k:m[1].toUpperCase(), a:(m[2]||'').split('|').map(s=>s.trim())}));
+  tags.sort((a,b)=>(b.k==='CARA')-(a.k==='CARA'));   // la cara cambia al toque, antes de lo que tarda (la música, buscar…)
   const notes=[];
   for(const t of tags){
     try{
@@ -3743,6 +3750,7 @@ function osFast(text, nf){
   if(tareasFast(text, nf)) return true;
   const cm=String(text).match(/^(?:friday,?\s*)?(?:¿\s*)?(?:c[oó]mo (?:hago|se hace|se hacen|preparo|cocino)|receta (?:de|para)|quiero (?:hacer|cocinar|preparar)|ense[ñn]ame a (?:hacer|cocinar)|vamos a (?:hacer|cocinar))\s+(.+?)(?:\s+para\s+(\d+)\s*(?:personas|porciones)?)?[?.!\s]*$/i);
   if(cm && !/\b(tarea|fichas|timer|recordatorio)\b/.test(nf)){ pushHist('user', text); cocinaStart(cm[1], cm[2]); return true; }
+  if(/\b(modo (cielo|noche)|pone(me)? el cielo|mostrame el cielo|salvapantallas)\b/.test(nf)){ pushHist('user', text); osClose(); say('Ahí está el cielo. Tocá la pantalla para volver.', 'happy'); setTimeout(()=>{ if(!speakingNow()) ambOn(true); else { const w=setInterval(()=>{ if(!speakingNow()){ clearInterval(w); ambOn(true); } }, 400); } }, 300); return true; }
   if(/^(quedate quieta|no te muevas|deja de moverte)$/.test(nf)){ S.mueve='no'; saveS(); sayFast(text, 'Listo, me quedo quietita acá abajo.', 'wink'); return true; }
   if(/^(movete|podes moverte|move te|pasea|anda a pasear)$/.test(nf)){ S.mueve='si'; saveS(); bud.next=0; state.lastUser=Date.now()-45000; sayFast(text, '¡Yupi! Me voy a dar una vuelta.', 'excited'); return true; }
   // volver al inicio / abrir apps
@@ -3779,7 +3787,7 @@ function osFast(text, nf){
 // ---------------------------------------------------------------- los toques del sistema
 document.addEventListener('click', e=>{
   const t=e.target.closest ? e.target : null; if(!t) return;
-  const ap=t.closest('.app-ic'); if(ap){ osOpen(ap.dataset.app); return; }
+  const ap=t.closest('.app-ic'); if(ap){ e.stopPropagation(); const id=ap.dataset.app; if(id==='cielo'){ osClose(); state.lastUser=Date.now(); setTimeout(()=>ambOn(true), 60); } else osOpen(id); return; }
   if(t.closest('#winBack')){ osClose(); return; }
   if(t.closest('#mini')){ const pp=t.closest('#miniPP'); if(pp){ musicCtrl(pp.dataset.k==='play'?'seguir':'pausa'); return; } osOpen('mus'); return; }
   const mc=t.closest('[data-mc]'); if(mc){ musicCtrl(mc.dataset.mc, mc.dataset.v||''); setTimeout(renderMusCtl, 400); return; }
@@ -4200,6 +4208,7 @@ async function chequeoTablet(){
   await prueba('Cerebro (Groq)', async()=>{ if(!S.groqKey) return {st:'bad', t:'falta la llave'}; const t=await llm([{role:'user', content:'Respondé solamente la palabra: listo'}], ()=>{}); return {st:/listo/i.test(t)?'ok':'warn', t:'contestó «'+String(t).slice(0,30)+'»'}; }, 20000);
   await prueba('Servicio de la casa (Cloudflare)', async()=>{ if(!workerOn()) return {st:'warn', t:'no está armado (sin él no hay voz de Elena, tele ni luces)'}; await wkPing(); const v=S.workerV||0; return {st:v>=4?'ok':v>=2?'warn':'bad', t:v?`versión ${v}${v<4?' (falta actualizar el código: las videollamadas fuera de casa necesitan la 4)':''}`:'no responde'}; });
   await prueba('Voz de Elena', async()=>{ if(!vozNube()) return {st:'warn', t:S.voz==='tablet'?'elegiste la voz de la tablet':'no disponible: '+(tts.err||'sin servicio')}; tts.failUntil=0; const a=await fetchTTS('Prueba de voz.'); return {st:a?'ok':'bad', t:a?'llegó el audio':'no llegó: '+(tts.err||'?')}; }, 20000);
+  await prueba('Música (YouTube)', async()=>{ const vs=await ytBuscar('Soda Stereo De música ligera'); return {st:/soda|ligera/i.test(vs[0].title)?'ok':'warn', t:`${vs.length} videos; el primero: «${vs[0].title}»`}; }, 25000);
   await prueba('Micrófono', async()=>({st:stt.on?'ok':'bad', t:stt.on?`andando; ruido de fondo ${(stt.floor||0).toFixed(4)}; modo ${S.micMode||'normal'}${sttNoisy()?' (mucho ruido)':''}`:'no anda: falta el permiso o el toque inicial'}));
   await prueba('Cámara', async()=>{ const v=await camVideo(); return {st:v&&v.videoWidth?'ok':'bad', t:v&&v.videoWidth?`${v.videoWidth}x${v.videoHeight}`:'no dio imagen'}; }, 12000);
   await prueba('Reconocer caras (librería)', async()=>{ const t0=performance.now(); await caraApi(); const ds=await carasAhora(); const ns=ds.map(caraMatch).filter(Boolean); return {st:'ok', t:`cargó en ${((performance.now()-t0)/1000).toFixed(1)} s; ve ${ds.length} cara(s)${ns.length?' y reconoce a '+listaY(ns):''}; caras enseñadas: ${conCara().join(', ')||'ninguna'}`}; }, 60000);

@@ -378,3 +378,18 @@ NUEVO EN LA 3.2: CHEQUEO
   reconocimiento de caras, la compu, Mercado Libre, la sincronización, la pantalla completa, las
   luces y Google/Spotify. Al terminar dice qué falló y le manda el informe a la compu (allá,
   «Copiar informe» junta los dos).
+
+=====================================================================
+NUEVO EN LA 3.3: LA MÚSICA DE VERDAD Y EL CIELO
+=====================================================================
+- Música: cuando pedías un tema sonaba siempre lo mismo (podcasts, Talking Tom…). Era YouTube:
+  desde los servidores de Cloudflare a veces devuelve otra página y FRIDAY agarraba "cualquier
+  video". Ahora busca por la vía buena (la API de YouTube, con las cookies aceptadas) y si no
+  encuentra el tema, lo dice; nunca pone cualquier cosa. Si el servicio de Cloudflare no anda,
+  le pide la búsqueda a la compu (FRIDAY.exe 3.6).
+  ⚠ Hay que actualizar el código del servicio de Cloudflare (worker.js, versión 5): en
+  Cloudflare → Workers → tu servicio → Edit code → pegá el worker.js nuevo → Deploy.
+- El cielo: tocar la app Cielo lo prendía y lo apagaba al toque. Arreglado. También por voz:
+  "Friday, modo cielo" o "modo noche".
+- Entiende mejor nombres de música (Soda Stereo, Duki, Tini, Bizarrap, Los Redondos, cumbia…).
+- El chequeo ahora también prueba la música de YouTube.
