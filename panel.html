@@ -374,6 +374,7 @@ body.inapp.talking .win{bottom:calc(var(--dock) + 110px)}
 .enr .emic{width:120px;height:120px;margin:22px auto 0;border-radius:50%;display:grid;place-items:center;color:#04121f;background:var(--friday);animation:recp 1.1s ease-in-out infinite}.enr .emic svg{width:52px;height:52px}
 .enr .edots{display:flex;justify-content:center;gap:8px;margin:18px 0 6px}.enr .edots i{width:14px;height:14px;border-radius:50%;background:var(--card-3)}.enr .edots i.ok{background:var(--leaf);box-shadow:0 0 10px var(--leaf)}
 .enr .est{min-height:24px;color:var(--lamp);font-size:16px}.enr .eact{margin-top:14px}
+.chqbox{width:min(760px,94vw)!important;text-align:left!important}.chql{list-style:none;margin:12px 0 0;padding:0;max-height:62vh;overflow:auto}.chql li{display:grid;grid-template-columns:26px 190px 1fr;gap:10px;padding:9px 0;border-top:1px solid var(--edge);font-size:16px;align-items:baseline}.chql i{font-style:normal}.chql b{font-weight:700}.chql span{color:var(--ink-2)}.chql .ok i{color:var(--leaf)}.chql .warn i{color:var(--lamp)}.chql .bad i{color:var(--alert)}.chql .run i{color:var(--friday)}
 .qrow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:8px 0;border-top:1px solid var(--edge)}.qrow:first-child{border-top:0}.qrow b{flex:1 1 90px;font:600 18px var(--text)}.qrow .ghost{margin:0}.qrow .x{min-width:50px;color:var(--alert);border-color:rgba(255,107,125,.4)}
 /* ---------- cocina ---------- */
 .coc{display:grid;grid-template-columns:minmax(300px,.9fr) 1.4fr;gap:24px;height:100%}
@@ -680,7 +681,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="seg" data-k="ambMin"><button type="button" data-v="2">A los 2 min</button><button type="button" data-v="5">A los 5 min</button><button type="button" data-v="15">A los 15 min</button><button type="button" data-v="0">Nunca</button></div></section>
     <section><h3>Conexiones</h3><ul class="conns" id="conns"></ul>
       <p class="note" id="shareNote"></p>
-      <button class="ghost" id="setLink" type="button">Compartir con la compu y el celu</button><button class="ghost" id="setQR" type="button">Configurar desde el celu</button><button class="ghost" id="setReload" type="button">Volver a cargar</button></section>
+      <button class="ghost" id="setLink" type="button">Compartir con la compu y el celu</button><button class="ghost" id="setQR" type="button">Configurar desde el celu</button><button class="ghost" id="setReload" type="button">Volver a cargar</button><button class="ghost" id="setChq" type="button">Hacer el chequeo</button></section>
     <p class="ver" id="setVer"></p>
   </div>
 </aside>
@@ -1797,7 +1798,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='3.1';
+const VERSION='3.2';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3272,6 +3273,7 @@ function setsInit(){
     else if(e.target.closest('[data-call]')){ const p=Call.peers().find(x=>x.dev===e.target.closest('[data-call]').dataset.call); setsShow(false); Call.start(p).then(err=>{ if(err) say(err,'worried'); }); }
     else if(e.target.id==='setLink'){ setsShow(false); setupShow(true, 'link'); }
     else if(e.target.id==='setReload') location.reload();
+    else if(e.target.id==='setChq') chequeoTablet();
   });
   // el teclado del código de la tele (en la tablet no hace falta el teclado del sistema)
   $('padK').innerHTML=[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" data-n="${n}">${n}</button>`).join('')+`<button type="button" class="fn" data-n="del">Borrar</button><button type="button" data-n="0">0</button><button type="button" class="fn" data-n="clr">Limpiar</button>`;
@@ -3736,6 +3738,7 @@ function osFast(text, nf){
   if(quienSoy(text, nf)) return true;
   if(state.icomTo){ const to=state.icomTo.to; state.icomTo=null; youBars(false); const r=icomSend(text, to); sayFast(text, r, 'happy'); return true; }
   if(quiz.on && !/^(friday|che)\b/.test(nf)){ pushHist('user', text); quizAnswer(text); return true; }
+  if(/\b(hace(me)?|corre)( un)? (chequeo|diagnostico)\b|^(chequeo|chequeo completo|diagnostico)$/.test(nf)){ sayFast(text, 'Dale, me pruebo todo. Tarda un minuto.', 'thinking'); setTimeout(chequeoTablet, 1500); return true; }
   if(cocFast(text, nf)) return true;
   if(tareasFast(text, nf)) return true;
   const cm=String(text).match(/^(?:friday,?\s*)?(?:¿\s*)?(?:c[oó]mo (?:hago|se hace|se hacen|preparo|cocino)|receta (?:de|para)|quiero (?:hacer|cocinar|preparar)|ense[ñn]ame a (?:hacer|cocinar)|vamos a (?:hacer|cocinar))\s+(.+?)(?:\s+para\s+(\d+)\s*(?:personas|porciones)?)?[?.!\s]*$/i);
@@ -4184,6 +4187,35 @@ document.addEventListener('click', e=>{
   const ed=t.closest('[data-enr-del]'); if(ed){ delete quien.caras[ed.dataset.enrDel]; delete quien.voces[ed.dataset.enrDel]; quienSave(); quienRender(); toast('Olvidé la cara y la voz de '+ed.dataset.enrDel); return; }
 }, true);
 // ================================================================ FRIDAY VIVA (fin)
+// ================================================================ CHEQUEO (tablet): se prueba sola y le manda el informe a la compu
+const chq={ on:false, rows:[] };
+function chqPaint(){ const ul=$('chqList'); if(!ul) return; ul.innerHTML=chq.rows.map(r=>`<li class="${r.st}"><i>${{ok:'✓',warn:'!',bad:'✗',run:'●'}[r.st]}</i><b>${esc(r.n)}</b><span>${esc(r.t||'')}</span></li>`).join(''); const ok=chq.rows.filter(r=>r.st==='ok').length; $('chqSt').textContent=chq.on?'Probando…':`${ok} de ${chq.rows.length} bien`; }
+function chqTexto(){ return `Tablet: FRIDAY Casa ${VERSION} · ${navigator.userAgent.replace(/^Mozilla\/5\.0 /,'').slice(0,90)} · pantalla ${innerWidth}x${innerHeight}\n`+chq.rows.map(r=>`[${{ok:'OK',warn:'OJO',bad:'MAL',run:'...'}[r.st]}] ${r.n}: ${r.t||''}`).join('\n'); }
+async function chequeoTablet(){
+  if(chq.on) return; chq.on=true; chq.rows=[]; setsShow(false);
+  let d=$('chq'); if(!d){ d=document.createElement('div'); d.id='chq'; d.className='enr'; d.innerHTML=`<div class="ebox chqbox"><h3>Chequeo de FRIDAY</h3><p id="chqSt"></p><ul id="chqList" class="chql"></ul><div class="eact"><button class="big-btn alt" type="button" id="chqX">Cerrar</button></div></div>`; document.body.appendChild(d); $('chqX').onclick=()=>d.remove(); }
+  const prueba=async(n, fn, ms)=>{ const r={n, st:'run', t:''}; chq.rows.push(r); chqPaint(); const t0=Date.now();
+    try{ const o=await Promise.race([Promise.resolve().then(fn), new Promise((_,rej)=>setTimeout(()=>rej(new Error('tardó más de '+Math.round((ms||15000)/1000)+' s')), ms||15000))]); r.st=o.st||'ok'; r.t=o.t||''; }catch(e){ r.st='bad'; r.t=String(e.message||e).slice(0,160); }
+    r.t+=(r.t?' ':'')+`(${((Date.now()-t0)/1000).toFixed(1)} s)`; chqPaint(); };
+  await prueba('Cerebro (Groq)', async()=>{ if(!S.groqKey) return {st:'bad', t:'falta la llave'}; const t=await llm([{role:'user', content:'Respondé solamente la palabra: listo'}], ()=>{}); return {st:/listo/i.test(t)?'ok':'warn', t:'contestó «'+String(t).slice(0,30)+'»'}; }, 20000);
+  await prueba('Servicio de la casa (Cloudflare)', async()=>{ if(!workerOn()) return {st:'warn', t:'no está armado (sin él no hay voz de Elena, tele ni luces)'}; await wkPing(); const v=S.workerV||0; return {st:v>=4?'ok':v>=2?'warn':'bad', t:v?`versión ${v}${v<4?' (falta actualizar el código: las videollamadas fuera de casa necesitan la 4)':''}`:'no responde'}; });
+  await prueba('Voz de Elena', async()=>{ if(!vozNube()) return {st:'warn', t:S.voz==='tablet'?'elegiste la voz de la tablet':'no disponible: '+(tts.err||'sin servicio')}; tts.failUntil=0; const a=await fetchTTS('Prueba de voz.'); return {st:a?'ok':'bad', t:a?'llegó el audio':'no llegó: '+(tts.err||'?')}; }, 20000);
+  await prueba('Micrófono', async()=>({st:stt.on?'ok':'bad', t:stt.on?`andando; ruido de fondo ${(stt.floor||0).toFixed(4)}; modo ${S.micMode||'normal'}${sttNoisy()?' (mucho ruido)':''}`:'no anda: falta el permiso o el toque inicial'}));
+  await prueba('Cámara', async()=>{ const v=await camVideo(); return {st:v&&v.videoWidth?'ok':'bad', t:v&&v.videoWidth?`${v.videoWidth}x${v.videoHeight}`:'no dio imagen'}; }, 12000);
+  await prueba('Reconocer caras (librería)', async()=>{ const t0=performance.now(); await caraApi(); const ds=await carasAhora(); const ns=ds.map(caraMatch).filter(Boolean); return {st:'ok', t:`cargó en ${((performance.now()-t0)/1000).toFixed(1)} s; ve ${ds.length} cara(s)${ns.length?' y reconoce a '+listaY(ns):''}; caras enseñadas: ${conCara().join(', ')||'ninguna'}`}; }, 60000);
+  await prueba('Voces enseñadas', async()=>({st:conVoz().length?'ok':'warn', t:conVoz().length?conVoz().join(', '):'ninguna todavía (Ajustes → Quién es quién)'}));
+  await prueba('La compu', async()=>{ const p=sharePeers().pc; if(!p) return {st:'warn', t:'no está unida'}; const min=Math.round((Date.now()-p.t)/60000); return {st:min<10?'ok':'warn', t:min<10?`en línea (hace ${min} min)`:`la última vez hace ${min} min`}; });
+  await prueba('Mercado Libre (por la compu)', async()=>{ const r=await mlBuscar('yerba mate'); return {st:r.ok?'ok':'bad', t:r.ok?`${r.items.length} publicaciones; la primera a ${fmtP(r.items[0].price)||'sin precio'}`:r.txt}; }, 30000);
+  await prueba('Sincronización', async()=>({st:FSync.on()?'ok':'warn', t:FSync.on()?`comparte con ${Object.keys(FSync.st.peers||{}).filter(x=>!/^cfg/.test(x) && x!==DEV).length} aparato(s)`:'no está compartiendo'}));
+  await prueba('Pantalla completa y siempre prendida', async()=>({st:document.fullscreenElement||matchMedia('(display-mode: fullscreen)').matches?'ok':'warn', t:`${document.fullscreenElement||matchMedia('(display-mode: fullscreen)').matches?'pantalla completa':'no está en pantalla completa (instalala desde Chrome)'}; no apagarse: ${'wakeLock' in navigator?'sí':'no disponible'}`}));
+  await prueba('Luces (Smart Life)', async()=>({st:casa.devs.length?'ok':'warn', t:casa.devs.length?`${casa.devs.length} aparatos (${casa.devs.filter(d=>d.online).length} en línea)`:(casa.err||'ninguno conectado')}));
+  await prueba('Google y Spotify', async()=>({st:'ok', t:`Google: ${googleOn()?(gapp.err?'con error: '+gapp.err:'conectado'):'sin conectar'}; Spotify: ${spOn()?'conectado':'sin conectar'}; tele: ${S.tv&&S.tv.screenId?'vinculada':'sin vincular'}`}));
+  chq.on=false; chqPaint();
+  const t=chqTexto(), pc=pcDev();
+  if(pc){ try{ await FSync.send({k:'chequeo', to:pc, texto:t}); }catch(e){} }
+  const bad=chq.rows.filter(r=>r.st==='bad');
+  say(bad.length?`Listo el chequeo: ${bad.length} ${bad.length>1?'cosas fallaron':'cosa falló'}: ${bad.map(r=>r.n.toLowerCase()).join(', ')}. ${pc?'Le mandé el informe a la compu.':''}`:`Listo el chequeo: todo bien. ${pc?'Le mandé el informe a la compu.':''}`, bad.length?'worried':'happy');
+}
 
 async function boot(){
   try{ faceBuild($('bFace')); }catch(e){}

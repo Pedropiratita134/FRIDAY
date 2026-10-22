@@ -369,3 +369,12 @@ NUEVO EN LA 3.1: FRIDAY VIVA — SE MUEVE, RECONOCE A LA FAMILIA, COCINA Y TAREA
   "¿Quién va ganando?", "¿qué me toca hoy?". En la app: lo de hoy con «Hecha» y la tabla de la
   semana. El domingo, en el resumen, anuncia quién ganó. La compu también las ve.
 QUÉ SUBIR: panel.html y sw.js (ya está subido en GitHub). En la compu: friday.html versión 93.
+
+=====================================================================
+NUEVO EN LA 3.2: CHEQUEO
+=====================================================================
+- "Friday, hacé un chequeo" (o Ajustes → Conexiones → «Hacer el chequeo»): la tablet prueba sola
+  el cerebro, el servicio de Cloudflare, la voz de Elena, el micrófono, la cámara, el
+  reconocimiento de caras, la compu, Mercado Libre, la sincronización, la pantalla completa, las
+  luces y Google/Spotify. Al terminar dice qué falló y le manda el informe a la compu (allá,
+  «Copiar informe» junta los dos).
