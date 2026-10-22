@@ -1459,7 +1459,7 @@ function whisperPrompt(){
   try{ for(const m of (memory||[]).slice(-40)) (String(m).match(/\b[A-ZÁÉÍÓÚÑ][a-záéíóúñ]{2,}\b/g)||[]).forEach(w=>{ if(nombres.size<12) nombres.add(w); }); }catch(e){}
   try{ for(const d of ((casa.devs)||[]).slice(0,10)) nombres.add(d.nombre); }catch(e){}
   const last=(Ear.hooks && Ear.hooks.lastSaid && Ear.hooks.lastSaid()) || '';
-  const base=`Charla en español rioplatense con FRIDAY, una asistente de voz de la casa. ${(S.familia&&S.familia.miembros&&S.familia.miembros.length)?'En la casa están '+S.familia.miembros.join(', ')+'.':''} Suele empezar diciendo el nombre FRIDAY. Escribí siempre "Friday". Palabras frecuentes: Friday, ${S.city||''}, Spotify, YouTube, Soda Stereo, Duki, Tini, Bizarrap, Los Redondos, Emilia, María Becerra, Ca7riel, cumbia, cuarteto, reggaetón, ${(typeof music!=='undefined' && music.cur && music.cur.title)?String(music.cur.title).slice(0,40)+', ':''}poné, prendé, apagá, la luz, timer, recordame, la lista, agregá${nombres.size?', '+[...nombres].join(', '):''}.`;
+  const base=`Charla en español rioplatense con FRIDAY, una asistente de voz de la casa. ${(S.familia&&S.familia.miembros&&S.familia.miembros.length)?'En la casa están '+S.familia.miembros.join(', ')+'.':''} Suele empezar diciendo el nombre FRIDAY. Escribí siempre "Friday". Palabras frecuentes: Friday, ${S.city||''}, Spotify, YouTube, Soda Stereo, No Te Va Gustar, Duki, Tini, Bizarrap, Los Redondos, Emilia, María Becerra, Ca7riel, cumbia, cuarteto, reggaetón, ${(typeof music!=='undefined' && music.cur && music.cur.title)?String(music.cur.title).slice(0,40)+', ':''}poné, prendé, apagá, la luz, timer, recordame, la lista, agregá${nombres.size?', '+[...nombres].join(', '):''}.`;
   return (last ? base+` FRIDAY recién dijo: "${String(last).slice(-200)}"` : base).slice(0,900);
 }
 // lo que pasó con lo último que escuchó (para saber por qué a veces no contesta)
@@ -1798,7 +1798,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='3.4';
+const VERSION='3.5';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2718,6 +2718,22 @@ function ytLoad(){
     setTimeout(()=>res(music.ytReady), 9000);
   });
 }
+// la búsqueda de música: expande siglas (NTVG → No Te Va Gustar) y, si en lo que pediste nombraste
+// al artista y el cerebro se lo olvidó, lo suma (así «Mañana de NTVG» no termina en otra «Mañana»)
+const MUS_SIGLAS={ntvg:'No Te Va Gustar', nvtg:'No Te Va Gustar', lpda:'La Portuaria', 'los redo':'Los Redondos', 'el flaco':'Luis Alberto Spinetta', 'la mona':'La Mona Jiménez', 'el indio':'Indio Solari', 'charly':'Charly García', 'fito':'Fito Páez', 'cerati':'Gustavo Cerati', 'bzrp':'Bizarrap', 'la k':"La K'onga"};
+function musExpand(q){ let o=' '+String(q||'')+' '; for(const [k,v] of Object.entries(MUS_SIGLAS)) o=o.replace(new RegExp('([\\s,.(])'+k.replace(/ /g,'\\s+')+'(?=[\\s,.)!?])','ig'), '$1'+v); return o.trim(); }
+function musicaQuery(q, dicho){
+  q=musExpand(q); const d=musExpand(dicho);
+  const ms=[...d.matchAll(/\b(?:de|del|por|by)\s+((?:los|las|la|el)\s+)?([A-ZÁÉÍÓÚÑa-záéíóúñ0-9'’.&][\wÁÉÍÓÚÑáéíóúñ'’.&]*(?:\s+(?!de\b|del\b|en\b|por\b)[\wÁÉÍÓÚÑáéíóúñ'’.&]+){0,4})(?=\s+(?:en la|en el|por favor|porfa|fuerte|bajito|ahora|ya)\b|[,.!?]|$)/ig)], m=ms[ms.length-1];
+  if(m){ const art=((m[1]||'')+m[2]).trim(); if(art.length>1 && !norm(q).includes(norm(art)) && !/^(fondo|la tele|spotify|youtube|nuevo|vuelta|una vez)$/i.test(art)) q=q+' '+art; }
+  return q.trim();
+}
+// entre lo que trajo YouTube, el que más se parece a lo que pediste (título y canal)
+function musOrden(vs, q){
+  const ws=norm(q).split(' ').filter(w=>w.length>2 && !/^(los|las|del|con|para|tema|cancion|musica|video|oficial)$/.test(w)); if(!ws.length) return vs;
+  const sc=v=>{ const t=norm((v.title||'')+' '+(v.by||'')); let k=ws.filter(w=>t.includes(w)).length/ws.length; if(/\b(cover|karaoke|reaccion|reaction|tutorial|letra en ingles)\b/.test(t)) k-=0.3; return k; };
+  return vs.map((v,i)=>({v,i,s:sc(v)})).sort((a,b)=>b.s-a.s || a.i-b.i).map(x=>x.v);
+}
 // busca en YouTube: primero con el servicio de la casa; si no anda (o no trae nada), le pide a la compu
 async function ytBuscar(que){
   let vs=[], err='';
@@ -2727,7 +2743,7 @@ async function ytBuscar(que){
   return vs;
 }
 async function ytPlayQuery(que){
-  const vs=await ytBuscar(que);
+  const vs=musOrden(await ytBuscar(que), que);
   music.list=vs; music.idx=0;
   if(!await ytLoad()) throw new Error('YouTube no carga en esta tablet');
   ytStart(); return vs[0];
@@ -2967,7 +2983,7 @@ function prompt(){
   L.push('Lo que te dicen llega de un reconocimiento de voz y a veces viene con palabras cambiadas. Si algo no tiene sentido, interpretá lo más probable según el contexto (las luces, la música, timers, la lista, la agenda). Si de verdad no se entiende, no inventes ni hagas nada: pedí que lo repita, en una frase corta.');
   const tags=['[[TIMER|segundos|para qué]]','[[RECORDAR|AAAA-MM-DDTHH:MM|qué|diario o semanal o habiles (solo si se repite)]] (recordatorio: suena en la tablet, la compu y el celu)','[[RECORDATORIO_BORRAR|de qué era]]','[[BORRAR|qué o a qué hora (ej. 22:30)]] (borra lo que sea de «Hoy»: recordatorio, nota, rutina, evento o aviso)','[[COMPRAS|agregar o quitar o tachar o vaciar|cosa; cosa]]','[[NOTA|texto]] (nota de la casa, se ve en la tablet, la compu y el celu)','[[MEMORIA|dato importante y duradero de la familia]]','[[OLVIDAR|el dato viejo]]','[[CUMPLE|nombre|DD/MM]]','[[AUTOMATIZAR|HH:MM|todos o habiles o finde o lunes,martes… o AAAA-MM-DD|qué hacer, en palabras]] (rutina que se repite a una hora; avisar algo es RECORDAR)','[[AUTOMATIZAR_BORRAR|cuál]]','[[MAPA|lugar lo más preciso posible|dato breve]] (muestra el mapa a pantalla completa)','[[DORMIR]] (cuando se van a dormir: modo noche hasta la mañana)','[[SEGUIMIENTO|AAAA-MM-DD (el día en que conviene preguntar)|qué preguntar y a quién]] (cuando alguien cuenta algo que va a pasar: una prueba, un turno, un partido, un viaje, que se siente mal)','[[PREGUNTADO|de qué era]]'];
   if(casa.devs.length) tags.push('[[CASA|qué aparato|prender o apagar o brillo 40 o color azul o blanco cálido o limpiar]]');
-  tags.push('[[MUSICA|qué poner|tema o artista o disco o playlist|tele o spotify (solo si lo pidió; si no, dejalo vacío: suena con YouTube)]]'+(teleOn()?' (hay una tele vinculada: si pide la música "en la tele", poné tele)':''),'[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
+  tags.push('[[MUSICA|qué poner: SIEMPRE el tema y el artista juntos cuando los sabés (ej. «Mañana No Te Va Gustar», nunca solo «Mañana»)|tema o artista o disco o playlist|tele o spotify (solo si lo pidió; si no, dejalo vacío: suena con YouTube)]]'+(teleOn()?' (hay una tele vinculada: si pide la música "en la tele", poné tele)':''),'[[MUSICA_CTRL|pausa o seguir o siguiente o anterior o volumen|valor]]');
   tags.push('[[BUSCAR|consulta]] para datos actuales (resultados, precios, horarios, noticias de algo puntual): no inventes','[[NOTICIAS]] para los titulares de hoy');
   if(googleOn() || pcDev()) tags.push('[[EVENTO|título|AAAA-MM-DDTHH:MM|minutos]] para anotar en la agenda','[[EVENTO_BORRAR|cuál]]','[[EVENTO_MOVER|cuál|AAAA-MM-DDTHH:MM o HH:MM]]');
   if(pcDev()) tags.push('[[TELE_LG|prender o apagar o volumen 0-100 o subir o bajar o app Netflix o hdmi 2 o anunciar texto]] (la tele LG la maneja la compu, tiene que estar prendida)');
@@ -3055,7 +3071,7 @@ async function brain(text, extra, depth=0){
       else if(t.k==='NOTA') addNota(t.a[0]);
       else if(t.k==='MEMORIA'){ const d=t.a[0]; if(d && !memory.some(m=>norm(m)===norm(d))){ memory.push(d); memory=memory.slice(-80); LS.set('memory',memory); try{ FSync.scan(); }catch(e){} } }
       else if(t.k==='CASA'){ const r=await casaDo(t.a[0], t.a.slice(1).join(' ')); if(!r.ok) notes.push('Casa: '+r.txt); else focusCard('casa'); }
-      else if(t.k==='MUSICA'){ await playMusic(t.a[0], t.a[1], t.a[2]); focusCard('mus'); }
+      else if(t.k==='MUSICA'){ await playMusic(musicaQuery(t.a[0], text||''), t.a[1], t.a[2]); focusCard('mus'); }
       else if(t.k==='MUSICA_CTRL') await musicCtrl(t.a[0], t.a[1]);
       else if(t.k==='BUSCAR'){ const r=await search(t.a[0]); notes.push(r?`Lo que encontraste sobre "${t.a[0]}": ${r}`:`No encontraste nada sobre "${t.a[0]}": decilo, no inventes.`); }
       else if(t.k==='NOTICIAS'){ const n=await news(); notes.push(n.length?'Titulares de hoy: '+n.join(' | '):'No pude traer las noticias.'); }
