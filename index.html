@@ -1087,7 +1087,7 @@ async function runTags(full){
         if(PANEL){ const r=await aCompu(p.slice(1).join(' ')); if(r) notes.push('La FRIDAY de la compu respondió (contáselo con tus palabras, corto): '+r); }
       } else if(k==='demo'){ if(PANEL) setTimeout(()=>demoOn(true), 2500);
       } else if(k==='panel' && p[1]){
-        if(FSync.on()){ FSync.send({k:'aviso', t:'Mensaje', v:p.slice(1).join(' '), i:'📢', u:true}); toast('📢 Lo dice la tablet'); }
+        if(FSync.on()){ const tx=p.slice(1).join(' '), de=S.name?`${S.name} (desde el celu)`:'el celu', tb=FSync.peersOf('tablet')[0]; FSync.send(Object.assign({k:'aviso', icom:true, de, t:'Mensaje de '+de, s:tx, v:`Mensaje de ${S.name||'el celu'}: ${tx}`, i:'📢', u:true}, tb?{to:tb.dev}:{})); toast('📢 Lo dice la tablet'); }
       } else if(k==='compras' && p[1]){
         const r=shopDo(p[1], p.slice(2).join(' ')); if(r) toast('🛒 '+r); if(/ver|mostr|list/.test(norm(p[1]))) showSheet('compras');
       } else if(k==='recordar' && p[1]) addMemory(p.slice(1).join(' '));
@@ -1308,6 +1308,10 @@ const FSync={
   },
   // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
   send(head){ return this.publish(head, null); },
+  // qué es cada aparato (compu, tablet, celu): lo dice él mismo; si es de una versión vieja, por su código o su nombre
+  kindOf(d){ const p=(this.st&&this.st.peers&&this.st.peers[d])||{}; if(p.dk) return p.dk; if(/^pc/.test(d)) return 'pc'; if(/^pan/.test(d)) return 'tablet'; if(/^cel/.test(d)) return 'celu'; if(/^cfg/.test(d)) return 'cfg';
+    const n=String(p.n||'').toLowerCase(); if(/compu|\bpc\b|windows|notebook/.test(n)) return 'pc'; if(/tablet|panel|de la casa/.test(n)) return 'tablet'; if(/celu|android|iphone|movil|telefono/.test(n)) return 'celu'; return ''; },
+  peersOf(kind){ return Object.entries((this.st&&this.st.peers)||{}).filter(([d])=>d!==(this.cfg&&this.cfg.dev) && this.kindOf(d)===kind).map(([d,p])=>Object.assign({dev:d}, p)).sort((a,b)=>b.t-a.t); },
   status(){ try{ this.hooks.onStatus && this.hooks.onStatus(); }catch(e){} },
   // lo que cambió acá desde la última vez → se manda
   scan(){
@@ -1329,7 +1333,7 @@ const FSync={
   async flush(){ const p=this.pending; this.pending={}; if(Object.keys(p).length) await this.publish({k:'d'}, p); },
   async publish(head, entries){
     if(!this.on()) return false;
-    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||''}, head);
+    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||'', dk:this.hooks.kind||''}, head);
     const chunks=[]; let cur={}, size=0;
     for(const [id,e] of Object.entries(entries||{})){
       const l=JSON.stringify(e).length+id.length+6;
@@ -1387,7 +1391,7 @@ const FSync={
   },
   async handle(o){
     const first=!this.st.peers[o.f];
-    this.st.peers[o.f]={t:Date.now(), n:o.n||'', u:o.u||''};
+    this.st.peers[o.f]={t:Date.now(), n:o.n||'', u:o.u||'', dk:o.dk||((this.st.peers[o.f]||{}).dk)||''};
     if(this.hooks.onPeer) try{ this.hooks.onPeer(o.f, this.st.peers[o.f], first); }catch(e){}
     if(o.e){
       const changes=[];
@@ -1508,7 +1512,7 @@ function syncApply(changes){
 function syncPrompt(){
   if(!FSync.on()) return '';
   let s='Estás vinculada con la FRIDAY de su compu: comparten la memoria y los recordatorios.\n';
-  if(!PANEL && Object.keys(FSync.st.peers||{}).some(d=>d.startsWith('pan'))) s+='En la casa hay una TABLET de FRIDAY: para que diga algo en voz alta allá ("avisá en la tablet que llego en diez"), [[PANEL|lo que tiene que decir]].\n';
+  if(!PANEL && Object.keys(FSync.st.peers||{}).some(d=>FSync.kindOf(d)==='tablet')) s+='En la casa hay una TABLET de FRIDAY: para que diga algo en voz alta allá ("avisá en la tablet que llego en diez"), [[PANEL|lo que tiene que decir]].\n';
   const t=agendaTxt(7);
   if(t) s+=`Agenda (su Google Calendar, la trae la compu): ${t}
 [[EVENTO|AAAA-MM-DD HH:MM|título|minutos|lugar]] le pide a la compu que lo anote en su Google Calendar (minutos y lugar opcionales; para todo el día, solo AAAA-MM-DD). Si te dice "anotá", "agendá" o "tengo turno" con día y hora, usá EVENTO (no RECORDATORIO). Decí que queda anotado apenas la compu esté prendida.
@@ -1540,7 +1544,7 @@ function pedirEvento(cuando, titulo, min, lugar){
   if(min && !/^\d+$/.test(min)){ lugar=min; min=''; }
   const p={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), tipo:'evento', args:{cuando, titulo, minutos:min?+min:60, lugar}, estado:'nuevo', txt:'', texto:titulo+' ('+cuando+')', at:Date.now()};
   pedidos.push(p); LS.set('pedidos',pedidos); FSync.scan();
-  const peer=Object.entries(FSync.st.peers||{}).filter(([d])=>d.startsWith('pc')).map(x=>x[1]).sort((a,b)=>b.t-a.t)[0];
+  const peer=Object.entries(FSync.st.peers||{}).filter(([d])=>FSync.kindOf(d)==='pc').map(x=>x[1]).sort((a,b)=>b.t-a.t)[0];
   const prendida=peer && Date.now()-peer.t<3*60000;
   toast('📅 Se lo pasé a la compu: '+titulo, 3500);
   setTimeout(()=>FSync.poll(), 25000); setTimeout(()=>FSync.poll(), 50000);
@@ -1549,10 +1553,10 @@ function pedirEvento(cuando, titulo, min, lugar){
 async function syncBoot(){
   if(!(window.crypto && crypto.subtle)) return;
   const name=PANEL ? 'Panel de la casa' : (IOS?'iPhone':/Android/i.test(navigator.userAgent)?'Android':'Celu')+(S.name?' de '+S.name:'');
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, url:spRedirect(), kinds:['m','r','p','l','u','b','o'], pollMs:PANEL?60000:20000,
-    live:PANEL, onMsg:o=>PANEL?panelMsg(o):null,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, kind:PANEL?'tablet':'celu', url:spRedirect(), kinds:['m','r','p','l','u','b','o'], pollMs:PANEL?60000:20000,
+    live:true, onMsg:o=>PANEL?panelMsg(o):celuMsg(o),
     paused:()=>document.hidden && !PANEL, local:syncLocal, apply:syncApply,
-    onPeer:(d,p,first)=>{ if(first && d.startsWith('pc')){ toast('💻 ¡Vinculada con tu compu!', 4500); buzz([60,40,60]); } if(openSheet==='vinc') renderVinc(); },
+    onPeer:(d,p,first)=>{ if(first && FSync.kindOf(d)==='pc'){ toast('💻 ¡Vinculada con tu compu!', 4500); buzz([60,40,60]); } if(openSheet==='vinc') renderVinc(); },
     onStatus:()=>{ if(openSheet==='vinc') renderVinc(); } });
   // vino con el link del QR (…#v=CÓDIGO)
   const m=location.hash.match(/[#&]v=([A-Za-z0-9-]+)/);
@@ -1563,7 +1567,7 @@ function syncWake(){ if(!FSync.on() || Date.now()-wakeAt<90000) return; wakeAt=D
 function renderVinc(){
   const on=FSync.on(); $('vOff').hidden=on; $('vOn').hidden=!on; $('vScan').hidden=!('BarcodeDetector' in window);
   if(on){
-    const ps=Object.entries(FSync.st.peers||{}).filter(([d])=>d.startsWith('pc')).map(x=>x[1]).sort((a,b)=>b.t-a.t), p=ps[0];
+    const ps=Object.entries(FSync.st.peers||{}).filter(([d])=>FSync.kindOf(d)==='pc').map(x=>x[1]).sort((a,b)=>b.t-a.t), p=ps[0];
     const ago=t=>{ const m=Math.round((Date.now()-t)/60000); return m<1?'recién':m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} días`; };
     $('vSt').innerHTML = p ? `✔ Vinculada con tu compu.<br><small>Último contacto: ${ago(p.t)}${FSync.lastErr?' · ⚠ '+esc(FSync.lastErr):''}</small>` : `Esperando a la compu… <small>(tiene que estar prendida con FRIDAY abierta)${FSync.lastErr?' · ⚠ '+esc(FSync.lastErr):''}</small>`;
   }
@@ -1844,7 +1848,7 @@ addEventListener('hashchange', ()=>{ if(S.groqKey) handleHash(); });
 const pan={ idle:Date.now(), demo:false, cardI:0, avT:null, confirm:null, ped:{}, setup:false, hintI:0, started:false };
 function pTouch(){ pan.idle=Date.now(); }
 const noche=()=>{ const h=new Date().getHours(); return h>=23 || h<7; };
-function pcPeer(){ const e=Object.entries((FSync.st&&FSync.st.peers)||{}).filter(([d])=>d.startsWith('pc')).sort((a,b)=>b[1].t-a[1].t)[0]; return e?{dev:e[0], ...e[1]}:null; }
+function pcPeer(){ const p=FSync.peersOf('pc')[0]; return p||null; }
 function pStatus(){
   if(!PANEL) return;
   const pc=pcPeer(), live=FSync.live;
@@ -1918,6 +1922,10 @@ async function aCompu(text){
     const p=pan.ped[id]={res, done:false};
     p.t=setTimeout(()=>{ if(!p.done){ p.done=true; delete pan.ped[id]; busy=false; orbState='idle'; res('La compu no me contesta. ¿Está prendida con FRIDAY abierta?'); } }, 12000);
   });
+}
+// el intercom en el celu (mientras la app está abierta): lo dice y lo muestra
+function celuMsg(o){
+  if(o.k==='aviso' && o.icom){ try{ buzz([80,60,80]); }catch(e){} toast('📢 '+(o.de||'Mensaje')+': '+(o.s||''), 7000); frSay(o.v||((o.de||'Mensaje')+': '+(o.s||''))); }
 }
 async function panelMsg(o){
   if(o.k==='ack' && pan.ped[o.id]){ const p=pan.ped[o.id]; clearTimeout(p.t); p.t=setTimeout(()=>{ if(!p.done){ p.done=true; delete pan.ped[o.id]; busy=false; orbState='idle'; p.res('La compu tardó demasiado.'); } }, 90000); }

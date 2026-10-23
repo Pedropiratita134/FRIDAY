@@ -401,3 +401,19 @@ NUEVO EN LA 3.5: LA MÚSICA PONE EL TEMA DEL ARTISTA QUE PEDISTE
   tema. Ahora la búsqueda siempre lleva el artista que nombraste, entiende siglas (NTVG = No Te Va
   Gustar, BZRP = Bizarrap…) y entre lo que encuentra elige el que coincide con tema y artista
   (y deja atrás covers y karaokes).
+
+=====================================================================
+NUEVO EN LA 3.6: INTERCOM Y VIDEOLLAMADAS QUE RECONOCEN A LA COMPU
+=====================================================================
+- La tablet no reconocía a la compu: cada aparato adivinaba qué era el otro por su código
+  interno, y si la compu tenía un código de una versión vieja, quedaba como "otro aparato".
+  Ahora cada aparato dice qué es (compu, tablet o celu), y con los viejos se fija también en el
+  nombre. Aparecen bien en «Llamar», en el intercom y en el chequeo.
+- Atender sola: ahora avisa en voz alta «Te llama Pedro (desde la compu). Atiendo en 7
+  segundos; si no querés, decí "no"» y muestra la cuenta. Decir «no» o tocar «No ahora» corta.
+- Si quien llama corta antes de que atiendas, deja de sonar enseguida (antes seguía 45 s).
+- Llamadas perdidas: queda en el intercom y en «Hoy»; «Friday, devolvé la llamada» llama.
+- Intercom: dice quién manda el mensaje (si FRIDAY te reconoció: «Mensaje de Sofi»); cada
+  mensaje tiene «Responder», y por voz: «Friday, respondele que ya voy».
+- El celu: recibe los mensajes del intercom mientras FRIDAY Móvil está abierta.
+QUÉ SUBIR: panel.html, index.html y sw.js. En la compu: friday.html versión 97.

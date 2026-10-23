@@ -236,6 +236,10 @@ const FSync={
   },
   // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
   send(head){ return this.publish(head, null); },
+  // qué es cada aparato (compu, tablet, celu): lo dice él mismo; si es de una versión vieja, por su código o su nombre
+  kindOf(d){ const p=(this.st&&this.st.peers&&this.st.peers[d])||{}; if(p.dk) return p.dk; if(/^pc/.test(d)) return 'pc'; if(/^pan/.test(d)) return 'tablet'; if(/^cel/.test(d)) return 'celu'; if(/^cfg/.test(d)) return 'cfg';
+    const n=String(p.n||'').toLowerCase(); if(/compu|\bpc\b|windows|notebook/.test(n)) return 'pc'; if(/tablet|panel|de la casa/.test(n)) return 'tablet'; if(/celu|android|iphone|movil|telefono/.test(n)) return 'celu'; return ''; },
+  peersOf(kind){ return Object.entries((this.st&&this.st.peers)||{}).filter(([d])=>d!==(this.cfg&&this.cfg.dev) && this.kindOf(d)===kind).map(([d,p])=>Object.assign({dev:d}, p)).sort((a,b)=>b.t-a.t); },
   status(){ try{ this.hooks.onStatus && this.hooks.onStatus(); }catch(e){} },
   // lo que cambió acá desde la última vez → se manda
   scan(){
@@ -257,7 +261,7 @@ const FSync={
   async flush(){ const p=this.pending; this.pending={}; if(Object.keys(p).length) await this.publish({k:'d'}, p); },
   async publish(head, entries){
     if(!this.on()) return false;
-    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||''}, head);
+    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||'', dk:this.hooks.kind||''}, head);
     const chunks=[]; let cur={}, size=0;
     for(const [id,e] of Object.entries(entries||{})){
       const l=JSON.stringify(e).length+id.length+6;
@@ -315,7 +319,7 @@ const FSync={
   },
   async handle(o){
     const first=!this.st.peers[o.f];
-    this.st.peers[o.f]={t:Date.now(), n:o.n||'', u:o.u||''};
+    this.st.peers[o.f]={t:Date.now(), n:o.n||'', u:o.u||'', dk:o.dk||((this.st.peers[o.f]||{}).dk)||''};
     if(this.hooks.onPeer) try{ this.hooks.onPeer(o.f, this.st.peers[o.f], first); }catch(e){}
     if(o.e){
       const changes=[];
