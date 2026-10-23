@@ -219,7 +219,17 @@ body.inapp .win{transform:none;opacity:1;visibility:visible}
 
 /* llamar e intercom */
 .people{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
-.person{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:20px;border-radius:26px;border:1px solid var(--edge);background:var(--card-2);cursor:pointer;text-align:left}
+.person{display:flex;flex-direction:column;align-items:flex-start;gap:14px;padding:20px;border-radius:26px;border:1px solid var(--edge);background:var(--card-2);text-align:left}
+.person .pact{display:flex;gap:10px;width:100%;flex-wrap:wrap}
+.person .pact button{flex:1 1 auto;min-height:54px;padding:8px 14px;border-radius:16px;border:1px solid rgba(74,222,128,.4);background:rgba(74,222,128,.12);color:#4ADE80;font:700 17px var(--text);display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer}
+.person .pact button.v2{background:none;color:var(--ink);border-color:var(--edge);font-weight:600}
+.person .pact svg{width:20px;height:20px}
+.person small.on{color:#4ADE80}
+.devrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px 14px;padding:14px 0;border-top:1px solid var(--edge)}.devrow:first-child{border-top:0}
+.devrow .who{flex:1 1 220px}.devrow .who b{font:600 19px var(--disp)}.devrow .who small{display:block;color:var(--ink-2);font-size:15px;margin-top:2px}
+.devrow .who small.ok{color:#4ADE80}.devrow .who small.bad{color:var(--alert)}
+.devrow .seg{flex:1 1 260px}.devrow .seg button{min-height:46px;font-size:16px;padding:8px 12px}
+.devrow .ghost{margin:0!important}
 .person .av{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;font:700 28px var(--disp);background:linear-gradient(150deg,#4ADE80,#1C8F57);color:#04140b}
 .person b{font:620 21px/1.15 var(--disp)}.person small{color:var(--ink-2);font-size:15px}
 .person .go{display:inline-flex;align-items:center;gap:8px;color:#4ADE80;font-weight:700}
@@ -642,7 +652,14 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <p class="lbl">Llamá a otro aparato de la familia, o decí «Friday, llamá a la compu».</p>
       <div class="seg" id="callList"></div>
       <p class="lbl">Cuando llaman a la tablet</p>
-      <div class="seg" data-k="autoAns"><button type="button" data-v="no">Hay que atender</button><button type="button" data-v="si">Atiende sola (avisa 5 segundos antes)</button></div></section>
+      <div class="seg" data-k="autoAns"><button type="button" data-v="no">Hay que atender</button><button type="button" data-v="si">Atiende sola (avisa y espera 10 segundos)</button></div>
+      <p class="note" id="autoNote">Si atiende sola: dice «Te llama…» en voz alta y cuenta 10 segundos. Para que no atienda, decí «no» o tocá «No ahora».</p>
+      <p class="note">Durante la llamada: tocá dos veces la imagen para verla entera o llenando la pantalla, acercá con dos dedos, «Achicar» la deja en una ventanita que podés mover (y agrandar desde la esquina), y tu cámara se arrastra a cualquier esquina.</p></section>
+    <section><h3>Aparatos de la familia</h3>
+      <p class="lbl">Los que están unidos a la tablet. «Probar» se fija si responden ahora. Si alguno figura mal (por ejemplo, la compu como «otro aparato»), tocá qué es.</p>
+      <div id="devList"></div>
+      <button class="ghost" id="devPing" type="button">Probar todos</button>
+      <p class="note" id="devNote"></p></section>
     <section><h3>Voz</h3>
       <div class="seg" data-k="voz"><button type="button" data-v="elena">Elena</button><button type="button" data-v="tomas">Tomás</button><button type="button" data-v="tablet">La de la tablet</button></div>
       <p class="note" id="vozNote"></p>
@@ -854,6 +871,8 @@ const FSync={
     const tick=async()=>{ if(!this.live || Date.now()-(this.polledAt||0)>600000) await this.poll(); this.scan(); };
     (async()=>{ await this.poll(); this.scan(); clearTimeout(this.pubT); await this.flush(); this.hello(); })();
     this.timers.push(setInterval(()=>this.scan(), 4000));
+    // "sigo acá" cada 10 minutos: los otros saben que este aparato está prendido aunque no cambie nada
+    this.timers.push(setInterval(()=>{ if(this.on() && (!this.hooks.paused || !this.hooks.paused())) this.publish({k:'p'}, null).catch(()=>{}); }, 600000));
     this.timers.push(setInterval(()=>{ if(!this.hooks.paused || !this.hooks.paused()) tick(); }, this.hooks.pollMs||20000));
     if(this.hooks.live){
       this.stream();
@@ -896,8 +915,18 @@ const FSync={
   // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
   send(head){ return this.publish(head, null); },
   // qué es cada aparato (compu, tablet, celu): lo dice él mismo; si es de una versión vieja, por su código o su nombre
-  kindOf(d){ const p=(this.st&&this.st.peers&&this.st.peers[d])||{}; if(p.dk) return p.dk; if(/^pc/.test(d)) return 'pc'; if(/^pan/.test(d)) return 'tablet'; if(/^cel/.test(d)) return 'celu'; if(/^cfg/.test(d)) return 'cfg';
+  kindOf(d){ const p=(this.st&&this.st.peers&&this.st.peers[d])||{}; if(p.fix) return p.fix; if(p.dk) return p.dk; if(/^pc/.test(d)) return 'pc'; if(/^pan/.test(d)) return 'tablet'; if(/^cel/.test(d)) return 'celu'; if(/^cfg/.test(d)) return 'cfg';
     const n=String(p.n||'').toLowerCase(); if(/compu|\bpc\b|windows|notebook/.test(n)) return 'pc'; if(/tablet|panel|de la casa/.test(n)) return 'tablet'; if(/celu|android|iphone|movil|telefono/.test(n)) return 'celu'; return ''; },
+  // si un aparato viejo quedó mal reconocido, se le dice a mano qué es ('' = que lo adivine solo)
+  setKind(d, k){ const p=this.st.peers[d]; if(!p) return false; p.fix=k||''; this.save(); this.status(); return true; },
+  forget(d){ if(!this.st.peers[d]) return false; delete this.st.peers[d]; this.save(); this.status(); return true; },
+  // "¿estás?": a uno (to) o a todos (''); devuelve quién contestó y en cuánto tiempo
+  async ping(to, ms){ if(!this.on()) return {}; const id=Math.random().toString(36).slice(2,10), t0=Date.now(), got={};
+    this.pongs=this.pongs||{};
+    return new Promise(res=>{ let tm; const done=()=>{ clearTimeout(tm); delete this.pongs[id]; res(got); };
+      this.pongs[id]=o=>{ got[o.f]={ms:Date.now()-t0, vr:o.vr||'', dk:o.dk||'', n:o.n||''}; if(to) done(); };
+      tm=setTimeout(done, ms||(to?9000:7000));
+      this.publish({k:'ping', id, to:to||''}, null).then(ok=>{ if(!ok) done(); }).catch(done); }); },
   peersOf(kind){ return Object.entries((this.st&&this.st.peers)||{}).filter(([d])=>d!==(this.cfg&&this.cfg.dev) && this.kindOf(d)===kind).map(([d,p])=>Object.assign({dev:d}, p)).sort((a,b)=>b.t-a.t); },
   status(){ try{ this.hooks.onStatus && this.hooks.onStatus(); }catch(e){} },
   // lo que cambió acá desde la última vez → se manda
@@ -920,7 +949,7 @@ const FSync={
   async flush(){ const p=this.pending; this.pending={}; if(Object.keys(p).length) await this.publish({k:'d'}, p); },
   async publish(head, entries){
     if(!this.on()) return false;
-    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||'', dk:this.hooks.kind||''}, head);
+    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||'', dk:this.hooks.kind||'', vr:this.hooks.ver||''}, head);
     const chunks=[]; let cur={}, size=0;
     for(const [id,e] of Object.entries(entries||{})){
       const l=JSON.stringify(e).length+id.length+6;
@@ -977,8 +1006,12 @@ const FSync={
     await this.handle(o);
   },
   async handle(o){
-    const first=!this.st.peers[o.f];
-    this.st.peers[o.f]={t:Date.now(), n:o.n||'', u:o.u||'', dk:o.dk||((this.st.peers[o.f]||{}).dk)||''};
+    const first=!this.st.peers[o.f], old=this.st.peers[o.f]||{};
+    this.st.peers[o.f]={t:Date.now(), n:o.n||old.n||'', u:o.u||old.u||'', dk:o.dk||old.dk||'', vr:o.vr||old.vr||'', fix:old.fix||''};
+    // "¿estás?" → "acá estoy" (así se sabe al toque si la compu o el celu están prendidos y con qué versión)
+    if(o.k==='ping'){ if((!o.to || o.to===this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<60000) await this.publish({k:'pong', to:o.f, id:o.id}, null); return; }
+    if(o.k==='pong'){ const w=this.pongs && this.pongs[o.id]; if(o.to===this.cfg.dev && w) w(o); return; }
+    if(o.k==='p') return;
     if(this.hooks.onPeer) try{ this.hooks.onPeer(o.f, this.st.peers[o.f], first); }catch(e){}
     if(o.e){
       const changes=[];
@@ -1561,53 +1594,175 @@ const Call=(()=>{
   async function unpack(s){ if(s[0]==='r') return s.slice(1); const ds=new Blob([ub64(s.slice(1))]).stream().pipeThrough(new DecompressionStream('deflate-raw')); return new Response(ds).text(); }
   async function sendBig(to, t, id, obj){ const p=await pack(JSON.stringify(obj)), n=Math.ceil(p.length/1600); for(let i=0;i<n;i++) await send(to, {t, id, i, n, d:p.slice(i*1600,(i+1)*1600)}); }
   // ---- pantalla
+  // se puede: ver la imagen entera o llenando la pantalla, acercar con dos dedos (o la rueda), achicar la llamada
+  // a una ventanita que se mueve y se agranda, mover tu propia cámara a cualquier esquina
+  const LSg=k=>{ try{ return JSON.parse(localStorage.getItem('fcall.'+k)); }catch(e){ return null; } };
+  const LSs=(k,v)=>{ try{ localStorage.setItem('fcall.'+k, JSON.stringify(v)); }catch(e){} };
+  const V={ fill:!!LSg('fill'), mini:false, z:1, tx:0, ty:0, pts:new Map(), lastTap:0, hideT:null, corner:LSg('corner')||'br', box:LSg('box')||null };
   function ui(){
     if($c('fcall')) return;
     const st=document.createElement('style'); st.textContent=`
-#fcall{position:fixed;inset:0;z-index:90;display:none;background:#060B14;color:#EEF4FF;font-family:var(--text,system-ui,sans-serif)}
+#fcall{position:fixed;inset:0;z-index:90;display:none;background:#060B14;color:#EEF4FF;font-family:var(--text,system-ui,sans-serif);overflow:hidden;user-select:none;-webkit-user-select:none}
 #fcall.on{display:block}
+#fcStage{position:absolute;inset:0;overflow:hidden;touch-action:none}
 #fcall video{position:absolute;background:#0E1A2E}
-#fcRemote{inset:0;width:100%;height:100%;object-fit:cover}
-#fcLocal{right:24px;bottom:120px;width:min(26vw,240px);aspect-ratio:3/4;object-fit:cover;border-radius:22px;box-shadow:0 18px 40px -16px rgba(0,0,0,.7);border:2px solid rgba(255,255,255,.18);transform:scaleX(-1)}
-#fcall.nocam #fcLocal,#fcall.inc #fcLocal{display:none}
-#fcall.wait #fcLocal{inset:0;width:100%;height:100%;border-radius:0;border:0;filter:brightness(.55) saturate(.9);aspect-ratio:auto}
-#fcTop{position:absolute;left:28px;top:24px;right:28px;display:flex;align-items:baseline;gap:14px;text-shadow:0 2px 16px rgba(0,0,0,.6)}
-#fcTop b{font:640 32px/1.1 var(--disp,system-ui,sans-serif)}#fcTop span{font-size:20px;opacity:.85}
-#fcMid{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);text-align:center;display:none}
-#fcall.wait #fcMid,#fcall.inc #fcMid{display:block}
+#fcRemote{left:0;top:0;width:100%;height:100%;object-fit:contain;background:#060B14;transform-origin:0 0;will-change:transform}
+#fcall.fill #fcRemote{object-fit:cover}
+#fcLocal{width:min(22vw,210px);aspect-ratio:3/4;object-fit:cover;border-radius:20px;box-shadow:0 18px 40px -16px rgba(0,0,0,.7);border:2px solid rgba(255,255,255,.2);transform:scaleX(-1);touch-action:none;cursor:grab;transition:left .25s,top .25s,width .2s}
+#fcLocal.drag{transition:none;cursor:grabbing}
+#fcLocal.tiny{width:min(12vw,110px);border-radius:14px}
+#fcall.nocam #fcLocal,#fcall.inc #fcLocal,#fcall.voz #fcLocal{display:none}
+#fcall.wait #fcLocal{left:0!important;top:0!important;width:100%;height:100%;border-radius:0;border:0;filter:brightness(.55) saturate(.9);aspect-ratio:auto;cursor:default}
+#fcTop{position:absolute;left:24px;top:20px;right:24px;display:flex;align-items:baseline;gap:14px;text-shadow:0 2px 16px rgba(0,0,0,.6);pointer-events:none;transition:opacity .3s}
+#fcTop b{font:640 30px/1.1 var(--disp,system-ui,sans-serif)}#fcTop span{font-size:19px;opacity:.85}
+#fcMid{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);text-align:center;display:none;pointer-events:none;width:min(90%,640px)}
+#fcall.wait #fcMid,#fcall.inc #fcMid,#fcall.voz #fcMid{display:block}
 #fcAv{width:150px;height:150px;margin:0 auto 22px;border-radius:44px;display:grid;place-items:center;font:640 64px var(--disp,system-ui,sans-serif);background:linear-gradient(160deg,#5E98F6,#2D63D8);color:#fff;box-shadow:0 0 0 0 rgba(94,152,246,.6);animation:fcPulse 1.6s ease-out infinite}
+#fcall.live #fcAv{animation:none}
 @keyframes fcPulse{70%{box-shadow:0 0 0 34px rgba(94,152,246,0)}100%{box-shadow:0 0 0 0 rgba(94,152,246,0)}}
-#fcMid h2{margin:0;font:640 44px/1.1 var(--disp,system-ui,sans-serif)}#fcMid p{margin:10px 0 0;font-size:22px;opacity:.8}
-#fcBar{position:absolute;left:0;right:0;bottom:28px;display:flex;justify-content:center;gap:18px}
-#fcBar button{min-width:76px;height:76px;border-radius:38px;border:0;font:600 17px var(--text,system-ui,sans-serif);color:#fff;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;padding:0 24px;display:flex;align-items:center;gap:10px}
-#fcBar button svg{width:28px;height:28px}
+#fcMid h2{margin:0;font:640 42px/1.1 var(--disp,system-ui,sans-serif)}#fcMid p{margin:10px 0 0;font-size:22px;opacity:.85}
+#fcBar{position:absolute;left:0;right:0;bottom:24px;display:flex;justify-content:center;flex-wrap:wrap;gap:14px;padding:0 12px;transition:opacity .3s}
+#fcBar button,#fcMiniBar button,#fcSnd{min-width:68px;height:68px;border-radius:34px;border:0;font:600 16px var(--text,system-ui,sans-serif);color:#fff;background:rgba(255,255,255,.16);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);cursor:pointer;padding:0 20px;display:flex;align-items:center;justify-content:center;gap:9px}
+#fcBar button svg,#fcMiniBar button svg{width:26px;height:26px;flex:none}
 #fcBar .off{background:#EEF4FF;color:#060B14}
-#fcBar .end{background:#D2475C}#fcBar .ok{background:#3E9B5A}
+#fcBar .end,#fcMiniBar .end{background:#D2475C}#fcBar .ok{background:#3E9B5A}
+#fcall button:focus-visible{outline:3px solid #9CC2FF;outline-offset:3px}
+#fcSnd{position:absolute;left:50%;top:22px;transform:translateX(-50%);display:none;background:#F2B33D;color:#1B1405;height:56px}
+#fcall.mute #fcSnd{display:flex}
+#fcZoom{position:absolute;right:20px;top:20px;padding:6px 12px;border-radius:14px;background:rgba(0,0,0,.45);font-size:15px;display:none;pointer-events:none}
+#fcall.zoomed #fcZoom{display:block}
+#fcall.idle:not(.mini) #fcTop,#fcall.idle:not(.mini) #fcBar{opacity:0;pointer-events:none}
 #fcall.inc{background:radial-gradient(120% 90% at 50% 20%,#14284A,#060B14)}
-@media (prefers-reduced-motion:reduce){#fcAv{animation:none}}`;
+#fcall.voz{background:radial-gradient(120% 90% at 50% 30%,#14284A,#060B14)}
+#fcall.voz #fcRemote{opacity:0}
+#fcall.voz.live #fcTop{display:none}
+#fcMiniBar,#fcGrip{display:none}
+#fcall.mini{inset:auto;border-radius:22px;box-shadow:0 24px 60px -18px rgba(0,0,0,.8);border:1px solid rgba(255,255,255,.22);cursor:grab;touch-action:none}
+#fcall.mini #fcTop,#fcall.mini #fcBar,#fcall.mini #fcLocal,#fcall.mini #fcMid p,#fcall.mini #fcZoom,#fcall.mini #fcSnd{display:none}
+#fcall.mini #fcStage{touch-action:none}
+#fcall.mini #fcMid{top:40%}#fcall.mini #fcAv{width:64px;height:64px;font-size:28px;border-radius:20px;margin-bottom:8px}#fcall.mini #fcMid h2{font-size:18px}
+#fcall.mini #fcMiniBar{display:flex;position:absolute;left:0;right:0;bottom:10px;justify-content:center;gap:10px}
+#fcall.mini #fcMiniBar button{min-width:48px;height:48px;padding:0 12px;font-size:14px}
+#fcall.mini #fcMiniBar button svg{width:22px;height:22px}
+#fcall.mini #fcGrip{display:block;position:absolute;left:0;top:0;width:44px;height:44px;cursor:nwse-resize;touch-action:none}
+#fcGrip::before{content:"";position:absolute;left:10px;top:10px;width:14px;height:14px;border-left:3px solid rgba(255,255,255,.75);border-top:3px solid rgba(255,255,255,.75);border-radius:4px 0 0 0}
+#fcMini0{position:absolute;inset:0}
+@media (prefers-reduced-motion:reduce){#fcAv{animation:none}#fcLocal{transition:none}}`;
     document.head.appendChild(st);
-    const d=document.createElement('div'); d.id='fcall'; d.innerHTML=`<video id="fcRemote" autoplay playsinline></video><video id="fcLocal" autoplay playsinline muted></video>
-<div id="fcTop"><b id="fcName"></b><span id="fcState"></span></div>
-<div id="fcMid"><div id="fcAv"></div><h2 id="fcMidT"></h2><p id="fcMidS"></p></div><div id="fcBar"></div>`;
+    const d=document.createElement('div'); d.id='fcall'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Videollamada');
+    d.innerHTML=`<div id="fcStage"><video id="fcRemote" autoplay playsinline></video></div><video id="fcLocal" autoplay playsinline muted></video>
+<div id="fcTop"><b id="fcName"></b><span id="fcState"></span></div><div id="fcZoom"></div>
+<div id="fcMid"><div id="fcAv"></div><h2 id="fcMidT"></h2><p id="fcMidS"></p></div>
+<button type="button" id="fcSnd">${'🔊'} Tocá para escuchar</button>
+<div id="fcBar"></div><div id="fcMiniBar"></div><div id="fcGrip" aria-hidden="true"></div>`;
     document.body.appendChild(d);
+    gestures(d);
   }
   const IC={ mic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>',
     cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="6" width="13" height="12" rx="3"/><path d="M16 10l5-3v10l-5-3z"/></svg>',
     end:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 14.5c5-5 13-5 18 0l-2.4 2.6-3.6-1.6v-2.6a12 12 0 0 0-6 0v2.6l-3.6 1.6z"/></svg>',
-    ok:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>' };
-  function show(mode, name, sub){
-    ui(); const f=$c('fcall'); f.className='on '+mode+(C.active && C.active.stream && C.active.stream.sinCamara ? ' nocam':''); $c('fcName').textContent=mode==='live'?cap(name):''; $c('fcState').textContent='';
-    $c('fcAv').textContent=(String(name).replace(/^(la|el) /i,'')[0]||'?').toUpperCase();
-    $c('fcMidT').textContent = mode==='inc' ? `Te llama ${name}` : `Llamando a ${name}…`; $c('fcMidS').textContent=sub||'';
-    const bar=$c('fcBar');
-    if(mode==='inc') bar.innerHTML=`<button type="button" id="fcNo">No ahora</button><button type="button" class="ok" id="fcYes">${IC.ok}Atender</button>`;
-    else bar.innerHTML=`<button type="button" id="fcMic" aria-label="Micrófono">${IC.mic}</button><button type="button" id="fcCam" aria-label="Cámara">${IC.cam}</button><button type="button" class="end" id="fcEnd">${IC.end}Colgar</button>`;
-    const on=(id,fn)=>{ const b=$c(id); if(b) b.onclick=fn; };
-    on('fcNo', ()=>reject()); on('fcYes', ()=>accept()); on('fcEnd', ()=>hangup());
-    on('fcMic', ()=>toggle('audio','fcMic')); on('fcCam', ()=>toggle('video','fcCam'));
+    ok:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6.6 10.8a15 15 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg>',
+    fit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M8 9h8v6H8z"/></svg>',
+    fill:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>',
+    min:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><rect x="12" y="12" width="7" height="6" rx="1" fill="currentColor"/></svg>',
+    big:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/></svg>' };
+  function bar(mode){
+    const b=$c('fcBar'), mb=$c('fcMiniBar'), a=C.active, voz=!!(a && a.voz);
+    if(mode==='inc'){ b.innerHTML=`<button type="button" id="fcNo">No ahora</button><button type="button" class="ok" id="fcYes">${IC.ok}Atender</button>`; mb.innerHTML=''; }
+    else { b.innerHTML=`<button type="button" id="fcMic" aria-label="Micrófono">${IC.mic}</button>`+(voz?'':`<button type="button" id="fcCam" aria-label="Cámara">${IC.cam}</button><button type="button" id="fcFit">${V.fill?IC.fit+'Ver entera':IC.fill+'Llenar'}</button>`)+`<button type="button" id="fcMin">${IC.min}Achicar</button><button type="button" class="end" id="fcEnd">${IC.end}Colgar</button>`;
+      mb.innerHTML=`<button type="button" id="fcBig" aria-label="Agrandar">${IC.big}</button><button type="button" id="fcMic2" aria-label="Micrófono">${IC.mic}</button><button type="button" class="end" id="fcEnd2" aria-label="Colgar">${IC.end}</button>`; }
+    const on=(id,fn)=>{ const x=$c(id); if(x) x.onclick=e=>{ e.stopPropagation(); fn(); }; };
+    on('fcNo', ()=>reject()); on('fcYes', ()=>accept()); on('fcEnd', ()=>hangup()); on('fcEnd2', ()=>hangup());
+    on('fcMic', ()=>toggle('audio','fcMic')); on('fcMic2', ()=>toggle('audio','fcMic2')); on('fcCam', ()=>toggle('video','fcCam'));
+    on('fcFit', ()=>setFill(!V.fill)); on('fcMin', ()=>setMini(true)); on('fcBig', ()=>setMini(false));
+    on('fcSnd', ()=>unmute());
+    if(a && a.stream){ const mic=a.stream.getAudioTracks().some(t=>!t.enabled); ['fcMic','fcMic2'].forEach(id=>{ const x=$c(id); if(x) x.classList.toggle('off', mic); }); const cam=a.stream.getVideoTracks().some(t=>!t.enabled); const x=$c('fcCam'); if(x) x.classList.toggle('off', cam); }
   }
-  function hide(){ const f=$c('fcall'); if(f) f.className=''; ['fcRemote','fcLocal'].forEach(id=>{ const v=$c(id); if(v) v.srcObject=null; }); }
-  function toggle(kind, id){ const a=C.active; if(!a || !a.stream) return; const tr=a.stream.getTracks().filter(t=>t.kind===kind); const off=tr.some(t=>t.enabled); tr.forEach(t=>t.enabled=!off); $c(id).classList.toggle('off', off); }
+  function show(mode, name, sub){
+    ui(); const f=$c('fcall'), a=C.active;
+    const cls=['on', mode]; if(a && a.stream && a.stream.sinCamara) cls.push('nocam'); if(a && a.voz) cls.push('voz'); if(V.fill) cls.push('fill'); if(V.mini && mode!=='inc') cls.push('mini');
+    f.className=cls.join(' ');
+    $c('fcName').textContent=mode==='live'?cap(name):''; $c('fcState').textContent='';
+    $c('fcAv').textContent=(String(name).replace(/^(la|el) /i,'')[0]||'?').toUpperCase();
+    $c('fcMidT').textContent = mode==='inc' ? (C.ring && C.ring.voz ? `Te llama ${name} (solo voz)` : `Te llama ${name}`) : mode==='live' ? cap(name) : `Llamando a ${name}…`; $c('fcMidS').textContent=sub||'';
+    bar(mode); placeLocal(); if(V.mini && mode!=='inc') placeMini(); else { f.style.left=f.style.top=f.style.width=f.style.height=''; }
+    zoomReset(); poke();
+  }
+  function hide(){ const f=$c('fcall'); if(f){ f.className=''; f.style.left=f.style.top=f.style.width=f.style.height=''; } ['fcRemote','fcLocal'].forEach(id=>{ const v=$c(id); if(v){ v.srcObject=null; v.muted=id==='fcLocal'; } }); V.mini=false; clearTimeout(V.hideT); lockScreen(false); }
+  function toggle(kind, id){ const a=C.active; if(!a || !a.stream) return; const tr=a.stream.getTracks().filter(t=>t.kind===kind); const off=tr.some(t=>t.enabled); tr.forEach(t=>t.enabled=!off);
+    (kind==='audio'?['fcMic','fcMic2']:[id]).forEach(x=>{ const el=$c(x); if(el) el.classList.toggle('off', off); }); }
+  function setFill(v){ V.fill=!!v; LSs('fill', V.fill); const f=$c('fcall'); if(f) f.classList.toggle('fill', V.fill); zoomReset(); const a=C.active; if(a) bar(a.state==='live'?'live':'wait'); }
+  // los controles se esconden solos durante la llamada (tocá la pantalla para verlos)
+  function poke(){ const f=$c('fcall'); if(!f) return; f.classList.remove('idle'); clearTimeout(V.hideT);
+    if(C.active && C.active.state==='live' && !C.active.voz) V.hideT=setTimeout(()=>{ if(C.active && C.active.state==='live') f.classList.add('idle'); }, 5000); }
+  // ---- la ventanita
+  function vw(){ return window.innerWidth||1024; } function vh(){ return window.innerHeight||768; }
+  function placeMini(){ const f=$c('fcall'); if(!f) return; let b=V.box;
+    const w0=Math.round(Math.min(Math.max(vw()*0.34, 240), 460));
+    if(!b || !b.w) b={w:w0, h:Math.round(w0*0.62), x:null, y:null};
+    b.w=Math.max(200, Math.min(b.w, vw()-16)); b.h=Math.max(130, Math.min(b.h, vh()-16));
+    if(b.x==null){ b.x=vw()-b.w-20; b.y=vh()-b.h-20; }
+    b.x=Math.max(8, Math.min(b.x, vw()-b.w-8)); b.y=Math.max(8, Math.min(b.y, vh()-b.h-8));
+    V.box=b; Object.assign(f.style, {left:b.x+'px', top:b.y+'px', width:b.w+'px', height:b.h+'px'}); }
+  function setMini(v){ V.mini=!!v; const f=$c('fcall'); if(!f || !f.classList.contains('on')) return; f.classList.toggle('mini', V.mini);
+    if(V.mini) placeMini(); else { f.style.left=f.style.top=f.style.width=f.style.height=''; }
+    zoomReset(); placeLocal(); poke(); C.opts.onMini && C.opts.onMini(V.mini); }
+  // ---- tu cámara: se arrastra y queda en la esquina más cercana; un toque la achica o agranda
+  function placeLocal(){ const l=$c('fcLocal'), f=$c('fcall'); if(!l || !f || f.classList.contains('wait')) { if(l){ l.style.left=l.style.top=''; } return; }
+    const r=l.getBoundingClientRect(), w=r.width||180, h=r.height||240, m=22, bot=130;
+    const x=V.corner[1]==='l'?m:vw()-w-m, y=V.corner[0]==='t'?(m+60):vh()-h-bot; l.style.left=x+'px'; l.style.top=y+'px'; }
+  if(typeof window!=='undefined') window.addEventListener('resize', ()=>{ const f=$c('fcall'); if(!f || !f.classList.contains('on')) return; if(V.mini) placeMini(); placeLocal(); zoomReset(); });
+  // ---- acercar y mover la imagen del otro (dos dedos, la rueda del mouse, doble toque)
+  function zoomApply(){ const v=$c('fcRemote'), f=$c('fcall'); if(!v) return; const W=vw(), H=vh();
+    V.z=Math.max(1, Math.min(4, V.z)); V.tx=Math.min(0, Math.max(W-W*V.z, V.tx)); V.ty=Math.min(0, Math.max(H-H*V.z, V.ty));
+    v.style.transform=V.z>1.01?`translate(${V.tx}px,${V.ty}px) scale(${V.z})`:''; f.classList.toggle('zoomed', V.z>1.01); const zz=$c('fcZoom'); if(zz) zz.textContent='×'+V.z.toFixed(1)+' · doble toque para volver'; }
+  function zoomReset(){ V.z=1; V.tx=0; V.ty=0; zoomApply(); }
+  function zoomAt(cx, cy, nz){ const z0=V.z; nz=Math.max(1, Math.min(4, nz)); V.tx=cx-(cx-V.tx)*nz/z0; V.ty=cy-(cy-V.ty)*nz/z0; V.z=nz; zoomApply(); }
+  function gestures(f){
+    const stage=f.querySelector('#fcStage'), loc=f.querySelector('#fcLocal'), grip=f.querySelector('#fcGrip');
+    let pinch=null, pan=null, win=null, rs=null, ld=null;
+    f.addEventListener('pointerdown', e=>{ poke();
+      if(e.target.closest('button')) return;
+      if(f.classList.contains('mini')){ e.preventDefault();
+        if(e.target===grip){ rs={x:e.clientX, y:e.clientY, b:Object.assign({}, V.box)}; }
+        else win={x:e.clientX, y:e.clientY, bx:V.box.x, by:V.box.y, moved:false};
+        try{ f.setPointerCapture(e.pointerId); }catch(er){} return; }
+      if(e.target===loc && !f.classList.contains('wait')){ const r=loc.getBoundingClientRect(); ld={dx:e.clientX-r.left, dy:e.clientY-r.top, x:e.clientX, y:e.clientY, moved:false}; loc.classList.add('drag'); try{ loc.setPointerCapture(e.pointerId); }catch(er){} e.preventDefault(); return; }
+      if(!stage.contains(e.target) || !f.classList.contains('live') || (C.active && C.active.voz)) return;
+      V.pts.set(e.pointerId, {x:e.clientX, y:e.clientY}); try{ stage.setPointerCapture(e.pointerId); }catch(er){}
+      if(V.pts.size===2){ const [p1,p2]=[...V.pts.values()]; pinch={d:Math.hypot(p1.x-p2.x, p1.y-p2.y)||1, z:V.z}; pan=null; }
+      else if(V.pts.size===1){ pan={x:e.clientX, y:e.clientY, tx:V.tx, ty:V.ty, moved:false}; }
+    });
+    f.addEventListener('pointermove', e=>{
+      if(win){ const dx=e.clientX-win.x, dy=e.clientY-win.y; if(Math.abs(dx)+Math.abs(dy)>6) win.moved=true; V.box.x=win.bx+dx; V.box.y=win.by+dy; placeMini(); return; }
+      if(rs){ const dx=e.clientX-rs.x, dy=e.clientY-rs.y; const w=Math.max(200, rs.b.w-dx), h=Math.max(130, rs.b.h-dy); V.box={w, h, x:rs.b.x+(rs.b.w-w), y:rs.b.y+(rs.b.h-h)}; placeMini(); return; }
+      if(ld){ if(Math.abs(e.clientX-ld.x)+Math.abs(e.clientY-ld.y)>6) ld.moved=true; if(ld.moved){ loc.style.left=(e.clientX-ld.dx)+'px'; loc.style.top=(e.clientY-ld.dy)+'px'; } return; }
+      if(!V.pts.has(e.pointerId)) return; V.pts.set(e.pointerId, {x:e.clientX, y:e.clientY});
+      if(pinch && V.pts.size>=2){ const [p1,p2]=[...V.pts.values()]; const d=Math.hypot(p1.x-p2.x, p1.y-p2.y); zoomAt((p1.x+p2.x)/2, (p1.y+p2.y)/2, pinch.z*d/pinch.d); }
+      else if(pan){ const dx=e.clientX-pan.x, dy=e.clientY-pan.y; if(Math.abs(dx)+Math.abs(dy)>8) pan.moved=true; if(V.z>1.01){ V.tx=pan.tx+dx; V.ty=pan.ty+dy; zoomApply(); } }
+    });
+    const up=e=>{
+      if(win){ const w=win; win=null; LSs('box', V.box); if(!w.moved && !e.target.closest('button')) setMini(false); return; }
+      if(rs){ rs=null; LSs('box', V.box); return; }
+      if(ld){ const l=ld; ld=null; loc.classList.remove('drag');
+        if(!l.moved){ loc.classList.toggle('tiny'); placeLocal(); return; }
+        const r=loc.getBoundingClientRect(), cx=r.left+r.width/2, cy=r.top+r.height/2; V.corner=(cy<vh()/2?'t':'b')+(cx<vw()/2?'l':'r'); LSs('corner', V.corner); placeLocal(); return; }
+      if(!V.pts.has(e.pointerId)) return; V.pts.delete(e.pointerId);
+      if(V.pts.size<2) pinch=null;
+      if(V.pts.size===0){ const tap=pan && !pan.moved; pan=null;
+        if(tap){ const now=Date.now(); if(now-V.lastTap<330){ V.lastTap=0; if(V.z>1.01) zoomReset(); else setFill(!V.fill); } else V.lastTap=now; } }
+      else if(V.pts.size===1){ const [p]=[...V.pts.values()]; pan={x:p.x, y:p.y, tx:V.tx, ty:V.ty, moved:true}; }
+    };
+    f.addEventListener('pointerup', up); f.addEventListener('pointercancel', up);
+    stage.addEventListener('wheel', e=>{ if(!f.classList.contains('live') || f.classList.contains('mini')) return; e.preventDefault(); zoomAt(e.clientX, e.clientY, V.z*(e.deltaY<0?1.15:1/1.15)); }, {passive:false});
+    document.addEventListener('keydown', e=>{ if(!f.classList.contains('on') || f.classList.contains('inc')) return; if(e.key==='Escape' && !V.mini){ setMini(true); } });
+  }
+  // ---- el sonido del otro: si el aparato no deja reproducir solo, aparece "Tocá para escuchar"
+  function playRemote(){ const v=$c('fcRemote'), f=$c('fcall'); if(!v || !v.srcObject) return; v.muted=false;
+    const p=v.play && v.play(); if(p && p.catch) p.catch(()=>{ v.muted=true; v.play().catch(()=>{}); f && f.classList.add('mute'); }); }
+  function unmute(){ const v=$c('fcRemote'), f=$c('fcall'); if(!v) return; v.muted=false; v.play && v.play().then(()=>f && f.classList.remove('mute')).catch(()=>{}); }
+  // la pantalla no se apaga durante la llamada
+  let wl=null; async function lockScreen(on){ try{ if(on && !wl && navigator.wakeLock){ wl=await navigator.wakeLock.request('screen'); } else if(!on && wl){ await wl.release(); wl=null; } }catch(e){ wl=null; } }
   // ---- el timbre
   let ringAC=null, ringT=null;
   function ringStart(incoming){
@@ -1615,10 +1770,13 @@ const Call=(()=>{
     const beep=()=>{ if(!ringAC) return; const t=ringAC.currentTime; (incoming?[[784,0],[988,.18],[784,.6],[988,.78]]:[[440,0],[440,.45]]).forEach(([f,d])=>{ const o=ringAC.createOscillator(), g=ringAC.createGain(); o.type='sine'; o.frequency.value=f; o.connect(g); g.connect(ringAC.destination); g.gain.setValueAtTime(0,t+d); g.gain.linearRampToValueAtTime(incoming?.28:.1,t+d+.03); g.gain.exponentialRampToValueAtTime(.001,t+d+.35); o.start(t+d); o.stop(t+d+.4); }); };
     beep(); ringT=setInterval(beep, incoming?2400:3200);
   }
+  // un "tic" suave por segundo mientras cuenta para atender sola (así se oye cuando decís «no»)
+  function tick(){ try{ const ac=ringAC || (ringAC=new (window.AudioContext||window.webkitAudioContext)()); const t=ac.currentTime, o=ac.createOscillator(), g=ac.createGain(); o.frequency.value=660; o.connect(g); g.connect(ac.destination); g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.07,t+.02); g.gain.exponentialRampToValueAtTime(.001,t+.18); o.start(t); o.stop(t+.2); }catch(e){} }
   function ringStop(){ clearInterval(ringT); ringT=null; try{ ringAC && ringAC.close(); }catch(e){} ringAC=null; }
   // ---- la conexión
   // con cámara si hay; si el aparato no tiene cámara (muchas compus), igual habla y ve al otro
-  async function media(){ const au={echoCancellation:true, noiseSuppression:true, autoGainControl:true};
+  async function media(voz){ const au={echoCancellation:true, noiseSuppression:true, autoGainControl:true};
+    if(voz){ const s=await navigator.mediaDevices.getUserMedia({audio:au}); s.sinCamara=true; return s; }
     try{ return await navigator.mediaDevices.getUserMedia({audio:au, video:{facingMode:'user', width:{ideal:1280}, height:{ideal:720}}}); }
     catch(e){ if(/NotAllowed|Security/.test(e.name)) throw e; const s=await navigator.mediaDevices.getUserMedia({audio:au}); s.sinCamara=true; return s; } }
   async function iceList(extra){ let mine=null; try{ mine=C.opts.ice ? await C.opts.ice() : null; }catch(e){} return [...STUN, ...(mine||[]), ...(extra||[])]; }
@@ -1626,34 +1784,37 @@ const Call=(()=>{
   async function makePC(a){
     const pc=new RTCPeerConnection({iceServers:a.ice}); a.pc=pc;
     a.stream.getTracks().forEach(t=>pc.addTrack(t, a.stream));
-    pc.ontrack=e=>{ const v=$c('fcRemote'); if(v.srcObject!==e.streams[0]){ v.srcObject=e.streams[0]; v.play && v.play().catch(()=>{}); } };
+    pc.ontrack=e=>{ const v=$c('fcRemote'); if(v.srcObject!==e.streams[0]){ v.srcObject=e.streams[0]; playRemote(); } };
     pc.onconnectionstatechange=()=>{ const s=pc.connectionState;
-      if(s==='connected' && a.state!=='live'){ a.state='live'; clearTimeout(a.giveUp); ringStop(); show('live', a.name); $c('fcLocal').srcObject=a.stream; a.t0=Date.now(); a.clock=setInterval(()=>{ const s2=Math.floor((Date.now()-a.t0)/1000); $c('fcState').textContent=`${Math.floor(s2/60)}:${String(s2%60).padStart(2,'0')}`; }, 1000); C.opts.onLive && C.opts.onLive(a.name); }
+      if(s==='connected' && a.state!=='live'){ a.state='live'; clearTimeout(a.giveUp); ringStop(); show('live', a.name, a.voz?'Llamada de voz':''); $c('fcLocal').srcObject=a.stream; playRemote(); a.t0=Date.now();
+        // si del otro lado no hay cámara, se ve su inicial en vez de una pantalla negra
+        setTimeout(()=>{ const rv=$c('fcRemote'), rs=rv && rv.srcObject; if(C.active===a && rs && !rs.getVideoTracks().length) $c('fcall').classList.add('voz'); }, 2500);
+        a.clock=setInterval(()=>{ const s2=Math.floor((Date.now()-a.t0)/1000), tt=`${Math.floor(s2/60)}:${String(s2%60).padStart(2,'0')}`; $c('fcState').textContent=tt; if($c('fcall').classList.contains('voz')) $c('fcMidS').textContent=(a.voz?'Llamada de voz · ':'')+tt; }, 1000); C.opts.onLive && C.opts.onLive(a.name); }
       else if(s==='failed') end('No se pudo conectar el video (la red no dejó). Probá de nuevo.', true);
       else if(s==='disconnected'){ clearTimeout(a.dropT); a.dropT=setTimeout(()=>{ if(pc.connectionState==='disconnected') end('Se cortó la llamada.', true); }, 8000); } };
     return pc;
   }
-  async function start(peer){
+  async function start(peer, op){ op=op||{};
     if(C.active || C.ring) return 'Ya hay una llamada.';
     if(!peer) return 'No encuentro ese aparato en la familia.';
     if(!FSync.on || !FSync.on()) return 'Este aparato no está unido a la familia todavía.';
-    const a=C.active={id:rid(), peer:peer.dev, name:peer.name, role:'caller', state:'calling'};
-    C.opts.onStart && C.opts.onStart();
-    show('wait', peer.name, 'Esperando que atiendan'); ringStart(false);
-    try{ a.stream=await media(); if(C.active!==a){ a.stream.getTracks().forEach(t=>t.stop()); return ''; } $c('fcLocal').srcObject=a.stream; }
+    const a=C.active={id:rid(), peer:peer.dev, name:peer.name, role:'caller', state:'calling', voz:!!op.voz};
+    C.opts.onStart && C.opts.onStart(); lockScreen(true);
+    show('wait', peer.name, a.voz?'Llamada de voz · esperando que atiendan':'Esperando que atiendan'); ringStart(false);
+    try{ a.stream=await media(a.voz); if(C.active!==a){ a.stream.getTracks().forEach(t=>t.stop()); return ''; } $c('fcLocal').srcObject=a.stream; }
     catch(e){ end('No pude usar la cámara o el micrófono: '+(e.message||e.name)); return 'No pude usar la cámara.'; }
     a.ice=await iceList();
-    await send(a.peer, {t:'ring', id:a.id, ts:Date.now(), ice:a.ice.filter(s=>s.username), q:(C.opts.who&&C.opts.who())||''});
+    await send(a.peer, Object.assign({t:'ring', id:a.id, ts:Date.now(), ice:a.ice.filter(s=>s.username), q:(C.opts.who&&C.opts.who())||''}, a.voz?{vo:1}:{}));
     a.giveUp=setTimeout(()=>{ if(C.active===a && a.state!=='live'){ send(a.peer,{t:'cancel', id:a.id}); end(`${cap(peer.name)} no atendió.`); } }, 45000);
     return '';
   }
   const cap=s=>String(s).charAt(0).toUpperCase()+String(s).slice(1);
   async function accept(){
     const r=C.ring; if(!r) return; C.ring=null; clearTimeout(r.to); clearInterval(C.autoT); ringStop();
-    const a=C.active={id:r.id, peer:r.from, name:r.name, role:'callee', state:'connecting'};
-    C.opts.onStart && C.opts.onStart();
+    const a=C.active={id:r.id, peer:r.from, name:r.name, role:'callee', state:'connecting', voz:!!r.voz};
+    C.opts.onStart && C.opts.onStart(); lockScreen(true);
     show('wait', r.name, 'Conectando…'); $c('fcMidT').textContent=`Conectando con ${r.name}…`;
-    try{ a.stream=await media(); $c('fcLocal').srcObject=a.stream; }
+    try{ a.stream=await media(a.voz); $c('fcLocal').srcObject=a.stream; }
     catch(e){ send(a.peer,{t:'no', id:a.id}); end('No pude usar la cámara o el micrófono: '+(e.message||e.name)); return; }
     a.ice=await iceList(r.ice); await makePC(a);
     await send(a.peer, {t:'acc', id:a.id, ice:a.ice.filter(s=>s.username)});
@@ -1678,16 +1839,18 @@ const Call=(()=>{
       if(viejo>60000) return;
       if(a || C.ring){ send(o.f,{t:'busy', id:o.id}); return; }
       const name=label(o.f, o.n), quien=String(o.q||'').trim(), dice=quien?`${quien} (desde ${name})`:name;
-      C.ring={id:o.id, from:o.f, name, ice:o.ice||[]};
-      show('inc', dice, 'Videollamada'); ringStart(true);
+      C.ring={id:o.id, from:o.f, name, ice:o.ice||[], voz:!!o.vo};
+      show('inc', dice, o.vo?'Llamada de voz':'Videollamada'); ringStart(true); lockScreen(true);
       C.ring.to=setTimeout(()=>{ if(C.ring && C.ring.id===o.id){ C.ring=null; ringStop(); hide(); C.last={dev:o.f, name}; C.opts.onMissed && C.opts.onMissed(dice, o.f); } }, 45000);
       C.opts.onRing && C.opts.onRing(dice);
       if(C.opts.autoAnswer && C.opts.autoAnswer()){
         // atiende sola, pero antes avisa en voz alta y cuenta: se puede decir «no» o tocar «No ahora»
-        let k=Math.max(3, +(C.opts.autoSecs&&C.opts.autoSecs())||5); const id=o.id;
+        let k=Math.max(3, +(C.opts.autoSecs&&C.opts.autoSecs())||10); const id=o.id;
         const paint=()=>{ const el=$c('fcMidS'); if(el) el.textContent=`Atiendo sola en ${k}… (decí «no» o tocá «No ahora»)`; };
+        // el timbre suena una vez y después solo un tic suave: FRIDAY avisa en voz alta y te tiene que poder oír
+        setTimeout(()=>{ if(C.ring && C.ring.id===id){ clearInterval(ringT); ringT=null; } }, 1500);
         paint(); C.opts.onAutoAnswer && C.opts.onAutoAnswer(dice, k);
-        clearInterval(C.autoT); C.autoT=setInterval(()=>{ if(!C.ring || C.ring.id!==id){ clearInterval(C.autoT); return; } k--; if(k<=0){ clearInterval(C.autoT); accept(); } else paint(); }, 1000);
+        clearInterval(C.autoT); C.autoT=setInterval(()=>{ if(!C.ring || C.ring.id!==id){ clearInterval(C.autoT); return; } k--; if(k<=0){ clearInterval(C.autoT); accept(); } else { paint(); if(k<=5) tick(); } }, 1000);
       }
       return;
     }
@@ -1719,17 +1882,19 @@ const Call=(()=>{
       const l=C.last; const p=l && peers().find(x=>x.dev===l.dev);
       if(!p){ C.opts.say && C.opts.say('No tengo ninguna llamada para devolver.'); return true; }
       start(p).then(err=>{ if(err && C.opts.say) C.opts.say(err); }); return true; }
-    const m=n.match(/\b(?:llama|llamame|llamar|hace(?:me)? una videollamada|videollamada|comunicame|conectame)\w* (?:a|con) (.+)$/);
+    const m=n.replace(/\b(una )?llamada de voz\b/g,'llamada').replace(/\b(por voz|solo voz|sin video|sin camara)\b/g,' ').replace(/\s+/g,' ').trim().match(/\b(?:llama|llamame|llamar|hace(?:me)? una videollamada|hace(?:me)? una llamada|videollamada|comunicame|conectame)\w* (?:a|al|con) (.+)$/);
     if(m && /compu|computadora|\bpc\b|tablet|living|celu|celular|telefono/.test(m[1]) || (m && findPeer(m[1]))){
       const p=findPeer(m[1]);
       if(!p){ C.opts.say && C.opts.say('No encuentro ese aparato en la familia. Primero hay que unirlo desde Ajustes.'); return true; }
-      start(p).then(err=>{ if(err && C.opts.say) C.opts.say(err); });
+      start(p, {voz:/\b(de voz|por voz|solo voz|sin (video|camara))\b/.test(n)}).then(err=>{ if(err && C.opts.say) C.opts.say(err); });
       return true;
     }
+    if(C.active && /^(achica(la)?|minimiza(la)?|hace(la)? chiquita)( la (llamada|pantalla|ventana))?$/.test(n)){ setMini(true); return true; }
+    if(C.active && /^(agranda(la)?|maximiza(la)?|pantalla completa)( la (llamada|pantalla|ventana))?$/.test(n)){ setMini(false); return true; }
     return false;
   }
   function init(o){ C.opts=o||{}; setInterval(()=>{ const t=Date.now()-120000; for(const k in C.seen) if(C.seen[k]<t) delete C.seen[k]; }, 60000); }
-  return { init, onMsg, start, accept, reject, hangup, fromText, peers, findPeer, kindOf, label, get last(){ return C.last||null; }, get active(){ return !!C.active; }, get ringing(){ return !!C.ring; }, _C:C };
+  return { init, onMsg, start, accept, reject, hangup, fromText, peers, findPeer, kindOf, label, setMini, setFill, get mini(){ return V.mini; }, get last(){ return C.last||null; }, get active(){ return !!C.active; }, get ringing(){ return !!C.ring; }, _C:C };
 })();
 // ================================================================ FRIDAY LLAMADAS (fin)
 
@@ -1822,7 +1987,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='3.6';
+const VERSION='3.7';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3276,13 +3441,13 @@ function setsRender(){
     ['Google', googleOn() ? (gapp.err?['warn',gapp.err.slice(0,40)]:['ok','Agenda']) : ['','Sin conectar']],
     ['Spotify', spOn() ? ['ok','Conectado'] : ['','Sin conectar']],
     ['La tele', S.tv && S.tv.screenId ? ['ok', S.tv.name||'Vinculada'] : ['','Sin vincular']],
-    ['La compu', pcT && Date.now()-pcT<10*60000 ? ['ok','En línea'] : sharePeers().pc ? ['','Apagada'] : ['warn','Sin compartir']],
+    ['La compu', pcT && Date.now()-pcT<25*60000 ? ['ok','En línea'+(FSync.st.peers[peer].vr?' · '+FSync.st.peers[peer].vr:'')] : sharePeers().pc ? ['','Apagada o con FRIDAY cerrada'] : ['warn','No la encuentro: mirá «Aparatos de la familia»']],
     ['El celu', sharePeers().cel.length ? ['ok', sharePeers().cel.length>1?sharePeers().cel.length+' celus':'Compartiendo'] : ['','Sin compartir']]];
   const sp=sharePeers(), con=[sp.pc?'la compu':'', sp.cel.length?'el celu':''].filter(Boolean);
   $('shareNote').className='note'+(con.length?'':' warn');
   $('shareNote').textContent = con.length ? `Comparte la agenda, las compras, los recordatorios, las rutinas y las notas con ${con.join(' y ')}.` : 'La tablet todavía no comparte nada con la compu ni con el celu. Tocá «Compartir con la compu y el celu».';
   $('conns').innerHTML=C.map(([k,[c,t]])=>`<li><i class="${c}"></i><span>${k}</span><small>${esc(t)}</small></li>`).join('');
-  $('setVer').textContent='FRIDAY Casa '+VERSION; famRender(); quienRender();
+  $('setVer').textContent='FRIDAY Casa '+VERSION; famRender(); quienRender(); devRender();
 }
 // el medidor del micrófono (mientras están abiertos los ajustes)
 function micMeter(){
@@ -3296,6 +3461,34 @@ function micMeter(){
 }
 function famRender(){ const f=FAM(); $('famApe').value=f.apellido||''; $('famList').innerHTML=f.miembros.map((m,i)=>`<span class="chip">${esc(m)}<button type="button" data-fdel="${i}" aria-label="Sacar">×</button></span>`).join('') || '<small>Todavía no hay nadie: agregá a cada uno.</small>'; }
 function famSave(f){ S.familia=f; saveS(); famRender(); quienRender(); render(); try{ FSync.put && FSync.put('c:familia', f); }catch(e){} }
+// ---------------------------------------------------------------- los aparatos de la familia: quién es quién y si responden
+const devSt={};   // dev → {ms, at} si respondió, {fail:true, at} si no
+function cuandoVisto(t){ const m=Math.round((Date.now()-t)/60000); if(m<2) return 'recién'; if(m<60) return `hace ${m} min`; const h=Math.round(m/60); if(h<24) return `hace ${h} h`; const d=Math.round(h/24); return d===1?'ayer':`hace ${d} días`; }
+function devList(){ return Object.entries((FSync.st&&FSync.st.peers)||{}).filter(([d])=>d!==FSync.cfg?.dev && FSync.kindOf(d)!=='cfg').map(([d,p])=>({dev:d, p, k:FSync.kindOf(d)})).sort((a,b)=>b.p.t-a.p.t); }
+function devRender(){
+  const el=$('devList'); if(!el) return;
+  if(!FSync.on()){ el.innerHTML='<p class="note warn">La tablet todavía no está unida a nada: tocá «Compartir con la compu y el celu» (más abajo).</p>'; $('devPing').hidden=true; return; }
+  $('devPing').hidden=false;
+  const L=devList();
+  el.innerHTML = L.length ? L.map(({dev,p,k})=>{ const st=devSt[dev], nom=k ? Call.label(dev, p.n) : (p.n||'Un aparato')+' (sin identificar: tocá qué es)';
+    const vieja = k==='pc' && !p.vr ? ' · versión vieja: actualizá friday.html' : '';
+    const est = st ? (st.wait?'<small>Probando…</small>':st.fail?`<small class="bad">No respondió: ${k==='pc'?'¿FRIDAY está abierta en la compu?':k==='celu'?'el celu solo responde con FRIDAY abierta':'está apagado o sin internet'}</small>`:`<small class="ok">Respondió en ${(st.ms/1000).toFixed(1).replace('.',',')} s${st.vr?' · '+esc(st.vr):''}</small>`) : '';
+    return `<div class="devrow"><div class="who"><b>${esc(nom.charAt(0).toUpperCase()+nom.slice(1))}</b><small>${esc(p.n||'sin nombre')} · visto ${cuandoVisto(p.t)}${p.vr?' · '+esc(p.vr):''}${vieja}</small>${est}</div>
+      <div class="seg">${[['pc','Compu'],['tablet','Tablet'],['celu','Celu']].map(([v,t])=>`<button type="button" data-dkind="${v}" data-dev="${esc(dev)}" aria-pressed="${k===v}">${t}</button>`).join('')}</div>
+      <button class="ghost" type="button" data-dping="${esc(dev)}">Probar</button><button class="ghost" type="button" data-dforget="${esc(dev)}">Olvidar</button></div>`; }).join('')
+    : '<p class="note warn">Todavía no apareció ningún aparato. En la compu: Ajustes → Celular → poné el código que da «Compartir con la compu y el celu».</p>';
+  const pc=L.find(x=>x.k==='pc');
+  $('devNote').textContent = !L.length ? '' : pc ? (pc.p.vr ? '' : 'La compu tiene una versión vieja de FRIDAY: no avisa qué es ni responde a «Probar». Actualizá friday.html con el último zip.')
+    : 'Ninguno figura como la compu. Si la compu está en la lista como otro aparato, tocá «Compu» en esa fila; si no está, unila desde la compu (Ajustes → Celular → código).';
+}
+async function devPingOne(d){ devSt[d]={wait:true}; devRender(); const r=await FSync.ping(d, 9000); const g=r[d]; devSt[d]=g?{ms:g.ms, vr:g.vr, at:Date.now()}:{fail:true, at:Date.now()}; devRender(); return !!g; }
+async function devPingAll(){ const L=devList(); L.forEach(x=>devSt[x.dev]={wait:true}); devRender(); $('devNote').textContent='Preguntando quién está…';
+  const r=await FSync.ping('', 8000); L.forEach(x=>{ const g=r[x.dev]; devSt[x.dev]=g?{ms:g.ms, vr:g.vr, at:Date.now()}:{fail:true, at:Date.now()}; });
+  for(const d of Object.keys(r)) if(!devSt[d]) devSt[d]={ms:r[d].ms, vr:r[d].vr, at:Date.now()};
+  devRender(); const n=Object.keys(r).length; if(!$('devNote').textContent) $('devNote').textContent = n ? `Respondieron ${n===1?'1 aparato':n+' aparatos'}.` : 'Nadie respondió. Fijate que FRIDAY esté abierta en la compu y que haya internet.'; }
+// para atender sola hace falta el permiso de cámara y micrófono "siempre": se pide ahora, con alguien adelante
+async function camPermPrep(){ try{ const s=await navigator.mediaDevices.getUserMedia({audio:true, video:true}); s.getTracks().forEach(t=>t.stop()); toast('Listo: la tablet puede atender sola. Si Chrome pregunta, elegí «Permitir siempre».', 6000); }
+  catch(e){ toast('Para atender sola, la tablet necesita permiso de cámara y micrófono: tocá el candado de arriba en Chrome → Permisos → Permitir.', 9000); } }
 function setsInit(){
   setsApply();
   $('famApe').addEventListener('change', ()=>{ const f=FAM(); f.apellido=$('famApe').value.trim().replace(/^familia\s+/i,''); famSave(f); });
@@ -3305,6 +3498,9 @@ function setsInit(){
   $('gear').onclick=()=>setsShow(true); $('setX').onclick=()=>setsShow(false); $('setBg').onclick=()=>setsShow(false);
   $('sets').addEventListener('click', e=>{
     const b=e.target.closest('.seg button');
+    const dk=e.target.closest('[data-dkind]');
+    if(dk){ FSync.setKind(dk.dataset.dev, dk.dataset.dkind); devRender(); setsRender(); toast('Listo: ahora '+Call.label(dk.dataset.dev, (FSync.st.peers[dk.dataset.dev]||{}).n)+' figura así.'); return; }
+    if(b && b.parentElement.dataset.k==='autoAns' && b.dataset.v==='si') camPermPrep();
     if(b){ const k=b.parentElement.dataset.k, v=b.dataset.v; S[k]=/^(patience|ambMin|miraMin)$/.test(k)?+v:v; saveS();
       if(k==='voz' || k==='vozVel'){ tts.cache.clear(); tts.failUntil=0; }
       if(k==='vozFuerte'){ voiceBoostSet(v==='si'); setTimeout(()=>say(v==='si'?'Así sueno más fuerte. ¿Se escucha mejor?':'Volví a la voz normal.', 'happy'), 200); }
@@ -3321,6 +3517,9 @@ function setsInit(){
     else if(e.target.id==='setLink'){ setsShow(false); setupShow(true, 'link'); }
     else if(e.target.id==='setReload') location.reload();
     else if(e.target.id==='setChq') chequeoTablet();
+    else if(e.target.id==='devPing') devPingAll();
+    else if(e.target.closest('[data-dping]')) devPingOne(e.target.closest('[data-dping]').dataset.dping);
+    else if(e.target.closest('[data-dforget]')){ const d=e.target.closest('[data-dforget]').dataset.dforget; FSync.forget(d); delete devSt[d]; devRender(); toast('Listo: si ese aparato vuelve a usarse, aparece solo de nuevo.'); }
   });
   // el teclado del código de la tele (en la tablet no hace falta el teclado del sistema)
   $('padK').innerHTML=[1,2,3,4,5,6,7,8,9].map(n=>`<button type="button" data-n="${n}">${n}</button>`).join('')+`<button type="button" class="fn" data-n="del">Borrar</button><button type="button" data-n="0">0</button><button type="button" class="fn" data-n="clr">Limpiar</button>`;
@@ -3590,7 +3789,7 @@ function renderMusCtl(){
 // ---------------------------------------------------------------- llamar
 function renderLlamar(){
   const ps=Call.peers();
-  const html=`<h3>¿A quién llamamos?</h3><p class="lbl">También podés decir «Friday, llamá a la compu».</p>`+(ps.length?`<div class="people">${ps.map(p=>`<button class="person" type="button" data-call="${esc(p.dev)}"><span class="av">${esc((p.name.replace(/^(la|el) /i,'')[0]||'?').toUpperCase())}</span><span><b>${esc(p.name)}</b><br><small>${Date.now()-p.t<5*60000?'En línea':'Visto '+(p.t?hhmm(new Date(p.t)):'hace rato')}</small></span><span class="go">${OSI.llamar} Videollamada</span></button>`).join('')}</div>`:`<p class="empty">Todavía no hay otros aparatos unidos. Andá a Ajustes → «Compartir con la compu y el celu».</p>`);
+  const html=`<h3>¿A quién llamamos?</h3><p class="lbl">También podés decir «Friday, llamá a la compu» (o «llamá a la compu por voz», sin cámara).</p>`+(ps.length?`<div class="people">${ps.map(p=>{ const on=Date.now()-p.t<25*60000; return `<div class="person"><span class="av">${esc((p.name.replace(/^(la|el) /i,'')[0]||'?').toUpperCase())}</span><span><b>${esc(p.name)}</b><br><small class="${on?'on':''}">${on?'En línea':'Visto '+(p.t?cuandoVisto(p.t):'hace rato')}</small></span><div class="pact"><button type="button" data-call="${esc(p.dev)}">${OSI.llamar} Videollamada</button><button type="button" class="v2" data-callv="${esc(p.dev)}">Solo voz</button></div></div>`; }).join('')}</div>`:`<p class="empty">Todavía no hay otros aparatos unidos. Andá a Ajustes → «Compartir con la compu y el celu».</p>`);
   const el=$('pLlamar'); if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
 }
 // ---------------------------------------------------------------- intercom: un mensaje que se dice en voz alta en otro aparato
@@ -3845,7 +4044,7 @@ document.addEventListener('click', e=>{
   const fm=t.closest('[data-fm]'); if(fm){ const f=fichas.find(x=>x.id===($('flash')||{}).dataset?.f); if(f){ fichaMarca(f, fm.dataset.fm==='bien'); faceSet(fm.dataset.fm==='bien'?'happy':'thinking', 1200); renderEst(); renderApps(); } return; }
   const cq=t.closest('[data-camq]'); if(cq){ camAsk(cq.dataset.camq); return; }
   if(t.closest('[data-cam="mira"]')){ S.mira=Mira.on?'no':'si'; saveS(); miraApply(); renderCam(); return; }
-  const pc=t.closest('.person[data-call]'); if(pc){ const p=Call.peers().find(x=>x.dev===pc.dataset.call); if(p) Call.start(p).then(err=>{ if(err) say(err,'worried'); }); return; }
+  const pc=t.closest('.person [data-call], .person [data-callv]'); if(pc){ const dv=pc.dataset.call||pc.dataset.callv, p=Call.peers().find(x=>x.dev===dv); if(p) Call.start(p, {voz:!!pc.dataset.callv}).then(err=>{ if(err) say(err,'worried'); }); return; }
   if(t.closest('#shopAdd')){ const v=$('shopIn').value.trim(); if(v){ shopAdd(v.split(/,|;/).map(s=>s.trim()).filter(Boolean)); $('shopIn').value=''; } return; }
   if(t.closest('#dock')){ escuchaYa(); return; }
   if(t.closest('#talk') && !t.closest('#face')){ os.talkHide=true; talkSync(); return; }
@@ -4258,7 +4457,12 @@ async function chequeoTablet(){
   await prueba('Cámara', async()=>{ const v=await camVideo(); return {st:v&&v.videoWidth?'ok':'bad', t:v&&v.videoWidth?`${v.videoWidth}x${v.videoHeight}`:'no dio imagen'}; }, 12000);
   await prueba('Reconocer caras (librería)', async()=>{ const t0=performance.now(); await caraApi(); const ds=await carasAhora(); const ns=ds.map(caraMatch).filter(Boolean); return {st:'ok', t:`cargó en ${((performance.now()-t0)/1000).toFixed(1)} s; ve ${ds.length} cara(s)${ns.length?' y reconoce a '+listaY(ns):''}; caras enseñadas: ${conCara().join(', ')||'ninguna'}`}; }, 60000);
   await prueba('Voces enseñadas', async()=>({st:conVoz().length?'ok':'warn', t:conVoz().length?conVoz().join(', '):'ninguna todavía (Ajustes → Quién es quién)'}));
-  await prueba('La compu', async()=>{ const p=sharePeers().pc; if(!p) return {st:'warn', t:'no está unida: en la tablet, Ajustes → Conexiones → «Compartir con la compu y el celu»; en la compu, Ajustes → Celular → «¿Tenés la tablet de FRIDAY mostrando un código?»'}; const min=Math.round((Date.now()-p.t)/60000); return {st:min<10?'ok':'warn', t:min<10?`en línea (hace ${min} min)`:`la última vez hace ${min} min`}; });
+  await prueba('La compu', async()=>{ const p=sharePeers().pc; if(!p){ const otros=devList().filter(x=>!x.k).length; return {st:'warn', t:'no está unida'+(otros?` (hay ${otros} aparato(s) sin identificar: en Ajustes → Aparatos de la familia tocá «Compu» en el que corresponda)`:': en la tablet, Ajustes → Conexiones → «Compartir con la compu y el celu»; en la compu, Ajustes → Celular → poné el código')}; }
+    const d=pcDev(), r=await FSync.ping(d, 9000), g=r[d]; if(g) return {st:g.vr?'ok':'warn', t:`responde en ${(g.ms/1000).toFixed(1)} s`+(g.vr?' · '+g.vr:' · versión vieja de FRIDAY en la compu: actualizá friday.html')};
+    const pp=FSync.st.peers[d]||{}; if(!pp.vr) return {st:'warn', t:`unida (visto ${cuandoVisto(p.t)}), pero con una versión vieja que no responde: actualizá friday.html en la compu`}; return {st:'bad', t:`unida, pero no responde ahora (visto ${cuandoVisto(p.t)}): ¿FRIDAY está abierta en la compu?`}; }, 12000);
+  await prueba('Atender sola las llamadas', async()=>{ let cam='', mic=''; try{ cam=(await navigator.permissions.query({name:'camera'})).state; mic=(await navigator.permissions.query({name:'microphone'})).state; }catch(e){}
+    const ok=cam==='granted' && mic==='granted'; if(S.autoAns!=='si') return {st:'ok', t:'apagado (hay que atender tocando o diciendo «atendé»)'+(ok?'':'; ojo: Chrome todavía no tiene permiso fijo de cámara')};
+    return {st:ok||!cam?'ok':'warn', t:ok||!cam?'prendido: avisa y atiende a los 10 segundos':`prendido, pero Chrome no tiene permiso fijo de cámara/micrófono (${cam||'?'}/${mic||'?'}): en Ajustes → Videollamadas tocá otra vez «Atiende sola» y elegí «Permitir siempre»`}; });
   await prueba('Mercado Libre (por la compu)', async()=>{ const r=await mlBuscar('yerba mate'); return {st:r.ok?'ok':'bad', t:r.ok?`${r.items.length} publicaciones; la primera a ${fmtP(r.items[0].price)||'sin precio'}`:r.txt}; }, 30000);
   await prueba('Sincronización', async()=>({st:FSync.on()?'ok':'warn', t:FSync.on()?`comparte con ${Object.keys(FSync.st.peers||{}).filter(x=>!/^cfg/.test(x) && x!==DEV).length} aparato(s)`:'no está compartiendo'}));
   await prueba('Pantalla completa y siempre prendida', async()=>({st:document.fullscreenElement||matchMedia('(display-mode: fullscreen)').matches?'ok':'warn', t:`${document.fullscreenElement||matchMedia('(display-mode: fullscreen)').matches?'pantalla completa':'no está en pantalla completa (instalala desde Chrome)'}; no apagarse: ${'wakeLock' in navigator?'sí':'no disponible'}`}));
@@ -4278,17 +4482,19 @@ async function boot(){
   try{ history.pushState({f:1},''); addEventListener('popstate', ()=>{ history.pushState({f:1},''); if(setsOpen()) setsShow(false); else if(!$('mapa').hidden) mapaOff(); else if(amb.on) ambOff(); else if(os.cur) osClose(); }); }catch(e){}
   faceBuild($('face')); faceSet('idle'); budInit(); faceBlink(); applyLight(); render();
   try{ if(navigator.serviceWorker && window.isSecureContext) navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kind:'tablet', kinds:['m','r','l','b','o','u','f','y','w','z'], pollMs:60000, live:true,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:DEV, name:'Tablet de la casa', kind:'tablet', ver:'Casa '+VERSION, kinds:['m','r','l','b','o','u','f','y','w','z'], pollMs:60000, live:true,
     local:syncLocal, apply:syncApply, onMsg, onStatus:renderStatus });
   if(setupCheck()) $('tap').hidden=false;
   getWeather(); casaLoad(); agendaLoad(); wkPing(); setsInit();
   Call.init({
     say:t=>say(t,'worried'),
     ice:async()=>{ if(!workerOn() || (S.workerV||0)<4) return null; const r=await wk('/turn'); return r.ok ? r.iceServers : null; },
-    autoAnswer:()=>S.autoAns==='si', autoSecs:()=>7,
+    autoAnswer:()=>S.autoAns==='si', autoSecs:()=>10,
     who:()=>(quien.cur && Date.now()-quien.curAt<5*60000) ? quien.cur : '',
-    onRing:name=>{ ambOff(); setsShow(false); stopTalk(); osClose(); state.lastUser=Date.now(); faceSet('surprised', 3000); duck(true); Ear.convoUntil=Date.now()+20000; },
-    onAutoAnswer:(name,k)=>{ say(`Te llama ${name}. Atiendo en ${k} segundos; si no querés, decí «no».`, 'surprised'); Ear.convoUntil=Date.now()+k*1000+4000; },
+    onRing:name=>{ ambOff(); setsShow(false); stopTalk(); osClose(); state.lastUser=Date.now(); faceSet('surprised', 3000); duck(true); Ear.convoUntil=Date.now()+20000;
+      // avisa en voz alta quién llama (si atiende sola, el aviso con la cuenta lo da onAutoAnswer)
+      if(S.autoAns!=='si') setTimeout(()=>{ if(Call.ringing) say(`Te llama ${name}. Decí «atendé» o «no».`, 'surprised'); }, 1600); },
+    onAutoAnswer:(name,k)=>{ setTimeout(()=>{ if(Call.ringing) say(`Te llama ${name}. Atiendo en ${k} segundos; si no querés, decí «no».`, 'surprised'); }, 1500); Ear.convoUntil=Date.now()+k*1000+4000; },
     onStart:()=>{ stopTalk(); ambOff(); setsShow(false); if(music.cur && music.cur.src==='youtube' && music.cur.playing!==false){ try{ music.yt.pauseVideo(); }catch(e){} } },
     onEnd:why=>{ state.lastUser=Date.now(); duck(false); if(why) toast(why, 5000); },
     onMissed:(name)=>{ duck(false); icom.log.push({at:Date.now(), de:name, t:'📹 Llamada perdida', leido:false}); icomSave(); addAviso({i:'📹', t:'Llamada perdida', s:'De '+name+' · «Friday, devolvé la llamada»', v:'Te llamó '+name+'. Si querés, decí «devolvé la llamada».'}, true); }

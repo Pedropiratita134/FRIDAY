@@ -195,6 +195,8 @@ const FSync={
     const tick=async()=>{ if(!this.live || Date.now()-(this.polledAt||0)>600000) await this.poll(); this.scan(); };
     (async()=>{ await this.poll(); this.scan(); clearTimeout(this.pubT); await this.flush(); this.hello(); })();
     this.timers.push(setInterval(()=>this.scan(), 4000));
+    // "sigo acá" cada 10 minutos: los otros saben que este aparato está prendido aunque no cambie nada
+    this.timers.push(setInterval(()=>{ if(this.on() && (!this.hooks.paused || !this.hooks.paused())) this.publish({k:'p'}, null).catch(()=>{}); }, 600000));
     this.timers.push(setInterval(()=>{ if(!this.hooks.paused || !this.hooks.paused()) tick(); }, this.hooks.pollMs||20000));
     if(this.hooks.live){
       this.stream();
@@ -237,8 +239,18 @@ const FSync={
   // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
   send(head){ return this.publish(head, null); },
   // qué es cada aparato (compu, tablet, celu): lo dice él mismo; si es de una versión vieja, por su código o su nombre
-  kindOf(d){ const p=(this.st&&this.st.peers&&this.st.peers[d])||{}; if(p.dk) return p.dk; if(/^pc/.test(d)) return 'pc'; if(/^pan/.test(d)) return 'tablet'; if(/^cel/.test(d)) return 'celu'; if(/^cfg/.test(d)) return 'cfg';
+  kindOf(d){ const p=(this.st&&this.st.peers&&this.st.peers[d])||{}; if(p.fix) return p.fix; if(p.dk) return p.dk; if(/^pc/.test(d)) return 'pc'; if(/^pan/.test(d)) return 'tablet'; if(/^cel/.test(d)) return 'celu'; if(/^cfg/.test(d)) return 'cfg';
     const n=String(p.n||'').toLowerCase(); if(/compu|\bpc\b|windows|notebook/.test(n)) return 'pc'; if(/tablet|panel|de la casa/.test(n)) return 'tablet'; if(/celu|android|iphone|movil|telefono/.test(n)) return 'celu'; return ''; },
+  // si un aparato viejo quedó mal reconocido, se le dice a mano qué es ('' = que lo adivine solo)
+  setKind(d, k){ const p=this.st.peers[d]; if(!p) return false; p.fix=k||''; this.save(); this.status(); return true; },
+  forget(d){ if(!this.st.peers[d]) return false; delete this.st.peers[d]; this.save(); this.status(); return true; },
+  // "¿estás?": a uno (to) o a todos (''); devuelve quién contestó y en cuánto tiempo
+  async ping(to, ms){ if(!this.on()) return {}; const id=Math.random().toString(36).slice(2,10), t0=Date.now(), got={};
+    this.pongs=this.pongs||{};
+    return new Promise(res=>{ let tm; const done=()=>{ clearTimeout(tm); delete this.pongs[id]; res(got); };
+      this.pongs[id]=o=>{ got[o.f]={ms:Date.now()-t0, vr:o.vr||'', dk:o.dk||'', n:o.n||''}; if(to) done(); };
+      tm=setTimeout(done, ms||(to?9000:7000));
+      this.publish({k:'ping', id, to:to||''}, null).then(ok=>{ if(!ok) done(); }).catch(done); }); },
   peersOf(kind){ return Object.entries((this.st&&this.st.peers)||{}).filter(([d])=>d!==(this.cfg&&this.cfg.dev) && this.kindOf(d)===kind).map(([d,p])=>Object.assign({dev:d}, p)).sort((a,b)=>b.t-a.t); },
   status(){ try{ this.hooks.onStatus && this.hooks.onStatus(); }catch(e){} },
   // lo que cambió acá desde la última vez → se manda
@@ -261,7 +273,7 @@ const FSync={
   async flush(){ const p=this.pending; this.pending={}; if(Object.keys(p).length) await this.publish({k:'d'}, p); },
   async publish(head, entries){
     if(!this.on()) return false;
-    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||'', dk:this.hooks.kind||''}, head);
+    const base=Object.assign({f:this.cfg.dev, n:this.hooks.name||'', u:this.hooks.url||'', dk:this.hooks.kind||'', vr:this.hooks.ver||''}, head);
     const chunks=[]; let cur={}, size=0;
     for(const [id,e] of Object.entries(entries||{})){
       const l=JSON.stringify(e).length+id.length+6;
@@ -318,8 +330,12 @@ const FSync={
     await this.handle(o);
   },
   async handle(o){
-    const first=!this.st.peers[o.f];
-    this.st.peers[o.f]={t:Date.now(), n:o.n||'', u:o.u||'', dk:o.dk||((this.st.peers[o.f]||{}).dk)||''};
+    const first=!this.st.peers[o.f], old=this.st.peers[o.f]||{};
+    this.st.peers[o.f]={t:Date.now(), n:o.n||old.n||'', u:o.u||old.u||'', dk:o.dk||old.dk||'', vr:o.vr||old.vr||'', fix:old.fix||''};
+    // "¿estás?" → "acá estoy" (así se sabe al toque si la compu o el celu están prendidos y con qué versión)
+    if(o.k==='ping'){ if((!o.to || o.to===this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<60000) await this.publish({k:'pong', to:o.f, id:o.id}, null); return; }
+    if(o.k==='pong'){ const w=this.pongs && this.pongs[o.id]; if(o.to===this.cfg.dev && w) w(o); return; }
+    if(o.k==='p') return;
     if(this.hooks.onPeer) try{ this.hooks.onPeer(o.f, this.st.peers[o.f], first); }catch(e){}
     if(o.e){
       const changes=[];

@@ -417,3 +417,26 @@ NUEVO EN LA 3.6: INTERCOM Y VIDEOLLAMADAS QUE RECONOCEN A LA COMPU
   mensaje tiene «Responder», y por voz: «Friday, respondele que ya voy».
 - El celu: recibe los mensajes del intercom mientras FRIDAY Móvil está abierta.
 QUÉ SUBIR: panel.html, index.html y sw.js. En la compu: friday.html versión 97.
+
+=====================================================================
+NUEVO EN LA 3.7: LA VIDEOLLAMADA SE ACOMODA Y LA TABLET SABE QUIÉN ES LA COMPU
+=====================================================================
+- La pantalla de la llamada ya no se agranda sola: se ve la imagen entera (sin cortar caras).
+  Tocá dos veces la imagen para llenar la pantalla o volver a verla entera; con dos dedos
+  acercás y movés la imagen.
+- «Achicar»: la llamada queda en una ventanita que se arrastra a donde quieras y se agranda
+  tirando de la esquina (se acuerda dónde la dejaste). Un toque la vuelve a pantalla completa.
+  Mientras, se puede usar la tablet.
+- Tu propia cámara se arrastra a cualquier esquina; un toque la achica.
+- Los botones se esconden solos durante la llamada (tocá la pantalla para verlos).
+- Si la tablet no deja reproducir el sonido solo, aparece «Tocá para escuchar».
+- Llamadas de solo voz: «Friday, llamá a la compu por voz», o «Solo voz» en Llamar.
+- Avisa antes: cuando llaman, FRIDAY dice en voz alta quién llama. Si «Atiende sola» está
+  prendido, cuenta 10 segundos (con un tic suave para que te pueda oír): «no» la frena.
+  Al prender «Atiende sola», pide el permiso de cámara: elegí «Permitir siempre».
+- Ajustes → «Aparatos de la familia»: la lista de lo que está unido, qué es cada uno y qué
+  versión tiene. «Probar» se fija si responde ahora. Si la compu figura como otro aparato,
+  tocá «Compu» en esa fila. «Olvidar» saca aparatos viejos.
+- Cada aparato avisa «sigo acá» cada 10 minutos: «En línea» ahora es de verdad.
+- El chequeo prueba de verdad si la compu responde, y si «Atiende sola» tiene el permiso.
+QUÉ SUBIR: panel.html, index.html y sw.js. En la compu: friday.html versión 98.
