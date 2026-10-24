@@ -446,3 +446,18 @@ NUEVO EN LA 3.8: LA VERSIÓN A LA VISTA
 =====================================================================
 - La versión se ve al abrir (pantalla de arranque y «Tocá para empezar») y arriba, al lado de
   FRIDAY. Cuando la tablet se actualiza, avisa «FRIDAY Casa se actualizó: de la 3.7 a la 3.8».
+
+=====================================================================
+NUEVO EN LA 3.9: NOTICIAS DE VERDAD, Y LA COMPU Y LA TABLET YA NO CONTESTAN LAS DOS
+=====================================================================
+- App nueva «Noticias»: portada, tu ciudad, Argentina, mundo, deportes, economía, tecnología y
+  espectáculos, con el diario y hace cuánto salió cada una (sin repetidas).
+  «Friday, ¿qué noticias hay?» las lee numeradas; «contame la segunda» (o «lo de Boca») busca
+  y te la cuenta con detalles; «noticias de deportes», «noticias de Boca», «noticias de Rosario».
+  Tocá una en la pantalla y te la cuenta.
+  ⚠ Para que lleguen directo, actualizá el servicio de Cloudflare a la versión 6 (Edit code →
+  pegá el worker.js nuevo → Deploy). Sin eso igual andan, pero por un servicio de afuera.
+- Cuando la compu y la tablet te escuchan a la vez, contesta una sola: la que te oyó más fuerte
+  (la que tenés más cerca). La otra se calla, muestra «le contesta la compu» y deja de escuchar
+  sin que digan «Friday», así no toma lo que dice la otra como si se lo dijeras vos.
+QUÉ SUBIR: panel.html, index.html, sw.js, tablet.html y worker.js. En la compu: friday.html v99.

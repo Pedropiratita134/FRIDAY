@@ -22,7 +22,7 @@ const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.goog
 let tuya = { host: null, tok: '', exp: 0 };
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words, X-Voz-Via' };
-const VERSION = 5;
+const VERSION = 6;
 const form = o => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });
 const enc = new TextEncoder();
@@ -97,6 +97,34 @@ function collectVideos(o, out, depth) {
 // permiso de cookies ya aceptado; 2) la página de resultados; y NUNCA "cualquier video que aparezca".
 const YT_CLIENT = '2.20250925.01.00';
 const YT_COOKIE = 'CONSENT=YES+cb.20240101-00-p0.es+FX+000; SOCS=CAI; PREF=hl=es&gl=AR';
+const NEWS_TOPICS = { argentina: 'NATION', mundo: 'WORLD', economia: 'BUSINESS', deportes: 'SPORTS', tecnologia: 'TECHNOLOGY', espectaculos: 'ENTERTAINMENT', ciencia: 'SCIENCE', salud: 'HEALTH' };
+async function newsFetch(env, cat, q) {
+  const base = env.NEWS_BASE || 'https://news.google.com', tail = 'hl=es-419&gl=AR&ceid=AR:es-419';
+  const url = q ? `${base}/rss/search?q=${encodeURIComponent(q + ' when:3d')}&${tail}`
+    : NEWS_TOPICS[cat] ? `${base}/rss/headlines/section/topic/${NEWS_TOPICS[cat]}?${tail}` : `${base}/rss?${tail}`;
+  const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36', 'Accept-Language': 'es-AR,es;q=0.9' }, cf: { cacheTtl: 600, cacheEverything: true } });
+  if (!r.ok) throw new Error('Google Noticias respondió ' + r.status);
+  return parseRss(await r.text());
+}
+function xmlDec(s) {
+  return String(s || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+    .replace(/&nbsp;/g, ' ').replace(/&#(\d+);/g, (m, n) => String.fromCharCode(+n)).replace(/&amp;/g, '&');
+}
+function parseRss(x) {
+  const out = [];
+  for (const m of String(x).matchAll(/<item>([\s\S]*?)<\/item>/g)) {
+    const it = m[1], g = t => { const mm = it.match(new RegExp('<' + t + '(?:\\s[^>]*)?>([\\s\\S]*?)<\\/' + t + '>')); return mm ? xmlDec(mm[1]).trim() : ''; };
+    let t = g('title'), src = g('source');
+    if (src && t.endsWith(' - ' + src)) t = t.slice(0, -(src.length + 3));
+    else if (!src) { const k = t.lastIndexOf(' - '); if (k > 20) { src = t.slice(k + 3); t = t.slice(0, k); } }
+    // en las notas principales, la descripción trae otros titulares del mismo tema
+    const rel = [...xmlDec(g('description')).matchAll(/<a [^>]*>([\s\S]*?)<\/a>/g)].map(a => a[1].replace(/<[^>]+>/g, '').trim()).filter(z => z && z !== t).slice(0, 3);
+    if (t) out.push({ t, src, at: Date.parse(g('pubDate')) || 0, link: g('link'), rel });
+    if (out.length >= 30) break;
+  }
+  return out;
+}
+
 async function ytSearch(env, q) {
   const base = env.YT_BASE || 'https://www.youtube.com';
   const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36';
@@ -296,6 +324,12 @@ export default {
     if (p === '/tuya' && req.method === 'POST') {
       let b = {}; try { b = await req.json(); } catch (e) { }
       try { return json(await tuyaCall(env, b)); } catch (e) { return json({ success: false, msg: 'no pude hablar con Tuya: ' + e.message }); }
+    }
+
+    // noticias: Google Noticias (Argentina), por sección o por tema; las lee la tablet en voz alta
+    if (p === '/news') {
+      const q = (u.searchParams.get('q') || '').slice(0, 120), cat = (u.searchParams.get('cat') || '').slice(0, 20);
+      try { return json({ ok: true, items: await newsFetch(env, cat, q) }); } catch (e) { return json({ ok: false, error: e.message }); }
     }
 
     if (p === '/yt') {
