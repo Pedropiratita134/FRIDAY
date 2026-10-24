@@ -54,6 +54,8 @@ button{font:inherit;color:inherit}
 .brand{display:flex;align-items:baseline;gap:10px;white-space:nowrap}
 .brand b{font:700 21px/1 var(--disp);letter-spacing:.16em;font-variation-settings:"wdth" 88}
 .brand span{font:500 12px/1 var(--text);letter-spacing:.32em;color:var(--ink-3)}
+.brand .ver{font:600 13px/1 var(--text);font-style:normal;color:var(--ink-2);padding:5px 9px;border-radius:999px;border:1px solid var(--edge);align-self:center}
+.brand .ver.new{color:#04121f;background:var(--friday);border-color:var(--friday)}
 .timers{display:flex;gap:8px;margin-left:8px;min-width:0}
 .sys{margin-left:auto;display:flex;align-items:center;gap:18px;color:var(--ink-2);font-size:17px;white-space:nowrap}
 .links{display:flex;gap:12px}
@@ -443,6 +445,8 @@ body.ambvid #ytbox iframe{transform:none}
 /* ---------- el arranque ---------- */
 .boot{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;background:radial-gradient(80% 60% at 50% 35%,#0E2340,#060B14 70%);transition:opacity .7s .1s,visibility .8s}
 .boot.off{opacity:0;visibility:hidden}
+.tap .tver{display:block;margin-top:18px;font:500 15px var(--text);color:var(--ink-3)}
+.boot .bver{margin-top:14px;font:500 15px var(--text);font-style:normal;color:#8DA3C4;animation:bootUp .8s .6s both}
 .boot .bface{width:150px;margin-bottom:22px;animation:bootIn 1s cubic-bezier(.2,.9,.3,1.2) both;filter:drop-shadow(0 0 40px rgba(76,201,255,.5))}
 .boot b{font:700 46px/1 var(--disp);letter-spacing:.22em;color:#EEF4FF;font-variation-settings:"wdth" 88;animation:bootUp .8s .25s both}
 .boot small{font:500 15px var(--text);letter-spacing:.42em;color:#62789A;animation:bootUp .8s .45s both}
@@ -570,10 +574,10 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
 </head>
 <body class="home">
 <div id="wall"></div>
-<div class="boot" id="boot"><div class="bface fface" id="bFace"></div><b>FRIDAY</b><small>BUFALABS</small><i></i></div>
+<div class="boot" id="boot"><div class="bface fface" id="bFace"></div><b>FRIDAY</b><small>BUFALABS</small><i></i><em class="bver" id="bVer"></em></div>
 <div class="os" id="app">
   <header class="bar">
-    <div class="brand"><b>FRIDAY</b><span>BUFALABS</span></div>
+    <div class="brand"><b>FRIDAY</b><span>BUFALABS</span><em class="ver" id="brandVer" title="Versión de FRIDAY Casa"></em></div>
     <div class="timers" id="timers"></div>
     <div class="sys">
       <span class="eye" id="eye" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Mirando</span></span>
@@ -632,7 +636,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
     <p>Para configurarme, escaneá este código con la cámara de tu celu. No hay que escribir nada acá.</p></div></div>
   <div class="qrbox"><div id="qr"></div><div class="code" id="sCode"></div><div class="st" id="sSt">Esperando al celu…</div><button class="sclose" id="sClose" type="button" hidden>Cancelar</button></div>
 </div>
-<button class="tap" id="tap" hidden><b>Tocá para empezar</b><span>Una sola vez. Después, decí «Friday» y lo que necesites.</span></button>
+<button class="tap" id="tap" hidden><b>Tocá para empezar</b><span>Una sola vez. Después, decí «Friday» y lo que necesites.</span><small class="tver" id="tapVer"></small></button>
 <div class="setbg" id="setBg"></div>
 <aside class="sets" id="sets" aria-label="Ajustes">
   <header><h2>Ajustes</h2><button class="done" id="setX" type="button">Listo</button></header>
@@ -1987,7 +1991,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='3.7';
+const VERSION='3.8';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -4477,6 +4481,11 @@ async function chequeoTablet(){
 
 async function boot(){
   try{ faceBuild($('bFace')); }catch(e){}
+  // la versión, a la vista: en la pantalla de arranque y arriba al lado de FRIDAY; si se acaba de actualizar, lo avisa
+  try{ const antes=LS.get('verVista',''), nueva=!!antes && antes!==VERSION;
+    $('bVer').textContent=nueva?`Actualizada a la versión ${VERSION}`:`Versión ${VERSION}`; $('brandVer').textContent='v'+VERSION; $('tapVer').textContent='FRIDAY Casa · versión '+VERSION;
+    if(nueva){ $('brandVer').classList.add('new'); setTimeout(()=>toast(`FRIDAY Casa se actualizó: de la ${antes} a la ${VERSION}`, 9000), 1800); setTimeout(()=>$('brandVer').classList.remove('new'), 6*3600000); }
+    LS.set('verVista', VERSION); }catch(e){}
   setTimeout(()=>$('boot').classList.add('off'), 1400);
   // como un sistema propio: el botón "atrás" de Android no la cierra (cierra lo que esté abierto)
   try{ history.pushState({f:1},''); addEventListener('popstate', ()=>{ history.pushState({f:1},''); if(setsOpen()) setsShow(false); else if(!$('mapa').hidden) mapaOff(); else if(amb.on) ambOff(); else if(os.cur) osClose(); }); }catch(e){}

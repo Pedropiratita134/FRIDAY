@@ -440,3 +440,9 @@ NUEVO EN LA 3.7: LA VIDEOLLAMADA SE ACOMODA Y LA TABLET SABE QUIÉN ES LA COMPU
 - Cada aparato avisa «sigo acá» cada 10 minutos: «En línea» ahora es de verdad.
 - El chequeo prueba de verdad si la compu responde, y si «Atiende sola» tiene el permiso.
 QUÉ SUBIR: panel.html, index.html y sw.js. En la compu: friday.html versión 98.
+
+=====================================================================
+NUEVO EN LA 3.8: LA VERSIÓN A LA VISTA
+=====================================================================
+- La versión se ve al abrir (pantalla de arranque y «Tocá para empezar») y arriba, al lado de
+  FRIDAY. Cuando la tablet se actualiza, avisa «FRIDAY Casa se actualizó: de la 3.7 a la 3.8».
