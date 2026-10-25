@@ -18,7 +18,7 @@ CÓMO INSTALARLA (una sola vez)
 1. Copiá todos los archivos a tu carpeta de FRIDAY (idealmente C:\FRIDAY) y reemplazá los viejos.
    Si tenés la carpeta "voz" (Daniela), dejala donde está.
 2. Doble clic en INSTALAR-FRIDAY.bat. Esto actualiza el ícono del escritorio y el arranque automático
-   para que usen FRIDAY.exe, con el logo de LIKOS.
+   para que usen FRIDAY.exe, con el logo de BufaLabs.
 3. Abrí FRIDAY desde el ícono del escritorio.
 
 SI WINDOWS LA FRENA
