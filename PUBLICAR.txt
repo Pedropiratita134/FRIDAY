@@ -461,3 +461,23 @@ NUEVO EN LA 3.9: NOTICIAS DE VERDAD, Y LA COMPU Y LA TABLET YA NO CONTESTAN LAS 
   (la que tenés más cerca). La otra se calla, muestra «le contesta la compu» y deja de escuchar
   sin que digan «Friday», así no toma lo que dice la otra como si se lo dijeras vos.
 QUÉ SUBIR: panel.html, index.html, sw.js, tablet.html y worker.js. En la compu: friday.html v99.
+
+=====================================================================
+NUEVO EN LA 4.0: LA MISMA TABLET, MÁS LINDA Y MÁS ÚTIL
+=====================================================================
+- Noticias como en la compu: «Ver el noticiero» (o «Friday, ¿qué noticias hay?») las pasa en
+  pantalla completa, como en la tele: EN VIVO, la foto de cada noticia, el titular grande, la
+  lista al costado y el «último momento» abajo; va cambiando a la par de lo que lee FRIDAY.
+  Tocá la pantalla para cortarlo. La app muestra la principal grande con foto y resumen, y las
+  demás con foto (o el nombre del diario).
+  ⚠ Para las fotos y los resúmenes: servicio de Cloudflare en la versión 7 (pegá el worker.js nuevo).
+- En el inicio: un titular con foto que va pasando (tocalo y FRIDAY te lo cuenta) y el
+  pronóstico de las próximas 6 horas, con la probabilidad de lluvia.
+- Agenda: separada por día (Hoy, Mañana, Lunes…), lo próximo destacado con cuenta regresiva,
+  el mes con puntitos en los días que tienen algo, y las notas. Colores: eventos, recordatorios,
+  rutinas y cumpleaños. Tocá algo para borrarlo.
+- Intercom como un chat: lo tuyo a la derecha, lo que llega a la izquierda con quién lo mandó,
+  separado por día; las llamadas perdidas tienen botón «Llamar». En «¿A dónde?» se ve qué
+  aparato está prendido.
+- Llamar, sin aparatos unidos: un botón para unirlos directamente.
+QUÉ SUBIR: panel.html, sw.js, tablet.html y worker.js.

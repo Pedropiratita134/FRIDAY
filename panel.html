@@ -243,19 +243,139 @@ body.inapp .win{transform:none;opacity:1;visibility:visible}
 @keyframes recp{50%{box-shadow:0 0 0 30px rgba(255,138,61,.06), 0 30px 60px -20px rgba(255,138,61,.6)}}
 .talkcap{text-align:center;color:var(--ink-2);font-size:17px;margin:10px 0 20px;min-height:24px}
 .msgs{display:flex;flex-direction:column;gap:10px}
-/* noticias */
-.ncats{margin-bottom:18px}
-.ntop{display:flex;align-items:center;flex-wrap:wrap;gap:12px 18px;margin-bottom:16px}.ntop small{color:var(--ink-2);font-size:15px}
-.nbtn{min-height:54px;padding:0 24px;border-radius:999px;border:0;background:#FFC24B;color:#1d1300;font:700 18px var(--text);cursor:pointer}
-.nback{min-height:46px;padding:0 16px;border-radius:999px;border:1px solid var(--edge-2);background:none;color:var(--ink);font:600 16px var(--text);cursor:pointer}
-.nlist{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(360px,1fr));gap:12px}
-.nlist button{width:100%;height:100%;display:flex;gap:14px;align-items:flex-start;text-align:left;padding:16px 18px;border-radius:20px;border:1px solid var(--edge);background:var(--card-2);color:var(--ink);cursor:pointer}
-.nlist button:active{transform:scale(.98)}
-.nlist .nn{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font:700 17px var(--disp);background:rgba(255,194,75,.16);color:#FFC24B}
-.nlist b{display:block;font:600 19px/1.32 var(--text)}.nlist small{display:block;margin-top:6px;color:var(--ink-2);font-size:15px}
-.ndet{max-width:860px}.ndet small{display:block;margin-top:16px;color:var(--ink-2);font-size:16px}
+/* noticias: como una revista */
+.ncats{margin-bottom:16px}
+.ntop{display:flex;align-items:center;flex-wrap:wrap;gap:10px 18px;margin-bottom:16px}.ntop small{color:var(--ink-2);font-size:15px;flex:1 1 280px}
+.nbtn{display:inline-flex;align-items:center;gap:10px;min-height:54px;padding:0 24px;border-radius:999px;border:0;background:#FFC24B;color:#1d1300;font:700 18px var(--text);cursor:pointer}
+.nbtn svg{width:18px;height:18px}
+.nbtn.green{background:#4ADE80;color:#04140b}
+.nback{min-height:46px;padding:0 16px;border-radius:999px;border:1px solid var(--edge-2);background:rgba(6,11,20,.55);color:var(--ink);font:600 16px var(--text);cursor:pointer;position:relative}
+.nmag{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:16px;align-items:start}
+.nhero{position:relative;display:flex;flex-direction:column;justify-content:flex-end;gap:10px;min-height:360px;padding:26px;border-radius:26px;border:1px solid var(--edge);overflow:hidden;text-align:left;color:#fff;cursor:pointer;
+  background:linear-gradient(0deg,rgba(4,8,16,.96) 0%,rgba(4,8,16,.55) 45%,rgba(4,8,16,.05) 75%),var(--img,radial-gradient(120% 90% at 30% 20%,#3a2a08,#0b1222 70%)) center/cover no-repeat}
+.nhero.noimg{background:radial-gradient(120% 100% at 20% 10%,rgba(255,194,75,.32),rgba(11,18,34,.95) 60%),#0b1222}
+.nhero .nk{align-self:flex-start;font:700 14px var(--text);letter-spacing:.04em;color:#1d1300;background:#FFC24B;padding:5px 12px;border-radius:8px}
+.nhero b{font:660 31px/1.15 var(--disp);text-shadow:0 2px 18px rgba(0,0,0,.7)}
+.nhero small{font:400 18px/1.45 var(--text);color:#d7e3f2;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.nlist{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.nlist button{width:100%;display:flex;gap:14px;align-items:center;text-align:left;padding:10px;border-radius:18px;border:1px solid var(--edge);background:var(--card-2);color:var(--ink);cursor:pointer}
+.nlist button:active,.nhero:active{transform:scale(.985)}
+.nth{flex:none;width:112px;height:76px;border-radius:12px;object-fit:cover;background:#13213a}
+.nofoto{display:grid;place-items:center;padding:6px;text-align:center;font:700 15px/1.15 var(--disp);color:#FFC24B;background:linear-gradient(150deg,rgba(255,194,75,.2),rgba(19,33,58,.9));overflow:hidden}
+.nlist b{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;font:600 18px/1.3 var(--text)}
+.nlist b em{font-style:normal;color:#FFC24B;margin-right:8px;font-variant-numeric:tabular-nums}
+.nlist small{display:block;margin-top:5px;color:var(--ink-2);font-size:14px}
+.ndet{max-width:900px;position:relative}
+.ndhero{height:300px;margin:0 0 -64px;border-radius:24px;background:#13213a center/cover no-repeat;mask-image:linear-gradient(180deg,#000 55%,transparent)}
+.ndet>small{display:block;margin-top:16px;color:var(--ink-2);font-size:16px}
 .ndet h3{font:640 32px/1.18 var(--disp);margin:8px 0 16px}.ndet p{font:400 22px/1.55 var(--text);color:var(--ink);margin:0 0 16px}
+.ndet .nlead{font-weight:500;color:#d7e3f2}
 .ndet .nwait{color:var(--ink-2)}.ndet .nrel{font-size:16px;color:var(--ink-2)}
+@media (orientation:portrait){ .nmag{grid-template-columns:1fr} .nhero{min-height:340px} }
+/* el noticiero (pantalla completa, como en la compu) */
+.ntv{position:fixed;inset:0;z-index:80;background:#020812;overflow:hidden;cursor:pointer;animation:ntvIn .6s ease both}
+.ntv[hidden]{display:none}
+.ntv-bg{position:absolute;inset:-4%;background:#071828 center/cover no-repeat}
+.ntv-bg.noimg{background:radial-gradient(ellipse at 40% 40%,rgba(255,194,75,.28),rgba(76,201,255,.12) 40%,#020812 72%)}
+.ntv-bg.kb{animation:ntvKb 18s ease-out forwards, ntvIn .8s ease both}
+@keyframes ntvKb{from{transform:scale(1.02)}to{transform:scale(1.12) translate(-1.5%,-1%)}}
+@keyframes ntvIn{from{opacity:0}to{opacity:1}}
+@keyframes ntvLow{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:none}}
+@keyframes ntvTick{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+@keyframes ntvBlink{50%{opacity:.35}}
+.ntv-shade{position:absolute;inset:0;background:linear-gradient(90deg,rgba(2,8,18,.88) 0%,rgba(2,8,18,.28) 48%,rgba(2,8,18,.66) 100%),linear-gradient(0deg,rgba(2,8,18,.96) 0%,rgba(2,8,18,0) 58%)}
+.ntv-bug{position:absolute;left:34px;top:26px;display:flex;align-items:center;gap:10px;font:600 15px var(--text);letter-spacing:.2em;color:#fff;background:rgba(2,8,18,.55);border:1px solid rgba(255,194,75,.45);padding:9px 15px;border-radius:8px}
+.ntv-bug .live{color:#fff;background:#e53935;padding:3px 9px;border-radius:4px;font-size:12px;letter-spacing:.14em;animation:ntvBlink 1.4s infinite}
+.ntv-bug b{color:#FFC24B}.ntv-bug .clk{margin-left:8px;color:#9fb6c8;letter-spacing:.06em}
+.ntv-face{position:absolute;right:30px;top:20px;width:120px;height:120px}
+.ntv-list{position:absolute;right:26px;top:160px;width:min(340px,30vw);display:flex;flex-direction:column;gap:10px}
+.ntv-it{display:flex;gap:10px;align-items:center;background:rgba(2,8,18,.62);border:1px solid rgba(255,194,75,.18);border-radius:10px;padding:8px;color:#9fb6c8;font-size:14px;line-height:1.3;transition:all .4s;opacity:.72}
+.ntv-it img,.ntv-it i{width:70px;height:48px;object-fit:cover;border-radius:6px;flex:none;background:rgba(255,194,75,.14)}
+.ntv-it span{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.ntv-it.on{opacity:1;color:#fff;border-color:#FFC24B;background:rgba(255,194,75,.14);transform:translateX(-10px);box-shadow:0 0 22px rgba(255,194,75,.3)}
+.ntv-low{position:absolute;left:34px;bottom:84px;width:min(980px,60vw)}
+.ntv-low.in .ntv-k{animation:ntvLow .5s cubic-bezier(.2,.9,.3,1.2) both}
+.ntv-low.in .ntv-t{animation:ntvLow .6s .08s cubic-bezier(.2,.9,.3,1.2) both}
+.ntv-low.in .ntv-s{animation:ntvLow .6s .18s ease both}
+.ntv-sec{font:600 15px var(--text);color:#cfe0ec;margin-bottom:10px;letter-spacing:.02em}
+.ntv-k{display:inline-block;font:700 14px var(--text);letter-spacing:.08em;color:#1d1300;background:#FFC24B;padding:6px 12px;border-radius:6px}
+.ntv-t{font:680 clamp(28px,3.6vw,52px)/1.08 var(--disp);color:#fff;margin:12px 0 10px;text-shadow:0 2px 18px rgba(0,0,0,.8)}
+.ntv-s{font:400 clamp(17px,1.6vw,22px)/1.45 var(--text);color:#cfe0ec;max-width:880px;text-shadow:0 1px 10px rgba(0,0,0,.9)}
+.ntv-tick{position:absolute;left:0;right:0;bottom:0;height:50px;display:flex;align-items:center;background:rgba(2,8,18,.94);border-top:2px solid #FFC24B;overflow:hidden}
+.ntv-tick .lbl{flex:none;height:100%;display:flex;align-items:center;padding:0 18px;background:#e53935;color:#fff;font:800 14px var(--text);letter-spacing:.12em}
+.ntv-tick .run{flex:1;overflow:hidden;white-space:nowrap}
+.ntv-tick .run span{display:inline-block;padding-left:100%;font-size:17px;color:#e6f2fb;animation:ntvTick 70s linear infinite}
+.ntv-x{position:absolute;right:30px;bottom:64px;font-size:14px;color:#8aa0bd}
+body.noticiero .dock,body.noticiero .talk{visibility:hidden}
+@media (orientation:portrait){ .ntv-list{display:none} .ntv-low{width:auto;right:30px} }
+@media (prefers-reduced-motion:reduce){ .ntv-bg.kb{animation:none} .ntv-tick .run span{animation:none;padding-left:0} }
+/* en el inicio: noticias y las próximas horas */
+.widgets{display:flex;gap:14px}.widgets>*{flex:1 1 0}.widgets>.wnews{flex-grow:1.6}
+.widgets:empty{display:none}
+.wnews{position:relative;display:flex;align-items:center;gap:14px;padding:12px;border-radius:22px;border:1px solid var(--edge);background:var(--card);color:var(--ink);text-align:left;cursor:pointer;min-width:0;min-height:104px}
+.wnews>img,.wnews>.nofoto{flex:none;width:118px;height:80px;border-radius:14px;object-fit:cover}
+.wnews>span{min-width:0}
+.wnews small{display:flex;align-items:center;gap:6px;color:#FFC24B;font:600 14px var(--text)}.wnews small svg{width:15px;height:15px}
+.wnews b{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin-top:5px;font:600 18px/1.3 var(--text)}
+.wnews .dots{position:absolute;right:14px;top:12px;display:flex;gap:4px}.wnews .dots i{width:6px;height:6px;border-radius:50%;background:var(--edge-2)}.wnews .dots i.on{background:#FFC24B}
+.wfc{display:grid;grid-template-columns:repeat(6,1fr);align-items:center;padding:10px 8px;border-radius:22px;border:1px solid var(--edge);background:var(--card);min-height:104px}
+.wfc span{display:flex;flex-direction:column;align-items:center;gap:3px}
+.wfc small{color:var(--ink-2);font-size:13px}.wfc svg{width:26px;height:26px}.wfc b{font:600 17px var(--disp)}.wfc em{font-style:normal;font-size:12px;color:var(--friday);min-height:15px}
+@media (max-height:640px) and (orientation:landscape){ .wfc{display:none} }
+@media (orientation:portrait){ .widgets{flex-direction:column} }
+/* agenda */
+.agw{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(280px,1fr);gap:26px;min-height:100%}
+.agtl h4{margin:18px 0 8px;font:620 21px var(--disp);display:flex;align-items:baseline;gap:10px}.agtl h4:first-child{margin-top:2px}
+.agtl h4 small{font:400 16px var(--text);color:var(--ink-2)}
+.agev{display:grid;grid-template-columns:110px 4px minmax(0,1fr) auto;gap:14px;align-items:center;padding:12px 14px;margin-bottom:8px;border-radius:16px;background:var(--card-2);border:1px solid transparent;cursor:pointer}
+.agev time{font:620 20px var(--disp);font-variant-numeric:tabular-nums;color:var(--ink)}
+.agev .agbar{align-self:stretch;width:4px;border-radius:4px;background:var(--friday)}
+.agev .tx b{display:block;font:600 19px/1.25 var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.agev .tx small{display:block;color:var(--ink-2);font-size:15px;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.agev em{font-style:normal;font:700 15px var(--text);color:#04121f;background:var(--friday);padding:5px 11px;border-radius:999px;white-space:nowrap}
+.agev.next{border-color:rgba(76,201,255,.5);background:rgba(76,201,255,.1)}
+.agev.ask{background:rgba(255,107,125,.12)}
+.agev .del,.agnote .del{border:0;border-radius:999px;padding:8px 16px;background:var(--alert);color:#fff;font:600 15px var(--text);cursor:pointer}
+.t-recordatorio .agbar{background:#FFB547}.t-rutina .agbar{background:#5FD39A}.t-cumple .agbar{background:#FF5FA2}
+.t-recordatorio.agev time,.t-cumple.agev time{color:var(--ink)}
+.agside{display:flex;flex-direction:column;gap:16px}
+.agnext{position:relative;padding:20px;border-radius:22px;background:linear-gradient(150deg,rgba(76,201,255,.22),rgba(47,123,255,.08));border:1px solid rgba(76,201,255,.35)}
+.agnext.t-recordatorio{background:linear-gradient(150deg,rgba(255,181,71,.22),rgba(255,181,71,.06));border-color:rgba(255,181,71,.4)}
+.agnext.t-cumple{background:linear-gradient(150deg,rgba(255,95,162,.22),rgba(255,95,162,.06));border-color:rgba(255,95,162,.4)}
+.agnext small{color:var(--ink-2);font-size:15px}.agnext b{display:block;font:640 26px/1.15 var(--disp);margin:6px 0}.agnext span{color:var(--ink-2);font-size:16px}
+.agnext em{position:absolute;right:16px;top:16px;font-style:normal;font:700 15px var(--text);color:#04121f;background:var(--friday);padding:5px 11px;border-radius:999px}
+.agcal,.agnotes{padding:16px 18px;border-radius:22px;background:var(--card-2)}
+.agcal h5,.agnotes h5{margin:0 0 10px;font:620 18px var(--disp)}
+.cg{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center}
+.cg b{font:600 13px var(--text);color:var(--ink-3);padding-bottom:4px}
+.cg span{position:relative;font:500 16px/34px var(--text);font-variant-numeric:tabular-nums;border-radius:10px}
+.cg span.pas{color:var(--ink-3)}
+.cg span.hoy{background:var(--friday);color:#04121f;font-weight:700}
+.cg span i{position:absolute;left:50%;bottom:3px;width:5px;height:5px;margin-left:-2.5px;border-radius:50%;background:#FFB547}
+.cg span.hoy i{background:#04121f}
+.agnote{margin:0;padding:8px 0;border-top:1px solid var(--edge);font-size:16px;display:flex;align-items:center;justify-content:space-between;gap:8px;cursor:pointer}.agnote:first-of-type{border-top:0}
+.aghint{color:var(--ink-2);font-size:15px;line-height:1.45;margin:0}.aghint q{color:var(--ink);quotes:"«" "»"}
+#cAgenda{background:none;border:0;box-shadow:none;padding:0;overflow:visible}
+@media (orientation:portrait){ .agw{grid-template-columns:1fr} }
+/* intercom como chat */
+.icw .chips button{display:inline-flex;align-items:center;gap:8px}
+.chips .dot{width:8px;height:8px;border-radius:50%;background:var(--ink-3)}.chips .dot.on{background:#5FD39A;box-shadow:0 0 0 3px rgba(95,211,154,.2)}
+.icchat{display:flex;flex-direction:column;min-height:0}
+.chat{display:flex;flex-direction:column;gap:10px;max-height:calc(100vh - 330px);overflow-y:auto;padding-right:4px}
+.cday{align-self:center;font:600 13px var(--text);color:var(--ink-3);padding:4px 12px;border-radius:999px;background:var(--card-2);margin:4px 0}
+.bub{display:flex;align-items:flex-end;gap:10px;max-width:88%}
+.bub>div{padding:10px 14px;border-radius:18px 18px 18px 6px;background:var(--card-2);min-width:0}
+.bub small{display:block;color:var(--ink-2);font-size:13px;margin-bottom:3px}
+.bub p{margin:0;font-size:18px;line-height:1.35;color:var(--ink)}
+.bub .av{flex:none;width:36px;height:36px;border-radius:12px;display:grid;place-items:center;font:700 16px var(--disp);background:linear-gradient(150deg,#FF8A3D,#C2561E);color:#1a0b02}
+.bub.out{align-self:flex-end}.bub.out>div{border-radius:18px 18px 6px 18px;background:rgba(255,138,61,.18)}
+.bub.nuevo>div{box-shadow:0 0 0 2px rgba(255,138,61,.55)}
+.bub.call .av{background:rgba(255,107,125,.18);font-size:18px}.bub.call>div{background:rgba(255,107,125,.1)}
+.bub .rbtn{flex:none;border:1px solid var(--edge-2);background:var(--card-3);color:var(--ink);border-radius:999px;padding:8px 14px;font:600 15px var(--text);cursor:pointer;align-self:center}
+/* llamar sin aparatos */
+.callempty{max-width:560px;margin:40px auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
+.callempty .ce-ic{width:92px;height:92px;border-radius:30px;display:grid;place-items:center;background:rgba(74,222,128,.14);color:#4ADE80}.callempty .ce-ic svg{width:46px;height:46px}
+.callempty b{font:640 26px var(--disp)}.callempty p{margin:0 0 8px;color:var(--ink-2);font-size:18px;line-height:1.45}
 .msg{display:flex;gap:12px;align-items:baseline;padding:12px 16px;border-radius:18px;background:var(--card-2)}
 .msg.out{background:rgba(255,138,61,.12)}
 .msg time{font:600 15px var(--disp);color:var(--ink-3);font-variant-numeric:tabular-nums}
@@ -610,6 +730,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
     </section>
     <section class="apps">
       <div class="grid" id="grid"></div>
+      <div class="widgets" id="widgets"></div>
       <div class="mini" id="mini" hidden><i class="art" id="miniArt"></i><div><b id="miniT"></b><small id="miniA"></small></div><button type="button" id="miniPP" aria-label="Pausa"></button></div>
       <div class="tips" id="tips"></div>
     </section>
@@ -730,6 +851,15 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
   <div class="st" id="padSt"></div>
 </div></div>
 <div class="mapa" id="mapa" hidden><iframe id="mapF" title="Mapa" src="about:blank" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe><div class="mcap"><b id="mapT"></b><small id="mapS"></small><span>Tocá para cerrar</span></div></div>
+<div class="ntv" id="ntv" hidden role="dialog" aria-label="Noticiero">
+  <div class="ntv-bg" id="ntvBg"></div><div class="ntv-shade"></div>
+  <div class="ntv-bug"><span class="live">● EN VIVO</span><b>FRIDAY</b> NOTICIAS<span class="clk" id="ntvClock"></span></div>
+  <div class="ntv-face fface" id="ntvFace"></div>
+  <div class="ntv-list" id="ntvList"></div>
+  <div class="ntv-low" id="ntvLow"><div class="ntv-sec" id="ntvSec"></div><div class="ntv-k" id="ntvK"></div><div class="ntv-t" id="ntvT"></div><div class="ntv-s" id="ntvS"></div></div>
+  <div class="ntv-tick"><span class="lbl">ÚLTIMO MOMENTO</span><div class="run"><span id="ntvRun"></span></div></div>
+  <div class="ntv-x">Tocá la pantalla para cerrar</div>
+</div>
 <div class="toast" id="toast"></div>
 <script>
 'use strict';
@@ -2065,7 +2195,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='3.9';
+const VERSION='4.0';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3420,7 +3550,7 @@ function render(){
     const txt=s>=3600?`${Math.floor(s/3600)}:${z2(Math.floor(s%3600/60))}:${z2(s%60)}`:`${Math.floor(s/60)}:${z2(s%60)}`;
     return `<div class="tpill${left<60000?' urge':''}"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" class="bg"/><circle cx="22" cy="22" r="18" class="fg" style="stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-fr)).toFixed(1)}"/></svg><b>${txt}</b><span>${esc(t.label||'Timer')}</span></div>`; }).join('')
     + (ringing?`<div class="tpill urge ring"><b>¡Listo!</b><span>${esc(ringing.label||'Timer')}</span></div>`:'');
-  renderHoyTo($('cHoy'), innerHeight>innerWidth?5:5, false); renderCasa(); renderMus(); renderShop(); renderStatus(); renderHint(); renderApps(); if(os.cur) renderPane(os.cur);
+  renderHoyTo($('cHoy'), innerHeight>innerWidth?5:5, false); renderCasa(); renderMus(); renderShop(); renderStatus(); renderHint(); renderApps(); renderWidgets(); if(os.cur) renderPane(os.cur);
 }
 const hoyAsk={x:'', until:0};
 function renderHoyTo(box, max, full){
@@ -3479,7 +3609,7 @@ document.addEventListener('click', e=>{
   if(d){ const dev=casa.devs.find(x=>x.id===d.dataset.dev); if(!dev || casa.busy) return; casaDo(dev.nombre, devOn(dev)?'apagar':'prender').then(r=>{ if(!r.ok) toast(r.txt); else faceSet('wink',1200); }); return; }
   const dl=e.target.closest && e.target.closest('[data-del]');
   if(dl){ const t=borrarX(dl.dataset.del); hoyAsk.x=''; render(); toast(t?`Borrado: ${t}`:'Ya no estaba'); faceSet('wink',1200); return; }
-  const rw=e.target.closest && e.target.closest('.row[data-x]');
+  const rw=e.target.closest && e.target.closest('.row[data-x], .agev[data-x], .agnote[data-x]');
   if(rw){ hoyAsk.x=rw.dataset.x; hoyAsk.until=Date.now()+5000; render(); return; }
   const s=e.target.closest && e.target.closest('[data-shop]');
   if(s){ const x=compras.find(y=>y.id===s.dataset.shop); if(x){ x.h=!x.h; shopSave(); } return; }
@@ -3854,9 +3984,9 @@ function renderPane(id){
   if(!id) return;
   if(id==='llamar') renderLlamar(); else if(id==='icom') renderIcom(); else if(id==='estudio') renderEst();
   else if(id==='shop') renderPrecios(); else if(id==='cam') renderCam(); else if(id==='mus') renderMusCtl();
-  else if(id==='agenda') renderHoyTo($('cAgenda'), 14, true);
+  else if(id==='agenda') renderAgenda();
   else if(id==='cocina') renderCocina(); else if(id==='tareas') renderTareas();
-  else if(id==='noti'){ renderNoti(); if(!noti.busy && (!noti.items.length || Date.now()-noti.at>10*60000)) notiAbrir(noti.q?'':(noti.cat||'portada'), noti.q); }
+  else if(id==='noti'){ renderNoti(); if(!noti.busy && ((!noti.items.length && Date.now()-noti.at>60000) || Date.now()-noti.at>10*60000)) notiAbrir(noti.q?'':(noti.cat||'portada'), noti.q); }
 }
 // ---------------------------------------------------------------- FRIDAY sube cuando escucha o habla
 function talkSync(){
@@ -3880,7 +4010,7 @@ function renderMusCtl(){
 // ---------------------------------------------------------------- llamar
 function renderLlamar(){
   const ps=Call.peers();
-  const html=`<h3>¿A quién llamamos?</h3><p class="lbl">También podés decir «Friday, llamá a la compu» (o «llamá a la compu por voz», sin cámara).</p>`+(ps.length?`<div class="people">${ps.map(p=>{ const on=Date.now()-p.t<25*60000; return `<div class="person"><span class="av">${esc((p.name.replace(/^(la|el) /i,'')[0]||'?').toUpperCase())}</span><span><b>${esc(p.name)}</b><br><small class="${on?'on':''}">${on?'En línea':'Visto '+(p.t?cuandoVisto(p.t):'hace rato')}</small></span><div class="pact"><button type="button" data-call="${esc(p.dev)}">${OSI.llamar} Videollamada</button><button type="button" class="v2" data-callv="${esc(p.dev)}">Solo voz</button></div></div>`; }).join('')}</div>`:`<p class="empty">Todavía no hay otros aparatos unidos. Andá a Ajustes → «Compartir con la compu y el celu».</p>`);
+  const html=`<h3>¿A quién llamamos?</h3><p class="lbl">También podés decir «Friday, llamá a la compu» (o «llamá a la compu por voz», sin cámara).</p>`+(ps.length?`<div class="people">${ps.map(p=>{ const on=Date.now()-p.t<25*60000; return `<div class="person"><span class="av">${esc((p.name.replace(/^(la|el) /i,'')[0]||'?').toUpperCase())}</span><span><b>${esc(p.name)}</b><br><small class="${on?'on':''}">${on?'En línea':'Visto '+(p.t?cuandoVisto(p.t):'hace rato')}</small></span><div class="pact"><button type="button" data-call="${esc(p.dev)}">${OSI.llamar} Videollamada</button><button type="button" class="v2" data-callv="${esc(p.dev)}">Solo voz</button></div></div>`; }).join('')}</div>`:`<div class="callempty"><span class="ce-ic">${OSI.llamar}</span><b>Todavía no hay otros aparatos unidos</b><p>Uní la compu o un celu y vas a poder llamarlos con video o solo voz, o decir «Friday, llamá a la compu».</p><button class="nbtn green" type="button" data-golink>Compartir con la compu y el celu</button></div>`);
   const el=$('pLlamar'); if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
 }
 // ---------------------------------------------------------------- intercom: un mensaje que se dice en voz alta en otro aparato
@@ -3902,15 +4032,6 @@ function icomListen(){
   const to=icom.to||''; state.icomTo={to, until:Date.now()+14000}; Ear.convoUntil=Date.now()+14000; chime('up'); setMode('listening'); youBars(true);
   $('you').innerHTML='<span>Decí el mensaje</span>'; renderIcom();
   clearTimeout(icomListen.t); icomListen.t=setTimeout(()=>{ if(state.icomTo){ state.icomTo=null; if(state.mode==='listening'){ setMode('idle'); youBars(false); } renderIcom(); } }, 14500);
-}
-function renderIcom(){
-  const ts=icomTargets(), cur=icom.to||'';
-  const html=`<div class="cols"><div><h3>¿A dónde?</h3><div class="chips" id="icTo">${ts.map(t=>`<button type="button" data-icto="${esc(t.dev)}" aria-pressed="${t.dev===cur}">${esc(t.name)}</button>`).join('')}</div>
-    <button class="talkbtn${state.icomTo?' rec':''}" type="button" id="icTalk" aria-label="Hablar">${OSI.mic}</button>
-    <p class="talkcap">${state.icomTo?'Te escucho: decí el mensaje…':'Tocá y decí el mensaje: se escucha en voz alta allá.'}</p>
-    <div class="chips">${ICOM_FRASES.map(f=>`<button type="button" data-icf="${esc(f)}">${esc(f)}</button>`).join('')}</div></div>
-    <div><h3>Mensajes</h3>${icom.log.length?`<div class="msgs">${icom.log.slice(-8).reverse().map(x=>`<div class="msg${x.out?' out':''}"><time>${hhmm(new Date(x.at))}</time><span><b>${esc(x.out?'A '+x.para.toLowerCase().replace(/^(la|el) /,'')+':':'De '+x.de+':')}</b> ${esc(x.t)}</span>${!x.out&&x.dev?`<button type="button" class="rbtn" data-icr="${esc(x.dev)}">Responder</button>`:''}</div>`).join('')}</div>`:`<p class="empty">Todavía no hay mensajes. También por voz: <q>Friday, avisale a la compu que la comida está lista</q>.</p>`}</div></div>`;
-  const el=$('pIcom'); if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
 }
 // ---------------------------------------------------------------- modo estudio (tablet): tandas, pausas y fichas
 let est=Object.assign({on:false}, LS.get('est',{}));
@@ -4129,6 +4250,8 @@ document.addEventListener('click', e=>{
   const pl=t.closest('[data-play]'); if(pl){ playMusic(pl.dataset.play).then(r=>say(r,'happy')).catch(err=>say('No pude: '+err.message,'worried')); return; }
   const it=t.closest('[data-icto]'); if(it){ icom.to=it.dataset.icto; renderIcom(); return; }
   const ir=t.closest('[data-icr]'); if(ir){ icom.to=ir.dataset.icr; icomListen(); return; }
+  const ik=t.closest('[data-icall]'); if(ik){ const p=Call.peers().find(x=>x.dev===ik.dataset.icall); if(p) Call.start(p).then(err=>{ if(err) say(err,'worried'); }); else toast('Ese aparato ya no está unido'); return; }
+  if(t.closest('[data-golink]')){ setupShow(true, 'link'); return; }
   if(t.closest('#icTalk')){ if(state.icomTo) icomCancel(); else icomListen(); return; }
   const fr=t.closest('[data-icf]'); if(fr){ const r=icomSend(fr.dataset.icf, icom.to||''); toast('📢 '+r); return; }
   const es=t.closest('[data-est]'); if(es){ const a=es.dataset.est; if(a==='start') estStart('lo tuyo', 0, 25); else if(a==='pausa') estPausa(true); else if(a==='seguir') estPausa(false); else if(a==='fin') estFin(); else if(a==='quiz') say(quizStart()); return; }
@@ -4140,7 +4263,9 @@ document.addEventListener('click', e=>{
   const nc=t.closest('[data-ncat]'); if(nc){ notiAbrir(nc.dataset.ncat); return; }
   const ni=t.closest('[data-nit]'); if(ni){ const i=+ni.dataset.nit; faceSet('thinking'); notiMas(i).then(r=>say(r,'happy')); return; }
   if(t.closest('[data-nback]')){ noti.sel=-1; renderNoti(); return; }
-  if(t.closest('[data-nleer]')){ say(notiLeer(5), 'happy'); return; }
+  if(t.closest('[data-nleer]')){ notiCast(5); return; }
+  if(t.closest('#ntv')){ ntvClose(true); return; }
+  const wn=t.closest('[data-wnews]'); if(wn){ if(!(noti.cat==='portada' && !noti.q) && noti.cache.portada){ noti.cat='portada'; noti.q=''; noti.items=noti.cache.portada.items; noti.at=Date.now(); } osOpen('noti'); notiMas(+wn.dataset.wnews).then(r=>say(r,'happy')); return; }
   const nr=t.closest('[data-nread]'); if(nr){ const it=noti.items[+nr.dataset.nread]; if(it) say(noti.det[it.t]||it.t, 'happy'); return; }
   if(t.closest('#shopAdd')){ const v=$('shopIn').value.trim(); if(v){ shopAdd(v.split(/,|;/).map(s=>s.trim()).filter(Boolean)); $('shopIn').value=''; } return; }
   if(t.closest('#dock')){ escuchaYa(); return; }
@@ -4159,7 +4284,10 @@ async function newsGet(cat, q){
   // primero por tu servicio de Cloudflare (más rápido y sin intermediarios); si no, por rss2json
   if(workerOn() && (S.workerV||0)>=6){ try{ const r=await wk('/news?'+(q?'q='+encodeURIComponent(q):'cat='+cat)); if(r.ok) items=r.items||[]; else err=r.error||''; }catch(e){ err=e.message; } }
   if(!items.length){ try{ const d=await (await fetch(API.rss+encodeURIComponent(notiUrl(cat,q)))).json();
-      items=(d.items||[]).map(x=>{ let t=String(x.title||''), src=''; const k=t.lastIndexOf(' - '); if(k>20){ src=t.slice(k+3); t=t.slice(0,k); } return {t, src:src||x.author||'', at:Date.parse(String(x.pubDate||'').replace(' ','T')+'Z')||0, link:x.link||''}; });
+      items=(d.items||[]).map(x=>{ let t=String(x.title||''), src=''; const k=t.lastIndexOf(' - '); if(k>20){ src=t.slice(k+3); t=t.slice(0,k); }
+        const img=x.thumbnail || (x.enclosure && /image/.test(x.enclosure.type||'') && x.enclosure.link) || '', g=/news\.google/.test(x.link||'');
+        let dd=g?'':String(x.description||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim(); if(dd.length>230) dd=dd.slice(0,230).replace(/\s+\S*$/,'')+'…';
+        return {t, src:src||x.author||'', at:Date.parse(String(x.pubDate||'').replace(' ','T')+'Z')||0, link:x.link||'', img:/^https?:/.test(img)?img:'', d:dd}; });
       if(!items.length && d.message) err=d.message; }catch(e){ err=err||'sin conexión'; } }
   // sin repetidas (el mismo tema contado por dos diarios) y sin viejas
   const out=[]; for(const it of items){ if(!it.t) continue; if(it.at && Date.now()-it.at>3*86400000) continue; if(out.some(o=>Turno.sim(o.t,it.t)>0.55)) continue; out.push(it); if(out.length>=15) break; }
@@ -4203,16 +4331,73 @@ async function notiMas(i){
 function renderNoti(){
   const el=$('pNoti'); if(!el) return; const sel=noti.items[noti.sel];
   const cats=NOTI_CATS().map(([k,n])=>`<button type="button" data-ncat="${k}" aria-pressed="${!noti.q && noti.cat===k}">${esc(n)}</button>`).join('')+(noti.q?`<button type="button" aria-pressed="true">${esc(noti.q)}</button>`:'');
+  const meta=x=>`${esc(x.src||'')}${x.at?' · '+notiHace(x.at):''}`;
+  const foto=(x, cls)=>x.img?`<img class="${cls}" src="${esc(x.img)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.replaceWith(Object.assign(document.createElement('span'),{className:'${cls} nofoto',textContent:${esc(JSON.stringify(x.src||'Noticia'))}}))">`:`<span class="${cls} nofoto">${esc(x.src||'Noticia')}</span>`;
   let body;
   if(sel){ const d=noti.det[sel.t];
-    body=`<article class="ndet"><button class="nback" type="button" data-nback>← Todos los titulares</button><small>${esc(sel.src||'')}${sel.at?' · '+notiHace(sel.at):''}</small><h3>${esc(sel.t)}</h3>${d==='…'?'<p class="nwait">Buscando más detalles…</p>':d?`<p>${esc(d)}</p>`:'<p class="nwait">No encontré más detalles.</p>'}${sel.rel&&sel.rel.length?`<p class="nrel">Relacionadas: ${sel.rel.map(esc).join(' · ')}</p>`:''}${d&&d!=='…'?`<button class="nbtn" type="button" data-nread="${noti.sel}">Contámela de nuevo</button>`:''}</article>`; }
+    body=`<article class="ndet">${sel.img?`<div class="ndhero" style="background-image:url('${esc(sel.img)}')"></div>`:''}<button class="nback" type="button" data-nback>← Todos los titulares</button><small>${meta(sel)}</small><h3>${esc(sel.t)}</h3>${sel.d && d!==sel.d?`<p class="nlead">${esc(sel.d)}</p>`:''}${d==='…'?'<p class="nwait">Buscando más detalles…</p>':d?`<p>${esc(d)}</p>`:'<p class="nwait">No encontré más detalles.</p>'}${sel.rel&&sel.rel.length?`<p class="nrel">Relacionadas: ${sel.rel.map(esc).join(' · ')}</p>`:''}${d&&d!=='…'?`<button class="nbtn" type="button" data-nread="${noti.sel}">Contámela de nuevo</button>`:''}</article>`; }
   else if(noti.busy) body='<p class="empty">Trayendo las noticias…</p>';
   else if(!noti.items.length) body=`<p class="empty">${noti.err?'No pude traer las noticias ('+esc(noti.err)+'). Probá en un rato.':'No hay noticias de esto en los últimos días.'}</p>`;
-  else body=`<div class="ntop"><button class="nbtn" type="button" data-nleer>Leeme los titulares</button><small>Tocá una y FRIDAY te la cuenta · o decí «contame la segunda»</small></div><ol class="nlist">${noti.items.map((x,i)=>`<li><button type="button" data-nit="${i}"><span class="nn">${i+1}</span><span><b>${esc(x.t)}</b><small>${esc(x.src||'')}${x.at?' · '+notiHace(x.at):''}</small></span></button></li>`).join('')}</ol>`;
+  else { const [h, ...rest]=noti.items;
+    body=`<div class="ntop"><button class="nbtn" type="button" data-nleer>${OSI.play} Ver el noticiero</button><small>FRIDAY te las lee como en la tele · tocá una y te la cuenta · o decí «contame la segunda»</small></div>
+    <div class="nmag"><button type="button" class="nhero${h.img?'':' noimg'}" data-nit="0"${h.img?` style="--img:url('${esc(h.img)}')"`:''}><span class="nk">1 · ${meta(h)}</span><b>${esc(h.t)}</b>${h.d?`<small>${esc(h.d)}</small>`:''}</button>
+    <ol class="nlist">${rest.map((x,i)=>`<li><button type="button" data-nit="${i+1}">${foto(x,'nth')}<span><b><em>${i+2}</em>${esc(x.t)}</b><small>${meta(x)}</small></span></button></li>`).join('')}</ol></div>`; }
   const html=`<div class="chips ncats">${cats}</div>${body}`; if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; } }
+// ---------------------------------------------------------------- el noticiero (como el de la compu): pantalla completa mientras FRIDAY lee
+const ntv={ on:false, idx:-1, items:[], gen:0 };
+function ntvOpen(items, titulo){
+  ntv.items=items.slice(0,6); if(!ntv.items.length) return false; ntv.on=true; ntv.idx=-1; ntv.gen++;
+  const el=$('ntv'); el.hidden=false; document.body.classList.add('noticiero');
+  $('ntvSec').textContent=titulo||'Noticias';
+  $('ntvList').innerHTML=ntv.items.map((n,i)=>`<div class="ntv-it" data-i="${i}">${n.img?`<img src="${esc(n.img)}" alt="" referrerpolicy="no-referrer" onerror="this.replaceWith(document.createElement('i'))">`:'<i></i>'}<span>${esc(n.t)}</span></div>`).join('');
+  $('ntvRun').textContent=noti.items.map(n=>n.t).join('   •   ')+'   •   ';
+  try{ if(!$('ntvFace').querySelector('svg')){ faceBuild($('ntvFace')); faceApply(); } }catch(e){}
+  ntvClock(); clearInterval(ntv.ck); ntv.ck=setInterval(ntvClock, 15000);
+  ntvShow(0); return true; }
+function ntvClock(){ const c=$('ntvClock'); if(c) c.textContent=hhmm(new Date()); }
+function ntvShow(i){
+  if(!ntv.on || !ntv.items[i]) return; ntv.idx=i; const n=ntv.items[i];
+  const bg=$('ntvBg'); bg.classList.remove('kb'); void bg.offsetWidth; bg.style.backgroundImage=n.img?`url("${n.img}")`:''; bg.classList.toggle('noimg', !n.img); bg.classList.add('kb');
+  $('ntvK').textContent=`${i+1}/${ntv.items.length}  ·  ${n.src||'Noticia'}${n.at?'  ·  '+notiHace(n.at):''}`;
+  $('ntvT').textContent=n.t; $('ntvS').textContent=n.d||'';
+  const low=$('ntvLow'); low.classList.remove('in'); void low.offsetWidth; low.classList.add('in');
+  document.querySelectorAll('#ntvList .ntv-it').forEach(x=>x.classList.toggle('on', +x.dataset.i===i)); }
+function ntvClose(callar){ if(!ntv.on) return; ntv.on=false; ntv.gen++; clearInterval(ntv.ck); $('ntv').hidden=true; document.body.classList.remove('noticiero'); if(callar) stopTalk(); }
+const espera=ms=>new Promise(r=>setTimeout(r, ms));
+// dice algo y espera a que termine (para ir pasando de noticia a la par de la voz)
+async function decirYEsperar(t, gen){
+  say(t, 'happy'); const t0=Date.now();
+  while(!speakingNow() && Date.now()-t0<9000 && ntv.gen===gen && !Turno.callado()) await espera(120);
+  while(speakingNow() && Date.now()-t0<90000 && ntv.gen===gen) await espera(150); }
+async function notiCast(n){
+  const it=noti.items.slice(0, n||5);
+  if(!it.length){ say(notiLeer(5), 'worried'); return; }
+  if(!ntvOpen(it, 'Noticias '+notiTitulo())) return; const gen=ntv.gen, ords=['Primera','Segunda','Tercera','Cuarta','Quinta','Sexta'];
+  pushHist('assistant', notiLeer(n||5));
+  for(let i=0;i<it.length;i++){
+    if(ntv.gen!==gen) return; ntvShow(i);
+    const x=it[i], extra=x.d && x.d.length<170 ? ' '+x.d.replace(/…$/,'') : '';
+    await decirYEsperar(`${i===0?'Las noticias '+notiTitulo()+'. ':''}${ords[i]}: ${x.t.replace(/[.\s]+$/,'')}${x.src?', según '+x.src:''}.${extra}`, gen);
+  }
+  if(ntv.gen!==gen) return;
+  await decirYEsperar('Si querés que te cuente más de alguna, decime cuál: «la segunda», por ejemplo.', gen);
+  if(ntv.gen===gen){ ntvClose(); if(os.cur!=='noti') osOpen('noti',{auto:true}); state.lastUser=Date.now(); Ear.convoUntil=Date.now()+12000; } }
+// ---------------------------------------------------------------- en el inicio: un titular que va pasando y el pronóstico de las próximas horas
+const wid={ i:0, at:0, cargado:0 };
+function renderWidgets(){
+  const el=$('widgets'); if(!el) return;
+  if(Date.now()-wid.cargado>15*60000){ wid.cargado=Date.now(); newsGet('portada').then(it=>{ if(it.length && (!noti.items.length || (noti.cat==='portada' && !noti.q))){ noti.items=it; noti.at=Date.now(); } }).catch(()=>{}); }
+  const its=(noti.cat==='portada' && !noti.q ? noti.items : (noti.cache.portada||{}).items||[]).slice(0,6);
+  if(Date.now()-wid.at>9000){ wid.at=Date.now(); wid.i=(wid.i+1)%Math.max(1,its.length); }
+  const n=its[wid.i]; let h='';
+  if(n) h+=`<button type="button" class="wnews" data-wnews="${wid.i}">${n.img?`<img src="${esc(n.img)}" alt="" referrerpolicy="no-referrer" onerror="this.remove()">`:`<span class="nofoto">${esc(n.src||'Noticia')}</span>`}<span><small>${OSI.noti} Noticias · ${esc(n.src||'')}${n.at?' · '+notiHace(n.at):''}</small><b>${esc(n.t)}</b></span><i class="dots">${its.map((_,k)=>`<i class="${k===wid.i?'on':''}"></i>`).join('')}</i></button>`;
+  const w=weather.data, ahora=new Date().getHours();
+  if(w && w.hours && w.hours.length){ const hs=w.hours.filter(x=>+x.h.slice(0,2)!==ahora).slice(0,6);
+    h+=`<div class="wfc">${hs.map(x=>{ const hh=+x.h.slice(0,2), night=hh<7||hh>=20; return `<span><small>${x.h.slice(0,2)} h</small>${wxIcon(x.c, night)}<b>${x.t}°</b>${x.p>=30?`<em>${x.p}%</em>`:'<em></em>'}</span>`; }).join('')}</div>`; }
+  if(el.dataset.h!==h){ el.dataset.h=h; el.innerHTML=h; } }
 // por voz, al toque (sin pasar por el cerebro)
 function notiVoz(text, cat, q){ pushHist('user', text); osOpen('noti', {auto:true}); faceSet('thinking');
-  notiAbrir(cat, q).then(()=>{ const r=notiLeer(5); say(r, 'happy'); pushHist('assistant', r); }); }
+  notiAbrir(cat, q).then(()=>notiCast(5)); }
 function notiFast(text, nf){
   const n=nf.replace(/^(che |dale |ok |y )/,'');
   if(/^(que (hay de )?nuevo|(las |unas )?noticias|(los )?titulares|contame (las )?noticias|que (paso|pasa) hoy|leeme (las noticias|los titulares)|(cuales son |decime )?(las )?(noticias|titulares) de hoy|que dicen las noticias|que noticias hay|hay (alguna )?noticias?( nuevas?)?|que (hay de nuevo|novedades hay))( hoy| de hoy)?$/.test(n)){ notiVoz(text, 'portada'); return true; }
@@ -4221,6 +4406,56 @@ function notiFast(text, nf){
   if(noti.items.length && Date.now()-noti.at<20*60000 && (/\b(contame|decime|explicame|ampliame|leeme|que paso con|mas sobre|mas de)\b/.test(n) || /^(y )?(la )?(primera|segunda|tercera|cuarta|quinta|ultima)( noticia)?$/.test(n))){
     const i=notiCual(n); if(i>=0){ pushHist('user', text); faceSet('thinking'); notiMas(i).then(r=>{ say(r,'happy'); pushHist('assistant', r); }); return true; } }
   return false; }
+// ---------------------------------------------------------------- agenda: por día, lo próximo con cuenta regresiva y el mes
+const DIAS=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+function agItems(){
+  const now=new Date(), t0=new Date(now); t0.setHours(0,0,0,0); const out=[], fin=t0.getTime()+14*86400000;
+  for(const e of gapp.ev){ const at=new Date(e.d?e.i+'T00:00':e.i); if((e.d ? at>=t0 : at.getTime()>Date.now()-30*60000) && at.getTime()<fin) out.push({x:'e:'+(e.id||e.t), at, d:!!e.d, t:e.t, sub:e.l||'', tipo:'evento'}); }
+  for(const r of reminders) if(!r.done && r.at && new Date(r.at)>now && new Date(r.at).getTime()<fin) out.push({x:'r:'+r.id, at:new Date(r.at), t:r.texto, sub:r.rep?({diario:'Todos los días',semanal:'Cada semana',habiles:'Días hábiles'}[r.rep]||r.rep):'', tipo:'recordatorio'});
+  for(const a of autos) if(a.on!==false && autoHoy(a, now)){ const [h,m]=String(a.hora||'0:0').split(':').map(Number), at=new Date(now); at.setHours(h,m,0,0); if(at>now) out.push({x:'u:'+a.id, at, t:a.que, sub:'', tipo:'rutina'}); }
+  for(const c of cumplesProx()){ const at=new Date(t0); at.setDate(at.getDate()+c.dias); out.push({x:'', at, d:true, t:'Cumple de '+c.n, sub:'', tipo:'cumple'}); }
+  return out.sort((a,b)=>a.at-b.at || (b.d?1:0)-(a.d?1:0)); }
+function enCuanto(at){ const m=Math.round((at-Date.now())/60000); if(m<1) return 'ahora'; if(m<60) return `en ${m} min`; const h=Math.floor(m/60), r=m%60; if(h<6) return `en ${h} h${r>=10?' '+r+' min':''}`; const d=Math.round((new Date(at).setHours(0,0,0,0)-new Date().setHours(0,0,0,0))/86400000); return d===0?'hoy':d===1?'mañana':`en ${d} días`; }
+function diaTxt(at){ const t0=new Date(); t0.setHours(0,0,0,0); const k=Math.round((new Date(at).setHours(0,0,0,0)-t0)/86400000), d=new Date(at);
+  return [k===0?'Hoy':k===1?'Mañana':DIAS[d.getDay()].charAt(0).toUpperCase()+DIAS[d.getDay()].slice(1), `${k<2?DIAS[d.getDay()]+' ':''}${d.getDate()}`]; }
+function renderAgenda(){
+  const el=$('cAgenda'); if(!el) return; const its=agItems(), ask=Date.now()<hoyAsk.until?hoyAsk.x:'';
+  const prox=its.find(x=>!x.d && x.at>new Date()) || its[0];
+  const TIPO={evento:'Evento', recordatorio:'Recordatorio', rutina:'Rutina', cumple:'Cumple'};
+  let tl='', dia='';
+  for(const x of its.slice(0,30)){ const [dn, dd]=diaTxt(x.at); if(dn!==dia){ dia=dn; tl+=`<h4>${esc(dn)} <small>${esc(dd)}</small></h4>`; }
+    const sub=[x.sub, x.tipo!=='evento'?TIPO[x.tipo]:''].filter(Boolean).join(' · '), nx=x===prox && !x.d;
+    tl+=`<div class="agev t-${x.tipo}${nx?' next':''}${x.x&&x.x===ask?' ask':''}"${x.x?` data-x="${esc(x.x)}"`:''}><time>${x.d?'Todo el día':hhmm(x.at)}</time><span class="agbar"></span><span class="tx"><b>${esc(x.t)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span>${x.x&&x.x===ask?`<button class="del" type="button" data-del="${esc(x.x)}">Borrar</button>`:nx?`<em>${enCuanto(x.at)}</em>`:''}</div>`; }
+  if(!tl) tl=`<p class="empty">No hay nada en los próximos 14 días. Probá <q>Friday, recordame sacar la basura a las nueve</q>${googleOn()?'':' o conectá Google desde el celu'}.</p>`;
+  // el mes, con puntitos en los días que tienen algo
+  const now=new Date(), y=now.getFullYear(), mo=now.getMonth(), first=new Date(y,mo,1), dim=new Date(y,mo+1,0).getDate(), lead=(first.getDay()+6)%7;
+  const con=new Set(its.filter(x=>x.at.getMonth()===mo).map(x=>x.at.getDate()));
+  let cal=''; for(let i=0;i<lead;i++) cal+='<span></span>'; for(let d=1;d<=dim;d++) cal+=`<span class="${d===now.getDate()?'hoy':''}${d<now.getDate()?' pas':''}">${d}${con.has(d)?'<i></i>':''}</span>`;
+  const mes=now.toLocaleDateString('es-AR',{month:'long', year:'numeric'});
+  const side=`<aside class="agside">${prox?`<div class="agnext t-${prox.tipo}"><small>Lo próximo</small><b>${esc(prox.t)}</b><span>${esc(diaTxt(prox.at)[0])}${prox.d?'':' a las '+hhmm(prox.at)}${prox.sub?' · '+esc(prox.sub):''}</span>${!prox.d?`<em>${enCuanto(prox.at)}</em>`:''}</div>`:''}
+    <div class="agcal"><h5>${esc(mes.charAt(0).toUpperCase()+mes.slice(1))}</h5><div class="cg">${['L','M','M','J','V','S','D'].map(d=>`<b>${d}</b>`).join('')}${cal}</div></div>
+    ${notas.length?`<div class="agnotes"><h5>Notas</h5>${notas.slice(-4).reverse().map(n=>`<p data-x="o:${esc(n.id)}" class="agnote${('o:'+n.id)===ask?' ask':''}">${esc(n.t)}${('o:'+n.id)===ask?`<button class="del" type="button" data-del="o:${esc(n.id)}">Borrar</button>`:''}</p>`).join('')}</div>`:''}
+    <p class="aghint">Decí <q>Friday, ¿qué tengo mañana?</q> o <q>anotá el turno del médico el jueves a las 10</q>. Tocá algo para borrarlo.</p></aside>`;
+  const html=`<div class="agw"><div class="agtl">${tl}</div>${side}</div>`;
+  if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
+  if(os.cur==='agenda') $('winS').textContent=prox?`Lo próximo: ${prox.t}${prox.d?'':' · '+enCuanto(prox.at)}`:''; }
+// ---------------------------------------------------------------- intercom como un chat
+const KIND_IC={pc:'💻', tablet:'📟', celu:'📱'};
+function renderIcom(){
+  const ts=icomTargets(), cur=icom.to||'';
+  const chip=t=>{ const k=t.dev?(Call.kindOf?Call.kindOf(t.dev):''):'', on=t.dev && Date.now()-(t.t||0)<25*60000;
+    return `<button type="button" data-icto="${esc(t.dev)}" aria-pressed="${t.dev===cur}">${t.dev?(KIND_IC[k]||'📡'):'📢'} ${esc(t.name.charAt(0).toUpperCase()+t.name.slice(1))}${t.dev?`<i class="dot${on?' on':''}"></i>`:''}</button>`; };
+  const log=icom.log.slice(-14); let chat='', dia='';
+  for(const x of log){ const [dn]=diaTxt(x.at); if(dn!==dia){ dia=dn; chat+=`<div class="cday">${esc(dn==='Hoy'||dn==='Mañana'?dn:dn+' '+new Date(x.at).getDate())}</div>`; }
+    const quien=x.out?'Vos → '+String(x.para||'todos').replace(/^(la|el) /,''):String(x.de||'la compu'), ini=(x.out?'Y':quien.replace(/^(la|el) /i,'')[0]||'?').toUpperCase();
+    if(/Llamada perdida/.test(x.t||'')) chat+=`<div class="bub call"><span class="av">📹</span><div><small>${hhmm(new Date(x.at))}</small><p>Llamada perdida de ${esc(quien)}</p></div>${x.dev?`<button type="button" class="rbtn" data-icall="${esc(x.dev)}">Llamar</button>`:''}</div>`;
+    else chat+=`<div class="bub ${x.out?'out':'in'}${!x.out&&!x.leido?' nuevo':''}">${x.out?'':`<span class="av">${esc(ini)}</span>`}<div><small>${esc(x.out?quien:quien)} · ${hhmm(new Date(x.at))}</small><p>${esc(x.t)}</p></div>${!x.out&&x.dev?`<button type="button" class="rbtn" data-icr="${esc(x.dev)}">Responder</button>`:''}</div>`; }
+  const html=`<div class="cols icw"><div><h3>¿A dónde?</h3><div class="chips" id="icTo">${ts.map(chip).join('')}</div>
+    <button class="talkbtn${state.icomTo?' rec':''}" type="button" id="icTalk" aria-label="Hablar">${OSI.mic}</button>
+    <p class="talkcap">${state.icomTo?'Te escucho: decí el mensaje…':`Tocá y decí el mensaje: se escucha en voz alta en ${esc((ts.find(t=>t.dev===cur)||{name:'todos'}).name.toLowerCase().replace(/^todos$/,'todos los aparatos'))}.`}</p>
+    <div class="chips frases">${ICOM_FRASES.map(f=>`<button type="button" data-icf="${esc(f)}">${esc(f)}</button>`).join('')}</div></div>
+    <div class="icchat"><h3>Mensajes</h3>${chat?`<div class="chat" id="icChat">${chat}</div>`:`<p class="empty">Todavía no hay mensajes. También por voz: <q>Friday, avisale a la compu que la comida está lista</q>.</p>`}</div></div>`;
+  const el=$('pIcom'); if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; const c=$('icChat'); if(c) c.scrollTop=c.scrollHeight; } }
 // ================================================================ FRIDAY OS (fin)
 
 // ================================================================ FRIDAY VIVA (tablet)
@@ -4620,7 +4855,7 @@ async function chequeoTablet(){
     try{ const o=await Promise.race([Promise.resolve().then(fn), new Promise((_,rej)=>setTimeout(()=>rej(new Error('tardó más de '+Math.round((ms||15000)/1000)+' s')), ms||15000))]); r.st=o.st||'ok'; r.t=o.t||''; }catch(e){ r.st='bad'; r.t=String(e.message||e).slice(0,160); }
     r.t+=(r.t?' ':'')+`(${((Date.now()-t0)/1000).toFixed(1)} s)`; chqPaint(); };
   await prueba('Cerebro (Groq)', async()=>{ if(!S.groqKey) return {st:'bad', t:'falta la llave'}; const t=await llm([{role:'user', content:'Respondé solamente la palabra: listo'}], ()=>{}); return {st:/listo/i.test(t)?'ok':'warn', t:'contestó «'+String(t).slice(0,30)+'»'}; }, 20000);
-  await prueba('Servicio de la casa (Cloudflare)', async()=>{ if(!workerOn()) return {st:'warn', t:'no está armado (sin él no hay voz de Elena, tele ni luces)'}; await wkPing(); const v=S.workerV||0; return {st:v>=6?'ok':v>=2?'warn':'bad', t:v?`versión ${v}${v<5?' — falta actualizar el código a la 6 (con la vieja, la música pone cualquier cosa). En Cloudflare: Edit code, pegar el worker.js nuevo y Deploy':v<6?' — conviene actualizar el código a la 6 (las noticias llegan directo). En Cloudflare: Edit code, pegar el worker.js nuevo y Deploy':''}`:'no responde'}; });
+  await prueba('Servicio de la casa (Cloudflare)', async()=>{ if(!workerOn()) return {st:'warn', t:'no está armado (sin él no hay voz de Elena, tele ni luces)'}; await wkPing(); const v=S.workerV||0; return {st:v>=7?'ok':v>=2?'warn':'bad', t:v?`versión ${v}${v<5?' — falta actualizar el código a la 7 (con la vieja, la música pone cualquier cosa). En Cloudflare: Edit code, pegar el worker.js nuevo y Deploy':v<7?' — conviene actualizar el código a la 7 (las noticias llegan directo y con fotos). En Cloudflare: Edit code, pegar el worker.js nuevo y Deploy':''}`:'no responde'}; });
   await prueba('Voz de Elena', async()=>{ if(!vozNube()) return {st:'warn', t:S.voz==='tablet'?'elegiste la voz de la tablet':'no disponible: '+(tts.err||'sin servicio')}; tts.failUntil=0; const a=await fetchTTS('Prueba de voz.'); return {st:a?'ok':'bad', t:a?'llegó el audio':'no llegó: '+(tts.err||'?')}; }, 20000);
   await prueba('Música (YouTube)', async()=>{ const vs=await ytBuscar('Soda Stereo De música ligera'); return {st:/soda|ligera/i.test(vs[0].title)?'ok':'warn', t:`${vs.length} videos; el primero: «${vs[0].title}»`}; }, 25000);
   await prueba('Micrófono', async()=>{ if(!stt.on) return {st:'bad', t:'no anda: falta el permiso o el toque inicial'}; const fl=stt.floor||0, m=S.micMode||'normal', mal=m==='cerca' && fl<0.004 && !sttNoisy();
@@ -4673,7 +4908,7 @@ async function boot(){
     onAutoAnswer:(name,k)=>{ setTimeout(()=>{ if(Call.ringing) say(`Te llama ${name}. Atiendo en ${k} segundos; si no querés, decí «no».`, 'surprised'); }, 1500); Ear.convoUntil=Date.now()+k*1000+4000; },
     onStart:()=>{ stopTalk(); ambOff(); setsShow(false); if(music.cur && music.cur.src==='youtube' && music.cur.playing!==false){ try{ music.yt.pauseVideo(); }catch(e){} } },
     onEnd:why=>{ state.lastUser=Date.now(); duck(false); if(why) toast(why, 5000); },
-    onMissed:(name)=>{ duck(false); icom.log.push({at:Date.now(), de:name, t:'📹 Llamada perdida', leido:false}); icomSave(); addAviso({i:'📹', t:'Llamada perdida', s:'De '+name+' · «Friday, devolvé la llamada»', v:'Te llamó '+name+'. Si querés, decí «devolvé la llamada».'}, true); }
+    onMissed:(name, dev)=>{ duck(false); icom.log.push({at:Date.now(), de:name, dev:dev||'', t:'📹 Llamada perdida', leido:false}); icomSave(); addAviso({i:'📹', t:'Llamada perdida', s:'De '+name+' · «Friday, devolvé la llamada»', v:'Te llamó '+name+'. Si querés, decí «devolvé la llamada».'}, true); }
   }); state.sleepUntil=LS.get('sleepUntil',0);
   $('mapa').onclick=mapaOff;
   $('tap').onclick=start; $('sClose').onclick=()=>{ $('setup').hidden=true; setupShow.force=false; if(!state.started) $('tap').hidden=false; };

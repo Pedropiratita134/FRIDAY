@@ -22,7 +22,7 @@ const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.goog
 let tuya = { host: null, tok: '', exp: 0 };
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words, X-Voz-Via' };
-const VERSION = 6;
+const VERSION = 7;
 const form = o => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });
 const enc = new TextEncoder();
@@ -98,28 +98,63 @@ function collectVideos(o, out, depth) {
 const YT_CLIENT = '2.20250925.01.00';
 const YT_COOKIE = 'CONSENT=YES+cb.20240101-00-p0.es+FX+000; SOCS=CAI; PREF=hl=es&gl=AR';
 const NEWS_TOPICS = { argentina: 'NATION', mundo: 'WORLD', economia: 'BUSINESS', deportes: 'SPORTS', tecnologia: 'TECHNOLOGY', espectaculos: 'ENTERTAINMENT', ciencia: 'SCIENCE', salud: 'HEALTH' };
+// los diarios traen foto y resumen (como el noticiero de la compu); Google Noticias completa lo que falte
+const NEWS_DIARIOS = {
+  portada: [['https://www.infobae.com/arc/outboundfeeds/rss/?outputType=xml', 'Infobae'], ['https://www.clarin.com/rss/lo-ultimo/', 'Clarín'], ['https://www.lanacion.com.ar/arc/outboundfeeds/rss/?outputType=xml', 'La Nación'], ['https://feeds.bbci.co.uk/mundo/rss.xml', 'BBC Mundo']],
+  argentina: [['https://www.clarin.com/rss/politica/', 'Clarín'], ['https://www.lanacion.com.ar/arc/outboundfeeds/rss/category/politica/?outputType=xml', 'La Nación']],
+  mundo: [['https://feeds.bbci.co.uk/mundo/rss.xml', 'BBC Mundo'], ['https://www.clarin.com/rss/mundo/', 'Clarín']],
+  deportes: [['https://www.clarin.com/rss/deportes/', 'Clarín'], ['https://www.lanacion.com.ar/arc/outboundfeeds/rss/category/deportes/?outputType=xml', 'La Nación']],
+  economia: [['https://www.clarin.com/rss/economia/', 'Clarín'], ['https://www.lanacion.com.ar/arc/outboundfeeds/rss/category/economia/?outputType=xml', 'La Nación']],
+  tecnologia: [['https://www.clarin.com/rss/tecnologia/', 'Clarín'], ['https://feeds.bbci.co.uk/mundo/temas/tecnologia/rss.xml', 'BBC Mundo']],
+  espectaculos: [['https://www.clarin.com/rss/espectaculos/', 'Clarín'], ['https://www.lanacion.com.ar/arc/outboundfeeds/rss/category/espectaculos/?outputType=xml', 'La Nación']],
+};
+const NEWS_UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36';
+async function feedText(url) {
+  const r = await fetch(url, { headers: { 'User-Agent': NEWS_UA, 'Accept-Language': 'es-AR,es;q=0.9' }, cf: { cacheTtl: 600, cacheEverything: true } });
+  if (!r.ok) throw new Error('respondió ' + r.status);
+  return r.text();
+}
+const newsKey = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ').trim().slice(0, 48);
 async function newsFetch(env, cat, q) {
   const base = env.NEWS_BASE || 'https://news.google.com', tail = 'hl=es-419&gl=AR&ceid=AR:es-419';
-  const url = q ? `${base}/rss/search?q=${encodeURIComponent(q + ' when:3d')}&${tail}`
+  const gUrl = q ? `${base}/rss/search?q=${encodeURIComponent(q + ' when:3d')}&${tail}`
     : NEWS_TOPICS[cat] ? `${base}/rss/headlines/section/topic/${NEWS_TOPICS[cat]}?${tail}` : `${base}/rss?${tail}`;
-  const r = await fetch(url, { headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36', 'Accept-Language': 'es-AR,es;q=0.9' }, cf: { cacheTtl: 600, cacheEverything: true } });
-  if (!r.ok) throw new Error('Google Noticias respondió ' + r.status);
-  return parseRss(await r.text());
+  const dia = q ? [] : (NEWS_DIARIOS[cat] || (cat && cat !== 'portada' ? [] : NEWS_DIARIOS.portada));
+  const dBase = env.NEWS_DIARIOS_BASE || '';   // (para las pruebas)
+  const res = await Promise.all([feedText(gUrl).then(x => parseRss(x, '')).catch(() => []),
+    ...dia.map(([u, src]) => feedText(dBase ? dBase + '/' + encodeURIComponent(u) : u).then(x => parseRss(x, src).slice(0, 8)).catch(() => []))]);
+  const out = [], seen = new Set(), add = it => { const k = newsKey(it.t); if (!k || seen.has(k)) return; seen.add(k); out.push(it); };
+  // los diarios intercalados (uno de cada uno), y después Google
+  const ds = res.slice(1);
+  for (let i = 0; i < 8; i++) for (const l of ds) if (l[i]) add(l[i]);
+  for (const it of res[0]) add(it);
+  if (!out.length) throw new Error('no llegaron noticias');
+  return out.slice(0, 25);
 }
 function xmlDec(s) {
   return String(s || '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
     .replace(/&nbsp;/g, ' ').replace(/&#(\d+);/g, (m, n) => String.fromCharCode(+n)).replace(/&amp;/g, '&');
 }
-function parseRss(x) {
+function parseRss(x, srcDef) {
   const out = [];
   for (const m of String(x).matchAll(/<item>([\s\S]*?)<\/item>/g)) {
     const it = m[1], g = t => { const mm = it.match(new RegExp('<' + t + '(?:\\s[^>]*)?>([\\s\\S]*?)<\\/' + t + '>')); return mm ? xmlDec(mm[1]).trim() : ''; };
-    let t = g('title'), src = g('source');
+    let t = g('title'), src = g('source') || srcDef || '';
     if (src && t.endsWith(' - ' + src)) t = t.slice(0, -(src.length + 3));
     else if (!src) { const k = t.lastIndexOf(' - '); if (k > 20) { src = t.slice(k + 3); t = t.slice(0, k); } }
-    // en las notas principales, la descripción trae otros titulares del mismo tema
-    const rel = [...xmlDec(g('description')).matchAll(/<a [^>]*>([\s\S]*?)<\/a>/g)].map(a => a[1].replace(/<[^>]+>/g, '').trim()).filter(z => z && z !== t).slice(0, 3);
-    if (t) out.push({ t, src, at: Date.parse(g('pubDate')) || 0, link: g('link'), rel });
+    const desc = xmlDec(g('description')), link = g('link');
+    // la foto: media:content, media:thumbnail, enclosure o la primera <img> del texto
+    let img = '';
+    for (const re of [/<media:content[^>]*url="([^"]+)"[^>]*>/, /<media:thumbnail[^>]*url="([^"]+)"/, /<enclosure[^>]*url="([^"]+)"[^>]*type="image/, /<enclosure[^>]*type="image[^"]*"[^>]*url="([^"]+)"/]) { const mm = it.match(re); if (mm) { img = xmlDec(mm[1]); break; } }
+    if (!img) { const mm = (desc + xmlDec(g('content:encoded'))).match(/<img[^>]+src=["']([^"']+)/i); if (mm) img = mm[1]; }
+    if (img && !/^https?:\/\//.test(img)) img = '';
+    const google = /news\.google\.com/.test(link);
+    // en Google, la descripción trae otros titulares del mismo tema; en los diarios, el resumen
+    const rel = google ? [...desc.matchAll(/<a [^>]*>([\s\S]*?)<\/a>/g)].map(a => a[1].replace(/<[^>]+>/g, '').trim()).filter(z => z && z !== t).slice(0, 3) : [];
+    let d = google ? '' : desc.replace(/<[^>]+>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (d.length > 230) d = d.slice(0, 230).replace(/\s+\S*$/, '') + '…';
+    if (d && newsKey(d).startsWith(newsKey(t).slice(0, 30))) d = '';
+    if (t) out.push({ t, src, at: Date.parse(g('pubDate')) || 0, link, rel, d, img });
     if (out.length >= 30) break;
   }
   return out;
