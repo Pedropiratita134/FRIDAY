@@ -127,7 +127,7 @@ body.inapp .inicio{opacity:0;transform:scale(.96);pointer-events:none}
 
 /* las apps: íconos vivos */
 .apps{display:flex;flex-direction:column;gap:18px;min-height:0;padding-top:4px}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:20px 10px;align-content:start}
+.grid{display:grid;grid-template-columns:repeat(8,1fr);gap:18px 8px;align-content:start}
 .app-ic{--t:var(--friday);display:flex;flex-direction:column;align-items:center;gap:9px;padding:0;border:0;background:none;cursor:pointer;min-width:0}
 .app-ic .tile{position:relative;width:100%;max-width:108px;aspect-ratio:1;border-radius:32%;display:grid;place-items:center;
   background:linear-gradient(155deg, color-mix(in srgb,var(--t) 30%, #12203a) 0%, #0D1830 78%);
@@ -372,6 +372,48 @@ body.noticiero .dock,body.noticiero .talk{visibility:hidden}
 .bub.nuevo>div{box-shadow:0 0 0 2px rgba(255,138,61,.55)}
 .bub.call .av{background:rgba(255,107,125,.18);font-size:18px}.bub.call>div{background:rgba(255,107,125,.1)}
 .bub .rbtn{flex:none;border:1px solid var(--edge-2);background:var(--card-3);color:var(--ink);border-radius:999px;padding:8px 14px;font:600 15px var(--text);cursor:pointer;align-self:center}
+/* guardia, protocolos y la compu */
+.gpill{display:none;align-items:center;padding:6px 12px;border-radius:999px;background:rgba(255,107,125,.16);color:#FF8A96;font:700 14px var(--text);letter-spacing:.04em}
+body.guardia .gpill{display:inline-flex;animation:gblink 2s ease-in-out infinite}
+@keyframes gblink{50%{opacity:.55}}
+.gcard{display:flex;align-items:center;gap:18px;padding:18px 22px;border-radius:22px;background:var(--card-2);border:1px solid var(--edge);margin-bottom:12px}
+.gcard.on{background:linear-gradient(140deg,rgba(255,107,125,.2),rgba(255,107,125,.05));border-color:rgba(255,107,125,.45)}
+.gcard>div{flex:1;min-width:0}.gcard small{font:700 13px var(--text);letter-spacing:.14em;color:var(--ink-2)}.gcard b{display:block;font:640 24px var(--disp);margin:4px 0}.gcard span{color:var(--ink-2);font-size:16px;line-height:1.4}
+.gbtn{flex:none;min-height:56px;padding:0 26px;border-radius:999px;border:0;background:#FF6B7D;color:#fff;font:700 18px var(--text);cursor:pointer}
+.gcard:not(.on) .gbtn{background:var(--card-3);color:var(--ink);border:1px solid var(--edge-2)}
+.gev{display:flex;gap:10px;margin:0 0 14px;overflow-x:auto}.gev figure{margin:0;flex:none}.gev img{width:150px;height:112px;object-fit:cover;border-radius:12px;display:block}.gev figcaption{font-size:13px;color:var(--ink-2);margin-top:4px}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}
+.pcard{position:relative}
+.prun{width:100%;height:100%;display:flex;flex-direction:column;align-items:flex-start;gap:6px;padding:18px;border-radius:22px;border:1px solid color-mix(in srgb,var(--t) 35%, transparent);background:linear-gradient(150deg,color-mix(in srgb,var(--t) 20%, #12203a),#0D1830 80%);color:var(--ink);text-align:left;cursor:pointer}
+.prun:active{transform:scale(.97)}
+.prun .pic{font-size:32px;line-height:1}.prun b{font:640 22px var(--disp)}.prun small{color:var(--ink-2);font-size:14px;line-height:1.35}.prun em{font-style:normal;font-size:13px;color:var(--t);margin-top:auto}
+.pdel{position:absolute;right:10px;top:10px;width:34px;height:34px;border-radius:50%;border:1px solid var(--edge-2);background:rgba(6,11,20,.6);color:var(--ink-2);font-size:18px;cursor:pointer}
+.phud{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:85;pointer-events:none;animation:phIn .35s cubic-bezier(.2,.9,.3,1.2) both}
+.phud[hidden]{display:none}
+@keyframes phIn{from{opacity:0;transform:translate(-50%,-46%) scale(.94)}}
+.phud .pbox{min-width:min(460px,86vw);padding:24px 30px;border-radius:24px;background:rgba(4,10,22,.92);border:1px solid var(--t);box-shadow:0 0 0 1px rgba(255,255,255,.04),0 0 60px -10px var(--t),0 30px 80px -30px #000;backdrop-filter:blur(10px)}
+.phud small{font:700 13px var(--text);letter-spacing:.3em;color:var(--t)}.phud b{display:block;font:680 32px var(--disp);letter-spacing:.06em;margin:6px 0 14px}
+.phud ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.phud li{position:relative;padding-left:30px;font-size:18px;color:var(--ink-3);transition:color .3s}
+.phud li::before{content:"";position:absolute;left:0;top:4px;width:16px;height:16px;border-radius:50%;border:2px solid var(--ink-3)}
+.phud li.run{color:var(--ink)}.phud li.run::before{border-color:var(--t);border-top-color:transparent;animation:spin .8s linear infinite}
+.phud li.ok{color:var(--ink)}.phud li.ok::before{background:var(--t);border-color:var(--t)}
+.phud em{display:block;margin-top:14px;font:700 16px var(--text);font-style:normal;color:var(--t);letter-spacing:.2em}
+@keyframes spin{to{transform:rotate(360deg)}}
+.cacts{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:18px}
+.cacts button{min-height:52px;padding:0 18px;border-radius:16px;border:1px solid var(--edge-2);background:var(--card-2);color:var(--ink);font:600 16px var(--text);cursor:pointer}
+.hud .rings{display:flex;flex-wrap:wrap;gap:22px}
+.cring{position:relative;width:150px;height:150px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.cring svg{position:absolute;inset:0;transform:rotate(-90deg);overflow:visible}
+.cring circle{fill:none;stroke-width:7}.cring .bg{stroke:rgba(140,190,255,.12)}.cring .fg{stroke:var(--c);stroke-linecap:round;filter:drop-shadow(0 0 6px var(--c));transition:stroke-dashoffset .8s}
+.cring b{font:680 28px var(--disp);position:relative;line-height:1.1}.cring small{position:relative;max-width:104px;font-size:12px;line-height:1.25;color:var(--ink-2);margin-top:2px}
+.hstat{display:flex;flex-wrap:wrap;gap:8px 18px;margin:16px 0 6px;color:var(--ink-2);font-size:16px}.hstat .warn{color:#FFB547}.hstat .mut{color:var(--ink-3)}
+.spark{width:100%;height:60px;margin:6px 0 4px}.spark polyline{fill:none;stroke:#4CC9FF;stroke-width:2;vector-effect:non-scaling-stroke}
+.procs{display:flex;flex-direction:column;gap:6px}
+.procs>div{display:grid;grid-template-columns:minmax(0,1.2fr) 1fr auto auto;gap:12px;align-items:center;padding:8px 12px;border-radius:12px;background:var(--card-2)}
+.procs b{font:600 16px var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.procs i{height:6px;border-radius:3px;background:linear-gradient(90deg,#4CC9FF var(--w),rgba(140,190,255,.12) var(--w))}
+.procs small{color:var(--ink-2);font-size:14px;white-space:nowrap}.procs button{border:1px solid var(--edge-2);background:none;color:var(--ink-2);border-radius:999px;padding:6px 12px;font:600 13px var(--text);cursor:pointer}
+.cshot{margin:18px 0 0}.cshot img{width:100%;border-radius:14px;border:1px solid var(--edge)}.cshot figcaption{color:var(--ink-2);font-size:14px;margin-top:6px}
 /* llamar sin aparatos */
 .callempty{max-width:560px;margin:40px auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:12px}
 .callempty .ce-ic{width:92px;height:92px;border-radius:30px;display:grid;place-items:center;background:rgba(74,222,128,.14);color:#4ADE80}.callempty .ce-ic svg{width:46px;height:46px}
@@ -690,7 +732,7 @@ body.ambvid #ytbox iframe{transform:none}
   .clock{font-size:108px;grid-row:1/4}
   .date{margin:0}.wxrow{margin:8px 0 0}
   #cHoy{grid-column:1/3;margin-top:20px;max-height:34vh}
-  .grid{grid-template-columns:repeat(7,1fr);gap:18px 6px}
+  .grid{grid-template-columns:repeat(8,1fr);gap:16px 4px}
   .app-ic .tile{max-width:100px}
   .coc{grid-template-columns:1fr}
   .tips{display:none}
@@ -712,6 +754,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
   <header class="bar">
     <div class="brand"><b>FRIDAY</b><span>BUFALABS</span><em class="ver" id="brandVer" title="Versión de FRIDAY Casa"></em></div>
     <div class="timers" id="timers"></div>
+    <span class="gpill" id="gPill">● Guardia</span>
     <div class="sys">
       <span class="eye" id="eye" hidden><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><span>Mirando</span></span>
       <span class="links" id="links"></span>
@@ -747,6 +790,8 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="pane" data-app="llamar" id="pLlamar"></div>
       <div class="pane" data-app="icom" id="pIcom"></div>
       <div class="pane" data-app="noti" id="pNoti"></div>
+      <div class="pane" data-app="proto" id="pProto"></div>
+      <div class="pane" data-app="compu" id="pCompu"></div>
       <div class="pane" data-app="estudio" id="pEst"></div>
       <div class="pane" data-app="shop"><div class="cols"><div><article class="card" id="cShop" data-k="shop"></article><div class="addrow"><input id="shopIn" placeholder="Agregar a la lista…" autocomplete="off" spellcheck="false"><button class="big-btn" id="shopAdd" type="button">Agregar</button></div></div><div id="pPrecios"></div></div></div>
       <div class="pane" data-app="agenda"><article class="card" id="cAgenda"></article></div>
@@ -1060,6 +1105,19 @@ const FSync={
       await new Promise(r=>{ this.streamWake=r; setTimeout(r, ok ? 1500 : back); }); this.streamWake=null;
     }
   },
+  // una foto (u otro archivo) cifrada: viaja como adjunto de ntfy (queda unas horas allá) y el aviso lleva cómo abrirla
+  async sendFile(head, bytes, name){
+    if(!this.on()) return false;
+    try{ const iv=crypto.getRandomValues(new Uint8Array(12));
+      const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, this.key, bytes));
+      const all=new Uint8Array(12+ct.length); all.set(iv); all.set(ct,12);
+      const msg=await this.seal(Object.assign({f:this.cfg.dev, n:this.hooks.name||'', dk:this.hooks.kind||'', vr:this.hooks.ver||''}, head));
+      const r=await fetch(this.cfg.server+'/'+this.topic, {method:'PUT', body:all, headers:{'X-Filename':name||'f.bin', 'X-Message':msg, 'X-Firebase':'no'}});
+      if(r.ok){ this.okAt=Date.now(); this.lastErr=''; } return r.ok; }catch(e){ this.lastErr='sin conexión'; return false; } },
+  async openFile(url){
+    const r=await fetch(url); if(!r.ok) throw new Error('ya no está (los adjuntos duran unas horas)');
+    const u=new Uint8Array(await r.arrayBuffer());
+    return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(0,12)}, this.key, u.slice(12))); },
   // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
   send(head){ return this.publish(head, null); },
   // qué es cada aparato (compu, tablet, celu): lo dice él mismo; si es de una versión vieja, por su código o su nombre
@@ -1150,7 +1208,7 @@ const FSync={
     if(this.ids.has(m.id)) return; this.ids.add(m.id); if(this.ids.size>400) this.ids=new Set([...this.ids].slice(-200));
     this.st.lastId=m.id;
     const o=await this.unseal(m.message); if(!o || !o.f || o.f===this.cfg.dev) return;
-    o._t=(m.time||0)*1000;
+    o._t=(m.time||0)*1000; if(m.attachment && m.attachment.url) o._att=m.attachment.url;
     await this.handle(o);
   },
   async handle(o){
@@ -1185,7 +1243,7 @@ const FSync={
     }
     if(o.k && !['d','h','q'].includes(o.k) && this.hooks.onMsg){
       // pedidos y avisos viejos (de cuando este aparato estaba apagado) no se hacen
-      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:120000)){
+      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:o.k==='guardia'?3*3600000:120000)){
         // sin esperar: un pedido que tarda (por ejemplo, uno que espera tu "sí") no traba los mensajes que siguen
         Promise.resolve().then(()=>this.hooks.onMsg(o)).catch(e=>console.warn(e));
       }
@@ -1485,8 +1543,11 @@ function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[
 const WAKE_FORMS=['friday','fraidei','fraide','fraidey','freidei','fridei','fraday','freday','fraiday','fridey'];
 function lev(a,b){ const m=a.length, n=b.length; let p=Array.from({length:n+1},(_,j)=>j); for(let i=1;i<=m;i++){ const c=[i]; for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1, c[j-1]+1, p[j-1]+(a[i-1]===b[j-1]?0:1)); p=c; } return p[n]; }
 // ¿dónde está el nombre? devuelve [desde, cuántas palabras] (entre las primeras palabras), o null
+// «Friday» puede venir al principio («Friday, ¿qué hora es?»), después de un saludo («hola, Friday»,
+// «buenas noches Friday, ¿cómo estás?») o al final («¿qué hora es, Friday?»)
 function wakeAt(words){
-  for(let i=0;i<Math.min(words.length,4);i++){
+  const idx=[]; for(let i=0;i<Math.min(words.length,10);i++) idx.push(i); for(let i=Math.max(10, words.length-3);i<words.length;i++) idx.push(i);
+  for(const i of idx){
     const w=words[i];
     if(WAKE_RE.test(w)) return [i,1];
     if(w==='viernes' && (i===0 || (i===1 && /^(che|hola|ey|oye|eh|bueno|dale|ok)$/.test(words[0])))) return [i,1];
@@ -1503,11 +1564,11 @@ function wakeHit(t){ const n=norm(t); return !!n && (WAKE_RE.test(n) || !!wakeAt
 function stripWake(text){
   const orig=String(text).trim().split(/\s+/), words=orig.map(w=>norm(w));
   const at=wakeAt(words);
-  if(at){ const restOrig=[...orig.slice(0,at[0]), ...orig.slice(at[0]+at[1])].join(' ').replace(/^[,.;:!¡?¿\s]+/,'').trim(); return {called:true, rest:norm(restOrig), restOrig}; }
+  if(at){ const restOrig=[...orig.slice(0,at[0]), ...orig.slice(at[0]+at[1])].join(' ').replace(/^[,.;:!¡?¿\s]+/,'').replace(/[,;:\s]+$/,'').trim(); return {called:true, rest:norm(restOrig), restOrig}; }
   const flat=text.split('').map(ch=>(ch.toLowerCase().normalize('NFD')[0]||ch)).join('');
   const m=flat.match(WAKE_RE);
   if(!m) return {called:false, rest:text, restOrig:text};
-  const restOrig=(text.slice(0,m.index)+' '+text.slice(m.index+m[0].length)).replace(/\s+/g,' ').trim().replace(/^[,.;:!¡?¿\s]+/,'').trim();
+  const restOrig=(text.slice(0,m.index)+' '+text.slice(m.index+m[0].length)).replace(/\s+/g,' ').trim().replace(/^[,.;:!¡?¿\s]+/,'').replace(/[,;:\s]+$/,'').trim();
   return {called:true, rest:norm(restOrig), restOrig};
 }
 const stt={sr:48000, floor:0.004, level:0, recording:false, frames:[], pre:[], loud:0, speechMs:0, silenceMs:0, wakeChecked:0, seg:0, peekYes:false, peekNo:0, peekPend:0, segPeak:0, noHist:[], bgLv:0, coolPeek:0, coolUntil:0, fails:0, worklet:false, on:false, muteUntil:0};
@@ -1577,7 +1638,7 @@ function whisperModel(){ return Date.now()<(stt.turboUntil||0) ? 'whisper-large-
 function retryMs(txt, r){ const h=r && r.headers && +r.headers.get('retry-after'); if(h) return h*1000; const m=String(txt||'').match(/try again in (?:(\d+)m)?(?:([\d.]+)s)?/i); return m ? ((+m[1]||0)*60+(+m[2]||0))*1000+500 : 20000; }
 function sttCool(model, ms){ const until=Date.now()+Math.min(120000, Math.max(5000, ms)); if(model==='whisper-large-v3-turbo') stt.coolPeek=until; else stt.coolUntil=until; }
 function earAttending(){ return !S.wake || Date.now()<Ear.convoUntil; }
-function sttReset(){ stt.recording=false; stt.frames=[]; stt.pre=[]; stt.loud=0; stt.held=false; stt.wakeChecked=0; stt.seg++; stt.peekYes=false; stt.peekNo=0; stt.peekPend=0; stt.segPeak=0; }
+function sttReset(){ stt.recording=false; stt.frames=[]; stt.pre=[]; stt.loud=0; stt.held=false; stt.wakeChecked=0; stt.seg++; stt.peekYes=false; stt.peekNo=0; stt.peekPend=0; stt.segPeak=0; stt.peekCov=0; }
 async function wakePeek(frames){
   try{
     const fd=new FormData();
@@ -1590,7 +1651,7 @@ async function wakePeek(frames){
     if(!r.ok) return null;
     const d=await r.json(), txt=norm(String(d.text||'')); Ear.peeks++;
     if(txt && wakeHit(txt)){ Ear.hooks.onWake(); return true; }
-    if(txt) return txt.split(' ').filter(Boolean).length>=4 ? false : null;
+    if(txt) return txt.split(' ').filter(Boolean).length>=6 ? false : null;   // con pocas palabras puede venir después («hola, buenas… Friday»)
   }catch(e){ return null; }
   return null;
 }
@@ -1611,10 +1672,10 @@ function sttFrame(data){
     stt.frames.push(frame); stt.segPeak=Math.max(stt.segPeak, rms);
     if(S.wake && !earAttending() && stt.wakeChecked<2 && stt.speechMs>=600 && !stt.peekYes){
       const sofar=stt.frames.length*ms, louder = !sttNoisy() || stt.segPeak > stt.bgLv*1.4;
-      if((stt.wakeChecked===0 && sofar>=1200 || stt.wakeChecked===1 && sofar>=2600 && !stt.peekNo) && louder && sttPeekBudget()){
-        stt.wakeChecked++; const seg=stt.seg, pk=stt.segPeak; stt.peekPend++;
+      if((stt.wakeChecked===0 && sofar>=1200 || stt.wakeChecked===1 && sofar>=2600) && louder && sttPeekBudget()){
+        stt.wakeChecked++; const seg=stt.seg, pk=stt.segPeak, cov=sofar; stt.peekPend++;
         stt.peekP=wakePeek(stt.frames.slice()).then(yes=>{
-          if(yes===false){ stt.noHist.push(Date.now()); stt.bgLv = stt.bgLv ? stt.bgLv*0.7+pk*0.3 : pk; }
+          if(yes===false){ stt.noHist.push(Date.now()); stt.bgLv = stt.bgLv ? stt.bgLv*0.7+pk*0.3 : pk; if(stt.seg===seg) stt.peekCov=Math.max(stt.peekCov||0, cov); }
           if(stt.seg===seg){ stt.peekPend--; if(yes===true) stt.peekYes=true; else if(yes===false) stt.peekNo++; } return yes; });
       }
     }
@@ -1626,7 +1687,8 @@ function sttFrame(data){
     const cortar = micMusic() && !earAttending() && !stt.peekYes && total>6000;
     if(stt.silenceMs >= (+S.patience||1.2)*1000 || total>28000 || cortar){
       const frames=stt.frames, spoke=stt.speechMs, conv=earAttending();
-      const notForHer = !conv && !stt.peekYes && stt.peekNo>0 && !stt.peekPend;
+      // «no era para ella» solo si el vistazo escuchó casi toda la frase sin «Friday» (si no, puede estar al final)
+      const notForHer = !conv && !stt.peekYes && stt.peekNo>0 && !stt.peekPend && (stt.peekCov||0) >= total*0.75;
       const bajito = !conv && !stt.peekYes && !stt.wakeChecked && sttNoisy() && stt.segPeak <= stt.bgLv*1.4;
       const sinCupo=!sttSendBudget(conv), paraElla=conv || stt.peekYes;
       const skip = spoke<220 || notForHer || bajito || sinCupo;
@@ -1635,7 +1697,7 @@ function sttFrame(data){
       const yaDijo=stt.peekYes;
       sttReset();
       if(skip){ h.onDrop(); if(sinCupo && paraElla && spoke>=220 && h.onFail) h.onFail('cupo'); }
-      else if(waitPeek) Promise.race([waitPeek, new Promise(r=>setTimeout(()=>r(null), 2500))]).then(yes=>{ if(yes===false) h.onDrop(); else sttSend(frames, yes===true); });
+      else if(waitPeek){ const largo=total; Promise.race([waitPeek, new Promise(r=>setTimeout(()=>r(null), 2500))]).then(yes=>{ if(yes===false && largo<=3200) h.onDrop(); else sttSend(frames, yes===true); }); }
       else sttSend(frames, yaDijo || conv);
     }
   }
@@ -2195,7 +2257,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='4.0';
+const VERSION='4.1';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2440,6 +2502,7 @@ async function fetchTTS(t){
   } finally { clearTimeout(to); }
 }
 function speakChunk(text){
+  if(Turno.callado()) return;
   const t=spokenForm(text); if(!t) return;
   const it={t, base:cap.queued, n:wordsOf(t).length};
   cap.queued+=it.n;
@@ -2911,7 +2974,7 @@ function addAviso(a, speak){
   avisos.push({i:a.i||'🔔', t:String(a.t||'').slice(0,90), s:String(a.s||'').slice(0,90), at:Date.now()}); avisos=avisos.filter(x=>Date.now()-x.at<24*3600000).slice(-8); LS.set('avisos',avisos);
   ambOff(); chime('aviso'); showBanner(a.i, a.t, a.s); render(); focusCard('hoy');
   const h=new Date().getHours(), noche=h>=23||h<7||durmiendo();
-  if(speak && a.v && (!noche || a.u)) setTimeout(()=>{ if(!speakingNow()) say(a.v, a.u?'surprised':'happy'); }, 1400);
+  if(speak && a.v && (!noche || a.u) && Date.now()>protoSt.silencioUntil) setTimeout(()=>{ if(!speakingNow()) say(a.v, a.u?'surprised':'happy'); }, 1400);
 }
 
 // ---------------------------------------------------------------- la casa (Smart Life por el servicio de Cloudflare; si no, por la compu)
@@ -3066,6 +3129,7 @@ const pcCall=(a, x)=>pcSend({k:'call', a, x});
 const pcActs=list=>pcSend({k:'acts', list});
 function onMsg(o){
   if(o.k==='rtc'){ Call.onMsg(o); return; }
+  if(jarvisMsg(o)) return;
   if(o.k==='oi'){ Turno.onMsg(o); return; }
   const q=o.id && pcq[o.id];
   if(o.k==='ack' && q){ clearTimeout(q.t); q.t=setTimeout(()=>{ delete pcq[o.id]; q.res(null); }, 60000); }
@@ -3915,11 +3979,13 @@ const OSI={
   next:SV('<path d="M5 5v14l10-7zM18 5v14" fill="currentColor"/>'), prev:SV('<path d="M19 5v14L9 12zM6 5v14" fill="currentColor"/>'),
   volup:SV('<path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9.5a4 4 0 0 1 0 5M18.5 7a7.5 7.5 0 0 1 0 10"/>'), voldn:SV('<path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 12h4"/>'),
   noti:SV('<path d="M4 5.5h12.5v13a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M16.5 9H20v9.5a2 2 0 0 1-4 0"/><path d="M7.5 9h6M7.5 12.5h6M7.5 16h4"/>'),
+  proto:SV('<path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12z"/>'),
+  compu:SV('<rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8.5 20h7M12 16.5V20"/><path d="M7 12.5l2.5-3 2 2 3-4 2.5 3"/>'),
   mic:SV('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',2)
 };
 const APPS=[
   {id:'casa', n:'Casa', t:'#FFB547'}, {id:'mus', n:'Música', t:'#FF5FA2'}, {id:'cocina', n:'Cocina', t:'#A3E635'}, {id:'tareas', n:'Tareas', t:'#FACC15'}, {id:'estudio', n:'Estudio', t:'#A78BFA'}, {id:'shop', n:'Compras', t:'#34D3C4'},
-  {id:'agenda', n:'Agenda', t:'#4CC9FF'}, {id:'noti', n:'Noticias', t:'#FFC24B'}, {id:'icom', n:'Intercom', t:'#FF8A3D'}, {id:'llamar', n:'Llamar', t:'#4ADE80'}, {id:'cam', n:'Cámara', t:'#F87171'}, {id:'cielo', n:'Cielo', t:'#7C8BFF'}, {id:'ajustes', n:'Ajustes', t:'#94A3B8'}
+  {id:'agenda', n:'Agenda', t:'#4CC9FF'}, {id:'noti', n:'Noticias', t:'#FFC24B'}, {id:'icom', n:'Intercom', t:'#FF8A3D'}, {id:'llamar', n:'Llamar', t:'#4ADE80'}, {id:'cam', n:'Cámara', t:'#F87171'}, {id:'proto', n:'Protocolos', t:'#4CC9FF'}, {id:'compu', n:'Compu', t:'#5FD39A'}, {id:'cielo', n:'Cielo', t:'#7C8BFF'}, {id:'ajustes', n:'Ajustes', t:'#94A3B8'}
 ];
 const os={ cur:null, auto:false, at:0, talkHide:false, cam:null };
 const appOf=id=>APPS.find(a=>a.id===id);
@@ -3936,6 +4002,8 @@ function appSub(id){
   if(id==='cocina') return cocina ? [cocina.i>=0?`Paso ${cocina.i+1} de ${cocina.pasos.length}`:cocina.titulo, true] : ['', false];
   if(id==='tareas'){ const h=tareasHoy().length; const p=puntosSemana()[0]; return [h?h+(h>1?' para hoy':' para hoy'):(p?'👑 '+p[0]:''), false, h]; }
   if(id==='cam') return [Mira.on?'Mirando':'', Mira.on];
+  if(id==='proto') return [guardia.on?'Guardia activa':'', guardia.on];
+  if(id==='compu'){ const p=pcDev() && FSync.st.peers[pcDev()]; return [p && Date.now()-p.t<25*60000 ? 'En línea' : '', false]; }
   if(id==='noti') return [noti.items[0] && Date.now()-noti.at<3600000 ? (noti.items[0].src||'') : '', false];
   return ['', false];
 }
@@ -3967,7 +4035,7 @@ function osOpen(id, opt){
   if(id==='cam') camStart();
   if(id==='icom'){ icom.log.forEach(x=>x.leido=true); icomSave(); }
 }
-function osLeave(id){ if(id==='cam') camStop(); if(id==='icom' && state.icomTo) icomCancel(); }
+function osLeave(id){ if(id==='compu'){ compu.img=null; } if(id==='cam') camStop(); if(id==='icom' && state.icomTo) icomCancel(); }
 function osClose(){
   if(!os.cur) return; osLeave(os.cur); os.cur=null; os.auto=false;
   document.body.classList.remove('inapp'); document.body.classList.add('home'); $('win').setAttribute('aria-hidden','true');
@@ -3986,6 +4054,7 @@ function renderPane(id){
   else if(id==='shop') renderPrecios(); else if(id==='cam') renderCam(); else if(id==='mus') renderMusCtl();
   else if(id==='agenda') renderAgenda();
   else if(id==='cocina') renderCocina(); else if(id==='tareas') renderTareas();
+  else if(id==='proto') renderProto(); else if(id==='compu'){ renderCompu(); if(Date.now()-compu.at>4000 && !compu.pend) compuEstado(); }
   else if(id==='noti'){ renderNoti(); if(!noti.busy && ((!noti.items.length && Date.now()-noti.at>60000) || Date.now()-noti.at>10*60000)) notiAbrir(noti.q?'':(noti.cat||'portada'), noti.q); }
 }
 // ---------------------------------------------------------------- FRIDAY sube cuando escucha o habla
@@ -4199,6 +4268,10 @@ function osFast(text, nf){
   if(/\b(hace(me)?|corre)( un)? (chequeo|diagnostico)\b|^(chequeo|chequeo completo|diagnostico)$/.test(nf)){ sayFast(text, 'Dale, me pruebo todo. Tarda un minuto.', 'thinking'); setTimeout(chequeoTablet, 1500); return true; }
   if(cocFast(text, nf)) return true;
   if(tareasFast(text, nf)) return true;
+  if(saludoFast(text, nf)) return true;
+  if(guardiaFast(text, nf)) return true;
+  if(compuFast(text, nf)) return true;
+  if(protoFast(text, nf)) return true;
   if(notiFast(text, nf)) return true;
   const cm=String(text).match(/^(?:friday,?\s*)?(?:¿\s*)?(?:c[oó]mo (?:hago|se hace|se hacen|preparo|cocino)|receta (?:de|para)|quiero (?:hacer|cocinar|preparar)|ense[ñn]ame a (?:hacer|cocinar)|vamos a (?:hacer|cocinar))\s+(.+?)(?:\s+para\s+(\d+)\s*(?:personas|porciones)?)?[?.!\s]*$/i);
   if(cm && !/\b(tarea|fichas|timer|recordatorio)\b/.test(nf)){ pushHist('user', text); cocinaStart(cm[1], cm[2]); return true; }
@@ -4267,6 +4340,12 @@ document.addEventListener('click', e=>{
   if(t.closest('#ntv')){ ntvClose(true); return; }
   const wn=t.closest('[data-wnews]'); if(wn){ if(!(noti.cat==='portada' && !noti.q) && noti.cache.portada){ noti.cat='portada'; noti.q=''; noti.items=noti.cache.portada.items; noti.at=Date.now(); } osOpen('noti'); notiMas(+wn.dataset.wnews).then(r=>say(r,'happy')); return; }
   const nr=t.closest('[data-nread]'); if(nr){ const it=noti.items[+nr.dataset.nread]; if(it) say(noti.det[it.t]||it.t, 'happy'); return; }
+  const pr=t.closest('[data-proto]'); if(pr){ const p=protos.find(x=>x.id===pr.dataset.proto); if(p) protoRun(p); return; }
+  const pd=t.closest('[data-protodel]'); if(pd){ protos=protos.filter(x=>x.id!==pd.dataset.protodel); protoSave(); renderProto(); toast('Protocolo borrado'); return; }
+  const gd=t.closest('[data-guardia]'); if(gd){ guardiaSet(gd.dataset.guardia==='on'); return; }
+  const cp=t.closest('[data-compu]'); if(cp){ const q=cp.dataset.compu; if(q==='pantalla'){ compuPantalla().then(ok=>{ if(!ok) toast('La compu no mandó la pantalla'); }); return; }
+    if(q==='apagar'){ ofrecer('apagar compu', ()=>compuHacer('apagar','',+cp.dataset.min||30).then(r=>say(r.ok?`Listo: la compu se apaga en ${+cp.dataset.min||30} minutos.`:r.txt))); say(`¿Seguro que apago la compu en ${+cp.dataset.min||30} minutos? Decí «sí».`, 'surprised'); Ear.convoUntil=Date.now()+20000; return; }
+    compuHacer(q, cp.dataset.v||'', 0).then(r=>toast(r.txt)); return; }
   if(t.closest('#shopAdd')){ const v=$('shopIn').value.trim(); if(v){ shopAdd(v.split(/,|;/).map(s=>s.trim()).filter(Boolean)); $('shopIn').value=''; } return; }
   if(t.closest('#dock')){ escuchaYa(); return; }
   if(t.closest('#talk') && !t.closest('#face')){ os.talkHide=true; talkSync(); return; }
@@ -4577,7 +4656,7 @@ async function camVideo(){
   clearTimeout(camVideo.t); camVideo.t=setTimeout(camSuelta, 45000);   // si no se usa, apaga la cámara
   return quien.video;
 }
-function camSuelta(){ if(S.reconocer==='siempre' && state.started) return; try{ quien.stream && quien.stream.getTracks().forEach(t=>t.stop()); }catch(e){} quien.stream=null; quien.video=null; }
+function camSuelta(){ if((S.reconocer==='siempre' && state.started) || guardia.on) return; try{ quien.stream && quien.stream.getTracks().forEach(t=>t.stop()); }catch(e){} quien.stream=null; quien.video=null; }
 async function carasAhora(){
   const fa=await caraApi(), v=await camVideo();
   const ds=await fa.detectAllFaces(v, new fa.TinyFaceDetectorOptions({inputSize:320, scoreThreshold:0.5})).withFaceLandmarks().withFaceDescriptors();
@@ -4673,7 +4752,9 @@ async function quienRonda(){
   if(ns.length===1){ quien.cur=ns[0]; quien.curAt=now; quien.via='cara'; }
   ambOff(); const h=new Date().getHours(), hola=h<13?'¡Buen día':h<20?'¡Hola':'¡Buenas noches';
   const extra=nuevos.length===1 ? (()=>{ const t=tareasDe(nuevos[0]); return t.length?` Hoy te toca ${listaY(t.map(x=>x.t.toLowerCase()))}.`:''; })() : '';
-  say(`${hola}, ${listaY(nuevos)}!${extra}`, 'happy'); budEmote('excited');
+  // cuando vuelve uno solo, lo pone al día (mensajes, llamadas, lo que viene, sus tareas)
+  if(nuevos.length===1 && now-(quien.saludoPrev||0)>0) say(bienvenidaTxt(nuevos[0]), 'happy'); else say(`${hola}, ${listaY(nuevos)}!${extra}`, 'happy');
+  budEmote('excited');
 }
 // --- enseñarle a reconocer: la cara (8 fotos) o la voz (3 frases)
 function enrShow(nombre, tipo){
@@ -4881,6 +4962,306 @@ async function chequeoTablet(){
   say(bad.length?`Listo el chequeo: ${bad.length} ${bad.length>1?'cosas fallaron':'cosa falló'}: ${bad.map(r=>r.n.toLowerCase()).join(', ')}. ${pc?'Le mandé el informe a la compu.':''}`:`Listo el chequeo: todo bien. ${pc?'Le mandé el informe a la compu.':''}`, bad.length?'worried':'happy');
 }
 
+// ================================================================ FRIDAY, más JARVIS
+// saludos con tu nombre, protocolos, la bienvenida cuando llegás, modo guardia, la compu a mano
+// y avisos que se le ocurren sola
+
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function quienNombre(){ return (quien.cur && Date.now()-quien.curAt<5*60000) ? quien.cur : ''; }
+
+// ---------------------------------------------------------------- saludos y charla corta: al toque, sin pensar
+const SAL={ ofrece:null };
+function ofrecer(q, si){ SAL.ofrece={q, si, until:Date.now()+20000}; }
+function pendienteCorto(){
+  const u=icom.log.filter(x=>!x.out && !x.leido && !/Llamada perdida/.test(x.t||'')).length;
+  if(u) return u===1?'Ah, tenés un mensaje sin leer en el intercom.':`Ah, tenés ${u} mensajes sin leer en el intercom.`;
+  const e=agItems().find(x=>!x.d && x.at>new Date() && x.at-new Date()<90*60000); if(e) return `Te recuerdo: ${e.t}, ${enCuanto(e.at)}.`;
+  return ''; }
+function saludoFast(text, nf){
+  const n=nf.replace(/\b(friday|viernes)\b/g,' ').replace(/^(che|ey|eh|oye|bueno) /,'').replace(/\s+/g,' ').trim();
+  // ¿aceptó lo que le ofrecí? («¿activo el protocolo buenas noches?» → «dale»)
+  if(SAL.ofrece && Date.now()<SAL.ofrece.until){
+    if(/^(si|dale|bueno|ok|okay|de una|obvio|porfa|por favor|activalo|hacelo|hace lo|claro)( dale| porfa| por favor| gracias| si)?$/.test(n)){ const o=SAL.ofrece; SAL.ofrece=null; pushHist('user', text); o.si(); return true; }
+    if(/^(no|no gracias|nah|despues|deja|dejalo|no hace falta|ahora no)$/.test(n)){ SAL.ofrece=null; sayFast(text, pick(['Listo.','Dale, no hay problema.','Como quieras.']), 'happy'); return true; }
+  }
+  const nom=quienNombre(), yo=nom?', '+nom:'', h=new Date().getHours();
+  // «buen día» (el resumen de la mañana) y «buenas noches» (el modo noche) ya tienen lo suyo
+  if(/^(buen dia|buenos dias|buenas noches)$/.test(n)) return false;
+  const hola=n.match(/^(hola+|holis|buenas|buen dia|buenos dias|buenas tardes|buenas noches|hey|que tal|que onda|epa)( (como (estas|andas|va|te va|anda todo)|todo bien|que tal|que onda|que haces|como va))?$/) || n.match(/^(como (estas|andas|te va|va todo|anda todo)|todo bien|que haces)$/);
+  if(hola){
+    const como=/como|todo bien|que tal|que onda|que haces/.test(n);
+    let r = /buen dia|buenos dias/.test(n) && h>=13 ? `¡Buen día${yo}! Aunque ya es ${h<20?'la tarde':'de noche'}.` : pick([`¡Hola${yo}!`, `¡Buenas${yo}!`, `¡Hola${yo}! Qué bueno escucharte.`]);
+    if(como) r+=' '+pick(['Todo en orden por acá: todos los sistemas funcionando.','Acá ando, con todos los sistemas al cien.','Muy bien, gracias por preguntar.'])+' '+pick(['¿Y vos, cómo andás?','¿En qué te ayudo?']);
+    else { r+=' '+pick(['¿En qué te ayudo?','¿Qué necesitás?','Decime.']); const ex=pendienteCorto(); if(ex) r+=' '+ex; }
+    Ear.convoUntil=Date.now()+15000; sayFast(text, r, 'happy'); return true; }
+  if(/^(muchas |mil |genial |buenisimo |perfecto |joya )?gracias( genia| crack| friday)?$|^(sos (una )?(genia|genial|lo mas)|te quiero|que buena|bien ahi|joya|genial)$/.test(n)){
+    sayFast(text, pick([`¡De nada${yo}!`,'Para eso estoy.','Un placer.','¡Cuando quieras!']), 'happy'); return true; }
+  if(/^(chau|chao|nos vemos|hasta luego|hasta mañana|me voy|me tengo que ir|adios|me fui|me voy a trabajar|me voy al colegio)$/.test(n)){
+    ofrecer('me voy', ()=>protoRun('me voy'));
+    sayFast(text, `¡Chau${yo}! ¿Activo el protocolo «me voy»? Apago las luces y quedo de guardia.`, 'happy'); Ear.convoUntil=Date.now()+20000; return true; }
+  if(/^(estas( ahi)?|me escuchas|me oiste|hola estas)$/.test(n)){ sayFast(text, pick(['Siempre.','Acá estoy.','Para servirte.'])+' ¿Qué necesitás?', 'happy'); Ear.convoUntil=Date.now()+15000; return true; }
+  return false; }
+
+// ---------------------------------------------------------------- protocolos: una frase y se mueve toda la casa
+const PROTO_PASOS={
+  luces:'Luces', musica:'Música', pausa:'Pausar la música', tele:'Tele', decir:'Decir', icom:'Mensaje por el intercom', cielo:'Modo cielo',
+  noticias:'Noticias', agenda:'Agenda', clima:'Clima', guardia:'Guardia', compu:'La compu', silencio:'Sin avisos en voz alta', bienvenida:'Resumen de lo que pasó', esperar:'Esperar' };
+const PROTOS_BASE=[
+  {id:'noche', n:'buenas noches', ic:'🌙', t:'#7C8BFF', dice:['me voy a dormir','a dormir','hora de dormir'], pasos:[{t:'pausa'},{t:'agenda', c:'mañana'},{t:'luces', a:'apagar'},{t:'decir', x:'Que descansen. Quedo atenta.'},{t:'cielo'}]},
+  {id:'peli', n:'película', ic:'🎬', t:'#FF5FA2', dice:['vamos a ver una peli','hora de la peli','modo peli','modo cine'], pasos:[{t:'pausa'},{t:'luces', a:'brillo 15'},{t:'tele', a:'prender'},{t:'silencio', min:150},{t:'decir', x:'Listo: bajé las luces y prendí la tele. Que la disfruten.'}]},
+  {id:'voy', n:'me voy', ic:'🚪', t:'#FF8A3D', dice:['nos vamos','me voy de casa','salgo'], pasos:[{t:'pausa'},{t:'luces', a:'apagar'},{t:'tele', a:'apagar'},{t:'decir', x:'Que te vaya bien. Apagué todo y quedo de guardia.'},{t:'guardia', on:true}]},
+  {id:'llegue', n:'llegué', ic:'🏠', t:'#4ADE80', dice:['ya llegue','llegue','estoy en casa','volvi','ya volvi'], pasos:[{t:'guardia', on:false},{t:'luces', a:'prender'},{t:'bienvenida'}]},
+  {id:'dia', n:'buen día', ic:'☀️', t:'#FFB547', dice:['arranquemos el dia','modo mañana'], pasos:[{t:'luces', a:'prender'},{t:'clima'},{t:'agenda', c:'hoy'},{t:'noticias'}]},
+  {id:'fiesta', n:'fiesta', ic:'🎉', t:'#A78BFA', dice:['modo fiesta','que empiece la fiesta'], pasos:[{t:'luces', a:'color violeta'},{t:'musica', q:'música para fiesta, enganchados'},{t:'decir', x:'¡Que empiece la fiesta!'}]},
+];
+let protos=LS.get('protos', null);
+if(!Array.isArray(protos)) protos=PROTOS_BASE.map(p=>Object.assign({}, p));
+const protoSave=()=>LS.set('protos', protos);
+const protoSt={ corriendo:null, silencioUntil:0 };
+function protoFind(q){ const n=norm(q).replace(/^(el |la |los |modo |protocolo )/,'').trim(); if(!n) return null;
+  return protos.find(p=>norm(p.n)===n) || protos.find(p=>(p.dice||[]).some(d=>norm(d)===n)) || protos.find(p=>norm(p.n).includes(n) || (n.length>3 && n.includes(norm(p.n)))) || null; }
+function pasoTxt(s){ if(s.t==='luces') return 'Luces: '+(s.a||'').replace(/^brillo (\d+)/,'al $1%'); if(s.t==='musica') return 'Música: '+(s.q||''); if(s.t==='tele') return 'Tele: '+(s.a||'');
+  if(s.t==='decir') return '«'+(s.x||'')+'»'; if(s.t==='icom') return 'Intercom: '+(s.x||''); if(s.t==='agenda') return 'Agenda de '+(s.c||'hoy'); if(s.t==='guardia') return s.on?'Activar la guardia':'Desactivar la guardia';
+  if(s.t==='compu') return 'Compu: '+(s.a||''); if(s.t==='silencio') return 'Sin avisos en voz alta '+(s.min||60)+' min'; if(s.t==='esperar') return 'Esperar '+(s.s||5)+' s'; return PROTO_PASOS[s.t]||s.t; }
+// el cartel de "protocolo en marcha" (como en las pelis)
+function protoHud(p, i, fin){
+  let el=$('protoHud'); if(!el){ el=document.createElement('div'); el.id='protoHud'; el.className='phud'; document.body.appendChild(el); }
+  el.style.setProperty('--t', p.t||'#4CC9FF'); el.hidden=false;
+  el.innerHTML=`<div class="pbox"><small>PROTOCOLO</small><b>${esc(p.ic||'')} ${esc(p.n.toUpperCase())}</b><ol>${p.pasos.map((s,k)=>`<li class="${k<i||fin?'ok':k===i?'run':''}">${esc(pasoTxt(s))}</li>`).join('')}</ol>${fin?'<em>Listo</em>':''}</div>`;
+  clearTimeout(protoHud.t); if(fin) protoHud.t=setTimeout(()=>{ el.hidden=true; }, 3500); }
+async function decirYEsperarP(t){ say(t, 'happy'); const t0=Date.now(); while(!speakingNow() && Date.now()-t0<8000) await sleep(120); while(speakingNow() && Date.now()-t0<90000) await sleep(150); }
+async function protoRun(q, op){ op=op||{};
+  const p=typeof q==='object'?q:protoFind(q); if(!p){ say(`No tengo ningún protocolo «${q}». ${protos.length?'Tengo '+listaY(protos.map(x=>x.n))+'.':''}`, 'confused'); return false; }
+  if(protoSt.corriendo) return false; protoSt.corriendo=p.id; state.lastUser=Date.now(); ambOff(); faceSet('excited', 2000);
+  const notas=[];
+  try{
+    for(let i=0;i<p.pasos.length;i++){ const s=p.pasos[i]; protoHud(p, i);
+      try{
+        if(s.t==='luces'){ if(casa.devs.length || workerOn()){ const r=await casaDo('luces', s.a||'apagar'); if(!r.ok) notas.push(r.txt); } }
+        else if(s.t==='musica') await playMusic(s.q||'música tranquila').catch(e=>notas.push('No pude poner la música: '+e.message));
+        else if(s.t==='pausa'){ if(music.cur && music.cur.playing!==false) await musicCtrl('pausa'); }
+        else if(s.t==='tele'){ if(pcDev()){ const r=await pcActs([{accion:/apag/.test(norm(s.a||''))?'tv_apagar':'tv_prender', a1:'', a2:''}]); if(!r) notas.push('La compu no me contestó para la tele.'); } }
+        else if(s.t==='decir') await decirYEsperarP(s.x||'');
+        else if(s.t==='icom') icomSend(s.x||'', '');
+        else if(s.t==='noticias'){ await notiAbrir('portada'); await notiCast(3); }
+        else if(s.t==='agenda') await decirYEsperarP(agendaDecir(s.c||'hoy'));
+        else if(s.t==='clima') await decirYEsperarP(climaDecir());
+        else if(s.t==='guardia') guardiaSet(!!s.on, {silencio:true, demora:s.on?60:0});
+        else if(s.t==='silencio') protoSt.silencioUntil=Date.now()+(+s.min||60)*60000;
+        else if(s.t==='bienvenida') await decirYEsperarP(bienvenidaTxt(quienNombre(), true));
+        else if(s.t==='compu'){ const r=await compuHacer(s.a||'bloquear', s.v||'', s.min||0); if(r && !r.ok) notas.push(r.txt||''); }
+        else if(s.t==='esperar') await sleep(Math.min(60,(+s.s||5))*1000);
+        else if(s.t==='cielo') setTimeout(()=>ambOn(true), 1200);
+      }catch(e){ notas.push(e.message||String(e)); }
+      await sleep(250);
+    }
+    protoHud(p, p.pasos.length, true);
+    const hablo=p.pasos.some(s=>['decir','agenda','clima','noticias','bienvenida'].includes(s.t));
+    if(notas.length) say('Protocolo '+p.n+' listo, pero: '+notas.filter(Boolean).slice(0,2).join(' '), 'worried');
+    else if(!hablo) say(`Protocolo ${p.n}, activado.`, 'happy');
+    pushHist('assistant', `(activé el protocolo ${p.n})`);
+    if(!op.desdeCompu){ try{ FSync.send({k:'aviso', i:p.ic||'⚡', t:'Protocolo '+p.n, s:'Lo activaron en la tablet', v:''}); }catch(e){} }
+    return true;
+  } finally { protoSt.corriendo=null; } }
+function agendaDecir(c){
+  const t0=new Date(); t0.setHours(0,0,0,0); const d0=new Date(t0); if(c==='mañana') d0.setDate(d0.getDate()+1); const d1=new Date(d0); d1.setDate(d1.getDate()+1);
+  const its=agItems().filter(x=>x.at>=d0 && x.at<d1 && (c==='mañana' || x.d || x.at>new Date()));
+  const cuando=c==='mañana'?'Mañana':'Hoy';
+  if(!its.length) return `${cuando} no tenés nada anotado.`;
+  return `${cuando} tenés: `+its.slice(0,5).map(x=>x.d?x.t:`a las ${hhmm(x.at)}, ${x.t}`).join('; ')+'.'; }
+function climaDecir(){ const w=weather.data; if(!w) return ''; return `En ${S.city||'la ciudad'} hay ${w.temp} grados, ${WMO_LARGO(w.code)}; hoy entre ${w.min} y ${w.max}${w.rainP>=40?', y puede llover: llevá paraguas':''}.`; }
+// por voz: «modo película», «protocolo buenas noches», «activá el protocolo fiesta», o una de sus frases
+function protoFast(text, nf){
+  const n=nf.replace(/^(che |dale |bueno |friday )+/,'');
+  if(/\bmodo (cielo|noche|estudio|cocina|demo)\b/.test(n)) return false;   // esos son otra cosa
+  let m=n.match(/^(?:activa(?:r|me)?|corre(?:r)?|inicia(?:r)?|ejecuta(?:r)?|arranca(?:r)?|pone(?:me)?|lanza(?:r)?)(?: el| la)? (?:protocolo|modo) (.+)$/) || n.match(/^(?:protocolo|modo) (.+)$/);
+  if(m){ const p=protoFind(m[1]); if(p){ pushHist('user', text); protoRun(p); return true; } if(/protocolo/.test(n)){ sayFast(text, `No tengo un protocolo «${m[1]}». Si querés lo armamos: decí «Friday, creá el protocolo ${m[1]}: …» y lo que tiene que hacer.`, 'confused'); return true; } return false; }
+  const p=protos.find(x=>(x.dice||[]).some(d=>norm(d)===n)); if(p){ pushHist('user', text); protoRun(p); return true; }
+  m=String(text).match(/^(?:friday,?\s*)?(?:cre[aá](?:me)?|arm[aá](?:me)?|hac[eé](?:me)?|agreg[aá]|nuevo)\s+(?:un |el )?protocolo\s+(.+)$/i);
+  if(m){ pushHist('user', text); protoCrear(m[1]); return true; }
+  m=n.match(/^(?:borra|elimina|saca)(?:me)? el protocolo (.+)$/);
+  if(m){ const p=protoFind(m[1]); if(!p){ sayFast(text, `No tengo el protocolo «${m[1]}».`); return true; } protos=protos.filter(x=>x!==p); protoSave(); if(os.cur==='proto') renderProto(); sayFast(text, `Listo, borré el protocolo ${p.n}.`); return true; }
+  if(/^(que|cuales) protocolos (tenes|hay)|^(mis )?protocolos$/.test(n)){ sayFast(text, 'Tengo '+listaY(protos.map(x=>x.n))+'. Decí «Friday, protocolo» y el nombre.'); osOpen('proto',{auto:true}); return true; }
+  return false; }
+// «creá el protocolo cena: bajá las luces, poné jazz y avisá a todos que está la comida»
+async function protoCrear(desc){
+  setMode('thinking'); faceSet('thinking');
+  const sys=`Convertí el pedido en un protocolo para la casa. Respondé SOLO JSON: {"n":"nombre corto en minúscula","ic":"un emoji","dice":["frases para activarlo"],"pasos":[...]}.
+Pasos posibles (en orden): {"t":"luces","a":"prender|apagar|brillo 30|color rojo|blanco calido"}, {"t":"musica","q":"qué poner"}, {"t":"pausa"}, {"t":"tele","a":"prender|apagar"}, {"t":"decir","x":"texto que dice FRIDAY"}, {"t":"icom","x":"mensaje a todos los aparatos"}, {"t":"cielo"}, {"t":"noticias"}, {"t":"agenda","c":"hoy|mañana"}, {"t":"clima"}, {"t":"guardia","on":true|false}, {"t":"silencio","min":60}, {"t":"compu","a":"bloquear|apagar|silenciar"}, {"t":"esperar","s":10}, {"t":"bienvenida"}.
+Usá solo esos. Máximo 8 pasos.`;
+  try{
+    const out=await llm([{role:'system', content:sys},{role:'user', content:desc}], ()=>{});
+    const j=JSON.parse((out.match(/\{[\s\S]*\}/)||['{}'])[0]);
+    const pasos=(j.pasos||[]).filter(s=>s && PROTO_PASOS[s.t]).slice(0,8);
+    if(!j.n || !pasos.length) throw new Error('no entendí qué tiene que hacer');
+    const p={id:'u'+Date.now().toString(36), n:String(j.n).toLowerCase().slice(0,30), ic:String(j.ic||'⚡').slice(0,4), t:'#4CC9FF', dice:(j.dice||[]).map(String).slice(0,4), pasos};
+    protos=protos.filter(x=>norm(x.n)!==norm(p.n)); protos.push(p); protoSave();
+    setMode('idle'); osOpen('proto',{auto:true});
+    const r=`Listo, armé el protocolo ${p.n}: ${listaY(pasos.map(pasoTxt).map(t=>t.replace(/[«»]/g,'').toLowerCase()))}. Para usarlo decí «Friday, protocolo ${p.n}».`;
+    say(r, 'happy'); pushHist('assistant', r);
+  }catch(e){ setMode('idle'); say('No pude armar el protocolo: '+(e.message||'algo falló')+'. Probá decirme qué tiene que hacer, paso por paso.', 'worried'); } }
+function renderProto(){
+  const el=$('pProto'); if(!el) return; const g=guardia;
+  const gcard=`<div class="gcard${g.on?' on':''}"><div><small>MODO GUARDIA</small><b>${g.on?(Date.now()<g.desde?'Se activa en '+Math.ceil((g.desde-Date.now())/1000)+' s':'Activa: vigilando la casa'):'Apagada'}</b><span>${g.on?'Si ve a alguien que no conoce, saca una foto y te la manda al celu (cifrada). Si te reconoce, se desactiva sola.':'Con la cámara de la tablet. Decí «Friday, activá la guardia» o usá el protocolo «me voy».'}</span></div><button type="button" class="gbtn" data-guardia="${g.on?'off':'on'}">${g.on?'Desactivar':'Activar'}</button></div>`
+    +(g.eventos.length?`<div class="gev">${g.eventos.slice(-4).reverse().map(e=>`<figure>${e.img?`<img src="${e.img}" alt="">`:''}<figcaption>${hhmm(new Date(e.at))} · ${esc(e.t)}</figcaption></figure>`).join('')}</div>`:'');
+  const cards=protos.map(p=>`<div class="pcard" style="--t:${p.t||'#4CC9FF'}"><button type="button" class="prun" data-proto="${esc(p.id)}"><span class="pic">${esc(p.ic||'⚡')}</span><b>${esc(p.n.charAt(0).toUpperCase()+p.n.slice(1))}</b><small>${esc(p.pasos.map(pasoTxt).slice(0,4).join(' · '))}${p.pasos.length>4?' …':''}</small><em>«Friday, protocolo ${esc(p.n)}»</em></button>${p.id.startsWith('u')?`<button type="button" class="pdel" data-protodel="${esc(p.id)}" aria-label="Borrar">×</button>`:''}</div>`).join('');
+  const html=gcard+`<h3>Protocolos</h3><div class="pgrid">${cards}</div><p class="note">Para armar uno nuevo, decí: <q>Friday, creá el protocolo cena: bajá las luces, poné jazz y avisá a todos que está la comida</q>.</p>`;
+  if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; } }
+
+// ---------------------------------------------------------------- la bienvenida: cuando alguien vuelve, lo pone al día
+function bienvenidaTxt(n, corto){
+  const h=new Date().getHours(), noche=h>=23||h<6, yo=n?', '+n:'';
+  const partes=[`${noche?'¡Buenas noches':h<13?'¡Buen día':h<20?'¡Hola':'¡Buenas noches'}${yo}! ${pick(['Bienvenido a casa.','Qué bueno que llegaste.','Te estaba esperando.'])}`.replace(/Bienvenido/, n && /a$/.test(n)?'Bienvenida':'Bienvenido')];
+  const msgs=icom.log.filter(x=>!x.out && !x.leido && !/Llamada perdida/.test(x.t||''));
+  const perd=icom.log.filter(x=>!x.out && !x.leido && /Llamada perdida/.test(x.t||''));
+  if(msgs.length){ partes.push(msgs.length===1?`Mientras no estabas, ${msgs[0].de||'alguien'} dejó un mensaje: «${msgs[0].t}».`:`Mientras no estabas te dejaron ${msgs.length} mensajes; el último, de ${msgs[msgs.length-1].de||'alguien'}: «${msgs[msgs.length-1].t}».`); msgs.forEach(x=>x.leido=true); icomSave(); }
+  if(perd.length){ partes.push(perd.length===1?`Te llamó ${perd[0].de}.`:`Tenés ${perd.length} llamadas perdidas.`); perd.forEach(x=>x.leido=true); icomSave(); }
+  if(guardia.eventos.some(e=>e.at>guardia.vistoAt)){ const k=guardia.eventos.filter(e=>e.at>guardia.vistoAt).length; partes.push(`La guardia vio movimiento ${k===1?'una vez':k+' veces'}: las fotos están en Protocolos.`); guardia.vistoAt=Date.now(); }
+  const e=!noche && agItems().find(x=>!x.d && x.at>new Date() && x.at-new Date()<12*3600000); if(e) partes.push(`${e.t} ${enCuanto(e.at)}.`);
+  if(n){ const t=tareasDe(n); if(t.length) partes.push(`Hoy te toca ${listaY(t.map(x=>x.t.toLowerCase()))}.`); }
+  const pr=proact.items.find(x=>!x.dicho && Math.abs(x.at-Date.now())<3*3600000); if(pr){ partes.push(pr.texto); pr.dicho=true; proactSave(); }
+  if(partes.length===1 && !corto) partes.push('No pasó nada importante. ¿Necesitás algo?');
+  return partes.join(' '); }
+
+// ---------------------------------------------------------------- modo guardia: la cámara vigila cuando no hay nadie
+const guardia=Object.assign({on:false, desde:0, eventos:[], vistoAt:0}, LS.get('guardia',{}), {loop:null, prev:null, mov:0, ultAlerta:0, alertas:[]});
+const guardiaSave=()=>LS.set('guardia', {on:guardia.on, desde:guardia.desde, eventos:guardia.eventos.slice(-6), vistoAt:guardia.vistoAt});
+function guardiaSet(on, op){ op=op||{};
+  if(on===guardia.on && !op.forzar) { if(!op.silencio) say(on?'La guardia ya está activa.':'La guardia ya estaba apagada.'); return; }
+  guardia.on=on; guardia.desde=on?Date.now()+(op.demora!=null?op.demora:30)*1000:0; guardia.prev=null; guardia.mov=0; guardiaSave();
+  if(on){ guardiaLoop(); if(!op.silencio) say(`Guardia activada. Empiezo a vigilar en ${Math.round((guardia.desde-Date.now())/1000)} segundos.`, 'happy'); }
+  else { clearTimeout(guardia.loop); guardia.loop=null; if(!op.silencio) say('Guardia desactivada.', 'happy'); setTimeout(()=>{ try{ camSuelta(); }catch(e){} }, 1000); }
+  document.body.classList.toggle('guardia', on); if(os.cur==='proto') renderProto(); render();
+  if(!op.remoto){ try{ FSync.send({k:'guardia', on, est:1}); }catch(e){} } }
+async function guardiaLoop(){
+  clearTimeout(guardia.loop); if(!guardia.on) return;
+  guardia.loop=setTimeout(guardiaLoop, 1200);
+  if(Date.now()<guardia.desde || Call.active || os.cam || quien.enroll) return;
+  let v; try{ v=await camVideo(); }catch(e){ return; } if(!v || !v.videoWidth) return;
+  const c=guardia.cv||(guardia.cv=document.createElement('canvas')); c.width=64; c.height=48; const x=c.getContext('2d', {willReadFrequently:true});
+  x.drawImage(v, 0, 0, 64, 48); const d=x.getImageData(0,0,64,48).data, g=new Float32Array(64*48); let mean=0;
+  for(let i=0;i<g.length;i++){ g[i]=(d[i*4]*0.3+d[i*4+1]*0.59+d[i*4+2]*0.11); mean+=g[i]; } mean/=g.length;
+  for(let i=0;i<g.length;i++) g[i]-=mean;   // sin el brillo general: que prender una luz no cuente como alguien
+  const prev=guardia.prev; guardia.prev=g; if(!prev) return;
+  let cambio=0; for(let i=0;i<g.length;i++) if(Math.abs(g[i]-prev[i])>28) cambio++;
+  const frac=cambio/g.length;
+  if(frac>0.6){ guardia.mov=0; return; }        // cambió todo (la cámara se ajustó): no es alguien
+  guardia.mov = frac>0.05 ? guardia.mov+1 : 0;
+  if(guardia.mov>=2){ guardia.mov=0; await guardiaVio(v); } }
+async function guardiaVio(v){
+  // ¿es alguien de la familia? entonces es que llegó: se desactiva sola y lo recibe
+  let ns=[]; try{ if(conCara().length) ns=await quienMira(); }catch(e){}
+  if(ns.length){ guardiaSet(false, {silencio:true}); quien.cur=ns[0]; quien.curAt=Date.now(); quien.via='cara'; quien.saludo[ns[0]]=Date.now(); LS.set('saludos', quien.saludo);
+    say(bienvenidaTxt(ns[0])+' Desactivé la guardia.', 'happy'); return; }
+  const now=Date.now(); guardia.alertas=guardia.alertas.filter(t=>now-t<3600000);
+  if(now-guardia.ultAlerta<90000 || guardia.alertas.length>=10) return;
+  guardia.ultAlerta=now; guardia.alertas.push(now);
+  // la foto: chica para la tablet, mediana (cifrada) para el celu
+  const c=document.createElement('canvas'); c.width=640; c.height=Math.round(640*v.videoHeight/v.videoWidth); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
+  const t=document.createElement('canvas'); t.width=200; t.height=Math.round(200*c.height/c.width); t.getContext('2d').drawImage(c, 0, 0, t.width, t.height);
+  const ev={at:now, t:'Movimiento', img:t.toDataURL('image/jpeg', 0.6)}; guardia.eventos.push(ev); guardia.eventos=guardia.eventos.slice(-6); guardiaSave(); if(os.cur==='proto') renderProto();
+  try{ const blob=await new Promise(r=>c.toBlob(r, 'image/jpeg', 0.72)); const bytes=new Uint8Array(await blob.arrayBuffer());
+    await FSync.sendFile({k:'guardia', t:'Vi movimiento en casa', at:now}, bytes, 'guardia.bin'); }catch(e){ console.warn('guardia foto', e); }
+  try{ if(pcDev()) pcCall('aviso_celu', {titulo:'FRIDAY · Guardia', texto:`Vi movimiento en casa a las ${hhmm(new Date(now))}. Abrí FRIDAY Móvil para ver la foto.`, prioridad:5, forzar:true}); }catch(e){}
+  faceSet('surprised', 4000); say('Hola. Esta casa está protegida por FRIDAY: ya le avisé a la familia.', 'surprised'); }
+function guardiaFast(text, nf){
+  const n=nf.replace(/^(che |dale |friday )+/,'');
+  if(/^(activa|prende|pone|arma|enciende)(me)?( la| el)? (guardia|vigilancia|modo guardia|alarma)$|^(modo guardia|vigila la casa|cuida la casa|quedate de guardia)$/.test(n)){ pushHist('user', text); guardiaSet(true); return true; }
+  if(/^(desactiva|apaga|saca|desarma|para)(me)?( la| el)? (guardia|vigilancia|modo guardia|alarma)$/.test(n)){ pushHist('user', text); guardiaSet(false); return true; }
+  if(/^(como esta|esta activa|que paso con) la guardia$|^(la )?guardia$/.test(n)){ sayFast(text, guardia.on ? `La guardia está activa${guardia.eventos.length?'; la última vez que vi movimiento fue a las '+hhmm(new Date(guardia.eventos[guardia.eventos.length-1].at)):' y no vi a nadie'}.` : 'La guardia está apagada.'); return true; }
+  return false; }
+
+// ---------------------------------------------------------------- la compu, a mano: estado, procesos, bloquear, apagar, abrir programas, ver la pantalla
+const compu={ d:null, at:0, err:'', img:null, imgAt:0, pend:false };
+async function compuEstado(){ if(compu.pend) return compu.d; compu.pend=true;
+  try{ const r=await pcCall('pc_estado', {}); if(r && r.ok){ compu.d=r; compu.at=Date.now(); compu.err=''; } else compu.err = !pcDev() ? 'no hay ninguna compu unida' : !r ? 'la compu no contesta (¿FRIDAY está abierta?)' : r.error==='no_permitido' ? 'la compu tiene una versión vieja de FRIDAY: actualizá friday.html' : (r.error||'no anduvo'); }
+  finally{ compu.pend=false; if(os.cur==='compu') renderCompu(); } return compu.d; }
+async function compuHacer(que, v, min){
+  if(!pcDev()) return {ok:false, txt:'No hay ninguna compu unida a la tablet.'};
+  const r=await pcCall('pc_hacer', {que, v:v||'', min:+min||0});
+  if(!r) return {ok:false, txt:'La compu no me contesta. ¿Está prendida, con FRIDAY abierta?'};
+  if(r.error==='no_permitido') return {ok:false, txt:'La compu tiene una versión vieja de FRIDAY: hay que actualizar friday.html.'};
+  if(!r.ok) return {ok:false, txt:r.txt||'La compu dijo que no.'};
+  setTimeout(compuEstado, 1500); return {ok:true, txt:r.txt||'Listo.'}; }
+async function compuPantalla(){ compu.img='…'; if(os.cur==='compu') renderCompu(); const r=await pcCall('pc_pantalla', {}); if(!r || !r.ok){ compu.img=null; if(os.cur==='compu') renderCompu(); return false; } return true; }
+function compuDecir(d){ if(!d) return 'No sé cómo está la compu: '+(compu.err||'no contesta')+'.';
+  let t=`La compu está con el procesador al ${d.cpu}% y la memoria al ${Math.round(d.ramUsed/d.ramTotal*100)}%`;
+  if(d.temp) t+=`, a ${d.temp} grados`; if(d.battery!=null && d.battery>=0) t+=`, con ${d.battery}% de batería`; t+='.';
+  if(d.procs && d.procs[0] && d.procs[0].c>=15) t+=` Lo que más está usando es ${d.procs[0].n}.`;
+  if(d.apagaEn) t+=` Se apaga ${enCuanto(new Date(d.apagaEn))}.`;
+  t+= d.cpu<40 && d.ramUsed/d.ramTotal<0.8 ? ' Todo tranquilo.' : ' Está bastante exigida.'; return t; }
+function renderCompu(){
+  const el=$('pCompu'); if(!el) return; const d=compu.d;
+  const ring=(lbl, v, txt, col)=>{ const C=2*Math.PI*44, f=Math.max(0,Math.min(100,v))/100; return `<div class="cring" style="--c:${col}"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="44" class="bg"/><circle cx="50" cy="50" r="44" class="fg" style="stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-f)).toFixed(1)}"/></svg><b>${esc(txt)}</b><small>${esc(lbl)}</small></div>`; };
+  let html;
+  if(!d) html=`<p class="empty">${compu.err?'No pude ver la compu: '+esc(compu.err)+'.':'Preguntándole a la compu…'}</p>`;
+  else { const ram=d.ramTotal?d.ramUsed/d.ramTotal*100:0, disk=d.diskTotal?(1-d.diskFree/d.diskTotal)*100:0;
+    const spark=(d.hist||[]).length>1?`<svg class="spark" viewBox="0 0 300 60" preserveAspectRatio="none"><polyline points="${d.hist.map((v,i)=>`${(i/(d.hist.length-1)*300).toFixed(1)},${(58-v/100*56).toFixed(1)}`).join(' ')}"/></svg>`:'';
+    html=`<div class="hud"><div class="rings">${ring('Procesador', d.cpu, d.cpu+'%', '#4CC9FF')}${ring('Memoria', ram, Math.round(ram)+'%', '#A78BFA')}${ring('Disco · '+Math.round(d.diskFree)+' GB libres', disk, Math.round(disk)+'%', '#5FD39A')}${d.battery!=null&&d.battery>=0?ring('Batería', d.battery, d.battery+'%', '#FFB547'):''}</div>
+      <div class="hstat"><span>${d.temp?`🌡️ ${d.temp}°`:''}</span><span>⏱️ prendida ${d.uptimeH>=24?Math.floor(d.uptimeH/24)+' d '+Math.round(d.uptimeH%24)+' h':Math.round(d.uptimeH*10)/10+' h'}</span>${d.apagaEn?`<span class="warn">⏻ se apaga ${enCuanto(new Date(d.apagaEn))}</span>`:''}<span class="mut">actualizado ${Math.max(0,Math.round((Date.now()-compu.at)/1000))} s</span></div>
+      ${spark}<h3>Lo que más consume</h3><div class="procs">${(d.procs||[]).map(p=>`<div><b>${esc(p.n)}</b><i style="--w:${Math.min(100,p.c)}%"></i><small>${p.c}% · ${p.m>=1024?(p.m/1024).toFixed(1)+' GB':p.m+' MB'}</small><button type="button" data-compu="cerrar" data-v="${esc(p.n)}">Cerrar</button></div>`).join('')}</div></div>`; }
+  const acts=`<div class="cacts"><button type="button" data-compu="bloquear">🔒 Bloquear</button><button type="button" data-compu="volumen" data-v="silencio">🔇 Silenciar</button><button type="button" data-compu="volumen" data-v="bajar">🔉 Bajar</button><button type="button" data-compu="volumen" data-v="subir">🔊 Subir</button>${d&&d.apagaEn?`<button type="button" data-compu="cancelar">Cancelar el apagado</button>`:`<button type="button" data-compu="apagar" data-min="30">⏻ Apagar en 30 min</button>`}<button type="button" data-compu="pantalla">🖥️ Ver la pantalla</button></div>`;
+  const shot=compu.img==='…'?'<p class="note">Pidiéndole la pantalla a la compu…</p>':compu.img?`<figure class="cshot"><img src="${compu.img}" alt="La pantalla de la compu"><figcaption>La pantalla de la compu a las ${hhmm(new Date(compu.imgAt))}</figcaption></figure>`:'';
+  const all=acts+html+shot+'<p class="note">Por voz: <q>Friday, ¿cómo está la compu?</q>, <q>bloqueá la compu</q>, <q>apagá la compu en 20 minutos</q>, <q>abrí Spotify en la compu</q>, <q>mostrame la pantalla de la compu</q>.</p>';
+  if(el.dataset.h!==all){ el.dataset.h=all; el.innerHTML=all; } }
+function compuFast(text, nf){
+  const n=nf.replace(/^(che |dale |friday )+/,''); if(!/\b(compu|computadora|pc|notebook)\b/.test(n)) return false;
+  const hacer=(que, v, min, ok)=>{ pushHist('user', text); compuHacer(que, v, min).then(r=>say(r.ok?(ok||r.txt):r.txt, r.ok?'happy':'worried')); return true; };
+  if(/^(como (esta|anda)|que tal (esta|anda)|estado de) (la )?(compu|computadora|pc)|^(la )?(compu|computadora|pc) (como esta|esta bien)/.test(n)){ pushHist('user', text); osOpen('compu',{auto:true}); compuEstado().then(d=>say(compuDecir(d), 'happy')); return true; }
+  if(/\b(bloquea|bloqueame|bloquear)\b/.test(n)) return hacer('bloquear', '', 0, 'Listo, bloqueé la compu.');
+  if(/\b(cancela|cancelame|no apagues)\b.*\b(apagado|apagar|apagues)\b|\bno apagues la compu\b/.test(n)) return hacer('cancelar', '', 0, 'Listo, la compu no se apaga.');
+  let m=n.match(/\b(apaga|apagame|apagar)( la)? (compu|computadora|pc)( en (\d+|un|una|media) (minutos?|horas?|hora))?/);
+  if(m){ let min=1; if(m[5]){ const k=m[5]==='media'?30:/^\d+$/.test(m[5])?+m[5]:1; min=/hora/.test(m[6])?(m[5]==='media'?30:k*60):k; }
+    pushHist('user', text); ofrecer('apagar compu', ()=>compuHacer('apagar','',min).then(r=>say(r.ok?(min>1?`Listo: la compu se apaga en ${min} minutos.`:'Listo: la compu se apaga en un minuto. Decí «cancelá el apagado» si cambiás de idea.'):r.txt)));
+    say(min>1?`¿Seguro que apago la compu en ${min} minutos?`:'¿Seguro que apago la compu ahora?', 'surprised'); Ear.convoUntil=Date.now()+20000; return true; }
+  m=n.match(/\b(abri|abrime|abrir)(?: el| la)? (.+?) en la (compu|computadora|pc)$/); if(m) return hacer('abrir', m[2], 0, `Listo, abrí ${m[2]} en la compu.`);
+  m=n.match(/\b(cerra|cerrame|cerrar)(?: el| la)? (.+?) en la (compu|computadora|pc)$/); if(m) return hacer('cerrar', m[2], 0, `Listo, cerré ${m[2]}.`);
+  if(/\b(mostrame|mira|que hay en|mostra) la pantalla de la (compu|computadora|pc)/.test(n)){ pushHist('user', text); osOpen('compu',{auto:true}); compuPantalla().then(ok=>{ if(!ok) say('La compu no me mandó la pantalla.', 'worried'); }); say('Ahí te la muestro.', 'happy'); return true; }
+  if(/\b(silencia|mutea|silenciame)\b/.test(n)) return hacer('volumen', 'silencio', 0, 'Listo.');
+  if(/\b(subi|subile)( el)? volumen\b/.test(n)) return hacer('volumen', 'subir', 0, 'Listo, más fuerte.');
+  if(/\b(baja|bajale)( el)? volumen\b/.test(n)) return hacer('volumen', 'bajar', 0, 'Listo, más bajo.');
+  return false; }
+
+// ---------------------------------------------------------------- avisos que se le ocurren sola (una vez por día, a la mañana)
+const proact=Object.assign({fecha:'', items:[], pidiendo:false}, LS.get('proact',{}));
+const proactSave=()=>LS.set('proact', {fecha:proact.fecha, items:proact.items});
+function proactReglas(){
+  // lluvia y agenda: si a la hora de algo que tenés afuera va a llover, te avisa una hora antes
+  const out=[], w=weather.data; if(!w || !w.hours) return out;
+  for(const e of agItems().filter(x=>!x.d && x.at>new Date() && x.at-new Date()<14*3600000)){
+    const hh=e.at.getHours(), hr=w.hours.find(x=>+x.h.slice(0,2)===hh || +x.h.slice(0,2)===(hh+23)%24);
+    if(hr && hr.p>=50){ out.push({at:e.at.getTime()-3600000, texto:`Ojo: para ${e.t} a las ${hhmm(e.at)} hay ${hr.p}% de probabilidad de lluvia. Llevá paraguas.`}); } }
+  return out; }
+async function proactTick(){
+  const hoy=todayISO(), h=new Date().getHours(), now=Date.now();
+  if(proact.fecha!==hoy && h>=7 && !proact.pidiendo && state.started) await proactPedir();
+  const noche=h>=23||h<7;
+  for(const x of proact.items) if(!x.dicho && now>=x.at && now-x.at<2*3600000 && !noche && !durmiendo() && state.mode==='idle' && !speakingNow() && !Call.active && !guardia.on && Date.now()>protoSt.silencioUntil){
+    x.dicho=true; proactSave(); addAviso({i:'💡', t:x.texto.slice(0,90), v:x.texto}, true); break; } }
+async function proactPedir(){
+  const hoy=todayISO(), now=Date.now();
+  { proact.pidiendo=true;
+    try{ let items=proactReglas();
+      if(S.groqKey){
+        const ctx=[`Hoy es ${new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})}.`, `Clima: ${weatherText()}.`, 'Agenda: '+(agendaDecir('hoy')+' '+agendaDecir('mañana')),
+          'Tareas de la casa pendientes hoy: '+(tareasHoy().map(t=>t.t+(tareaTurno(t)?' ('+tareaTurno(t)+')':'')).join(', ')||'ninguna'),
+          'Lo que sabés de la familia: '+((typeof memory!=='undefined'&&memory)||[]).slice(-25).map(m=>typeof m==='string'?m:(m.t||m.texto||'')).join('; ')];
+        const out=await llm([{role:'system', content:'Sos FRIDAY, la asistente de la casa (como JARVIS). Con estos datos, proponé de 0 a 3 avisos realmente útiles para hoy que nadie te pidió (por ejemplo: llevar algo para una actividad que hacen ese día, una tarea atrasada, prepararse para el clima, un cumpleaños). Nada obvio ni repetido de la agenda. Respondé SOLO JSON: [{"hora":"HH:MM","texto":"lo que vas a decir, corto y cálido"}]. Si no hay nada que valga la pena, respondé [].'},{role:'user', content:ctx.join('\n')}], ()=>{});
+        const arr=JSON.parse((String(out).match(/\[[\s\S]*\]/)||['[]'])[0]);
+        for(const x of arr.slice(0,3)){ const m=String(x.hora||'').match(/^(\d{1,2}):(\d{2})$/); if(!m || !x.texto) continue; const at=new Date(); at.setHours(+m[1], +m[2], 0, 0); if(at.getTime()>now-1800000) items.push({at:at.getTime(), texto:String(x.texto).slice(0,220)}); } }
+      proact.fecha=hoy; proact.items=items.map(x=>Object.assign({dicho:false}, x)); proactSave();
+    }catch(e){ console.warn('proact', e); proact.fecha=hoy; proactSave(); }
+    finally{ proact.pidiendo=false; } } }
+
+// ---------------------------------------------------------------- lo que llega de otros aparatos
+function jarvisMsg(o){
+  if(o.k==='guardia' && o.est){ if(!!o.on!==guardia.on){ guardiaSet(!!o.on, {silencio:true, remoto:true, demora:o.on?30:0}); say(o.on?'Me pidieron desde el celu que active la guardia. La activo en 30 segundos.':'Desactivaron la guardia desde el celu.', 'happy'); } return true; }
+  if(o.k==='guardia') return true;   // (la foto que mandó esta misma tablet)
+  if(o.k==='proto' && o.n){ const p=protoFind(o.n); if(p) protoRun(p, {desdeCompu:true}); else FSync.send({k:'aviso', to:o.f, i:'⚡', t:'No hay protocolo «'+o.n+'» en la tablet', s:'', v:''}); return true; }
+  if(o.k==='pantalla' && o._att){ FSync.openFile(o._att).then(b=>{ const u=URL.createObjectURL(new Blob([b], {type:'image/jpeg'})); compu.img=u; compu.imgAt=Date.now(); if(os.cur!=='compu') osOpen('compu',{auto:true}); renderCompu(); }).catch(e=>{ compu.img=null; say('No pude abrir la pantalla de la compu.', 'worried'); }); return true; }
+  return false; }
+// ================================================================ FRIDAY, más JARVIS (fin)
+
 async function boot(){
   try{ faceBuild($('bFace')); }catch(e){}
   // la versión, a la vista: en la pantalla de arranque y arriba al lado de FRIDAY; si se acaba de actualizar, lo avisa
@@ -4917,6 +5298,9 @@ async function boot(){
     if(os.cur && state.mode==='idle' && !speakingNow() && !(os.cur==='estudio' && (est.on||quiz.on)) && !(os.cur==='icom' && state.icomTo) && !(os.cur==='cocina' && cocina) && Date.now()-Math.max(state.lastUser, os.at)>(os.auto?25000:180000)) osClose(); }, 1000);
   Turno.init({ level:()=>stt.level||0, onLose:d=>{ turnoMio.quien=d?Call.label(d, (FSync.st.peers[d]||{}).n):'la compu'; }, onOther:()=>{ Ear.convoUntil=0; },
     onVeto:d=>{ stopTalk(); turnoMio.quien=d?Call.label(d,(FSync.st.peers[d]||{}).n):'la compu'; turnoPerdi(turnoMio.ult||''); } });
+  setInterval(()=>{ proactTick().catch(()=>{}); }, 30000); setTimeout(()=>{ proactTick().catch(()=>{}); }, 20000);
+  if(guardia.on){ document.body.classList.add('guardia'); guardia.desde=Math.max(guardia.desde, Date.now()+20000); guardiaLoop(); }
+  setInterval(()=>{ if(os.cur==='compu' && !compu.pend && Date.now()-compu.at>4000) compuEstado(); }, 2000);
   setInterval(talkSync, 250); setInterval(resumenTick, 30000); setInterval(budTick, 450); setInterval(tareasTick, 30000); setInterval(()=>{ quienRonda().catch(()=>{}); }, 6000);
   setInterval(()=>{ applyLight(); agendaCheck(); autoTick(); }, 30000);
   setInterval(()=>{ const mins=+S.ambMin; if(mins && !amb.on && !setsOpen() && !(os.cur && !os.auto) && state.started && state.mode==='idle' && !speakingNow() && Date.now()-state.lastUser>mins*60000) ambOn(); }, 5000);

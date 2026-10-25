@@ -236,6 +236,19 @@ const FSync={
       await new Promise(r=>{ this.streamWake=r; setTimeout(r, ok ? 1500 : back); }); this.streamWake=null;
     }
   },
+  // una foto (u otro archivo) cifrada: viaja como adjunto de ntfy (queda unas horas allá) y el aviso lleva cómo abrirla
+  async sendFile(head, bytes, name){
+    if(!this.on()) return false;
+    try{ const iv=crypto.getRandomValues(new Uint8Array(12));
+      const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, this.key, bytes));
+      const all=new Uint8Array(12+ct.length); all.set(iv); all.set(ct,12);
+      const msg=await this.seal(Object.assign({f:this.cfg.dev, n:this.hooks.name||'', dk:this.hooks.kind||'', vr:this.hooks.ver||''}, head));
+      const r=await fetch(this.cfg.server+'/'+this.topic, {method:'PUT', body:all, headers:{'X-Filename':name||'f.bin', 'X-Message':msg, 'X-Firebase':'no'}});
+      if(r.ok){ this.okAt=Date.now(); this.lastErr=''; } return r.ok; }catch(e){ this.lastErr='sin conexión'; return false; } },
+  async openFile(url){
+    const r=await fetch(url); if(!r.ok) throw new Error('ya no está (los adjuntos duran unas horas)');
+    const u=new Uint8Array(await r.arrayBuffer());
+    return new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(0,12)}, this.key, u.slice(12))); },
   // un mensaje suelto (pedidos, avisos): no se guarda, se manda y listo
   send(head){ return this.publish(head, null); },
   // qué es cada aparato (compu, tablet, celu): lo dice él mismo; si es de una versión vieja, por su código o su nombre
@@ -326,7 +339,7 @@ const FSync={
     if(this.ids.has(m.id)) return; this.ids.add(m.id); if(this.ids.size>400) this.ids=new Set([...this.ids].slice(-200));
     this.st.lastId=m.id;
     const o=await this.unseal(m.message); if(!o || !o.f || o.f===this.cfg.dev) return;
-    o._t=(m.time||0)*1000;
+    o._t=(m.time||0)*1000; if(m.attachment && m.attachment.url) o._att=m.attachment.url;
     await this.handle(o);
   },
   async handle(o){
@@ -361,7 +374,7 @@ const FSync={
     }
     if(o.k && !['d','h','q'].includes(o.k) && this.hooks.onMsg){
       // pedidos y avisos viejos (de cuando este aparato estaba apagado) no se hacen
-      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:120000)){
+      if(!(o.to && o.to!==this.cfg.dev) && Math.abs(Date.now()-(o._t||Date.now()))<(o.k==='aviso'?600000:o.k==='guardia'?3*3600000:120000)){
         // sin esperar: un pedido que tarda (por ejemplo, uno que espera tu "sí") no traba los mensajes que siguen
         Promise.resolve().then(()=>this.hooks.onMsg(o)).catch(e=>console.warn(e));
       }

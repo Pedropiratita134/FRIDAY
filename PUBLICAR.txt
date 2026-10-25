@@ -481,3 +481,31 @@ NUEVO EN LA 4.0: LA MISMA TABLET, MÁS LINDA Y MÁS ÚTIL
   aparato está prendido.
 - Llamar, sin aparatos unidos: un botón para unirlos directamente.
 QUÉ SUBIR: panel.html, sw.js, tablet.html y worker.js.
+
+=====================================================================
+NUEVO EN LA 4.1: MÁS JARVIS
+=====================================================================
+- «Hola, Friday», «buenas noches Friday, ¿cómo estás?», «¿qué hora es, Friday?»: ahora te
+  escucha aunque digas algo antes o después de su nombre (en la tablet y en la compu).
+- Saludos y charla corta al toque, con tu nombre si te reconoce: «hola», «¿cómo estás?»
+  («todos los sistemas funcionando»), «gracias», «chau» (te ofrece el protocolo «me voy»),
+  «buenas noches» de noche (te ofrece el protocolo buenas noches). Si hay un mensaje sin leer o
+  algo en un rato, te lo dice.
+- PROTOCOLOS (app nueva): una frase y se mueve toda la casa, con un cartel como en las pelis.
+  De fábrica: buenas noches, película, me voy, llegué, buen día y fiesta. «Friday, modo
+  película», «Friday, protocolo fiesta». Para armar uno: «Friday, creá el protocolo cena: bajá
+  las luces, poné jazz y avisá a todos que está la comida». Desde la compu y el celu también:
+  «protocolo fiesta».
+- BIENVENIDA: cuando la cámara reconoce a alguien que vuelve, lo saluda y lo pone al día:
+  mensajes que le dejaron, llamadas perdidas, lo que viene, sus tareas.
+- MODO GUARDIA: «Friday, activá la guardia» (o el protocolo «me voy»). Si ve a alguien que no
+  conoce, le habla, saca una foto y te la manda al celu (cifrada) y a la compu. Si te reconoce,
+  se desactiva sola y te recibe. Se apaga por voz, desde la app Protocolos o desde el celu.
+- COMPU (app nueva): el estado de la compu como en un panel de JARVIS (procesador, memoria,
+  disco, batería, temperatura, qué consume más) y botones: bloquear, silenciar, volumen, apagar
+  en 30 minutos, ver la pantalla. Por voz: «¿cómo está la compu?», «bloqueá la compu», «apagá
+  la compu en 20 minutos», «abrí Spotify en la compu», «mostrame la pantalla de la compu».
+- AVISOS QUE SE LE OCURREN SOLA: a la mañana piensa si hay algo útil para avisarte en el día
+  (llevar algo, una tarea atrasada, prepararse para el clima) y lo dice a su hora. Si va a
+  llover cuando tenés algo en la agenda, te avisa una hora antes.
+QUÉ SUBIR: panel.html, index.html, sw.js. En la compu: friday.html versión 100.
