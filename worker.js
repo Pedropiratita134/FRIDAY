@@ -5,6 +5,8 @@
 //   3) tu Google: agenda y mails (guarda la "llave larga" de Google sin que tu clave quede a la vista)
 //   4) la voz de FRIDAY: Elena, la misma voz natural que usa en la compu (la de Microsoft Edge / Translator)
 //   5) la tele: pone música en el YouTube de tu tele (vinculada con el código de la tele)
+//   7) un cerebro más para FRIDAY (Workers AI, gratis: 10.000 «neuronas» por día). Hace falta el enlace
+//      Settings → Bindings → Add → Workers AI, con el nombre AI.
 //   6) videollamadas: el "puente" de Cloudflare para cuando dos aparatos no se pueden ver directo (opcional:
 //      TURN_KEY_ID y TURN_KEY_TOKEN, de Cloudflare → Realtime → TURN Server; gratis hasta 1000 GB por mes)
 //
@@ -22,7 +24,7 @@ const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.goog
 let tuya = { host: null, tok: '', exp: 0 };
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words, X-Voz-Via' };
-const VERSION = 7;
+const VERSION = 8;
 const form = o => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });
 const enc = new TextEncoder();
@@ -354,7 +356,20 @@ export default {
 
     if (!same(key, env.FRIDAY_KEY)) return json({ ok: false, error: 'clave incorrecta' }, 401);
 
-    if (p === '/ping') return json({ ok: true, v: VERSION, tts: true, tele: true, turn: !!(env.TURN_KEY_ID && env.TURN_KEY_TOKEN), tuya: !!(env.TUYA_ID && env.TUYA_SECRET), google: !!(env.GOOGLE_ID && env.GOOGLE_SECRET) });
+    if (p === '/ping') return json({ ok: true, v: VERSION, tts: true, tele: true, ia: !!env.AI, turn: !!(env.TURN_KEY_ID && env.TURN_KEY_TOKEN), tuya: !!(env.TUYA_ID && env.TUYA_SECRET), google: !!(env.GOOGLE_ID && env.GOOGLE_SECRET) });
+
+    // BUFIA: un cerebro de respaldo (Workers AI). Recibe la charla como OpenAI y contesta de a pedacitos
+    if (p === '/ia' && req.method === 'POST') {
+      if (!env.AI) return json({ ok: false, error: 'falta el enlace de Workers AI (Settings → Bindings → Workers AI, nombre AI)' }, 501);
+      let b = {}; try { b = await req.json(); } catch (e) { }
+      const permitidos = ['@cf/meta/llama-3.3-70b-instruct-fp8-fast', '@cf/openai/gpt-oss-120b', '@cf/qwen/qwen3-30b-a3b-fp8'];
+      const model = permitidos.includes(b.model) ? b.model : permitidos[0];
+      const messages = (Array.isArray(b.messages) ? b.messages : []).slice(-20).map(m => ({ role: m.role === 'assistant' ? 'assistant' : m.role === 'system' ? 'system' : 'user', content: String(m.content || '').slice(0, 12000) }));
+      try {
+        const out = await env.AI.run(model, { messages, stream: true, max_tokens: Math.min(+b.max_tokens || 900, 2000) });
+        return new Response(out, { headers: { 'Content-Type': 'text/event-stream', 'Cache-Control': 'no-store', ...CORS } });
+      } catch (e) { return json({ ok: false, error: 'Workers AI: ' + e.message }, 502); }
+    }
 
     if (p === '/tuya' && req.method === 'POST') {
       let b = {}; try { b = await req.json(); } catch (e) { }
