@@ -274,11 +274,12 @@ header{align-items:center;padding:calc(12px + var(--safe-t)) 18px 2px}
 .hf:active,.fila:active{background:var(--surf2)}
 body.chatting #stage{flex:0 0 auto;height:auto;padding:0}
 body.chatting .saludo,body.chatting .hoy,body.chatting .seguir{display:none}
-body.chatting #face{height:clamp(80px,13vh,120px);margin:0}
+body.chatting #face{height:clamp(56px,8vh,72px);margin:0 0 2px}
+body.chatting header{padding-bottom:0}
 
 /* la charla */
-#chat{padding:4px 16px 10px;gap:12px}
-.msg{font-size:16px;line-height:1.45;padding:11px 15px;border-radius:20px}
+#chat{padding:8px 18px 16px;gap:14px;-webkit-mask-image:none;mask-image:none;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+.msg{max-width:84%;font-size:16.5px;line-height:1.5;padding:12px 16px;border-radius:22px}
 .msg.yo{background:var(--accent);color:var(--ink);font-weight:600;border-radius:20px 20px 6px 20px}
 .msg.fr{border:0;background:var(--surf2);border-radius:20px 20px 20px 6px}
 .msg.fr::before{content:none}
@@ -289,7 +290,8 @@ body.chatting #face{height:clamp(80px,13vh,120px);margin:0}
 #quick{padding:2px 16px 8px;gap:8px}
 .chip{border:0;background:var(--surf2);padding:9px 14px;font-size:14px;font-weight:600}
 body.chatting #quick{display:none}
-#bar{padding:4px 14px 10px;gap:10px;align-items:center}
+#bar{padding:8px 16px 12px;gap:10px;align-items:center;border-top:1px solid transparent}
+body.chatting #bar{border-top-color:var(--hair);background:var(--ink)}
 #txt{border:1px solid var(--hair);background:var(--surf);border-radius:24px;padding:12px 18px;min-height:48px}
 #txt:focus{border-color:rgba(var(--accent-rgb),.6)}
 .round{border-radius:50%;border:0;background:var(--surf2)}
@@ -298,12 +300,11 @@ body.chatting #quick{display:none}
 #mic.hf{background:#5ff2a8;box-shadow:0 0 0 5px rgba(95,242,168,.2)}
 
 /* pestañas */
-#tabs{position:fixed;left:0;right:0;bottom:0;z-index:14;display:flex;height:calc(var(--tabh) + var(--safe-b));padding:0 6px var(--safe-b);background:rgba(8,14,26,.94);border-top:1px solid var(--hair);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
-html[data-theme="friday"] #tabs{background:rgba(12,16,26,.95)}
+#tabs{position:fixed;left:0;right:0;bottom:0;z-index:14;display:flex;height:calc(var(--tabh) + var(--safe-b));padding:0 6px var(--safe-b);background:#0a1120;border-top:1px solid var(--hair)}
+html[data-theme="friday"] #tabs{background:#0e131d}
 #tabs button{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--muted);font-size:11.5px;font-weight:700;letter-spacing:.01em}
 #tabs .ic{width:23px;height:23px;stroke-width:1.9}
 #tabs button.on{color:var(--accent)}
-#tabs button.on .ic{filter:drop-shadow(0 0 8px rgba(var(--accent-rgb),.55))}
 #tabs button:active{transform:scale(.94)}
 
 /* las hojas ahora son páginas */
@@ -643,12 +644,15 @@ body.panel{padding-bottom:0}
 
 <script>
 'use strict';
-const VERSION='3.0';
+const VERSION='3.1';
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fm.'+k, JSON.stringify(v)); }catch(e){} },
            del(k){ try{ localStorage.removeItem('fm.'+k); }catch(e){} } };
+// ninguna llamada a internet puede dejar a FRIDAY esperando para siempre (las de Groq tienen su propio control)
+(function(){ const f0=window.fetch.bind(window); window.fetch=(u,o)=>{ o=o||{}; if(o.signal) return f0(u,o);
+  const c=new AbortController(), t=setTimeout(()=>c.abort(), 30000); return f0(u, Object.assign({}, o, {signal:c.signal})).finally(()=>clearTimeout(t)); }; })();
 const API={
   groq:'https://api.groq.com/openai/v1', gem:'https://generativelanguage.googleapis.com/v1beta',
   meteo:'https://api.open-meteo.com/v1/forecast', geo:'https://geocoding-api.open-meteo.com/v1/search',
@@ -1184,22 +1188,31 @@ ${spOnline()?`[[SPOTIFY|poner|qué|tipo]] pone música en su Spotify (tipo: tema
 [[SPOTIFY|control|pausa]], play, siguiente, anterior, [[SPOTIFY|control|volumen|40]] (o subir, bajar), [[SPOTIFY|control|aleatorio|si]], [[SPOTIFY|control|cola|tema]].`:'Spotify no está conectado: si te pide música, decile que toque el botón de música (la notita, arriba) para conectarlo.'}
 REGLA DE ORO: tu conocimiento es viejo. Nunca inventes datos actuales (resultados, precios, noticias, cargos): usá BUSCAR. Si no usaste una herramienta, no digas que hiciste algo.`;
 }
-async function* groqStream(messages){
-  const models=['openai/gpt-oss-20b','llama-3.3-70b-versatile','llama-3.1-8b-instant'];
-  let res=null, last='';
-  for(const model of models){
-    const body={model, messages, stream:true, temperature:0.7, max_completion_tokens:700}; if(/gpt-oss/.test(model)) body.reasoning_effort='low';
-    try{ res=await fetch(API.groq+'/chat/completions',{method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+S.groqKey}, body:JSON.stringify(body)}); }
-    catch(e){ throw new Error('sin_internet'); }
-    if(res.ok) break;
-    last=res.status; if(res.status===401) throw new Error('llave'); res=null;
-  }
-  if(!res) throw new Error('groq '+last);
-  const rd=res.body.getReader(), dec=new TextDecoder(); let buf='';
-  while(true){ const {value,done}=await rd.read(); if(done) break; buf+=dec.decode(value,{stream:true});
-    let i; while((i=buf.indexOf('\n'))>=0){ const line=buf.slice(0,i).trim(); buf=buf.slice(i+1);
-      if(!line.startsWith('data:')) continue; const d=line.slice(5).trim(); if(d==='[DONE]') return;
-      try{ const c=JSON.parse(d).choices?.[0]?.delta?.content; if(c) yield c; }catch(e){} } }
+// desde: 0 = empieza por el mejor modelo; 1 = salta gpt-oss (cuando devolvió la respuesta vacía)
+async function* groqStream(messages, desde=0){
+  const models=['openai/gpt-oss-20b','llama-3.3-70b-versatile','llama-3.1-8b-instant'].slice(desde);
+  let res=null, last='', ctl=null, perro=null, tardes=0;
+  // si Groq no contesta o se queda callado a mitad de camino, cortamos (antes quedaba «Pensando…» para siempre)
+  const vigilar=ms=>{ clearTimeout(perro); perro=setTimeout(()=>{ try{ ctl.abort(); }catch(e){} }, ms); };
+  try{
+    for(const model of models){
+      const body={model, messages, stream:true, temperature:0.7, max_completion_tokens:/gpt-oss/.test(model)?1400:700}; if(/gpt-oss/.test(model)) body.reasoning_effort='low';
+      if(tardes>=2) break;   // como mucho dos intentos lentos (~30 s): después avisamos
+      ctl=new AbortController(); vigilar(15000);
+      try{ res=await fetch(API.groq+'/chat/completions',{method:'POST', signal:ctl.signal, headers:{'Content-Type':'application/json','Authorization':'Bearer '+S.groqKey}, body:JSON.stringify(body)}); }
+      catch(e){ if(ctl.signal.aborted){ last='tarda'; tardes++; res=null; continue; } throw new Error('sin_internet'); }
+      if(res.ok) break;
+      last=res.status; if(res.status===401) throw new Error('llave'); res=null;
+    }
+    if(!res) throw new Error(last==='tarda'?'tarda':'groq '+last);
+    const rd=res.body.getReader(), dec=new TextDecoder(); let buf='';
+    while(true){ vigilar(20000); let r;
+      try{ r=await rd.read(); }catch(e){ throw new Error(ctl.signal.aborted?'tarda':'sin_internet'); }
+      const {value,done}=r; if(done) break; buf+=dec.decode(value,{stream:true});
+      let i; while((i=buf.indexOf('\n'))>=0){ const line=buf.slice(0,i).trim(); buf=buf.slice(i+1);
+        if(!line.startsWith('data:')) continue; const d=line.slice(5).trim(); if(d==='[DONE]') return;
+        try{ const c=JSON.parse(d).choices?.[0]?.delta?.content; if(c) yield c; }catch(e){} } }
+  } finally { clearTimeout(perro); }
 }
 let busy=false;
 function pushHistory(m){ hist.push(m); if(hist.length>30) hist=hist.slice(-30); LS.set('history',hist); }
@@ -1221,15 +1234,19 @@ async function turn(extra, depth=0){
   let full='', spoken=0;
   const visible=t=>t.replace(/\[\[[^\]]*(\]\]|$)/g,'').trim();
   try{
-    for await (const c of groqStream(msgs)){
-      full+=c; const v=visible(full);
-      if(v){ el.textContent=v; scrollDown(); if(PANEL) $('pSay').textContent=v; }
-      // va diciendo cada oración apenas está completa
-      const done=v.slice(spoken).match(/^[\s\S]*?[.!?…](\s|$)/);
-      if(done && !/\[\[/.test(full.slice(-2))){ say(done[0]); spoken+=done[0].length; }
+    // si el primer modelo devuelve la respuesta vacía (le pasa a gpt-oss), probamos con el siguiente
+    for(let desde=0; desde<2 && !full.trim(); desde++){
+      for await (const c of groqStream(msgs, desde)){
+        full+=c; const v=visible(full);
+        if(v){ el.textContent=v; scrollDown(); if(PANEL) $('pSay').textContent=v; }
+        // va diciendo cada oración apenas está completa
+        const done=v.slice(spoken).match(/^[\s\S]*?[.!?…](\s|$)/);
+        if(done && !/\[\[/.test(full.slice(-2))){ say(done[0]); spoken+=done[0].length; }
+      }
     }
+    if(!full.trim()) throw new Error('vacia');
   }catch(e){
-    el.textContent = e.message==='llave' ? 'Tu llave de Groq no funciona. Revisala en Ajustes (arriba a la derecha).' : e.message==='sin_internet' ? 'No tengo internet ahora. Probá en un ratito.' : 'Se me trabó algo ('+e.message+'). Probá de nuevo.';
+    el.textContent = e.message==='llave' ? 'Tu llave de Groq no funciona. Revisala en Más → Cerebro.' : e.message==='sin_internet' ? 'No tengo internet ahora. Probá en un ratito.' : e.message==='tarda' ? 'Mi cerebro está tardando demasiado. Probá de nuevo en un ratito.' : e.message==='vacia' ? 'No me salió la respuesta. ¿Me lo repetís?' : 'Se me trabó algo ('+e.message+'). Probá de nuevo.';
     say(el.textContent); busy=false; orbState='idle'; setStatus('warn','Con problemas'); return;
   }
   const v=visible(full); const rest=v.slice(spoken).trim(); if(rest) say(rest);
