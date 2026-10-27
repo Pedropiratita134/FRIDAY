@@ -160,8 +160,8 @@ code{background:rgba(var(--accent-rgb),.12);padding:2px 6px;border-radius:6px;fo
 #setup h2{margin:14px 0 4px;font-size:21px}
 #setup .stepn{text-align:center;color:var(--muted);font-size:12px;letter-spacing:.2em;text-transform:uppercase}
 #setup .pane{display:none}#setup .pane.on{display:block;animation:pop .3s}
-#setupMsg{min-height:22px;color:var(--warn);font-size:14px;margin-top:6px}
-#setupMsg.ok{color:var(--ok)}
+#setupMsg,#setupMsg2{min-height:22px;color:var(--warn);font-size:14px;margin-top:6px}
+#setupMsg.ok,#setupMsg2.ok{color:var(--ok)}
 
 #ask{position:fixed;inset:0;z-index:25;display:none;align-items:center;justify-content:center;padding:24px;background:rgba(0,0,0,.65)}
 #ask.on{display:flex}
@@ -342,6 +342,7 @@ html[data-theme="friday"] #tabs{background:#0e131d}
 .big{border:0;border-radius:16px;background:var(--accent);color:var(--ink);font-weight:800;letter-spacing:0;padding:14px}
 .big.sec{background:var(--surf2);color:var(--text);font-weight:700}
 .big.red{color:var(--bad)}
+.note.aviso{color:var(--warn);font-weight:600}
 .note.pie{text-align:center;margin:22px 0 4px;font-size:13px}
 .colores{display:flex;gap:12px;padding-top:12px}
 .color{flex:1;display:flex;align-items:center;gap:10px;padding:12px;border-radius:16px;border:2px solid var(--hair);cursor:pointer;font-weight:700}
@@ -553,9 +554,11 @@ body.panel{padding-bottom:0}
 
   <h4>Cerebro</h4>
   <div class="grupo pad">
-    <div class="field"><label for="cfGroq">Llave de Groq (gratis)</label><input id="cfGroq" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_…"></div>
-    <p class="note">Se saca en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a>. Queda guardada <b>solo en este celu</b>.</p>
-    <div class="field"><label for="cfGem">Llave de Gemini (opcional, para buscar mejor en internet)</label><input id="cfGem" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…"></div>
+    <div class="field"><label for="cfGroq">Llave de Groq (gratis, obligatoria)</label><input id="cfGroq" type="password" autocomplete="off" spellcheck="false" placeholder="gsk_…"></div>
+    <p class="note">Se saca en <a href="https://console.groq.com/keys" target="_blank" rel="noopener">console.groq.com/keys</a>.</p>
+    <div class="field"><label for="cfGem">Llave de Gemini (gratis, obligatoria)</label><input id="cfGem" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…"></div>
+    <p class="note">Se saca en <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">aistudio.google.com/apikey</a>. Con las dos, si una se queda sin cupo, FRIDAY sigue con la otra. Quedan guardadas <b>solo en este celu</b>.</p>
+    <p class="note aviso" id="faltaLlave" hidden></p>
   </div>
 
   <h4>Apariencia</h4>
@@ -596,7 +599,7 @@ body.panel{padding-bottom:0}
   </div>
   <div class="pane" data-p="2">
     <h2>Mi cerebro 🧠</h2>
-    <p class="note">Para pensar uso <b>Groq</b>, que es gratis. Necesitás tu propia "llave" (un código). Se saca en 1 minuto:</p>
+    <p class="note">Pienso con <b>dos cerebros gratis</b>: Groq y Gemini. Si uno se queda sin cupo, sigo con el otro, así nunca te quedás sin FRIDAY. Necesitás tu propia «llave» de cada uno (un código). Primero la de <b>Groq</b>, en 1 minuto:</p>
     <ol class="steps">
       <li>Tocá <b>Abrir Groq</b> y entrá con tu cuenta de <b>Google</b>.</li>
       <li>Tocá <b>Create API Key</b>, ponele de nombre <b>FRIDAY</b> y tocá <b>Submit</b>.</li>
@@ -609,6 +612,20 @@ body.panel{padding-bottom:0}
     <p class="note">La llave queda guardada <b>solo en este celu</b>. Nadie más la ve.</p>
   </div>
   <div class="pane" data-p="3">
+    <h2>Mi segundo cerebro ✨</h2>
+    <p class="note" id="gemPorQue">Ahora la de <b>Gemini</b>, de Google. También es gratis y se saca en 1 minuto:</p>
+    <ol class="steps">
+      <li>Tocá <b>Abrir Google AI Studio</b> y entrá con tu cuenta de <b>Google</b>.</li>
+      <li>Tocá <b>Create API key</b> (o «Crear clave de API»). Si te pregunta por un proyecto, elegí cualquiera o creá uno.</li>
+      <li>Copiá la llave y volvé acá. Empieza con <b>AIza</b>.</li>
+    </ol>
+    <a class="big sec" href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">Abrir Google AI Studio ↗</a>
+    <div class="field"><label for="suGem">Pegá tu llave de Gemini acá</label><input id="suGem" type="password" autocomplete="off" spellcheck="false" placeholder="AIza…"></div>
+    <button class="big" id="suG">Probar la llave</button>
+    <div id="setupMsg2"></div>
+    <p class="note">Las dos son obligatorias: con una sola, cuando se acaba el cupo del día, FRIDAY se queda muda.</p>
+  </div>
+  <div class="pane" data-p="4">
     <h2>¡Listo! 🎉</h2>
     <p class="note">Tocá el <b>🎤</b> y hablame, o escribime. Probá: <b>"¿Cómo va a estar el clima mañana?"</b>, <b>"Recordame en 20 minutos sacar la ropa"</b>, <b>"Contame las noticias"</b>.</p>
     <h2 style="font-size:17px">📲 Tenerme como app</h2>
@@ -644,7 +661,7 @@ body.panel{padding-bottom:0}
 
 <script>
 'use strict';
-const VERSION='3.1';
+const VERSION='3.2';
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1214,6 +1231,20 @@ async function* groqStream(messages, desde=0){
         try{ const c=JSON.parse(d).choices?.[0]?.delta?.content; if(c) yield c; }catch(e){} } }
   } finally { clearTimeout(perro); }
 }
+// Gemini como segundo cerebro (misma charla, mismas reglas)
+async function geminiChat(msgs){
+  if(!S.gemKey) return '';
+  const sys=msgs.filter(m=>m.role==='system').map(m=>m.content).join('\n\n'), contents=[];
+  for(const m of msgs){ if(m.role==='system') continue; const role=m.role==='assistant'?'model':'user', text=String(m.content||'').trim(); if(!text) continue;
+    const last=contents[contents.length-1]; if(last && last.role===role) last.parts[0].text+='\n\n'+text; else contents.push({role, parts:[{text}]}); }
+  if(!contents.length || contents[0].role!=='user') contents.unshift({role:'user', parts:[{text:'(sigue la charla)'}]});
+  for(const model of ['gemini-flash-latest','gemini-flash-lite-latest','gemini-2.5-flash']){
+    try{ const r=await fetch(`${API.gem}/models/${model}:generateContent?key=${encodeURIComponent(S.gemKey)}`,{method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({systemInstruction:{parts:[{text:sys}]}, contents, generationConfig:{temperature:0.7, maxOutputTokens:2048}})});
+      if(!r.ok) continue; const d=await r.json(); const t=(d.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('').trim(); if(t) return t; }catch(e){}
+  }
+  return '';
+}
 let busy=false;
 function pushHistory(m){ hist.push(m); if(hist.length>30) hist=hist.slice(-30); LS.set('history',hist); }
 async function ask(text){
@@ -1231,7 +1262,7 @@ async function turn(extra, depth=0){
   const el=typingEl();
   const msgs=[{role:'system', content:systemPrompt()}, ...hist.slice(-14)];
   if(extra) msgs.push({role:'user', content:extra});
-  let full='', spoken=0;
+  let full='', spoken=0, fallo=null;
   const visible=t=>t.replace(/\[\[[^\]]*(\]\]|$)/g,'').trim();
   try{
     // si el primer modelo devuelve la respuesta vacía (le pasa a gpt-oss), probamos con el siguiente
@@ -1245,7 +1276,17 @@ async function turn(extra, depth=0){
       }
     }
     if(!full.trim()) throw new Error('vacia');
-  }catch(e){
+  }catch(e0){ fallo=e0; }
+  if(fallo && full.trim()) fallo=null;   // se cortó a mitad de camino: nos quedamos con lo que llegó
+  // Groq no pudo (sin cupo, lento, llave mala o respuesta vacía): contesta Gemini antes de rendirnos
+  if(fallo && fallo.message!=='sin_internet' && S.gemKey){
+    setStatus('ok','Pensando con Gemini…');
+    const t=await geminiChat(msgs);
+    if(t){ full=t; const v=visible(full); if(v){ el.textContent=v; scrollDown(); if(PANEL) $('pSay').textContent=v; }
+      if(fallo.message==='llave') toast('Tu llave de Groq no anda: te contesté con Gemini. Revisala en Más → Cerebro.', 5000);
+      fallo=null; }
+  }
+  if(fallo){ const e=fallo;
     el.textContent = e.message==='llave' ? 'Tu llave de Groq no funciona. Revisala en Más → Cerebro.' : e.message==='sin_internet' ? 'No tengo internet ahora. Probá en un ratito.' : e.message==='tarda' ? 'Mi cerebro está tardando demasiado. Probá de nuevo en un ratito.' : e.message==='vacia' ? 'No me salió la respuesta. ¿Me lo repetís?' : 'Se me trabó algo ('+e.message+'). Probá de nuevo.';
     say(el.textContent); busy=false; orbState='idle'; setStatus('warn','Con problemas'); return;
   }
@@ -1322,14 +1363,15 @@ function fillMenu(){
   $('cfHf').checked=hf.on; if($('cfHfMotor')) $('cfHfMotor').value=(S.hfMotor==='celu'&&SRC)?'celu':'whisper';
   $('cfName').value=S.name; $('cfTrato').value=S.trato; $('cfCity').value=S.city; $('cfConvo').checked=!!S.convo; $('cfTheme').value=S.theme;
   $('cfGroq').value=S.groqKey; $('cfGem').value=S.gemKey; $('cfSpId').value=S.spId; $('spRedirect').textContent=spRedirect(); $('spOut').hidden=!spOnline();
-  $('verTxt').textContent=VERSION; pickVoice(); renderInstall(); renderMas();
+  $('verTxt').textContent=VERSION; pickVoice(); renderInstall(); renderMas(); faltaLlave();
 }
+function faltaLlave(){ const f=[!S.groqKey&&'Groq', !S.gemKey&&'Gemini'].filter(Boolean); const el=$('faltaLlave'); el.hidden=!f.length; el.textContent=f.length?'⚠ Te falta la llave de '+f.join(' y de ')+'. Con una sola, FRIDAY puede quedarse sin respuestas.':''; }
 function readMenu(){
   const city=$('cfCity').value.trim();
   if(city!==S.city){ S.city=city; S.lat=S.lon=null; weather=null; getWeather(true); }
   Object.assign(S,{name:$('cfName').value.trim(), trato:$('cfTrato').value, convo:$('cfConvo').checked, theme:$('cfTheme').value,
     groqKey:$('cfGroq').value.replace(/\s/g,''), gemKey:$('cfGem').value.replace(/\s/g,''), spId:$('cfSpId').value.trim(), voice:$('cfVoice').value||S.voice});
-  saveS(); applyTheme(); pickVoice();
+  saveS(); applyTheme(); pickVoice(); try{ faltaLlave(); }catch(e){}
 }
 document.querySelectorAll('#sh-menu input, #sh-menu select').forEach(el=>el.addEventListener('change', readMenu));
 $('cfSpId').addEventListener('change', ()=>{ S.spId=$('cfSpId').value.trim(); saveS(); spOpen(); });
@@ -1365,15 +1407,24 @@ $('shareBtn').onclick=async()=>{ const url=spRedirect(); try{ if(navigator.share
 
 // ================================================================ bienvenida
 function openSetup(p){ $('setup').classList.add('on'); setupStep(p||1); }
-function setupStep(n){ document.querySelectorAll('#setup .pane').forEach(x=>x.classList.toggle('on', +x.dataset.p===n)); $('setupN').textContent=`Paso ${n} de 3`; if(n===3) renderInstall(); }
-$('su1').onclick=()=>{ S.name=$('suName').value.trim(); const c=$('suCity').value.trim(); if(c!==S.city){ S.city=c; S.lat=S.lon=null; } saveS(); getWeather(true); setupStep(S.groqKey?3:2); };
+function setupStep(n){ document.querySelectorAll('#setup .pane').forEach(x=>x.classList.toggle('on', +x.dataset.p===n)); $('setupN').textContent=`Paso ${n} de 4`; if(n===4) renderInstall(); if(n===3 && S.gemKey) $('suGem').value=S.gemKey; }
+$('su1').onclick=()=>{ S.name=$('suName').value.trim(); const c=$('suCity').value.trim(); if(c!==S.city){ S.city=c; S.lat=S.lon=null; } saveS(); getWeather(true); setupStep(!S.groqKey?2:!S.gemKey?3:4); };
 $('su2').onclick=async()=>{
   const k=$('suKey').value.replace(/\s/g,''); const m=$('setupMsg'); m.className='';
   if(!k.startsWith('gsk_')){ m.textContent='La llave de Groq empieza con gsk_. Copiala de nuevo.'; return; }
   m.textContent='Probando…';
   try{ const r=await fetch(API.groq+'/models',{headers:{Authorization:'Bearer '+k}});
     if(r.status===401){ m.textContent='Esa llave no anda: copiala de nuevo (completa).'; return; }
-    if(!r.ok) throw 0; S.groqKey=k; saveS(); m.className='ok'; m.textContent='✔ ¡Anda!'; setTimeout(()=>setupStep(3), 600);
+    if(!r.ok) throw 0; S.groqKey=k; saveS(); m.className='ok'; m.textContent='✔ ¡Anda!'; setTimeout(()=>setupStep(S.gemKey?4:3), 600);
+  }catch(e){ m.textContent='No pude probarla (¿hay internet?).'; }
+};
+$('suG').onclick=async()=>{
+  const k=$('suGem').value.replace(/\s/g,''); const m=$('setupMsg2'); m.className='';
+  if(!/^AIza[\w-]{20,}$/.test(k)){ m.textContent='La llave de Gemini empieza con AIza. Copiala de nuevo, completa.'; return; }
+  m.textContent='Probando…';
+  try{ const r=await fetch(`${API.gem}/models?pageSize=1&key=${encodeURIComponent(k)}`);
+    if(r.status===400 || r.status===401 || r.status===403){ m.textContent='Esa llave no anda: copiala de nuevo (completa).'; return; }
+    if(!r.ok) throw 0; S.gemKey=k; saveS(); m.className='ok'; m.textContent='✔ ¡Anda! Ya tengo los dos cerebros.'; setTimeout(()=>setupStep(S.groqKey?4:2), 700);
   }catch(e){ m.textContent='No pude probarla (¿hay internet?).'; }
 };
 $('su3').onclick=()=>{ $('setup').classList.remove('on'); unlockAudio(); greet(); };
@@ -2429,6 +2480,7 @@ document.querySelectorAll('input[name=tema]').forEach(r=>r.addEventListener('cha
   getWeather(); fireReminders();
   addEventListener('online', ()=>setStatus('ok','Lista')); addEventListener('offline', ()=>setStatus('bad','Sin internet'));
   await syncBoot();
+  if(!PANEL && S.groqKey && !S.gemKey && !$('setup').classList.contains('on')){ $('gemPorQue').innerHTML='Ahora FRIDAY piensa con <b>dos cerebros gratis</b>: si uno se queda sin cupo, sigue con el otro. Te falta la llave de <b>Gemini</b>, de Google. Se saca en 1 minuto:'; openSetup(3); }
   schedulePushes(); renderAgChip(); renderHoy(); setInterval(()=>{ if(!document.hidden && !openSheet) renderHoy(); }, 30000);
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) renderHoy(); });
   const h=new Date().getHours();
