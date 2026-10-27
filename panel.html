@@ -748,6 +748,20 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
 </style>
 </head>
 <body class="home">
+<script>
+// Gemini: la llave va en el encabezado x-goog-api-key (las nuevas «AQ.» no andan en la dirección; las viejas «AIza» andan igual)
+(function(){ if(window.__gemHdr) return; window.__gemHdr=1; const f0=window.fetch.bind(window);
+  window.fetch=function(u, o){
+    try{ const s=typeof u==='string' ? u : (u && u.url) || '';
+      if(s.indexOf('generativelanguage.googleapis.com')>=0 && /[?&]key=/.test(s)){
+        const url=new URL(s), k=url.searchParams.get('key'); url.searchParams.delete('key');
+        o=Object.assign({}, o||{}); const h=new Headers(o.headers||(u&&u.headers)||{}); h.set('x-goog-api-key', k); o.headers=h;
+        if(typeof u!=='string' && u && u.method && !o.method) o.method=u.method;
+        u=url.toString();
+      } }catch(e){}
+    return f0(u, o);
+  }; })();
+</script>
 <div id="wall"></div>
 <div class="boot" id="boot"><div class="bface fface" id="bFace"></div><b>FRIDAY</b><small>BUFALABS</small><i></i><em class="bver" id="bVer"></em></div>
 <div class="os" id="app">
