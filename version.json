@@ -1,0 +1,21 @@
+{
+ "version": "3.6",
+ "titulo": "Actualizaciones como en la compu",
+ "items": [
+  {
+   "icono": "🚀",
+   "titulo": "Te aviso cuando hay algo nuevo",
+   "texto": "Cuando sale una versión nueva, te muestro qué trae y se instala con un toque, sin bajar nada."
+  },
+  {
+   "icono": "✨",
+   "titulo": "Te cuento lo nuevo",
+   "texto": "Después de actualizarme te presento las novedades, una por una. Las podés volver a ver desde Más."
+  },
+  {
+   "icono": "🗣️",
+   "titulo": "También hablando",
+   "texto": "Decime «buscá actualizaciones» o «qué hay de nuevo» y te lo digo."
+  }
+ ]
+}

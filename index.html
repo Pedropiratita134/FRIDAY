@@ -430,6 +430,115 @@ body.panel{padding-bottom:0}
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 #micTabChip{position:fixed;left:50%;transform:translateX(-50%);top:calc(env(safe-area-inset-top) + 10px);z-index:60;border:0;border-radius:999px;padding:10px 16px;background:#ffb020;color:#1b1300;font:700 14px/1.2 inherit;box-shadow:0 8px 20px rgba(0,0,0,.35)}
 .msg.sis{align-self:center;font-size:13px;opacity:.75;padding:4px 10px;background:none}
+  .upd{position:fixed;inset:0;z-index:66;display:grid;place-items:center;padding:20px;background:radial-gradient(60% 55% at 50% 45%,rgba(var(--accent-rgb),.10),rgba(3,8,16,.82) 70%);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);animation:updFade .35s ease}
+  .upd[hidden]{display:none}
+  @keyframes updFade{from{opacity:0}}
+  .upd-card{position:relative;width:min(640px,100%);max-height:calc(100vh - 40px);overflow-y:auto;display:grid;grid-template-columns:150px minmax(0,1fr);gap:8px 26px;padding:28px 30px 24px;border-radius:26px;border:1px solid rgba(var(--accent-rgb),.38);
+    background:linear-gradient(var(--accent),var(--accent)) top 0 left 40px/calc(100% - 80px) 2px no-repeat,linear-gradient(180deg,rgba(var(--accent-rgb),.13),rgba(8,14,26,.96) 200px),rgba(8,14,26,.96);box-shadow:0 30px 90px rgba(0,0,0,.6),0 0 60px rgba(var(--accent-rgb),.10);animation:dlgIn .35s ease}
+  .upd-ring{position:relative;width:150px;height:150px;align-self:start}
+  .upd-ring svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+  .upd-ring .r1{fill:none;stroke:rgba(var(--accent-rgb),.25);stroke-width:1.5;stroke-dasharray:3 7;transform-origin:75px 75px;animation:spin 14s linear infinite}
+  .upd-ring .r2{fill:none;stroke:rgba(var(--accent-rgb),.55);stroke-width:2;stroke-dasharray:60 30 8 30;transform-origin:75px 75px;animation:spin 6s linear infinite reverse}
+  .upd-ring .r3{fill:none;stroke:rgba(var(--accent-rgb),.14);stroke-width:8}
+  .upd-ring .pr{fill:none;stroke:var(--accent);stroke-width:8;stroke-linecap:round;transform:rotate(-90deg);transform-origin:75px 75px;transition:stroke-dashoffset .35s ease;filter:drop-shadow(0 0 6px var(--accent))}
+  .upd-ring .mid{position:absolute;inset:0;display:grid;place-items:center;text-align:center;color:var(--accent)}
+  .upd-ring .mid svg{position:static;width:46px;height:46px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;animation:updBaja 1.8s ease-in-out infinite}
+  @keyframes updBaja{0%,100%{transform:translateY(-3px)}50%{transform:translateY(4px)}}
+  .upd-ring .pct{font:700 30px/1 var(--display);color:var(--text);text-shadow:0 0 18px rgba(var(--accent-rgb),.6)}
+  .upd-ring .pct small{display:block;margin-top:6px;font:600 12px var(--font);color:var(--muted);letter-spacing:.05em}
+  .upd-ring.ok .pr{stroke:#5ff2a8;filter:drop-shadow(0 0 8px #5ff2a8)}
+  .upd-ring.ok .mid{color:#5ff2a8}
+  .upd-ring.mal .pr,.upd-ring.mal .r2{stroke:#ff8a7a}
+  .upd-ring.reinicia .r2{animation-duration:1.1s}
+  .upd-txt{min-width:0}
+  .upd-et{font:600 13px var(--display);letter-spacing:.12em;color:var(--accent);margin:4px 0 6px}
+  .upd-ver{font:700 40px/1 var(--display);color:var(--text);margin:0;text-shadow:0 0 24px rgba(var(--accent-rgb),.35)}
+  .upd-ver span{color:var(--accent)}
+  .upd-tit{font-size:19px;color:var(--text);margin:10px 0 4px}
+  .upd-lista{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+  .upd-lista li{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:start;padding:9px 12px;border-radius:13px;background:rgba(255,255,255,.035);border:1px solid rgba(var(--accent-rgb),.14);animation:updItem .45s ease both}
+  .upd-lista li:nth-child(2){animation-delay:.08s}.upd-lista li:nth-child(3){animation-delay:.16s}.upd-lista li:nth-child(4){animation-delay:.24s}.upd-lista li:nth-child(5){animation-delay:.32s}
+  @keyframes updItem{from{opacity:0;transform:translateX(10px)}}
+  .upd-lista li i{font-style:normal;font-size:20px;line-height:1.3;text-align:center}
+  .upd-lista li b{display:block;font-size:16px}.upd-lista li small{display:block;color:var(--muted);font-size:14px;line-height:1.35}
+  .upd-meta{grid-column:1/-1;color:var(--muted);font-size:14px;margin-top:8px}
+  .upd-st{min-height:22px;font-size:16px;color:var(--text);margin-top:8px}
+  .upd-st.mal{color:#ffb3a8}
+  .upd-bar{height:6px;border-radius:6px;background:rgba(var(--accent-rgb),.12);overflow:hidden;margin-top:10px}
+  .upd-bar i{display:block;height:100%;width:0;background:var(--accent);box-shadow:0 0 10px var(--accent);transition:width .3s}
+  .upd-nav{grid-column:1/-1;display:flex;justify-content:flex-end;flex-wrap:wrap;gap:10px;margin-top:14px}
+  .upd-nav .btn{min-width:130px;padding:11px 18px;font-size:15px}
+  .upd-fases{display:flex;gap:6px;margin-top:12px}
+  .upd-fases span{flex:1;padding:6px 4px;border-radius:9px;text-align:center;font-size:13px;color:var(--muted);background:rgba(255,255,255,.03);border:1px solid rgba(var(--accent-rgb),.12);transition:all .3s}
+  .upd-fases span.on{color:var(--text);border-color:var(--accent);background:rgba(var(--accent-rgb),.14);box-shadow:0 0 14px rgba(var(--accent-rgb),.25)}
+  .upd-fases span.ok{color:#5ff2a8;border-color:rgba(95,242,168,.4)}
+  .upd-fade{position:fixed;inset:0;z-index:67;background:#02060d;opacity:0;pointer-events:none;transition:opacity 1.2s ease}
+  .upd-fade.on{opacity:1}
+  .updb{position:fixed;left:50%;bottom:26px;z-index:64;display:flex;align-items:center;gap:14px;max-width:min(720px,calc(100vw - 40px));padding:12px 14px 12px 12px;border-radius:20px;border:1px solid rgba(var(--accent-rgb),.45);background:linear-gradient(180deg,rgba(var(--accent-rgb),.14),rgba(8,14,26,.96));box-shadow:0 20px 60px rgba(0,0,0,.55),0 0 40px rgba(var(--accent-rgb),.15);transform:translateX(-50%);animation:updbIn .6s cubic-bezier(.2,1.3,.4,1) both}
+  .updb.sale{animation:updbOut .4s ease forwards}
+  @keyframes updbIn{from{opacity:0;transform:translate(-50%,40px)}}
+  @keyframes updbOut{to{opacity:0;transform:translate(-50%,30px)}}
+  .updb-ic{flex:none;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;color:var(--accent);border:2px solid rgba(var(--accent-rgb),.4);border-top-color:var(--accent);animation:spin 2.4s linear infinite}
+  .updb-ic svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;animation:spin 2.4s linear infinite reverse}
+  .updb-tx{min-width:0;flex:1}.updb-tx b{display:block;font-size:17px}.updb-tx small{display:block;color:var(--muted);font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .updb .btn{padding:9px 16px;font-size:15px}
+  /* la mini presentación de lo nuevo */
+  .upn{position:fixed;inset:0;z-index:68;display:grid;place-items:center;overflow:hidden;background:radial-gradient(55% 60% at 50% 48%,rgba(var(--accent-rgb),.16),rgba(var(--accent-rgb),0) 72%),#02060d;cursor:pointer;animation:updFade .5s ease}
+  .upn[hidden]{display:none}
+  .upn::after{content:"";position:absolute;left:0;right:0;top:0;height:120px;pointer-events:none;background:linear-gradient(180deg,rgba(var(--accent-rgb),0),rgba(var(--accent-rgb),.07),rgba(var(--accent-rgb),0));animation:scanl 9s linear infinite}
+  .upn .aros{position:absolute;left:50%;top:48%;width:0;height:0}
+  .upn .aros i{position:absolute;left:0;top:0;border-radius:50%;border:1px solid rgba(var(--accent-rgb),.22);transform:translate(-50%,-50%)}
+  .upn .aros i:nth-child(1){width:420px;height:420px;border-style:dashed;animation:spin 40s linear infinite}
+  .upn .aros i:nth-child(2){width:620px;height:620px;border-color:rgba(var(--accent-rgb),.12)}
+  .upn .aros i:nth-child(3){width:880px;height:880px;border-color:rgba(var(--accent-rgb),.07);border-style:dashed;animation:spin 70s linear infinite reverse}
+  .upn .aros i:nth-child(4){width:250px;height:250px;border:2px solid var(--accent);opacity:0;animation:updBurst 1.6s ease-out .4s}
+  @keyframes updBurst{0%{opacity:.9;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(-50%,-50%) scale(3.2)}}
+  .upn .barras{position:absolute;left:50%;top:34px;transform:translateX(-50%);width:min(560px,80vw);display:flex;gap:6px}
+  .upn .barras i{flex:1;height:4px;border-radius:4px;background:rgba(var(--accent-rgb),.2);overflow:hidden}
+  .upn .barras i b{display:block;height:100%;width:0;background:var(--accent);box-shadow:0 0 10px var(--accent)}
+  .upn .barras i.ya b{width:100%}
+  .upn .barras i.va b{animation:updLlena var(--dur,6s) linear forwards}
+  @keyframes updLlena{to{width:100%}}
+  .upn .pag{position:relative;width:min(760px,88vw);text-align:center;color:var(--text)}
+  .upn .pag.entra{animation:updEntra .6s cubic-bezier(.2,.9,.3,1.2) both}
+  @keyframes updEntra{from{opacity:0;transform:translateY(24px) scale(.96)}}
+  .upn .et{font:600 15px var(--display);letter-spacing:.22em;color:var(--accent);margin-bottom:18px}
+  .upn .num{display:inline-flex;align-items:center;gap:26px;font:700 clamp(80px,13vw,150px)/1 var(--display);color:var(--text);text-shadow:0 0 40px rgba(var(--accent-rgb),.45)}
+  .upn .num .de{color:var(--muted);font-size:.55em;opacity:.8}
+  .upn .num .fl{width:.9em;height:3px;background:linear-gradient(90deg,transparent,var(--accent));position:relative;font-size:.4em}
+  .upn .num .fl::after{content:"";position:absolute;right:-2px;top:-7px;border:8px solid transparent;border-left-color:var(--accent);border-right:0}
+  .upn .num .a{display:inline-block;overflow:hidden;height:1em}
+  .upn .num .a span{display:block;animation:updSube .9s cubic-bezier(.2,.9,.3,1.15) .5s both}
+  @keyframes updSube{from{transform:translateY(100%);opacity:0}}
+  .upn .sub{font-size:22px;color:var(--muted);margin-top:18px}
+  .upn .ico{width:150px;height:150px;margin:0 auto 26px;border-radius:50%;display:grid;place-items:center;font-size:70px;line-height:1;background:radial-gradient(circle,rgba(var(--accent-rgb),.28),rgba(var(--accent-rgb),.04) 70%);border:2px solid rgba(var(--accent-rgb),.55);box-shadow:0 0 50px rgba(var(--accent-rgb),.35),inset 0 0 30px rgba(var(--accent-rgb),.2);animation:updLate 2.4s ease-in-out infinite}
+  @keyframes updLate{50%{box-shadow:0 0 80px rgba(var(--accent-rgb),.5),inset 0 0 40px rgba(var(--accent-rgb),.3)}}
+  .upn h2{font:700 clamp(30px,4vw,46px)/1.1 var(--display);margin:0 0 14px;letter-spacing:.02em}
+  .upn p{font-size:clamp(19px,2vw,24px);line-height:1.45;color:#cfe3f3;margin:0 auto;max-width:34ch}
+
+  @keyframes scanl{from{transform:translateY(-120px)}to{transform:translateY(100vh)}}
+  .upd{z-index:190;padding:calc(16px + var(--safe-t)) 14px calc(16px + var(--safe-b))}
+  .upd-card{background:linear-gradient(180deg,rgba(10,32,54,.97),rgba(4,12,22,.98));box-shadow:0 30px 80px rgba(0,0,0,.6),0 0 60px rgba(var(--accent-rgb),.12)}
+  .upd .btn{border:1px solid var(--line2);background:var(--card);color:var(--text);border-radius:14px;font:700 15px var(--font);cursor:pointer}
+  .upd .btn.primary{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+  .upn{z-index:195}
+  .upn .num{text-shadow:none}.upn .num .a{text-shadow:0 0 30px rgba(var(--accent-rgb),.45)}.upn .num .a span{overflow:visible}
+  .upn .pie{position:absolute;left:0;right:0;bottom:calc(30px + var(--safe-b));display:flex;justify-content:center;gap:10px;padding:0 20px}
+  .upn .pie .btn{flex:1;max-width:220px;padding:14px;border-radius:14px;border:1px solid var(--line2);background:var(--card);color:var(--text);font:700 16px var(--font)}
+  .upn .pie .btn.primary{background:var(--accent);color:var(--ink)}
+  .upn .tip{position:absolute;left:0;right:0;bottom:calc(36px + var(--safe-b));text-align:center;color:var(--muted);font-size:14px;letter-spacing:.08em}
+  .upn .barras{top:calc(22px + var(--safe-t))}
+  @media (max-width:560px){
+    .upd-card{grid-template-columns:minmax(0,1fr);padding:22px 18px 18px;justify-items:stretch}
+    .upd-ring{width:120px;height:120px;justify-self:center}
+    .upd-ver{font-size:30px;text-align:center}.upd-et,.upd-tit{text-align:center}
+    .upd-nav{flex-direction:column-reverse}.upd-nav .btn{width:100%}
+    .upn .aros i:nth-child(1){width:300px;height:300px}.upn .aros i:nth-child(2){width:440px;height:440px}.upn .aros i:nth-child(3){width:620px;height:620px}
+    .upn .num{gap:16px;font-size:72px}
+    .upn .ico{width:110px;height:110px;font-size:52px;margin-bottom:20px}
+    .upn h2{font-size:26px}.upn p{font-size:18px}.upn .sub{font-size:18px}
+  }
+
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Orbitron:wght@500;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
@@ -1101,6 +1210,11 @@ B.stream = async function*(id, clave, messages, signal, opts){
     <button class="big sec" id="clearChat">Borrar la charla de la pantalla</button>
     <button class="big sec red" id="resetAll">Borrar todo (llaves, memoria, recordatorios)</button>
   </div>
+  <h4>Versión</h4>
+  <div class="grupo pad">
+    <p class="note" id="actNota">Me fijo sola si hay una versión nueva.</p>
+    <div class="row2"><button class="big sec" id="actBuscar" type="button">Buscar actualizaciones</button><button class="big sec" id="actNuevo" type="button">Ver lo nuevo</button></div>
+  </div>
   <p class="note pie">FRIDAY Móvil <span id="verTxt"></span> · hecha por BufaLabs · todo queda en este celu</p>
 </section>
 
@@ -1180,7 +1294,12 @@ B.stream = async function*(id, clave, messages, signal, opts){
 
 <script>
 'use strict';
-const VERSION='3.5';
+const VERSION='3.6';
+// Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
+const NOVEDADES_M={"version":"3.6","titulo":"Actualizaciones como en la compu","items":[
+  {"icono":"🚀","titulo":"Te aviso cuando hay algo nuevo","texto":"Cuando sale una versión nueva, te muestro qué trae y se instala con un toque, sin bajar nada."},
+  {"icono":"✨","titulo":"Te cuento lo nuevo","texto":"Después de actualizarme te presento las novedades, una por una. Las podés volver a ver desde Más."},
+  {"icono":"🗣️","titulo":"También hablando","texto":"Decime «buscá actualizaciones» o «qué hay de nuevo» y te lo digo."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1786,6 +1905,127 @@ async function geminiChat(msgs){
 }
 let busy=false, ultimaQ='', memSem=null;
 function pushHistory(m){ hist.push(m); if(hist.length>30) hist=hist.slice(-30); LS.set('history',hist); }
+
+// ================================================================ ACTUALIZACIONES (como en la compu)
+// version.json (en la misma página) dice cuál es la última versión y qué trae. Si es más nueva, aviso
+// con lo nuevo; al tocar «Actualizar» se baja, se verifica y se instala; al abrir la nueva, la mini presentación.
+const verM=v=>{ const p=String(v||'0').replace(/[^\d.]/g,'').split('.'); return (+p[0]||0)*1000+(+p[1]||0); };
+const ACT={ caja:null, ultimo:0, mostrando:false, nueva:null };
+const actEsc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ACT_ARO=`<svg viewBox="0 0 150 150"><circle class="r3" cx="75" cy="75" r="58"/><circle class="pr" cx="75" cy="75" r="58" stroke-dasharray="364.4" stroke-dashoffset="364.4"/><circle class="r1" cx="75" cy="75" r="72"/><circle class="r2" cx="75" cy="75" r="66"/></svg>`;
+const ACT_FLECHA=`<svg viewBox="0 0 24 24"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>`;
+const ACT_OK=`<svg viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>`;
+function actLibre(){ return !document.getElementById('splash') && !ACT.mostrando && !document.querySelector('.sheet.on') && !(typeof busy!=='undefined' && busy) && S.groqKey; }
+async function actConsultar(){
+  try{ const r=await fetch('version.json?t='+Date.now(), {cache:'no-store'}); if(!r.ok) return null; const j=await r.json(); return j && j.version ? j : null; }catch(e){ return null; }
+}
+function actCaja(){
+  if(ACT.caja) return ACT.caja;
+  const d=document.createElement('div'); d.className='upd'; d.hidden=true;
+  d.innerHTML=`<div class="upd-card" role="dialog" aria-modal="true" aria-labelledby="actVer">
+    <div class="upd-ring" id="actAro">${ACT_ARO}<div class="mid" id="actMid">${ACT_FLECHA}</div></div>
+    <div class="upd-txt"><div class="upd-et" id="actEt"></div><h2 class="upd-ver" id="actVer"></h2><div class="upd-tit" id="actTit"></div><div id="actCuerpo"></div></div>
+    <div class="upd-nav" id="actNav"></div></div>`;
+  document.body.appendChild(d); ACT.caja=d; return d;
+}
+function actAro(f, cls){ const r=document.getElementById('actAro'); if(!r) return; r.className='upd-ring'+(cls?' '+cls:''); r.querySelector('.pr').style.strokeDashoffset=String(364.4*(1-Math.max(0,Math.min(1,f||0)))); }
+function actCerrar(){ if(ACT.caja){ ACT.caja.hidden=true; } ACT.mostrando=false; }
+function actBoton(txt, cls, fn){ const b=document.createElement('button'); b.type='button'; b.className='btn'+(cls?' '+cls:''); b.textContent=txt; b.onclick=fn; return b; }
+function actAvisar(n){
+  ACT.mostrando=true; ACT.nueva=n; const d=actCaja(); d.hidden=false; actAro(0,'');
+  document.getElementById('actMid').innerHTML=ACT_FLECHA;
+  document.getElementById('actEt').textContent='HAY UNA VERSIÓN NUEVA';
+  document.getElementById('actVer').innerHTML='Móvil <span>'+actEsc(n.version)+'</span>';
+  document.getElementById('actTit').textContent=n.titulo||'';
+  document.getElementById('actCuerpo').innerHTML='<ul class="upd-lista">'+(n.items||[]).slice(0,5).map(x=>`<li><i>${actEsc(x.icono||'✨')}</i><div><b>${actEsc(x.titulo)}</b><small>${actEsc(x.texto)}</small></div></li>`).join('')+`</ul><p class="upd-st" style="color:var(--muted)">Tenés la ${actEsc(VERSION)}. Tarda unos segundos y no se borra nada tuyo.</p>`;
+  const nav=document.getElementById('actNav'); nav.innerHTML='';
+  nav.append(actBoton('Más tarde','', ()=>{ LS.set('actDespues', {v:n.version, hasta:Date.now()+20*3600e3}); actCerrar(); }), actBoton('Actualizar ahora','primary', ()=>actInstalar(n)));
+  try{ say(`Hay una versión nueva, la ${n.version}. ¿La instalo?`); }catch(e){}
+}
+async function actInstalar(n){
+  const fases=['Descargar','Verificar','Instalar'];
+  document.getElementById('actEt').textContent='ACTUALIZANDO';
+  document.getElementById('actCuerpo').innerHTML=`<div class="upd-fases">${fases.map(f=>`<span>${f}</span>`).join('')}</div><div class="upd-bar"><i id="actBar"></i></div><p class="upd-st" id="actSt">Bajando la versión nueva…</p>`;
+  document.getElementById('actNav').innerHTML='';
+  const sp=[...document.querySelectorAll('.upd-fases span')], st=t=>{ document.getElementById('actSt').textContent=t; };
+  const paso=(k,f)=>{ sp.forEach((x,j)=>x.className=j<k?'ok':j===k?'on':''); actAro(f,''); document.getElementById('actMid').innerHTML=`<div class="pct">${Math.round(f*100)}%<small>${fases[Math.min(k,2)].toUpperCase()}</small></div>`; document.getElementById('actBar').style.width=Math.round(f*100)+'%'; };
+  const mal=t=>{ actAro(1,'mal'); st(t); const nav=document.getElementById('actNav'); nav.innerHTML=''; nav.append(actBoton('Cerrar','', actCerrar), actBoton('Probar de nuevo','primary', ()=>actInstalar(n))); };
+  try{
+    paso(0,.08);
+    const r=await fetch('index.html?v='+encodeURIComponent(n.version)+'&t='+Date.now(), {cache:'no-store'});
+    if(!r.ok) return mal('No pude bajarla. ¿Hay internet?');
+    const html=await r.text(); paso(1,.55); st('Verificando que esté completa…'); await new Promise(z=>setTimeout(z,500));
+    const m=html.match(/const VERSION='([^']+)'/);
+    if(!m || verM(m[1])<verM(n.version) || html.length<20000 || !/<\/html>\s*$/i.test(html)) return mal('Llegó incompleta. Probá de nuevo en un rato.');
+    paso(2,.8); st('Instalando…');
+    try{ const reg=await navigator.serviceWorker.getRegistration(); if(reg) await reg.update(); }catch(e){}
+    try{ for(const k of await caches.keys()){ const c=await caches.open(k); const resp=()=>new Response(html,{headers:{'Content-Type':'text/html; charset=utf-8'}}); await c.put('index.html', resp()); await c.put('./', resp()); } }catch(e){}
+    await new Promise(z=>setTimeout(z,500));
+    sp.forEach(x=>x.className='ok'); actAro(1,'ok'); document.getElementById('actMid').innerHTML=ACT_OK; document.getElementById('actBar').style.width='100%';
+    document.getElementById('actEt').textContent='¡LISTO!'; st('Abriendo la versión nueva…');
+    LS.set('actDe', VERSION);
+    setTimeout(()=>{ document.body.style.transition='opacity .6s'; document.body.style.opacity='0'; setTimeout(()=>location.reload(), 650); }, 900);
+  }catch(e){ mal('Algo salió mal: '+String(e.message||e).slice(0,80)); }
+}
+// la mini presentación de lo nuevo (al abrir la versión nueva, o desde Más)
+function actPresentar(aMano){
+  if(ACT.mostrando && !aMano) return; ACT.mostrando=true;
+  const de=String(LS.get('actDe','')||LS.get('verVista','')||'');
+  const items=NOVEDADES_M.items||[];
+  const o=document.createElement('div'); o.className='upn'; o.tabIndex=-1;
+  o.innerHTML=`<div class="aros"><i></i><i></i><i></i><i></i></div><div class="barras">${['',...items].map(()=>'<i><b></b></i>').join('')}</div><div class="pag" id="actPag"></div><div class="tip" id="actTip">Tocá para pasar</div><div class="pie" id="actPie"></div>`;
+  document.body.appendChild(o);
+  let i=-1, t=null, fin=false; const barras=[...o.querySelectorAll('.barras i')];
+  const decir=x=>{ try{ say(x); }catch(e){} };
+  const cerrar=()=>{ if(fin) return; fin=true; clearTimeout(t); try{ stopVoice && speechSynthesis.cancel(); }catch(e){} LS.set('verVista', VERSION); LS.set('actDe',''); o.style.transition='opacity .5s'; o.style.opacity='0'; setTimeout(()=>{ o.remove(); ACT.mostrando=false; }, 500); };
+  const pag=()=>{ const p=document.getElementById('actPag'); p.classList.remove('entra'); void p.offsetWidth; p.classList.add('entra'); return p; };
+  const mostrar=k=>{
+    clearTimeout(t); i=k; const p=pag(); barras.forEach((b,j)=>{ b.className=j<i+1?'ya':j===i+1?'va':''; });
+    document.getElementById('actPie').innerHTML=''; document.getElementById('actTip').textContent='Tocá para pasar';
+    if(i<0){ const dur=5500; barras[0].style.setProperty('--dur',dur+'ms');
+      p.innerHTML=`<div class="et">${aMano||!de?'LO NUEVO DE ESTA VERSIÓN':'ACTUALIZACIÓN COMPLETA'}</div><div class="num">${aMano||!de?'':`<span class="de">${actEsc(de)}</span><span class="fl"></span>`}<span class="a"><span>${actEsc(VERSION)}</span></span></div><div class="sub">${actEsc(NOVEDADES_M.titulo||'')}</div>`;
+      decir(aMano||!de?`Esto es lo nuevo de la versión ${VERSION}.`:`¡Listo! Ya estoy en la versión ${VERSION}. Te cuento lo nuevo.`);
+      t=setTimeout(()=>mostrar(0), dur); return; }
+    if(i>=items.length) return cierre();
+    const it=items[i], dur=Math.max(6000, 2600+(it.texto||'').length*55); barras[i+1].style.setProperty('--dur',dur+'ms');
+    p.innerHTML=`<div class="ico">${actEsc(it.icono||'✨')}</div><h2>${actEsc(it.titulo)}</h2><p>${actEsc(it.texto)}</p>`;
+    decir(it.titulo+'. '+it.texto); t=setTimeout(()=>mostrar(i+1), dur);
+  };
+  const cierre=()=>{ clearTimeout(t); i=items.length; barras.forEach(b=>b.className='ya'); const p=pag();
+    p.innerHTML=`<div class="ico">🚀</div><h2>¡Eso es todo!</h2><p>Cuando haya otra versión nueva te aviso.</p>`;
+    document.getElementById('actTip').textContent='';
+    const pie=document.getElementById('actPie'); pie.innerHTML='';
+    pie.append(actBoton('Ver de nuevo','', e=>{ e.stopPropagation(); mostrar(-1); }), actBoton('¡Listo!','primary', e=>{ e.stopPropagation(); cerrar(); }));
+    decir('¡Eso es todo!'); };
+  o.onclick=()=>{ if(i<items.length) mostrar(i+1); };
+  mostrar(-1);
+}
+async function actBuscar(aMano){
+  if(PANEL) return null;
+  const n=await actConsultar(); ACT.ultimo=Date.now();
+  if(!n){ if(aMano){ const t='No pude fijarme ahora. ¿Hay internet?'; toast(t); } return null; }
+  if(verM(n.version)>verM(VERSION)){
+    const dp=LS.get('actDespues',null);
+    if(!aMano && dp && dp.v===n.version && Date.now()<dp.hasta) return n;
+    actAvisar(n); return n;
+  }
+  if(aMano){ const t=`Estás al día: tenés la última, la ${VERSION}.`; toast('✅ '+t); try{ say(t); }catch(e){} }
+  const nt=document.getElementById('actNota'); if(nt) nt.textContent=`Estás al día (Móvil ${VERSION}). Me fijo sola cada unas horas.`;
+  return n;
+}
+function actArranque(intento){
+  intento=intento||0; if(PANEL) return;
+  if(!actLibre()){ if(intento<30) setTimeout(()=>actArranque(intento+1), 2000); return; }
+  const vista=LS.get('verVista',null);
+  const yaUsaba=vista!=null || !!LS.get('memory',null) || (typeof hist!=='undefined' && hist.length>0);
+  if(vista==null && !yaUsaba){ LS.set('verVista', VERSION); }                   // recién instalada: nada que presentar
+  else if(vista==null || verM(vista)<verM(VERSION)){ if(vista==null && !LS.get('actDe','')) LS.set('actDe','3.5'); actPresentar(false); return; }
+  actBuscar(false);
+}
+window.addEventListener('load', ()=>setTimeout(()=>actArranque(0), 2500));
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && Date.now()-ACT.ultimo>6*3600e3 && actLibre()) actBuscar(false); });
+setInterval(()=>{ if(document.visibilityState==='visible' && Date.now()-ACT.ultimo>6*3600e3 && actLibre()) actBuscar(false); }, 30*60e3);
+
 // ================================================================ BUFIA por voz (3.5)
 let bufiaMal=null, bufiaNota='', invUlt=null;
 function ultimoPar(){ let r='', p=''; for(let i=hist.length-1;i>=0;i--){ const m=hist[i]; if(!r && m.role==='assistant'){ r=String(m.content||''); continue; } if(r && m.role==='user'){ p=String(m.content||''); break; } } return r ? {p, r} : null; }
@@ -1800,6 +2040,8 @@ function bufiaVozCelu(text){
       addMemory('corrección: '+text.slice(0,200)+(m.p?' (cuando preguntó «'+m.p.slice(0,80)+'»)':''));
       bufiaNota=`(Aviso del sistema, no lo dijo el usuario) Antes le preguntó «${m.p.slice(0,300)}», le contestaste «${m.r.replace(/\[\[[^\]]*\]\]/g,'').slice(0,500)}» y te dijo que estuvo mal. Lo que acaba de decir es qué estuvo mal. Agradecé corto y contestá bien la pregunta original teniéndolo en cuenta.`;
       return null; } }
+  if(/\b(busca|buscame|fijate si hay|hay) (alguna )?(actualizacion|actualizaciones|version nueva)\b|^actualizate$|^(actualiza|actualizar)( la app)?$/.test(n)){ actBuscar(true); return 'Me fijo si hay una versión nueva.'; }
+  if(/\b(que hay de nuevo|que tiene de nuevo|que trae (esta|la) version|mostrame (lo nuevo|las novedades)|novedades de (esta|la) version)\b/.test(n)){ setTimeout(()=>actPresentar(true), 300); return 'Te muestro lo nuevo de esta versión.'; }
   const sis=BUFIA.preguntaSistema(text);
   if(sis==='cupo') return BUFIA.cupoTexto();
   if(sis==='quien') return BUFIA.quienTexto();
@@ -1990,7 +2232,8 @@ function fillMenu(){
   $('cfName').value=S.name; $('cfTrato').value=S.trato; $('cfCity').value=S.city; $('cfConvo').checked=!!S.convo; $('cfTheme').value=S.theme;
   $('cfGroq').value=S.groqKey; $('cfGem').value=S.gemKey; $('cfMistral').value=S.mistralKey||''; $('cfOr').value=S.orKey||''; $('cfRevisar').checked=S.bufiaRevisar!==false; $('cfSpId').value=S.spId; $('spRedirect').textContent=spRedirect(); $('spOut').hidden=!spOnline();
   try{ $('cupoHoy').textContent='Hoy: '+BUFIA.cupoTexto()+' También me lo podés preguntar: «¿cómo estás de cupo?».'; }catch(e){}
-  $('verTxt').textContent=VERSION; pickVoice(); renderInstall(); renderMas(); faltaLlave();
+  $('verTxt').textContent=VERSION; pickVoice();
+  if(!$('actBuscar').dataset.ok){ $('actBuscar').dataset.ok=1; $('actBuscar').onclick=()=>{ closeSheets && closeSheets(); actBuscar(true); }; $('actNuevo').onclick=()=>{ closeSheets && closeSheets(); actPresentar(true); }; } renderInstall(); renderMas(); faltaLlave();
 }
 function faltaLlave(){ const f=[!S.groqKey&&'Groq', !S.gemKey&&'Gemini'].filter(Boolean); const el=$('faltaLlave'); el.hidden=!f.length; el.textContent=f.length?'⚠ Te falta la llave de '+f.join(' y de ')+'. Con una sola, FRIDAY puede quedarse sin respuestas.':''; }
 function readMenu(){
