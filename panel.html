@@ -2271,7 +2271,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='4.1';
+const VERSION='4.2';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3145,6 +3145,8 @@ function onMsg(o){
   if(o.k==='rtc'){ Call.onMsg(o); return; }
   if(jarvisMsg(o)) return;
   if(o.k==='oi'){ Turno.onMsg(o); return; }
+  // el celu hace de micrófono (beta): lo que dijiste cerca del celu, la tablet lo escucha y te contesta
+  if(o.k==='oir' && o.t){ if(o.to && FSync.cfg && o.to!==FSync.cfg.dev) return; userSaid(String(o.t).slice(0,400), {celu:true}); return; }
   const q=o.id && pcq[o.id];
   if(o.k==='ack' && q){ clearTimeout(q.t); q.t=setTimeout(()=>{ delete pcq[o.id]; q.res(null); }, 60000); }
   else if(o.k==='res' && q && o.fin){ clearTimeout(q.t); delete pcq[o.id]; q.res(o.r||(o.notes?{ok:true, notes:o.notes}:null)); if(o.r && o.r.ok) setTimeout(()=>casaLoad(true), 800); }
