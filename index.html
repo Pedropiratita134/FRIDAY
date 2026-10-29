@@ -570,7 +570,7 @@ body.panel{padding-bottom:0}
 // =====================================================================================================
 (function(){
 if(window.BUFIA) return;
-const B = window.BUFIA = { version: 2 };
+const B = window.BUFIA = { version: 3 };
 const GEM = 'https://generativelanguage.googleapis.com/v1beta';
 const conTiempo = (ms) => { const c = new AbortController(); const t = setTimeout(() => c.abort(), ms); return { signal: c.signal, listo: () => clearTimeout(t) }; };
 // B.proxy (lo pone la compu): un puente por FRIDAY.exe para los servicios que el navegador bloquea
@@ -955,6 +955,96 @@ B.stream = async function*(id, clave, messages, signal, opts){
       if(!line.startsWith('data:')) continue; const d = line.slice(5).trim(); if(d === '[DONE]') return;
       try{ const j = JSON.parse(d); const c = j.choices && j.choices[0] && j.choices[0].delta && j.choices[0].delta.content; if(c) yield c; else if(j.response) yield j.response; }catch(e){} } }
 };
+
+// =====================================================================================================
+// BUFIA 3: más inteligente (FRIDAY 102.01 y Móvil 3.7)
+// =====================================================================================================
+const lsGet = (k, d) => { try{ const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } };
+const lsSet = (k, v) => { try{ localStorage.setItem(k, JSON.stringify(v)); }catch(e){} };
+const hoy = () => hoyStr();
+const normT = t => sinTildes(t).replace(/[¿?¡!.,;:«»"]/g, ' ').replace(/\b(friday|che|dale|porfa|por favor)\b/g, ' ').replace(/\s+/g, ' ').trim();
+
+// ----------------------------------------------------------------- EL DÍA: lo que se habló, y lo que quedó pendiente de ayer
+// cada app anota lo que se dice; al empezar otro día, un cerebro saca lo que quedó pendiente y FRIDAY lo menciona una vez
+B.diaAnotar = function(rol, texto){
+  texto = String(texto || '').replace(/\[\[[^\]]*\]\]/g, '').replace(/\s+/g, ' ').trim(); if(!texto) return;
+  let d = lsGet('bufia:dia', null);
+  if(!d || d.fecha !== hoy()){ if(d && d.msgs && d.msgs.length) lsSet('bufia:ayer', d); d = { fecha: hoy(), msgs: [] }; }
+  d.msgs.push((rol === 'user' ? 'U: ' : 'F: ') + texto.slice(0, 300)); while(d.msgs.length > 120) d.msgs.shift();
+  lsSet('bufia:dia', d);
+};
+let pendCorriendo = false;
+B.prepararDia = async function(claves){
+  const p = lsGet('bufia:pendientes', null); if(p && p.fecha === hoy()) return p;
+  const a = lsGet('bufia:ayer', null); if(!a || !a.msgs || a.msgs.length < 4 || pendCorriendo) return null;
+  pendCorriendo = true;
+  try{
+    const r = await B.pedir(`Esta es una charla entre un usuario y su asistente FRIDAY del ${a.fecha}. Listá lo que el usuario dijo que tenía que hacer, lo que quedó sin terminar o lo que FRIDAY prometió avisarle, y que todavía sirva recordar hoy (máximo 4, cada uno en una frase corta en segunda persona, ej. "tenías que llamar a tu abuela"). Si no hay nada, lista vacía. Respondé SOLO JSON: {"pendientes":["..."]}\n${a.msgs.join('\n').slice(-7000)}`, claves, { json: true, max: 300, ms: 20000 });
+    const l = (JSON.parse((String(r || '').match(/\{[\s\S]*\}/) || ['{}'])[0]).pendientes || []).filter(x => typeof x === 'string' && x.trim()).slice(0, 4);
+    const v = { fecha: hoy(), items: l, dicho: false }; lsSet('bufia:pendientes', v); return v;
+  }catch(e){ return null; } finally { pendCorriendo = false; }
+};
+B.diaPrompt = function(){
+  const p = lsGet('bufia:pendientes', null); if(!p || p.fecha !== hoy() || !p.items || !p.items.length) return '';
+  return `PENDIENTES QUE QUEDARON DE AYER: ${p.items.join('; ')}.${p.dicho ? ' Ya se los recordaste hoy: no los repitas salvo que pregunte.' : ' Recordáselos una sola vez, cortito y natural, la próxima vez que lo saludes o al final de tu respuesta (ej. "Ah, ayer quedó pendiente…").'} Si pregunta qué le quedó pendiente, decíselos.\n`;
+};
+B.diaDicho = function(respuesta){
+  const p = lsGet('bufia:pendientes', null); if(!p || p.dicho || !p.items || !p.items.length) return;
+  const r = normT(respuesta); if(/\b(pendiente|ayer|quedo|te acordas|tenias que)\b/.test(r)){ p.dicho = true; lsSet('bufia:pendientes', p); }
+};
+
+// ----------------------------------------------------------------- HÁBITOS: aprende lo que pedís seguido y se adelanta
+// «¿Te pongo lo de siempre para estudiar?» si a esta hora, otros días, pediste lo mismo
+const NO_HABITO = /^(si|no|dale|gracias|ok|listo|hola|chau|buen dia|buenas|jaja\w*|bien|mal|eso esta mal|muy bien|bien ahi)$/;
+B.habitoAnotar = function(texto){
+  const n = normT(texto); if(!n || n.length < 6 || n.split(' ').length > 14 || NO_HABITO.test(n)) return;
+  const l = lsGet('bufia:habitos', []); const d = new Date();
+  l.push({ t: n, f: hoy(), m: d.getHours() * 60 + d.getMinutes(), w: d.getDay(), o: String(texto).trim().slice(0, 160) }); while(l.length > 400) l.shift();
+  lsSet('bufia:habitos', l);
+};
+B.habitoSugerir = function(){
+  const l = lsGet('bufia:habitos', []); if(l.length < 3) return null;
+  const d = new Date(), m = d.getHours() * 60 + d.getMinutes(), finde = d.getDay() === 0 || d.getDay() === 6;
+  const ya = lsGet('bufia:habitoOfrecido', {}); const hoyYa = l.filter(x => x.f === hoy()).map(x => x.t);
+  const grupos = {};
+  for(const x of l){ if(x.f === hoy()) continue; if(Math.abs(x.m - m) > 45) continue; if(((x.w === 0 || x.w === 6)) !== finde) continue;
+    (grupos[x.t] = grupos[x.t] || { dias: new Set(), o: x.o }).dias.add(x.f); }
+  const mejor = Object.entries(grupos).filter(([t, g]) => g.dias.size >= 3 && !hoyYa.includes(t) && ya[t] !== hoy()).sort((a, b) => b[1].dias.size - a[1].dias.size)[0];
+  if(!mejor) return null;
+  return { texto: mejor[1].o, clave: mejor[0], dias: mejor[1].dias.size };
+};
+B.habitoOfrecido = function(clave){ const ya = lsGet('bufia:habitoOfrecido', {}); ya[clave] = hoy(); lsSet('bufia:habitoOfrecido', ya); };
+B.habitoPregunta = s => `¿Hago lo de siempre a esta hora? «${s.texto}».`;
+
+// ----------------------------------------------------------------- VARIAS OPINIONES: en lo que pide pensar bien, consulta otro cerebro
+// devuelve lo que vale la pena agregar a la respuesta ('' si las dos coinciden)
+B.consejo = async function(pregunta, respuesta, claves){
+  if(!pregunta || !respuesta) return '';
+  const otra = await B.pedir(`Respondé esta pregunta lo mejor posible, en español rioplatense, en 4 a 8 frases, sin markdown:\n${pregunta}`, claves, { max: 700, ms: 30000, temp: .4 });
+  if(!otra) return '';
+  const r = await B.pedir(`Dos asistentes respondieron la misma pregunta.\nPregunta: ${pregunta}\nRespuesta A (la que ya se le dio al usuario): ${respuesta}\nRespuesta B (otra opinión): ${otra}\n\nSi B aporta algo importante que A no dijo (un dato, un riesgo, otra opción) o contradice a A con razón, contestá: AGREGO: y en 1 a 3 frases habladas, rioplatenses, sin markdown, lo que conviene sumar o corregir. Si no aporta nada importante, contestá solo: IGUAL`, claves, { max: 300, temp: 0, ms: 25000 });
+  const m = String(r || '').match(/AGREGO:\s*([\s\S]+)/i);
+  return m ? m[1].trim().replace(/\s+/g, ' ').slice(0, 500) : '';
+};
+
+// ----------------------------------------------------------------- MODO PROFE: te explica, te toma preguntas y te dice qué tenés flojo
+B.profe = function(){ const p = lsGet('bufia:profe', null); return p && Date.now() - p.at < 90 * 60000 ? p : null; };
+B.profeDetectar = function(texto){
+  const n = normT(texto);
+  if(B.profe() && /^(termina(mos)?|basta|listo|ya esta|corta|terminar)( el| la)? ?(examen|prueba|modo profe|repaso)?$|\b(termina|corta|basta) (el|la) (examen|prueba|repaso)\b|\bsali(r)? del modo profe\b/.test(n)) return { fin: true };
+  const m = n.match(/\b(?:modo profe|tomame (?:examen|una prueba|un examen|preguntas|lección|leccion)|haceme (?:preguntas|un examen|una prueba)|preguntame)\s*(?:de|sobre|del|de la|de los)?\s*(.{3,80})$/);
+  if(m && m[1]){ const k = m[1].trim().split(' ').length; const orig = String(texto).replace(/[¿?¡!.,;:«»"]/g, ' ').trim().split(/\s+/); return { tema: orig.slice(-k).join(' ') }; }
+  if(/^(modo profe|tomame examen|haceme un examen)$/.test(n)) return { tema: '' };
+  return null;
+};
+B.profeEmpezar = function(tema){ const p = { tema: tema || '', n: 0, bien: 0, at: Date.now() }; lsSet('bufia:profe', p); return p; };
+B.profeTerminar = function(){ lsSet('bufia:profe', null); };
+B.profeMarcar = function(acerto){ const p = B.profe(); if(!p) return; p.n++; if(acerto) p.bien++; p.at = Date.now(); lsSet('bufia:profe', p); };
+B.profePrompt = function(){
+  const p = B.profe(); if(!p) return '';
+  return `MODO PROFE ACTIVO${p.tema ? ' sobre «' + p.tema + '»' : ' (preguntale el tema si no lo dijo)'}. Vas por la pregunta ${p.n + 1} de 5 (acertó ${p.bien}). Reglas: hacé UNA pregunta por vez, corta y clara, y terminá con la pregunta (así te escucha). Cuando responda, decí si está bien o qué le faltó en una o dos frases, marcá [[PROFE|bien]] o [[PROFE|mal]] y seguí con la próxima pregunta. Si no sabe, explicáselo corto. Después de la quinta, cerrá: decile cuántas acertó y qué tiene flojo, guardalo con [[RECORDAR|repasar ${p.tema || 'el tema'}: …]] y marcá [[PROFE|fin]].\n`;
+};
+
 })();
 
 </script>
@@ -1294,12 +1384,13 @@ B.stream = async function*(id, clave, messages, signal, opts){
 
 <script>
 'use strict';
-const VERSION='3.6';
+const VERSION='3.7';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"3.6","titulo":"Actualizaciones como en la compu","items":[
-  {"icono":"🚀","titulo":"Te aviso cuando hay algo nuevo","texto":"Cuando sale una versión nueva, te muestro qué trae y se instala con un toque, sin bajar nada."},
-  {"icono":"✨","titulo":"Te cuento lo nuevo","texto":"Después de actualizarme te presento las novedades, una por una. Las podés volver a ver desde Más."},
-  {"icono":"🗣️","titulo":"También hablando","texto":"Decime «buscá actualizaciones» o «qué hay de nuevo» y te lo digo."}]};
+const NOVEDADES_M={"version":"3.7","titulo":"Te conozco mejor","items":[
+  {"icono":"🌙","titulo":"Me acuerdo de lo de ayer","texto":"Si ayer quedó algo pendiente, te lo recuerdo una vez al otro día."},
+  {"icono":"💡","titulo":"Lo de siempre","texto":"Aprendo lo que me pedís seguido a cierta hora y te lo ofrezco. Decime «dale» y listo."},
+  {"icono":"🧠","titulo":"Dos cerebros piensan mejor","texto":"Cuando me decís «pensalo bien», consulto otra opinión y, si suma algo, te lo agrego."},
+  {"icono":"🎓","titulo":"Modo profe","texto":"Decime «tomame examen de historia»: te hago cinco preguntas, te corrijo y te digo qué repasar."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1829,7 +1920,7 @@ Clima: ${wxText()}.
 Recordatorios pendientes: ${rems}.
 ${(()=>{ const f=LS.get('ficha',null); return f&&f.texto?`Ficha del usuario (lo que sabés de él en general): ${f.texto}\n`:''; })()}${(()=>{ const r=LS.get('charlaRes',null); return r&&r.texto&&hist.length>=12?`Resumen de lo que venían charlando antes: ${r.texto}\n`:''; })()}Lo que sabés del usuario${memSem&&memSem.lista.length?' (lo que viene al caso ahora)':''}: ${(memSem&&memSem.lista.length ? [...new Set([...memSem.lista, ...memory.slice(-6)])] : memory.slice(-40)).join('; ')||'nada todavía'}.
 ${BUFIA.REGLAS}
-${BUFIA.gustosPrompt()}Si te dicen "eso está mal" sin decir por qué, preguntá corto qué estuvo mal.
+${BUFIA.gustosPrompt()}${BUFIA.diaPrompt()}${BUFIA.profePrompt()}Si te dicen "eso está mal" sin decir por qué, preguntá corto qué estuvo mal.
 Lista de compras: ${shopPrompt()}.
 ${ecoPromptM()}${syncPrompt()}
 Herramientas: agregá la marca al final, en una línea aparte (no se leen):
@@ -1878,8 +1969,13 @@ async function* groqStream(messages, desde=0){
 let bufiaRevAt=0;
 async function bufiaDespues(pregunta, respuesta, conHerramientas){
   const claves={gem:S.gemKey, groq:S.groqKey};
+  try{ BUFIA.diaDicho(respuesta); }catch(e){}
   try{ const tipo=BUFIA.tipo(pregunta);
-    if(S.bufiaRevisar!==false && !conHerramientas && (tipo==='dificil'||tipo==='pensar') && Date.now()-bufiaRevAt>60000){
+    if(S.bufiaRevisar!==false && tipo==='pensar' && Date.now()-bufiaRevAt>60000){
+      bufiaRevAt=Date.now(); const c=await BUFIA.consejo(pregunta, respuesta, claves);
+      if(c && !busy){ const t='Lo consulté con otro cerebro y agrego: '+c; bubble('fr', t); say(t); pushHistory({role:'assistant', content:t}); }
+    }
+    else if(S.bufiaRevisar!==false && !conHerramientas && (tipo==='dificil'||tipo==='pensar') && Date.now()-bufiaRevAt>60000){
       bufiaRevAt=Date.now(); const c=await BUFIA.revisar(pregunta, respuesta, claves);
       if(c && !busy){ const t='Ojo, me corrijo: '+c; bubble('fr', t); say(t); pushHistory({role:'assistant', content:t}); }
     } }catch(e){}
@@ -1904,7 +2000,7 @@ async function geminiChat(msgs){
   return '';
 }
 let busy=false, ultimaQ='', memSem=null;
-function pushHistory(m){ hist.push(m); if(hist.length>30) hist=hist.slice(-30); LS.set('history',hist); }
+function pushHistory(m){ try{ BUFIA.diaAnotar(m.role, m.content); }catch(e){} hist.push(m); if(hist.length>30) hist=hist.slice(-30); LS.set('history',hist); }
 
 // ================================================================ ACTUALIZACIONES (como en la compu)
 // version.json (en la misma página) dice cuál es la última versión y qué trae. Si es más nueva, aviso
@@ -2027,7 +2123,15 @@ document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState=
 setInterval(()=>{ if(document.visibilityState==='visible' && Date.now()-ACT.ultimo>6*3600e3 && actLibre()) actBuscar(false); }, 30*60e3);
 
 // ================================================================ BUFIA por voz (3.5)
-let bufiaMal=null, bufiaNota='', invUlt=null;
+let bufiaMal=null, bufiaNota='', invUlt=null, habitoPend=null;
+// «¿Hago lo de siempre a esta hora?» al abrir la app (una vez por día y por costumbre)
+function habitoRevisar(){ try{
+  if(PANEL || habitoPend || busy || isSpeaking() || document.getElementById('splash') || document.querySelector('.upn,.upd:not([hidden])') || document.querySelector('.sheet.on')) return;
+  const s=BUFIA.habitoSugerir(); if(!s) return;
+  BUFIA.habitoOfrecido(s.clave); habitoPend={texto:s.texto, hasta:Date.now()+60000}; frSay(BUFIA.habitoPregunta(s));
+}catch(e){} }
+window.addEventListener('load', ()=>{ setTimeout(habitoRevisar, 9000); setTimeout(()=>{ try{ BUFIA.prepararDia({gem:S.gemKey, groq:S.groqKey}); }catch(e){} }, 6000); });
+document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') setTimeout(habitoRevisar, 2500); });
 function ultimoPar(){ let r='', p=''; for(let i=hist.length-1;i>=0;i--){ const m=hist[i]; if(!r && m.role==='assistant'){ r=String(m.content||''); continue; } if(r && m.role==='user'){ p=String(m.content||''); break; } } return r ? {p, r} : null; }
 const informes=()=>LS.get('informes',[]);
 function informeTexto(leer){ const l=informes(), r=l[l.length-1]; if(!r) return 'Todavía no tengo informes. Pedime «investigá…» y te armo uno.'; return leer ? r.texto : `Te dejo el informe de «${r.tema}» acá abajo.\n\n${r.texto}`; }
@@ -2095,6 +2199,15 @@ async function ask(text){
       if(!t){ micTabPoner(false); frSay('La tablet no está conectada. Vuelvo a contestarte yo.'); return; }
       const ok=await FSync.send({k:'oir', to:t.dev, t:text.slice(0,400), de:S.name||''}); const b=document.createElement('div'); b.className='msg sis'; b.textContent=ok?'🎙 Se lo pasé a la tablet':'No pude llegar a la tablet: ¿hay internet?'; chat.appendChild(b); scrollDown(); return; }
   }
+  if(!PANEL && habitoPend){ const hp=habitoPend; habitoPend=null; const hn=norm(text);
+    if(Date.now()<hp.hasta){
+      if(/^(si|dale|bueno|obvio|de una|si dale|si por favor|hacelo|porfa)\b/.test(hn) && hn.split(' ').length<=4){ bubble('yo', text); pushHistory({role:'user', content:text}); txt.value=''; return ask(hp.texto); }
+      if(/^(no|nah|ahora no|despues|mas tarde|no gracias)\b/.test(hn) && hn.split(' ').length<=4){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay('Dale, otro día.'); return; }
+    } }
+  if(!PANEL){ const pd=BUFIA.profeDetectar(text);
+    if(pd && pd.fin){ BUFIA.profeTerminar(); txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay('Listo, cortamos el examen. Cuando quieras seguimos.'); return; }
+    if(pd && pd.tema!==undefined) BUFIA.profeEmpezar(pd.tema);
+    try{ BUFIA.habitoAnotar(text); BUFIA.prepararDia({gem:S.gemKey, groq:S.groqKey}); }catch(e){} }
   if(!PANEL && celuJarvis(text)) return;
   if(!PANEL){ const bv=bufiaVozCelu(text); if(bv){ closeSheets(); txt.value=''; autoGrow(); stopVoice(); $('heard').textContent=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(bv); return; } }
   if(!S.groqKey){ if(!PANEL) openSetup(2); return; }
@@ -2171,7 +2284,8 @@ async function runTags(full){
   for(const p of tags){
     const k=norm(p[0]).replace(/ /g,'_');
     try{
-      if(k==='recordatorio' && p[1]){
+      if(k==='profe'){ const q=String(p[1]||'').toLowerCase(); if(q==='bien'||q==='mal') BUFIA.profeMarcar(q==='bien'); else if(q==='fin') BUFIA.profeTerminar(); }
+      else if(k==='recordatorio' && p[1]){
         const m=p[1].match(/(\d{4})-(\d{2})-(\d{2})[ T](\d{1,2}):(\d{2})/); if(!m) continue;
         const at=`${m[1]}-${m[2]}-${m[3]}T${m[4].padStart(2,'0')}:${m[5]}:00`;
         const rp=norm(p[3]||''), rep=/diario|todos los dias/.test(rp)?'diario':/semanal/.test(rp)?'semanal':/habiles|lunes a viernes/.test(rp)?'habiles':null;

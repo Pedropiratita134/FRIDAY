@@ -1,21 +1,26 @@
 {
- "version": "3.6",
- "titulo": "Actualizaciones como en la compu",
+ "version": "3.7",
+ "titulo": "Te conozco mejor",
  "items": [
   {
-   "icono": "🚀",
-   "titulo": "Te aviso cuando hay algo nuevo",
-   "texto": "Cuando sale una versión nueva, te muestro qué trae y se instala con un toque, sin bajar nada."
+   "icono": "🌙",
+   "titulo": "Me acuerdo de lo de ayer",
+   "texto": "Si ayer quedó algo pendiente, te lo recuerdo una vez al otro día."
   },
   {
-   "icono": "✨",
-   "titulo": "Te cuento lo nuevo",
-   "texto": "Después de actualizarme te presento las novedades, una por una. Las podés volver a ver desde Más."
+   "icono": "💡",
+   "titulo": "Lo de siempre",
+   "texto": "Aprendo lo que me pedís seguido a cierta hora y te lo ofrezco. Decime «dale» y listo."
   },
   {
-   "icono": "🗣️",
-   "titulo": "También hablando",
-   "texto": "Decime «buscá actualizaciones» o «qué hay de nuevo» y te lo digo."
+   "icono": "🧠",
+   "titulo": "Dos cerebros piensan mejor",
+   "texto": "Cuando me decís «pensalo bien», consulto otra opinión y, si suma algo, te lo agrego."
+  },
+  {
+   "icono": "🎓",
+   "titulo": "Modo profe",
+   "texto": "Decime «tomame examen de historia»: te hago cinco preguntas, te corrijo y te digo qué repasar."
   }
  ]
 }
