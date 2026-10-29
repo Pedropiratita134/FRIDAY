@@ -1,26 +1,16 @@
 {
- "version": "3.8",
- "titulo": "Más manos libres",
+ "version": "3.9",
+ "titulo": "Más confiable",
  "items": [
   {
-   "icono": "💸",
-   "titulo": "Gastos por voz",
-   "texto": "Decime «gasté 3500 en el súper» y llevo la cuenta del mes. Preguntame «¿cuánto gasté?» o poneme un límite y te aviso si te pasás."
+   "icono": "🩺",
+   "titulo": "¿Cómo anduviste?",
+   "texto": "Preguntame «¿cómo anduviste esta semana?» y te digo cómo le fue a cada cerebro. También está en Más → Cerebro."
   },
   {
-   "icono": "🚗",
-   "titulo": "Modo auto",
-   "texto": "«Estoy manejando»: pantalla grande y te escucho solita después de cada respuesta, sin tocar nada."
-  },
-  {
-   "icono": "📷",
-   "titulo": "Foto y pregunta",
-   "texto": "Decime «mirá esto», sacá la foto y preguntame lo que quieras de lo que ves."
-  },
-  {
-   "icono": "🗣️",
-   "titulo": "«Oye Siri, Friday»",
-   "texto": "En Más → Atajos te explico cómo hablarme desde Siri o desde «Ok Google», sin abrir la app."
+   "icono": "🧾",
+   "titulo": "Algo anduvo mal",
+   "texto": "Decime «algo anduvo mal» y armo un informe para BufaLabs, sin tus charlas, tu memoria ni tus llaves."
   }
  ]
 }

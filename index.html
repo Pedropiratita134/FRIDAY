@@ -582,7 +582,7 @@ body.panel{padding-bottom:0}
 // =====================================================================================================
 (function(){
 if(window.BUFIA) return;
-const B = window.BUFIA = { version: 3 };
+const B = window.BUFIA = { version: 4 };
 const GEM = 'https://generativelanguage.googleapis.com/v1beta';
 const conTiempo = (ms) => { const c = new AbortController(); const t = setTimeout(() => c.abort(), ms); return { signal: c.signal, listo: () => clearTimeout(t) }; };
 // B.proxy (lo pone la compu): un puente por FRIDAY.exe para los servicios que el navegador bloquea
@@ -616,10 +616,44 @@ B.GROQ_MAPA = { 'llama-3.3-70b-versatile': 'openai/gpt-oss-120b', 'llama-3.1-8b-
       } }catch(e){}
     let quien = '';
     try{ quien = cupoDe(typeof u === 'string' ? u : (u && u.url) || '', o); }catch(e){}
-    const p = f0(u, o);
-    if(quien) p.then(r => { try{ cupoAnotar(quien, r.status); }catch(e){} }, () => {});
+    const t0 = Date.now(); const p = f0(u, o);
+    if(quien) p.then(r => { try{ cupoAnotar(quien, r.status); saludAnotar(quien, r.status, Date.now() - t0); }catch(e){} },
+                     e => { try{ if(!(e && e.name === 'AbortError')) saludAnotar(quien, 0, Date.now() - t0); }catch(x){} });
     return p;
   }; })();
+
+// ----------------------------------------------------------------- SALUD: cómo anduvo cada cerebro esta semana (pedidos, fallas, demora)
+const SALUD_K = 'bufia:salud';
+function semanaStr(){ const d = new Date(); const j = new Date(d.getFullYear(), 0, 1); return d.getFullYear() + '-S' + Math.ceil(((d - j) / 864e5 + j.getDay() + 1) / 7); }
+function saludLeer(){ let s = null; try{ s = JSON.parse(localStorage.getItem(SALUD_K) || 'null'); }catch(e){} if(!s || s.sem !== semanaStr()) s = { sem: semanaStr(), p: {}, ant: s && s.p || null }; return s; }
+function saludAnotar(quien, status, ms){
+  const prov = String(quien).split('|')[0]; if(prov === 'gemini-memoria') return;
+  const s = saludLeer(), x = s.p[prov] = s.p[prov] || { n: 0, err: 0, cupo: 0, ms: 0 };
+  x.n++; x.ms += Math.min(ms, 120000); if(status === 429) x.cupo++; else if(!status || status >= 400) x.err++;
+  try{ localStorage.setItem(SALUD_K, JSON.stringify(s)); }catch(e){}
+}
+const NOMBRE_PROV = { groq: 'Groq', gemini: 'Gemini', whisper: 'el oído de Groq', mistral: 'Mistral', openrouter: 'OpenRouter' };
+B.salud = function(){ const s = saludLeer(); return Object.entries(s.p).map(([k, x]) => ({ id: k, nombre: NOMBRE_PROV[k] || k, n: x.n, err: x.err, cupo: x.cupo, ms: x.n ? Math.round(x.ms / x.n) : 0, ok: x.n ? Math.round((x.n - x.err - x.cupo) / x.n * 100) : 100 })).sort((a, b) => b.n - a.n); };
+B.saludTexto = function(){
+  const l = B.salud().filter(x => x.n >= 1); if(!l.length) return 'Esta semana todavía no usé ningún cerebro.';
+  const peor = l.filter(x => x.n >= 5 && x.ok < 90).sort((a, b) => a.ok - b.ok)[0];
+  let t = 'Esta semana: ' + l.slice(0, 4).map(x => `${x.nombre} contestó bien el ${x.ok} por ciento de ${x.n} ${x.n === 1 ? 'pedido' : 'pedidos'}, en ${(x.ms / 1000).toFixed(1).replace('.', ',')} segundos promedio`).join('; ') + '.';
+  t += peor ? ` El que más falló fue ${peor.nombre}${peor.cupo > peor.err ? ', sobre todo por falta de cupo' : ''}.` : ' Ninguno anduvo mal.';
+  return t;
+};
+// ----------------------------------------------------------------- INFORME DE ERRORES (sin tus charlas ni tus datos)
+const ERR = []; B.errores = ERR;
+try{ window.addEventListener('error', e => { ERR.push({ at: Date.now(), m: String(e.message || '').slice(0, 160), d: String(e.filename || '').split('/').pop() + ':' + (e.lineno || '') }); if(ERR.length > 20) ERR.shift(); });
+     window.addEventListener('unhandledrejection', e => { const r = e.reason; ERR.push({ at: Date.now(), m: String(r && (r.message || r) || '').slice(0, 160), d: 'promesa' }); if(ERR.length > 20) ERR.shift(); }); }catch(e){}
+B.informe = function(app, version, extra){
+  const sal = B.salud().map(x => `- ${x.nombre}: ${x.n} pedidos, ${x.err} fallas, ${x.cupo} sin cupo, ${x.ms} ms`).join('\n') || '- sin datos';
+  const errs = ERR.slice(-10).map(e => `- ${new Date(e.at).toLocaleTimeString('es-AR')} ${e.m} (${e.d})`).join('\n') || '- ninguno';
+  return `Informe de ${app} ${version}\nFecha: ${new Date().toLocaleString('es-AR')}\nNavegador: ${navigator.userAgent.slice(0, 160)}\n\nCerebros esta semana:\n${sal}\n\nErrores recientes:\n${errs}\n${extra ? '\n' + extra + '\n' : ''}\n(No incluye tus charlas, tu memoria ni tus llaves.)`;
+};
+B.informeLink = function(app, version, texto){
+  return 'https://github.com/Bufalabs-arg/bufalabs-arg.github.io/issues/new?title=' + encodeURIComponent(`Algo anduvo mal en ${app} ${version}`) + '&body=' + encodeURIComponent(String(texto).slice(0, 5500));
+};
+B.pideInforme = t => /^(algo (anduvo|anda|salio) mal|algo no anda|algo no funciona|manda(r|le|me)? un informe|reporta(r)? (un|el|este) (error|problema|fallo)|avisale a bufalabs|informe de errores)$/.test(sinTildes(t).replace(/[¿?¡!.,;:]/g, ' ').replace(/\b(friday|che)\b/g, ' ').replace(/\s+/g, ' ').trim());
 
 // ----------------------------------------------------------------- CUPO: cuántas veces le preguntamos hoy a cada cerebro
 // (los planes gratis tienen un máximo por día; así FRIDAY te puede decir cómo viene)
@@ -668,6 +702,7 @@ B.cupoTexto = function(){
 B.preguntaSistema = function(texto){
   const n = sinTildes(texto).replace(/[¿?¡!.,]/g, ' ').replace(/\s+/g, ' ').trim();
   if(/\b(como (estas|andas|vas|venis) (de|con el) cupo|cuanto cupo|cuanto (te )?queda (de cupo|de cerebro|hoy)|te queda cupo|cupo (de hoy|gratis)|cuantas (veces|preguntas) (le )?(preguntaste|hiciste|usaste) hoy)\b/.test(n)) return 'cupo';
+  if(/\b(como (anduviste|andas|funcionaste|te fue) (esta|la|en la) semana|como anduvieron los cerebros|salud de (friday|los cerebros)|estado de los cerebros)\b/.test(n)) return 'salud';
   if(/\b(quien (me )?(contesto|respondio)|con (que|cual) (cerebro|modelo) (me )?(contestaste|respondiste)|que (cerebro|modelo) usaste|quien (me )?lo (contesto|respondio))\b/.test(n)) return 'quien';
   return '';
 };
@@ -1290,6 +1325,7 @@ B.profePrompt = function(){
   </div>
   <div class="grupo" style="margin-top:10px">
     <p class="note" id="cupoHoy"></p>
+    <p class="note" id="saludCelu"></p>
     <div class="switch"><div><b>Me reviso</b><div class="note">En las preguntas difíciles, otro cerebro controla mi respuesta y te aviso si me equivoqué.</div></div><input type="checkbox" id="cfRevisar"></div>
   </div>
 
@@ -1325,6 +1361,7 @@ B.profePrompt = function(){
 
   <h4>Datos</h4>
   <div class="grupo pad">
+    <button class="big sec" id="informeCelu">🧾 Mandar un informe de errores</button>
     <button class="big sec" id="clearChat">Borrar la charla de la pantalla</button>
     <button class="big sec red" id="resetAll">Borrar todo (llaves, memoria, recordatorios)</button>
   </div>
@@ -1413,13 +1450,11 @@ B.profePrompt = function(){
 
 <script>
 'use strict';
-const VERSION='3.8';
+const VERSION='3.9';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"3.8","titulo":"Más manos libres","items":[
-  {"icono":"💸","titulo":"Gastos por voz","texto":"Decime «gasté 3500 en el súper» y llevo la cuenta del mes. Preguntame «¿cuánto gasté?» o poneme un límite y te aviso si te pasás."},
-  {"icono":"🚗","titulo":"Modo auto","texto":"«Estoy manejando»: pantalla grande y te escucho solita después de cada respuesta, sin tocar nada."},
-  {"icono":"📷","titulo":"Foto y pregunta","texto":"Decime «mirá esto», sacá la foto y preguntame lo que quieras de lo que ves."},
-  {"icono":"🗣️","titulo":"«Oye Siri, Friday»","texto":"En Más → Atajos te explico cómo hablarme desde Siri o desde «Ok Google», sin abrir la app."}]};
+const NOVEDADES_M={"version":"3.9","titulo":"Más confiable","items":[
+  {"icono":"🩺","titulo":"¿Cómo anduviste?","texto":"Preguntame «¿cómo anduviste esta semana?» y te digo cómo le fue a cada cerebro. También está en Más → Cerebro."},
+  {"icono":"🧾","titulo":"Algo anduvo mal","texto":"Decime «algo anduvo mal» y armo un informe para BufaLabs, sin tus charlas, tu memoria ni tus llaves."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -2248,6 +2283,15 @@ function habitoRevisar(){ try{
 }catch(e){} }
 window.addEventListener('load', ()=>{ setTimeout(habitoRevisar, 9000); setTimeout(()=>{ try{ BUFIA.prepararDia({gem:S.gemKey, groq:S.groqKey}); }catch(e){} }, 6000); });
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') setTimeout(habitoRevisar, 2500); });
+async function informeMandarCelu(){
+  const tx=BUFIA.informe('FRIDAY Móvil', VERSION, `Pantalla: ${innerWidth}×${innerHeight} · Instalada: ${matchMedia('(display-mode: standalone)').matches?'sí':'no'} · Voz: ${S.voz?'sí':'no'}`);
+  try{ await navigator.clipboard.writeText(tx); }catch(e){}
+  const link=BUFIA.informeLink('FRIDAY Móvil', VERSION, tx);
+  if(navigator.share){ try{ await navigator.share({title:'Informe de FRIDAY Móvil', text:tx}); return; }catch(e){ if(e && e.name==='AbortError') return; } }
+  window.open(link, '_blank');
+}
+function saludPintarCelu(){ const el=$('saludCelu'); if(!el) return; const l=BUFIA.salud();
+  el.innerHTML = l.length ? '<b>Salud de esta semana</b><br>'+l.map(x=>`${esc(x.nombre)}: ${x.ok}% bien de ${x.n}${x.cupo?` · ${x.cupo} sin cupo`:''}${x.err?` · ${x.err} fallas`:''} · ${(x.ms/1000).toFixed(1).replace('.',',')} s`).join('<br>') : 'Salud de esta semana: todavía sin datos.'; }
 function ultimoPar(){ let r='', p=''; for(let i=hist.length-1;i>=0;i--){ const m=hist[i]; if(!r && m.role==='assistant'){ r=String(m.content||''); continue; } if(r && m.role==='user'){ p=String(m.content||''); break; } } return r ? {p, r} : null; }
 const informes=()=>LS.get('informes',[]);
 function informeTexto(leer){ const l=informes(), r=l[l.length-1]; if(!r) return 'Todavía no tengo informes. Pedime «investigá…» y te armo uno.'; return leer ? r.texto : `Te dejo el informe de «${r.tema}» acá abajo.\n\n${r.texto}`; }
@@ -2265,6 +2309,8 @@ function bufiaVozCelu(text){
   const sis=BUFIA.preguntaSistema(text);
   if(sis==='cupo') return BUFIA.cupoTexto();
   if(sis==='quien') return BUFIA.quienTexto();
+  if(sis==='salud') return BUFIA.saludTexto();
+  if(BUFIA.pideInforme(text)){ setTimeout(()=>needTap('🧾','Tocá para mandar el informe', informeMandarCelu), 900); return 'Armé un informe sin tus charlas ni tus llaves. Tocá el botón para mandárselo a BufaLabs.'; }
   if(/\b(mostrame|abri|abrime|quiero ver|pasame) (el|ese|tu)? ?(ultimo )?informe\b/.test(n)) return informeTexto(false);
   if(/\b(leeme|lee|leelo|contame) (el|ese|tu) (ultimo )?informe( completo)?\b|^leemelo( completo)?$/.test(n)) return informeTexto(true);
   if(invUlt && Date.now()-invUlt.at<6*60000 && /^(si|dale|bueno|mostramelo|mostrame|a ver|obvio|si mostramelo|si dale|si por favor)( por favor| porfa)?$/.test(n)){ invUlt=null; const l=informes(); return l.length && Date.now()-l[l.length-1].at<10*60000 ? informeTexto(false) : 'Lo estoy terminando de escribir. En un ratito te lo muestro: decime «mostrame el informe».'; }
@@ -2470,7 +2516,8 @@ function fillMenu(){
   $('cfName').value=S.name; $('cfTrato').value=S.trato; $('cfCity').value=S.city; $('cfConvo').checked=!!S.convo; $('cfTheme').value=S.theme;
   $('cfGroq').value=S.groqKey; $('cfGem').value=S.gemKey; $('cfMistral').value=S.mistralKey||''; $('cfOr').value=S.orKey||''; $('cfRevisar').checked=S.bufiaRevisar!==false; $('cfSpId').value=S.spId; $('spRedirect').textContent=spRedirect(); $('spOut').hidden=!spOnline();
   try{ $('cupoHoy').textContent='Hoy: '+BUFIA.cupoTexto()+' También me lo podés preguntar: «¿cómo estás de cupo?».'; }catch(e){}
-  $('verTxt').textContent=VERSION; pickVoice(); try{ renderGastos(); }catch(e){}
+  $('verTxt').textContent=VERSION; pickVoice(); try{ renderGastos(); saludPintarCelu(); }catch(e){}
+  if(!$('informeCelu').dataset.ok){ $('informeCelu').dataset.ok=1; $('informeCelu').onclick=()=>informeMandarCelu(); }
   if(!$('actBuscar').dataset.ok){ $('actBuscar').dataset.ok=1; $('actBuscar').onclick=()=>{ closeSheets && closeSheets(); actBuscar(true); }; $('actNuevo').onclick=()=>{ closeSheets && closeSheets(); actPresentar(true); }; } renderInstall(); renderMas(); faltaLlave();
 }
 function faltaLlave(){ const f=[!S.groqKey&&'Groq', !S.gemKey&&'Gemini'].filter(Boolean); const el=$('faltaLlave'); el.hidden=!f.length; el.textContent=f.length?'⚠ Te falta la llave de '+f.join(' y de ')+'. Con una sola, FRIDAY puede quedarse sin respuestas.':''; }
