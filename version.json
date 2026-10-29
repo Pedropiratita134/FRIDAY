@@ -1,26 +1,26 @@
 {
- "version": "3.7",
- "titulo": "Te conozco mejor",
+ "version": "3.8",
+ "titulo": "Más manos libres",
  "items": [
   {
-   "icono": "🌙",
-   "titulo": "Me acuerdo de lo de ayer",
-   "texto": "Si ayer quedó algo pendiente, te lo recuerdo una vez al otro día."
+   "icono": "💸",
+   "titulo": "Gastos por voz",
+   "texto": "Decime «gasté 3500 en el súper» y llevo la cuenta del mes. Preguntame «¿cuánto gasté?» o poneme un límite y te aviso si te pasás."
   },
   {
-   "icono": "💡",
-   "titulo": "Lo de siempre",
-   "texto": "Aprendo lo que me pedís seguido a cierta hora y te lo ofrezco. Decime «dale» y listo."
+   "icono": "🚗",
+   "titulo": "Modo auto",
+   "texto": "«Estoy manejando»: pantalla grande y te escucho solita después de cada respuesta, sin tocar nada."
   },
   {
-   "icono": "🧠",
-   "titulo": "Dos cerebros piensan mejor",
-   "texto": "Cuando me decís «pensalo bien», consulto otra opinión y, si suma algo, te lo agrego."
+   "icono": "📷",
+   "titulo": "Foto y pregunta",
+   "texto": "Decime «mirá esto», sacá la foto y preguntame lo que quieras de lo que ves."
   },
   {
-   "icono": "🎓",
-   "titulo": "Modo profe",
-   "texto": "Decime «tomame examen de historia»: te hago cinco preguntas, te corrijo y te digo qué repasar."
+   "icono": "🗣️",
+   "titulo": "«Oye Siri, Friday»",
+   "texto": "En Más → Atajos te explico cómo hablarme desde Siri o desde «Ok Google», sin abrir la app."
   }
  ]
 }

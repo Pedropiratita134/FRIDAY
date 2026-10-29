@@ -31,50 +31,26 @@
   ],
   "shortcuts": [
     {
-      "name": "Hablar con FRIDAY",
-      "short_name": "Hablar",
-      "url": "./#hablar",
+      "name": "Hablarle",
+      "short_name": "Hablarle",
+      "description": "Abrir FRIDAY escuchándote",
+      "url": "./?hablar=1",
       "icons": [
         {
-          "src": "sc-hablar.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          "src": "icon-192.png",
+          "sizes": "192x192"
         }
       ]
     },
     {
-      "name": "Manos libres",
-      "short_name": "Manos libres",
-      "url": "./#manoslibres",
+      "name": "Mis gastos",
+      "short_name": "Gastos",
+      "description": "Cuánto gastaste este mes",
+      "url": "./?q=cu%C3%A1nto%20gast%C3%A9%20este%20mes",
       "icons": [
         {
-          "src": "sc-manos.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Lista de compras",
-      "short_name": "Compras",
-      "url": "./#compras",
-      "icons": [
-        {
-          "src": "sc-compras.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        }
-      ]
-    },
-    {
-      "name": "Buen día",
-      "short_name": "Buen día",
-      "url": "./#buendia",
-      "icons": [
-        {
-          "src": "sc-buendia.png",
-          "sizes": "192x192",
-          "type": "image/png"
+          "src": "icon-192.png",
+          "sizes": "192x192"
         }
       ]
     }

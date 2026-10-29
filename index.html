@@ -539,6 +539,18 @@ body.panel{padding-bottom:0}
     .upn h2{font-size:26px}.upn p{font-size:18px}.upn .sub{font-size:18px}
   }
 
+#auto{position:fixed;inset:0;z-index:150;display:none;flex-direction:column;align-items:center;justify-content:space-between;padding:calc(24px + var(--safe-t)) 22px calc(24px + var(--safe-b));background:radial-gradient(70% 50% at 50% 45%,rgba(var(--accent-rgb),.16),transparent 70%),#020810;color:var(--text);text-align:center}
+#auto.on{display:flex}
+#auto .et{font:700 14px var(--display);letter-spacing:.2em;color:var(--accent)}
+#autoTx{font:600 clamp(26px,7vw,40px)/1.25 var(--font);max-height:42vh;overflow:auto;margin:0}
+#autoMic{width:min(62vw,260px);aspect-ratio:1;border-radius:50%;border:3px solid var(--accent);background:radial-gradient(circle,rgba(var(--accent-rgb),.35),rgba(var(--accent-rgb),.06) 70%);color:var(--text);font:800 22px var(--display);letter-spacing:.06em;box-shadow:0 0 60px rgba(var(--accent-rgb),.35)}
+#auto.oye #autoMic{background:var(--accent);color:var(--ink);animation:autoLate 1.2s ease-in-out infinite}
+@keyframes autoLate{50%{box-shadow:0 0 90px rgba(var(--accent-rgb),.7)}}
+#autoSalir{border:1px solid var(--line2);background:var(--card);color:var(--text);border-radius:14px;padding:14px 26px;font:700 17px var(--font)}
+#camBtn{width:44px;height:44px;flex:none;color:var(--muted)}
+#camBtn .ic{width:22px;height:22px}
+.gasto{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
+.gasto button{background:none;border:0;color:var(--muted);font-size:16px}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Orbitron:wght@500;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
@@ -1124,6 +1136,8 @@ B.profePrompt = function(){
 <footer id="bar">
   <button class="round" id="adjBtn" aria-label="Mandar una foto o un PDF"><svg class="ic" viewBox="0 0 24 24"><path d="M20 11.5l-8.2 8.2a5 5 0 0 1-7.1-7.1l8.6-8.6a3.4 3.4 0 0 1 4.8 4.8l-8.6 8.6a1.7 1.7 0 0 1-2.4-2.4l7.9-7.9"/></svg></button>
   <input type="file" id="adjIn" accept="image/*,application/pdf" hidden>
+  <button class="round" id="camBtn" aria-label="Sacar una foto y preguntar"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg></button>
+  <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
   <textarea id="txt" rows="1" placeholder="Escribile a FRIDAY…" enterkeyhint="send" autocomplete="off"></textarea>
   <button class="round" id="send" aria-label="Mandar"><svg class="ic" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z"/></svg></button>
   <button class="round" id="mic" aria-label="Hablar"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
@@ -1288,6 +1302,20 @@ B.profePrompt = function(){
     <select id="cfTheme" hidden><option value="jarvis">Celeste (JARVIS)</option><option value="friday">Dorado (FRIDAY)</option></select>
   </div>
 
+  <h4>Gastos</h4>
+  <div class="grupo pad">
+    <p class="note" id="gastoRes">Decime «gasté 3500 en el súper» y llevo la cuenta del mes.</p>
+    <div id="gastoLista"></div>
+  </div>
+
+  <h4>Atajos</h4>
+  <div class="grupo pad">
+    <details><summary><b>«Oye Siri, Friday»</b> (iPhone)</summary>
+      <p class="note">1. Abrí la app <b>Atajos</b> y tocá <b>+</b>.<br>2. Agregá la acción <b>Dictar texto</b> (idioma: español).<br>3. Agregá <b>Codificar URL</b> (usa el texto dictado).<br>4. Agregá <b>URL</b>: <code>https://pedropiratita134.github.io/FRIDAY/?q=</code> y al final tocá la variable <b>Texto codificado</b>.<br>5. Agregá <b>Abrir URL</b>.<br>6. Ponele de nombre <b>Friday</b>. Listo: decí «Oye Siri, Friday», después lo que quieras, y te contesto.</p></details>
+    <details><summary><b>«Ok Google»</b> (Android)</summary>
+      <p class="note">Con FRIDAY instalada en la pantalla de inicio, decí «Ok Google, abrí FRIDAY». Si mantenés apretado el ícono, tenés atajos: <b>Hablarle</b> y <b>Mis gastos</b>.</p></details>
+  </div>
+
   <h4>La app</h4>
   <div class="grupo pad">
     <p class="note" id="installNote"></p>
@@ -1380,17 +1408,18 @@ B.profePrompt = function(){
   <video id="psVideo" playsinline muted hidden></video>
   <button id="psScan" hidden>📷 O escaneá el QR de la compu</button>
 </div>
+<div id="auto" aria-live="polite"><div class="et">MODO AUTO</div><p id="autoTx">Te escucho después de cada respuesta. Hablame tranquilo.</p><button id="autoMic" type="button">HABLAR</button><button id="autoSalir" type="button">Salir del modo auto</button></div>
 <div id="tapgo"><button id="tapBtn"><span id="tapIc"></span><b id="tapTxt"></b></button><button id="tapNo">Ahora no</button></div>
 
 <script>
 'use strict';
-const VERSION='3.7';
+const VERSION='3.8';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"3.7","titulo":"Te conozco mejor","items":[
-  {"icono":"🌙","titulo":"Me acuerdo de lo de ayer","texto":"Si ayer quedó algo pendiente, te lo recuerdo una vez al otro día."},
-  {"icono":"💡","titulo":"Lo de siempre","texto":"Aprendo lo que me pedís seguido a cierta hora y te lo ofrezco. Decime «dale» y listo."},
-  {"icono":"🧠","titulo":"Dos cerebros piensan mejor","texto":"Cuando me decís «pensalo bien», consulto otra opinión y, si suma algo, te lo agrego."},
-  {"icono":"🎓","titulo":"Modo profe","texto":"Decime «tomame examen de historia»: te hago cinco preguntas, te corrijo y te digo qué repasar."}]};
+const NOVEDADES_M={"version":"3.8","titulo":"Más manos libres","items":[
+  {"icono":"💸","titulo":"Gastos por voz","texto":"Decime «gasté 3500 en el súper» y llevo la cuenta del mes. Preguntame «¿cuánto gasté?» o poneme un límite y te aviso si te pasás."},
+  {"icono":"🚗","titulo":"Modo auto","texto":"«Estoy manejando»: pantalla grande y te escucho solita después de cada respuesta, sin tocar nada."},
+  {"icono":"📷","titulo":"Foto y pregunta","texto":"Decime «mirá esto», sacá la foto y preguntame lo que quieras de lo que ves."},
+  {"icono":"🗣️","titulo":"«Oye Siri, Friday»","texto":"En Más → Atajos te explico cómo hablarme desde Siri o desde «Ok Google», sin abrir la app."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1464,7 +1493,7 @@ let convoArm=false;
 function afterSpeech(){
   // en la tablet: después de contestar, te sigue escuchando unos segundos sin decir "Friday"
   if(PANEL && hf.on && convoArm){ convoArm=false; hf.armed=Date.now()+7000; orbState='listen'; setTimeout(()=>{ if(orbState==='listen' && Date.now()>hf.armed) orbState='idle'; }, 7300); return; }
-  if(convoArm && S.convo && !document.hidden){ convoArm=false; setTimeout(()=>{ if(!isSpeaking() && !rec.on && !busy) recStart(true); }, 450); } }
+  if(convoArm && (S.convo || convoForzado || autoModo) && !document.hidden){ convoArm=false; convoForzado=false; setTimeout(()=>{ if(!isSpeaking() && !rec.on && !busy) recStart(true); }, 450); } }
 
 // ================================================================ oído: grabación + Whisper (Groq)
 let actx=null;
@@ -1921,7 +1950,7 @@ Recordatorios pendientes: ${rems}.
 ${(()=>{ const f=LS.get('ficha',null); return f&&f.texto?`Ficha del usuario (lo que sabés de él en general): ${f.texto}\n`:''; })()}${(()=>{ const r=LS.get('charlaRes',null); return r&&r.texto&&hist.length>=12?`Resumen de lo que venían charlando antes: ${r.texto}\n`:''; })()}Lo que sabés del usuario${memSem&&memSem.lista.length?' (lo que viene al caso ahora)':''}: ${(memSem&&memSem.lista.length ? [...new Set([...memSem.lista, ...memory.slice(-6)])] : memory.slice(-40)).join('; ')||'nada todavía'}.
 ${BUFIA.REGLAS}
 ${BUFIA.gustosPrompt()}${BUFIA.diaPrompt()}${BUFIA.profePrompt()}Si te dicen "eso está mal" sin decir por qué, preguntá corto qué estuvo mal.
-Lista de compras: ${shopPrompt()}.
+${gastosPrompt()}Lista de compras: ${shopPrompt()}.
 ${ecoPromptM()}${syncPrompt()}
 Herramientas: agregá la marca al final, en una línea aparte (no se leen):
 [[RECORDATORIO|AAAA-MM-DD HH:MM|qué recordarle]] para una hora concreta (calculala exacta desde ahora). Si se repite, cuarto campo: diario, semanal o habiles.
@@ -2119,8 +2148,95 @@ function actArranque(intento){
   actBuscar(false);
 }
 window.addEventListener('load', ()=>setTimeout(()=>actArranque(0), 2500));
+(function(){ const u=new URLSearchParams(location.search), q=(u.get('q')||'').trim(), h=u.get('hablar');
+  if(!q && !h) return; try{ history.replaceState(null,'',location.pathname); }catch(e){}
+  const espera=(n)=>{ if(document.getElementById('splash') || !S.groqKey){ if(n<40) setTimeout(()=>espera(n+1), 300); return; }
+    if(q) ask(q.slice(0,500)); else needTap('🎙️','Tocá y hablame', ()=>recStart(false)); };
+  window.addEventListener('load', ()=>setTimeout(()=>espera(0), 600)); })();
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible' && Date.now()-ACT.ultimo>6*3600e3 && actLibre()) actBuscar(false); });
 setInterval(()=>{ if(document.visibilityState==='visible' && Date.now()-ACT.ultimo>6*3600e3 && actLibre()) actBuscar(false); }, 30*60e3);
+
+
+// ================================================================ MÁS MANOS LIBRES (3.8)
+// ---- escuchar sí o sí después de hablar (para «¿qué querés saber de la foto?» y el modo auto)
+let convoForzado=false, autoModo=false, autoLock=null, fotoPend=null;
+// ---- GASTOS por voz
+const gastos=()=>LS.get('gastos',[]);
+const pesos=n=>'$'+Math.round(n).toLocaleString('es-AR');
+function gastoMonto(n){
+  const m=n.match(/\$?\s*(\d[\d.,]*)\s*(mil|lucas?|k|palos?|millones|millon)?\b/); if(!m) return 0;
+  let x=m[1]; const mult=/^(mil|lucas?|k)$/.test(m[2]||'')?1000:/^(palos?|millones|millon)$/.test(m[2]||'')?1e6:1;
+  if(/^\d{1,3}(\.\d{3})+$/.test(x)) x=x.replace(/\./g,''); else x=x.replace(/\./g,'').replace(',','.');
+  return (+x||0)*mult;
+}
+function gastosPeriodo(p){ const d=new Date(), ini=new Date(d.getFullYear(), d.getMonth(), p==='hoy'?d.getDate():p==='semana'?d.getDate()-((d.getDay()+6)%7):1); return gastos().filter(g=>g.at>=ini.getTime()); }
+function gastosPorRubro(l){ const r={}; l.forEach(g=>{ r[g.en]=(r[g.en]||0)+g.monto; }); return Object.entries(r).sort((a,b)=>b[1]-a[1]); }
+function gastosPrompt(){ const l=gastosPeriodo('mes'); if(!l.length) return ''; const t=l.reduce((a,g)=>a+g.monto,0);
+  return `Gastos de este mes (los anotó por voz): total ${pesos(t)}${LS.get('gastoLimite',0)?' de un límite de '+pesos(LS.get('gastoLimite',0)):''}; ${gastosPorRubro(l).slice(0,6).map(([k,v])=>k+' '+pesos(v)).join(', ')}.\n`; }
+function gastoDeVoz(text){
+  const n=norm(text).replace(/[¿?¡!]/g,'').trim();
+  // anotar
+  if(/^(hoy |ayer |recien )?(gaste|me gaste|pague|abone|compre|saque|puse|cargue)\b/.test(n) && /\d/.test(n)){
+    const monto=gastoMonto(String(text).toLowerCase()); if(!(monto>0)) return '';
+    let en=(n.match(/\b(?:en|de|del|para|por)\s+(?:el |la |los |las |un |una )?([a-zñ ]{3,30})$/)||[])[1]||(n.match(/^(?:hoy |ayer )?(?:compre|pague|abone|cargue)\s+(?:el |la |los |las |un |una )?([a-zñ ]{3,25}?)\s+(?:a|por|en)?\s*\$?\d/)||[])[1]||'varios';
+    en=en.replace(/\b(pesos|mil|lucas?|hoy|ayer)\b/g,'').trim()||'varios';
+    const l=gastos(); l.push({monto, en, at:Date.now()}); while(l.length>500) l.shift(); LS.set('gastos', l);
+    const mes=gastosPeriodo('mes').reduce((a,g)=>a+g.monto,0), lim=+LS.get('gastoLimite',0)||0;
+    let t=`Anotado: ${pesos(monto)} en ${en}. Este mes llevás ${pesos(mes)}.`;
+    if(lim){ if(mes>=lim) t+=` Ojo: te pasaste del límite de ${pesos(lim)}.`; else if(mes>=lim*.8) t+=` Ya usaste el ${Math.round(mes/lim*100)} por ciento de tu límite.`; }
+    return t;
+  }
+  if(/\b(limite|presupuesto|tope)\b/.test(n) && /\d/.test(n) && /\b(pone|poneme|mi|de|es|fija|fijame)\b/.test(n)){ const v=gastoMonto(String(text).toLowerCase()); if(v>0){ LS.set('gastoLimite', v); return `Listo, tu límite es de ${pesos(v)} por mes. Te aviso cuando llegues al 80 por ciento.`; } }
+  if(/\b(borra|anula|saca|elimina)(me)? (el )?ultimo gasto\b/.test(n)){ const l=gastos(); const g=l.pop(); LS.set('gastos', l); return g?`Listo, borré ${pesos(g.monto)} en ${g.en}.`:'No tenés gastos anotados.'; }
+  if(/\ben que (gaste|gasto|gastamos) mas\b/.test(n)){ const r=gastosPorRubro(gastosPeriodo('mes')); return r.length?`Este mes, lo que más: ${r.slice(0,3).map(([k,v])=>k+' con '+pesos(v)).join(', ')}.`:'Este mes no anotaste gastos.'; }
+  if(/\bcuanto (gaste|llevo gastado|voy gastando|gastamos|llevo)\b/.test(n) || /^mis gastos$|^(cuanto|como) (voy|vengo) (con los|de) gastos/.test(n)){
+    const p=/\bhoy\b/.test(n)?'hoy':/\bsemana\b/.test(n)?'semana':'mes'; const l=gastosPeriodo(p), t=l.reduce((a,g)=>a+g.monto,0);
+    const lim=+LS.get('gastoLimite',0)||0;
+    return l.length ? `${p==='hoy'?'Hoy':p==='semana'?'Esta semana':'Este mes'} gastaste ${pesos(t)} en ${l.length===1?'una compra':l.length+' compras'}${p==='mes'&&lim?`, de un límite de ${pesos(lim)}`:''}. Lo que más: ${gastosPorRubro(l).slice(0,2).map(([k,v])=>k+' '+pesos(v)).join(' y ')}.` : `${p==='hoy'?'Hoy':p==='semana'?'Esta semana':'Este mes'} no anotaste gastos.`;
+  }
+  return '';
+}
+function renderGastos(){
+  const l=gastosPeriodo('mes'), t=l.reduce((a,g)=>a+g.monto,0), lim=+LS.get('gastoLimite',0)||0;
+  $('gastoRes').textContent = l.length ? `Este mes: ${pesos(t)}${lim?' de '+pesos(lim):''}.` : 'Decime «gasté 3500 en el súper» y llevo la cuenta del mes.';
+  const box=$('gastoLista'); box.innerHTML='';
+  gastos().slice(-8).reverse().forEach(g=>{ const d=document.createElement('div'); d.className='gasto'; d.innerHTML=`<span>${esc(g.en)} · ${new Date(g.at).toLocaleDateString('es-AR',{day:'numeric',month:'short'})}</span><span><b>${pesos(g.monto)}</b> <button aria-label="Borrar">✕</button></span>`;
+    d.querySelector('button').onclick=()=>{ LS.set('gastos', gastos().filter(x=>x.at!==g.at)); renderGastos(); }; box.appendChild(d); });
+}
+// ---- MODO AUTO
+async function autoPoner(on){
+  autoModo=!!on; $('auto').classList.toggle('on', autoModo);
+  if(autoModo){ try{ autoLock=await navigator.wakeLock.request('screen'); }catch(e){} const u=[...document.querySelectorAll('.msg.fr')].pop(); if(u) $('autoTx').textContent=u.textContent; }
+  else { try{ autoLock && autoLock.release(); }catch(e){} autoLock=null; }
+}
+new MutationObserver(()=>{ if(!autoModo) return; const u=[...document.querySelectorAll('.msg.fr')].pop(); if(u) $('autoTx').textContent=u.textContent; }).observe(document.getElementById('chat')||document.body, {childList:true, subtree:true, characterData:true});
+// ---- FOTO Y PREGUNTA: la mira Gemini con lo que preguntes
+async function mirarArchivo(dataUrl, pdf, nombre, pedido){
+  const preg=pedido || (pdf?'Resumime este PDF: de qué se trata y lo más importante.':'¿Qué es esto? Contame lo importante.');
+  pushHistory({role:'user', content:(pdf?'[Me mandó el PDF «'+nombre+'»] ':'[Me mandó una foto] ')+preg});
+  busy=true; orbState='think'; setStatus('ok','Mirando…'); const el=typingEl();
+  const prompt=`Sos FRIDAY, una asistente en español rioplatense, cálida y clara. ${S.name?'El usuario se llama '+S.name+'. ':''}Te mandó ${pdf?'un PDF':'una foto'} y te pide: «${preg}». Contestá corto y hablado (se lee en voz alta), sin markdown ni listas. Si hay textos, números o montos, usalos tal cual.`;
+  let t='';
+  for(const model of ['gemini-flash-latest','gemini-flash-lite-latest','gemini-2.5-flash']){
+    try{ const r=await fetch(`${API.gem}/models/${model}:generateContent?key=${encodeURIComponent(S.gemKey)}`,{method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{role:'user', parts:[{inline_data:{mime_type:pdf?'application/pdf':'image/jpeg', data:dataUrl.split(',')[1]}}, {text:prompt}]}], generationConfig:{temperature:0.4, maxOutputTokens:1500}})});
+      if(!r.ok) continue; const d=await r.json(); t=(d.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('').trim(); if(t) break; }catch(e){}
+  }
+  busy=false; orbState='idle';
+  if(!t){ el.textContent='No pude mirarlo ahora. Probá de nuevo en un ratito.'; setStatus('warn','Con problemas'); return; }
+  el.textContent=t; scrollDown(); say(t); pushHistory({role:'assistant', content:t}); setStatus('ok','Lista'); convoArm=true;
+}
+async function recibirArchivo(f){
+  if(!f) return; if(!S.gemKey){ toast('Para mirar fotos hace falta la llave de Gemini (Más → Cerebro)'); return; }
+  const pdf=f.type==='application/pdf'; if(pdf && f.size>15e6){ toast('El PDF es muy grande (hasta 15 MB)'); return; }
+  const pedido=txt.value.trim(); txt.value=''; autoGrow(); closeSheets(); stopVoice();
+  let dataUrl; try{ dataUrl = pdf ? await aBase64(f) : await achicarFoto(f); }catch(e){ toast('No pude abrir ese archivo'); return; }
+  const yo=bubble('yo', (pdf?'📄 '+f.name:'')+(pedido?(pdf?'\n':'')+pedido:'')); if(!pdf){ const im=document.createElement('img'); im.src=dataUrl; im.className='adjfoto'; yo.prepend(im); }
+  if(pedido) return mirarArchivo(dataUrl, pdf, f.name, pedido);
+  // sin pregunta: te la pregunta en voz y te escucha
+  fotoPend={dataUrl, pdf, nombre:f.name, at:Date.now()};
+  convoForzado=true; frSay(pdf?'Ya lo tengo. ¿Qué querés saber del PDF?':'Ya la tengo. ¿Qué querés saber?');
+}
 
 // ================================================================ BUFIA por voz (3.5)
 let bufiaMal=null, bufiaNota='', invUlt=null, habitoPend=null;
@@ -2208,6 +2324,14 @@ async function ask(text){
     if(pd && pd.fin){ BUFIA.profeTerminar(); txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay('Listo, cortamos el examen. Cuando quieras seguimos.'); return; }
     if(pd && pd.tema!==undefined) BUFIA.profeEmpezar(pd.tema);
     try{ BUFIA.habitoAnotar(text); BUFIA.prepararDia({gem:S.gemKey, groq:S.groqKey}); }catch(e){} }
+  if(!PANEL){ const nm2=norm(text).replace(/[¿?¡!.,]/g,' ').replace(/\s+/g,' ').trim();
+    // la foto que estaba esperando una pregunta
+    if(fotoPend && Date.now()-fotoPend.at<5*60000){ const f=fotoPend; fotoPend=null; txt.value=''; bubble('yo', text); return mirarArchivo(f.dataUrl, f.pdf, f.nombre, text); }
+    if(/^(mira esto|mirá esto|que es esto|saca(me)? una foto|fijate esto|sacale una foto( a esto)?|mira lo que te muestro)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); needTap('📷','Tocá para sacar la foto', ()=>$('camIn').click()); return; }
+    if(/^(modo auto|modo manejo|modo auto(movil)?|estoy manejando|voy manejando|voy a manejar|modo conducir)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); autoPoner(true); frSay('Modo auto: te escucho solita después de cada respuesta. Cuando llegues, decí «salí del modo auto».'); return; }
+    if(autoModo && /\b(sali|salir|termina|apaga)( del)? modo (auto|manejo)\b|^(llegue|ya llegue)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); autoPoner(false); frSay('Listo, llegaste. Salí del modo auto.'); return; }
+    const gv=gastoDeVoz(text); if(gv){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(gv); return; }
+  }
   if(!PANEL && celuJarvis(text)) return;
   if(!PANEL){ const bv=bufiaVozCelu(text); if(bv){ closeSheets(); txt.value=''; autoGrow(); stopVoice(); $('heard').textContent=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(bv); return; } }
   if(!S.groqKey){ if(!PANEL) openSetup(2); return; }
@@ -2346,7 +2470,7 @@ function fillMenu(){
   $('cfName').value=S.name; $('cfTrato').value=S.trato; $('cfCity').value=S.city; $('cfConvo').checked=!!S.convo; $('cfTheme').value=S.theme;
   $('cfGroq').value=S.groqKey; $('cfGem').value=S.gemKey; $('cfMistral').value=S.mistralKey||''; $('cfOr').value=S.orKey||''; $('cfRevisar').checked=S.bufiaRevisar!==false; $('cfSpId').value=S.spId; $('spRedirect').textContent=spRedirect(); $('spOut').hidden=!spOnline();
   try{ $('cupoHoy').textContent='Hoy: '+BUFIA.cupoTexto()+' También me lo podés preguntar: «¿cómo estás de cupo?».'; }catch(e){}
-  $('verTxt').textContent=VERSION; pickVoice();
+  $('verTxt').textContent=VERSION; pickVoice(); try{ renderGastos(); }catch(e){}
   if(!$('actBuscar').dataset.ok){ $('actBuscar').dataset.ok=1; $('actBuscar').onclick=()=>{ closeSheets && closeSheets(); actBuscar(true); }; $('actNuevo').onclick=()=>{ closeSheets && closeSheets(); actPresentar(true); }; } renderInstall(); renderMas(); faltaLlave();
 }
 function faltaLlave(){ const f=[!S.groqKey&&'Groq', !S.gemKey&&'Gemini'].filter(Boolean); const el=$('faltaLlave'); el.hidden=!f.length; el.textContent=f.length?'⚠ Te falta la llave de '+f.join(' y de ')+'. Con una sola, FRIDAY puede quedarse sin respuestas.':''; }
@@ -3456,26 +3580,11 @@ function achicarFoto(file){ return new Promise((ok,mal)=>{ const u=URL.createObj
     c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u); ok(c.toDataURL('image/jpeg',0.85)); };
   im.onerror=()=>{ URL.revokeObjectURL(u); mal(new Error('foto')); }; im.src=u; }); }
 const aBase64=f=>new Promise((ok,mal)=>{ const r=new FileReader(); r.onload=()=>ok(r.result); r.onerror=mal; r.readAsDataURL(f); });
-$('adjIn').onchange=async()=>{
-  const f=$('adjIn').files[0]; $('adjIn').value=''; if(!f) return;
-  const pdf=f.type==='application/pdf'; if(pdf && f.size>15e6){ toast('El PDF es muy grande (hasta 15 MB)'); return; }
-  const pedido=txt.value.trim(); txt.value=''; autoGrow(); closeSheets(); stopVoice();
-  let dataUrl; try{ dataUrl = pdf ? await aBase64(f) : await achicarFoto(f); }catch(e){ toast('No pude abrir ese archivo'); return; }
-  const yo=bubble('yo', (pdf?'📄 '+f.name:'')+(pedido?(pdf?'\n':'')+pedido:'')); if(!pdf){ const im=document.createElement('img'); im.src=dataUrl; im.className='adjfoto'; yo.prepend(im); }
-  const preg=pedido || (pdf?'Resumime este PDF: de qué se trata y lo más importante.':'¿Qué es esto? Contame lo importante.');
-  pushHistory({role:'user', content:(pdf?'[Me mandó el PDF «'+f.name+'»] ':'[Me mandó una foto] ')+preg});
-  busy=true; orbState='think'; setStatus('ok','Mirando…'); const el=typingEl();
-  const prompt=`Sos FRIDAY, una asistente en español rioplatense, cálida y clara. ${S.name?'El usuario se llama '+S.name+'. ':''}Te mandó ${pdf?'un PDF':'una foto'} y te pide: «${preg}». Contestá corto y hablado (se lee en voz alta), sin markdown ni listas. Si hay números o datos (un ticket, una factura, un horario), decilos exactos. Si no se ve bien o no estás segura, decilo.`;
-  let t='';
-  for(const model of ['gemini-flash-latest','gemini-flash-lite-latest','gemini-2.5-flash']){
-    try{ const r=await fetch(`${API.gem}/models/${model}:generateContent?key=${encodeURIComponent(S.gemKey)}`,{method:'POST', headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({contents:[{role:'user', parts:[{inline_data:{mime_type:pdf?'application/pdf':'image/jpeg', data:dataUrl.split(',')[1]}}, {text:prompt}]}], generationConfig:{temperature:0.4, maxOutputTokens:1500}})});
-      if(!r.ok) continue; const d=await r.json(); t=(d.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('').trim(); if(t) break; }catch(e){}
-  }
-  busy=false; orbState='idle';
-  if(!t){ el.textContent='No pude mirarlo ahora. Probá de nuevo en un ratito.'; setStatus('warn','Con problemas'); return; }
-  el.textContent=t; scrollDown(); say(t); pushHistory({role:'assistant', content:t}); setStatus('ok','Lista');
-};
+$('adjIn').onchange=()=>{ const f=$('adjIn').files[0]; $('adjIn').value=''; recibirArchivo(f); };
+$('camIn').onchange=()=>{ const f=$('camIn').files[0]; $('camIn').value=''; recibirArchivo(f); };
+$('camBtn').onclick=()=>{ if(!S.gemKey){ toast('Para mirar fotos hace falta la llave de Gemini (Más → Cerebro)'); return; } $('camIn').click(); };
+$('autoMic').onclick=()=>{ unlockAudio && unlockAudio(); if(isSpeaking()) stopVoice(); recStart(false); };
+$('autoSalir').onclick=()=>{ autoPoner(false); frSay('Listo, salí del modo auto.'); };
 
 (async function boot(){
   applyTheme(); tickClock(); setInterval(tickClock, 10000);
