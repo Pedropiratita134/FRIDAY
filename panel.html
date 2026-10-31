@@ -153,7 +153,7 @@ body.inapp .inicio{opacity:0;transform:scale(.96);pointer-events:none}
 .mini button{width:52px;height:52px;border-radius:50%;border:0;background:var(--card-3);display:grid;place-items:center;cursor:pointer;flex:0 0 52px}
 .mini button svg{width:22px;height:22px}
 .tips{display:flex;flex-wrap:wrap;gap:10px}
-.tips span{padding:9px 16px;border-radius:999px;border:1px dashed var(--edge-2);color:var(--ink-2);font-size:16px}
+.tips span,.tips button{padding:9px 16px;border-radius:999px;border:1px dashed var(--edge-2);color:var(--ink-2);font-size:16px}
 
 /* ---------- la ventana de cada app ---------- */
 .win{position:absolute;left:24px;right:24px;top:var(--bar);bottom:var(--dock);border-radius:34px;background:rgba(9,17,31,.86);border:1px solid var(--edge);
@@ -310,6 +310,11 @@ body.noticiero .dock,body.noticiero .talk{visibility:hidden}
 @media (orientation:portrait){ .ntv-list{display:none} .ntv-low{width:auto;right:30px} }
 @media (prefers-reduced-motion:reduce){ .ntv-bg.kb{animation:none} .ntv-tick .run span{animation:none;padding-left:0} }
 /* en el inicio: noticias y las próximas horas */
+.ctl{display:flex;flex-wrap:wrap;gap:10px}.ctl:empty{display:none}
+.ctl .dev{justify-content:flex-start;flex:1 1 150px;max-width:230px;min-height:0;flex-direction:row;align-items:center;gap:12px;padding:12px 16px;border-radius:20px}
+.ctl .dev svg{width:28px;height:28px;flex:0 0 28px}.ctl .dev span{font-size:17px;-webkit-line-clamp:1}.ctl .dev small{font-size:13px}
+.ctl .todo{flex:0 0 auto;padding:12px 18px;border-radius:20px;border:1px solid var(--edge);background:var(--card);color:var(--ink);font:600 16px var(--text);cursor:pointer}
+.tips button{background:none;font-family:inherit;cursor:pointer}
 .widgets{display:flex;gap:14px}.widgets>*{flex:1 1 0}.widgets>.wnews{flex-grow:1.6}
 .widgets:empty{display:none}
 .wnews{position:relative;display:flex;align-items:center;gap:14px;padding:12px;border-radius:22px;border:1px solid var(--edge);background:var(--card);color:var(--ink);text-align:left;cursor:pointer;min-width:0;min-height:104px}
@@ -478,7 +483,14 @@ body.guardia .gpill{display:inline-flex;animation:gblink 2s ease-in-out infinite
 .status.warn{color:var(--alert)}.status.warn i{background:var(--alert);box-shadow:0 0 10px var(--alert)}
 .status.off i{background:var(--ink-3);box-shadow:none}
 @keyframes pulse{50%{transform:scale(.55);opacity:.55}}
-.dline{flex:1;min-width:0;color:var(--ink-2);font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
+.escr{flex:1;display:flex;align-items:center;gap:8px;min-width:0;margin:10px 0}
+.escr input{flex:1;min-width:0;height:52px;padding:0 20px;border-radius:999px;border:1px solid var(--edge-2);background:rgba(6,11,20,.55);color:var(--ink);font:500 19px var(--text);outline:none}
+.escr input::placeholder{color:var(--ink-3)}.escr input:focus{border-color:rgba(120,190,255,.7);box-shadow:0 0 0 3px rgba(90,170,255,.18)}
+.escr button{flex:0 0 52px;height:52px;border-radius:50%;border:0;background:#3D8BFF;color:#fff;display:grid;place-items:center;cursor:pointer}.escr button svg{width:24px;height:24px}
+.escr button:active{transform:scale(.94)}
+.celuchip{flex:0 0 auto;color:var(--ink-3);font:500 15px var(--text);white-space:nowrap}
+@media (max-width:900px){ .celuchip{display:none} }
+.dline{display:none;flex:1;min-width:0;color:var(--ink-2);font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:right}
 .dline q{quotes:"«" "»";color:var(--ink-3)}
 
 /* ---------- cuando FRIDAY habla: sube y ocupa la pantalla ---------- */
@@ -787,6 +799,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
     </section>
     <section class="apps">
       <div class="grid" id="grid"></div>
+      <div class="ctl" id="ctl"></div>
       <div class="widgets" id="widgets"></div>
       <div class="mini" id="mini" hidden><i class="art" id="miniArt"></i><div><b id="miniT"></b><small id="miniA"></small></div><button type="button" id="miniPP" aria-label="Pausa"></button></div>
       <div class="tips" id="tips"></div>
@@ -797,7 +810,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
     <div class="wbody">
       <div class="pane" data-app="casa"><article class="card" id="cCasa" data-k="casa"></article></div>
       <div class="pane" data-app="mus"><article class="card" id="cMus" data-k="mus"><h2>Música<small id="mSt"></small></h2>
-        <div id="mEmpty"><p class="empty">No está sonando nada. Pedime algo: <q>Friday, poné Soda Stereo</q>.</p><div class="chips sugs" id="mSugs"></div></div>
+        <div id="mEmpty"><p class="empty">No está sonando nada. Pedime algo: <q>Poné Soda Stereo</q>.</p><div class="chips sugs" id="mSugs"></div></div>
         <div class="music" id="mBox" hidden><div class="cover" id="mCover"><div id="ytbox"><div id="ytp"></div></div><span class="src" id="mSrc"></span></div>
           <div class="mside"><div class="meta"><b id="mTitle"></b><small id="mArtist"></small></div><div class="prog"><i id="mProg"></i></div>
             <div class="mctl" id="mCtl"></div><div class="chips mmove" id="mMove"></div></div></div></article></div>
@@ -814,7 +827,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="pane" data-app="tareas" id="pTar"></div>
     </div>
   </section>
-  <footer class="dock" id="dock"><div class="dface fface" id="dFace"></div><div class="status" id="status"><i></i><span>Decí «Friday»</span></div><div class="dline" id="dline"></div></footer>
+  <footer class="dock" id="dock"><div class="dface fface" id="dFace"></div><div class="status" id="status"><i></i><span>Lista</span></div><form class="escr" id="escr" autocomplete="off"><input id="escrIn" type="text" enterkeyhint="send" maxlength="400" placeholder="Escribile a FRIDAY…" aria-label="Escribile a FRIDAY"><button type="submit" aria-label="Mandar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form><span class="celuchip">o hablale desde el celu</span><div class="dline" id="dline"></div></footer>
 </div>
 <div class="talk" id="talk" aria-live="polite"><div class="fwrap"><div id="face" class="fface" aria-label="FRIDAY"></div></div>
   <div class="tx"><p class="you" id="you"></p><p class="her" id="her"></p><div class="hint" id="hint"></div></div></div>
@@ -826,11 +839,11 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
   <div class="cap" id="skyCap"></div></div>
 <div class="setup" id="setup" hidden>
   <div><div class="sface fface" id="sFace"></div><h1 id="sH">Hola, soy FRIDAY.</h1>
-    <div id="sTxt"><p>Voy a ser el sistema de la casa: me hablás y hago.</p>
+    <div id="sTxt"><p>Voy a ser la pantalla de la casa: me escribís o me hablás desde el celu, y hago.</p>
     <p>Para configurarme, escaneá este código con la cámara de tu celu. No hay que escribir nada acá.</p></div></div>
   <div class="qrbox"><div id="qr"></div><div class="code" id="sCode"></div><div class="st" id="sSt">Esperando al celu…</div><button class="sclose" id="sClose" type="button" hidden>Cancelar</button></div>
 </div>
-<button class="tap" id="tap" hidden><b>Tocá para empezar</b><span>Una sola vez. Después, decí «Friday» y lo que necesites.</span><small class="tver" id="tapVer"></small></button>
+<button class="tap" id="tap" hidden><b>Tocá para empezar</b><span>Una sola vez, así puedo hablar. Después me escribís abajo o me hablás desde FRIDAY en el celu.</span><small class="tver" id="tapVer"></small></button>
 <div class="setbg" id="setBg"></div>
 <aside class="sets" id="sets" aria-label="Ajustes">
   <header><h2>Ajustes</h2><button class="done" id="setX" type="button">Listo</button></header>
@@ -847,11 +860,11 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="seg" data-k="reconocer"><button type="button" data-v="no">Nunca</button><button type="button" data-v="hablar">Cuando le hablan</button><button type="button" data-v="siempre">Siempre (saluda al que llega)</button></div>
       <p class="note">También alcanza con decirle «soy Sofi». La voz la va aprendiendo sola cada vez que te reconoce por la cara.</p></section>
     <section><h3>Videollamadas</h3>
-      <p class="lbl">Llamá a otro aparato de la familia, o decí «Friday, llamá a la compu».</p>
+      <p class="lbl">Llamá a otro aparato de la familia, o escribí «Llamá a la compu».</p>
       <div class="seg" id="callList"></div>
       <p class="lbl">Cuando llaman a la tablet</p>
       <div class="seg" data-k="autoAns"><button type="button" data-v="no">Hay que atender</button><button type="button" data-v="si">Atiende sola (avisa y espera 10 segundos)</button></div>
-      <p class="note" id="autoNote">Si atiende sola: dice «Te llama…» en voz alta y cuenta 10 segundos. Para que no atienda, decí «no» o tocá «No ahora».</p>
+      <p class="note" id="autoNote">Si atiende sola: dice «Te llama…» en voz alta y cuenta 10 segundos. Para que no atienda, escribí «no» o tocá «No ahora».</p>
       <p class="note">Durante la llamada: tocá dos veces la imagen para verla entera o llenando la pantalla, acercá con dos dedos, «Achicar» la deja en una ventanita que podés mover (y agrandar desde la esquina), y tu cámara se arrastra a cualquier esquina.</p></section>
     <section><h3>Aparatos de la familia</h3>
       <p class="lbl">Los que están unidos a la tablet. «Probar» se fija si responden ahora. Si alguno figura mal (por ejemplo, la compu como «otro aparato»), tocá qué es.</p>
@@ -872,10 +885,10 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="seg" data-k="mira"><button type="button" data-v="no">No</button><button type="button" data-v="si">Sí, que mire</button></div>
       <p class="lbl">Cada cuánto</p>
       <div class="seg" data-k="miraMin"><button type="button" data-v="2">2 min</button><button type="button" data-v="5">5 min</button><button type="button" data-v="15">15 min</button></div>
-      <p class="note">Además, cuando quieras: «Friday, ¿qué ves?», «mirá esto», «¿cómo me queda?».</p></section>
+      <p class="note">Además, cuando quieras: «¿Qué ves?», «mirá esto», «¿cómo me queda?».</p></section>
     <section><h3>Subtítulos</h3>
       <div class="seg" data-k="subs"><button type="button" data-v="normales">Normales</button><button type="button" data-v="grandes">Grandes</button></div></section>
-    <section><h3>Oído</h3>
+    <section hidden><h3>Oído</h3>
       <p class="lbl">Cómo es la casa</p>
       <div class="seg" data-k="micMode"><button type="button" data-v="alta">Silenciosa</button><button type="button" data-v="normal">Normal</button><button type="button" data-v="cerca">Con mucho ruido</button></div>
       <p class="lbl">Cuánto espera cuando hacés una pausa</p>
@@ -1765,6 +1778,7 @@ function earHeard(text, yaLlamada){
   h.onText(text, text);
 }
 async function earStart(){
+  return false;   // Casa 5: la tablet no escucha. Le escribís o le hablás desde el celu.
   if(stt.on) return true;
   try{
     const stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true, autoGainControl:true, channelCount:1}});
@@ -2070,7 +2084,7 @@ const Call=(()=>{
       if(C.opts.autoAnswer && C.opts.autoAnswer()){
         // atiende sola, pero antes avisa en voz alta y cuenta: se puede decir «no» o tocar «No ahora»
         let k=Math.max(3, +(C.opts.autoSecs&&C.opts.autoSecs())||10); const id=o.id;
-        const paint=()=>{ const el=$c('fcMidS'); if(el) el.textContent=`Atiendo sola en ${k}… (decí «no» o tocá «No ahora»)`; };
+        const paint=()=>{ const el=$c('fcMidS'); if(el) el.textContent=`Atiendo sola en ${k}… (escribí «no» o tocá «No ahora»)`; };
         // el timbre suena una vez y después solo un tic suave: FRIDAY avisa en voz alta y te tiene que poder oír
         setTimeout(()=>{ if(C.ring && C.ring.id===id){ clearInterval(ringT); ringT=null; } }, 1500);
         paint(); C.opts.onAutoAnswer && C.opts.onAutoAnswer(dice, k);
@@ -2271,7 +2285,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='4.2';
+const VERSION='5.0';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2302,6 +2316,9 @@ const palette=()=>({idle:[47,107,227]});
   LS.set('migrado',true);
 })();
 let S=Object.assign({mueve:'si', reconocer:'hablar', name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', vozFuerte:'no', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
+const SERVIDOR_BUFALABS='https://bufalabs.pedrobufager.workers.dev/openai/v1', GROQ_DIRECTO=API.groq;
+if(!S.groqKey) S.groqKey='bufalabs';   // sin llave propia: piensa con el servidor de BufaLabs
+Object.defineProperty(API, 'groq', { get:()=> (!S.groqKey || S.groqKey==='bufalabs') ? SERVIDOR_BUFALABS : GROQ_DIRECTO });
 const saveS=()=>LS.set('cfg',S);
 // la tablet es de toda la familia: saluda a la familia, no a una persona
 const FAM=()=>Object.assign({apellido:'', miembros:[]}, S.familia||{});
@@ -2660,15 +2677,15 @@ function setMode(m){
 }
 function renderStatus(){
   const el=$('status'); if(!el) return; const now=Date.now(), cool=Math.max(stt.coolUntil||0, stt.coolPeek||0);
-  let cls='', txt='Decí «Friday»';
+  let cls='', txt='Lista';
   if(!navigator.onLine){ cls='warn'; txt='Sin internet'; }
-  else if(!stt.on && state.started){ cls='warn'; txt='No tengo permiso para el micrófono'; }
+  
   else if(state.mode==='listening'){ cls='listen'; txt='Te escucho…'; }
   else if(state.mode==='thinking'){ cls='think'; txt='Pensando…'; }
   else if(state.mode==='speaking'){ cls='listen'; txt='Hablando'; }
   else if(stt.on && Date.now()<Ear.convoUntil){ cls='listen'; txt='Te escucho: hablá nomás'; }
   else if(cool>now){ cls='warn'; txt='Sin cupo de Groq · vuelve '+(cool-now<90000?'en un minuto':'a las '+hhmm(new Date(cool))); }
-  else if(sttNoisy()){ txt='Mucho ruido: decí «Friday» más fuerte'; }
+  
   el.className='status '+cls; el.querySelector('span').textContent=txt;
 }
 function pushHist(role, content){ hist.push({role, content:String(content).slice(0,900)}); if(hist.length>12) hist=hist.slice(-12); LS.set('hist',hist); }
@@ -3650,7 +3667,7 @@ function renderHoyTo(box, max, full){
     rows.push(row(e.x, '', `<time>${e.d?(k===0?'Hoy':'Mañ.'):hhmm(e.at)}</time>`, `<span>${esc(e.t)}${sub?`<small>${esc(sub)}</small>`:''}</span>`, e.ic?`<span class="k">${e.ic}</span>`:'<i></i>')); }
   for(const c of cumplesProx().slice(0,full?6:2)) rows.push(row('', '', `<span class="k">${IC.cake}</span>`, `<span>Cumple ${esc(c.n)}</span>`, `<span class="tag">${c.dias===0?'¡hoy!':c.dias===1?'mañana':'en '+c.dias+' días'}</span>`));
   for(const n of notas.slice(full?-8:-2).reverse()) rows.push(row('o:'+n.id, 'note', `<span class="k">${IC.note}</span>`, `<span>${esc(n.t)}</span>`));
-  const html=`<h2>${full?'Lo que viene':'Hoy'}</h2>`+(rows.length?`<div class="list">${rows.slice(0,max).join('')}</div>`:`<p class="empty">Nada anotado. Probá <q>Friday, recordame sacar la basura a las nueve</q>.</p>`);
+  const html=`<h2>${full?'Lo que viene':'Hoy'}</h2>`+(rows.length?`<div class="list">${rows.slice(0,max).join('')}</div>`:`<p class="empty">Nada anotado. Probá <q>Recordame sacar la basura a las nueve</q>.</p>`);
   if(box.dataset.h!==html){ box.dataset.h=html; box.innerHTML=html; }
 }
 function renderCasa(){
@@ -3660,7 +3677,15 @@ function renderCasa(){
   const h=`<h2>Casa<small>${on?on+(on>1?' prendidas':' prendida'):'Todo apagado'}</small></h2><div class="devs">${ds.map(d=>`<button class="dev${devOn(d)?' on':''}${d.online?'':' off'}${casa.busy===d.id?' busy':''}" data-dev="${esc(d.id)}" type="button">${d.tipo==='aspiradora'?IC.robot:d.tipo==='enchufe'?IC.plug:IC.bulb}<span>${esc(d.nombre)}${!d.online?'<small>Sin conexión</small>':d.tipo==='aspiradora'?`<small>${devOn(d)?'Limpiando':'En la base'}</small>`:''}</span></button>`).join('')}</div>`;
   if(el.dataset.h!==h){ el.dataset.h=h; el.innerHTML=h; }
   if(os.cur==='casa') $('winS').textContent=on?on+(on>1?' prendidas':' prendida'):'Todo apagado';
+  renderCtl();
 }
+function renderCtl(){
+  const el=$('ctl'); if(!el) return; const ds=casa.devs.filter(d=>d.online!==false).slice(0,6), on=casa.devs.filter(devOn);
+  const h = ds.length ? ds.map(d=>`<button class="dev${devOn(d)?' on':''}${casa.busy===d.id?' busy':''}" data-dev="${esc(d.id)}" type="button">${(el.querySelector(`[data-dev="${CSS.escape(d.id)}"] svg`)||{}).outerHTML||IC_LUZ}<div><span>${esc(d.nombre)}</span><small>${devOn(d)?'Prendida':'Apagada'}</small></div></button>`).join('') + (on.length?`<button class="todo" type="button" data-ctl="apagar">Apagar todo</button>`:'') : '';
+  if(el.dataset.h!==h){ el.dataset.h=h; el.innerHTML=h; }
+}
+const IC_LUZ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>';
+async function apagarTodo(){ const on=casa.devs.filter(devOn); for(const d of on){ try{ await casaDo(d.nombre, 'apagar'); }catch(e){} } renderCtl(); }
 function renderMus(){
   const m=music.cur || (pcInfo.np ? {src:'pc', title:pcInfo.np.t, artist:pcInfo.np.a, img:pcInfo.np.img, playing:true} : null);
   $('mEmpty').hidden=!!m; $('mBox').hidden=!m; $('ytbox').classList.toggle('on', !!(m && m.src==='youtube'));
@@ -3677,13 +3702,15 @@ function renderMus(){
 }
 function renderShop(){
   const p=compras.filter(x=>!x.h), hh=compras.filter(x=>x.h);
-  const h=`<h2>Para comprar<small>${p.length||''}</small></h2>`+(compras.length?`<div class="shop">${p.map(x=>`<button type="button" data-shop="${esc(x.id)}"><i></i>${esc(x.t)}</button>`).join('')}${hh.slice(0,8).map(x=>`<button type="button" class="ok" data-shop="${esc(x.id)}"><i></i>${esc(x.t)}</button>`).join('')}</div>`:`<p class="empty">Vacía. <q>Friday, agregá leche a la lista</q>.</p>`);
+  const h=`<h2>Para comprar<small>${p.length||''}</small></h2>`+(compras.length?`<div class="shop">${p.map(x=>`<button type="button" data-shop="${esc(x.id)}"><i></i>${esc(x.t)}</button>`).join('')}${hh.slice(0,8).map(x=>`<button type="button" class="ok" data-shop="${esc(x.id)}"><i></i>${esc(x.t)}</button>`).join('')}</div>`:`<p class="empty">Vacía. <q>Agregá leche a la lista</q>.</p>`);
   if($('cShop').dataset.h!==h){ $('cShop').dataset.h=h; $('cShop').innerHTML=h; }
 }
-const HINTS=()=>[timers.length?'Friday, ¿cuánto falta?':'Friday, poné un timer de 10 minutos', casa.devs.length?`Friday, prendé ${(casa.devs.find(d=>d.tipo==='luz')||casa.devs[0]).nombre.toLowerCase()}`:'Friday, ¿va a llover?', 'Friday, poné música de Soda', googleOn()?'Friday, ¿qué tengo hoy?':'Friday, recordame regar las plantas a las 7', 'Friday, agregá yerba a la lista', 'Friday, ¿qué noticias hay?', 'Friday, noticias de deportes'];
+const HINTS=()=>[timers.length?'¿Cuánto falta?':'Poné un timer de 10 minutos', casa.devs.length?`Prendé ${(casa.devs.find(d=>d.tipo==='luz')||casa.devs[0]).nombre.toLowerCase()}`:'¿Va a llover?', 'Poné música de Soda', googleOn()?'¿Qué tengo hoy?':'Recordame regar las plantas a las 7', 'Agregá yerba a la lista', '¿Qué noticias hay?', 'Noticias de deportes'];
 function renderHint(){ const show=!cap.words.length && state.mode==='idle'; const el=$('hint'); if(!show){ if(el.innerHTML) el.innerHTML=''; return; } if(!el.innerHTML) el.innerHTML=HINTS().slice(0,3).map(t=>`<span>«${esc(t)}»</span>`).join(''); }
 document.addEventListener('click', e=>{
   state.lastUser=Date.now();
+  const sg=e.target.closest && e.target.closest('[data-say]'); if(sg){ userSaid(sg.dataset.say, {escrito:true}); return; }
+  if(e.target.closest && e.target.closest('[data-ctl="apagar"]')){ apagarTodo(); return; }
   if(state.amb){ ambOff(); return; }
   const d=e.target.closest && e.target.closest('.dev');
   if(d){ const dev=casa.devs.find(x=>x.id===d.dataset.dev); if(!dev || casa.busy) return; casaDo(dev.nombre, devOn(dev)?'apagar':'prender').then(r=>{ if(!r.ok) toast(r.txt); else faceSet('wink',1200); }); return; }
@@ -3730,7 +3757,7 @@ function setsRender(){
   const ps=Call.peers();
   $('callList').innerHTML = ps.length ? ps.map(p=>`<button type="button" data-call="${esc(p.dev)}">📹 Llamar a ${esc(p.name)}</button>`).join('') : '<p class="note">Todavía no hay otros aparatos unidos: abajo, «Compartir con la compu y el celu».</p>';
   const tr=$('tvRow');
-  if(S.tv && S.tv.screenId) tr.innerHTML=`<div><b>${esc(S.tv.name||'La tele')}</b><small>Vinculada. Decí «Friday, poné Soda Stereo en la tele».</small></div><button class="ghost" type="button" id="tvOff">Desvincular</button>`;
+  if(S.tv && S.tv.screenId) tr.innerHTML=`<div><b>${esc(S.tv.name||'La tele')}</b><small>Vinculada. Escribí «Poné Soda Stereo en la tele».</small></div><button class="ghost" type="button" id="tvOff">Desvincular</button>`;
   else if(!workerOn() || wv<2) tr.innerHTML=`<div><b>La tele</b><small>${!workerOn()?'Necesita el servicio de Cloudflare (se arma desde el celu).':'Hay que actualizar el código del servicio de Cloudflare.'}</small></div>`;
   else tr.innerHTML=`<div><b>La tele</b><small>Con el YouTube de la tele. Si tenés Spotify Premium, también usa Spotify de la tele.</small></div><button class="ghost" type="button" id="tvLink">Vincular la tele</button>`;
   const peer=pcDev(), pcT=peer && FSync.st.peers[peer] ? FSync.st.peers[peer].t : 0;
@@ -3754,7 +3781,7 @@ function micMeter(){
     const full=0.06, T=micThrNow(), lv=Math.min(1,(stt.level||0)/full), th=Math.min(1,T/full);
     $('micLv').style.width=(lv*100).toFixed(1)+'%'; $('micLv').classList.toggle('hot', (stt.level||0)>T); $('micThr').style.left=(th*100).toFixed(1)+'%';
     const LG=(Ear.log||[]).slice(-6).reverse();
-    $('micLast').innerHTML = !stt.on ? 'El micrófono no está andando: tocá «Volver a cargar» y dale permiso.' : LG.length ? LG.map(x=>`${hhmm(new Date(x.at))} · ${esc(x.que)}${x.t?` — «${esc(x.t)}»`:''}`).join('<br>') : 'Todavía no escuché nada. Decí «Friday».';
+    $('micLast').innerHTML = !stt.on ? 'El micrófono no está andando: tocá «Volver a cargar» y dale permiso.' : LG.length ? LG.map(x=>`${hhmm(new Date(x.at))} · ${esc(x.que)}${x.t?` — «${esc(x.t)}»`:''}`).join('<br>') : 'Todavía no escuché nada. Escribí «Friday».';
   }, 120);
 }
 function famRender(){ const f=FAM(); $('famApe').value=f.apellido||''; $('famList').innerHTML=f.miembros.map((m,i)=>`<span class="chip">${esc(m)}<button type="button" data-fdel="${i}" aria-label="Sacar">×</button></span>`).join('') || '<small>Todavía no hay nadie: agregá a cada uno.</small>'; }
@@ -3918,7 +3945,7 @@ function setupUrl(code){ return location.href.replace(/[#?].*$/,'').replace(/[^\
 const SETUP_TXT=$('sTxt') ? $('sTxt').innerHTML : '';
 // mode 'link': unir la tablet al grupo de la compu y el celu (así comparten agenda, compras, recordatorios, notas…)
 function setupShow(force, mode){
-  setupShow.force=!!force; setupShow.mode=mode||''; $('sClose').hidden=!force;
+  setupShow.force=!!force; setupShow.mode=mode||''; $('sClose').hidden=false; $('sClose').textContent=force?'Cancelar':'Ahora no: usarla así';
   $('setup').hidden=false; $('tap').hidden=true;
   let inv=LS.get('invite',null); if(!inv || Date.now()-inv.at>20*60000){ inv={c:FSync.newInvite(), at:Date.now()}; LS.set('invite',inv); }
   const url=setupUrl(inv.c), code=inv.c.replace(/(.{4})(?=.)/,'$1-');
@@ -3944,8 +3971,10 @@ function sharePeers(){
   for(const [d,p] of ps){ const k=FSync.kindOf(d); if(k==='pc') { if(!out.pc || p.t>out.pc.t) out.pc=p; } else if(k==='celu') out.cel.push(p); }
   return out;
 }
+$('escr').addEventListener('submit', e=>{ e.preventDefault(); const i=$('escrIn'), t=i.value.trim(); if(!t) return; i.value=''; i.blur(); if(!state.started){ try{ start(); }catch(x){} } userSaid(t, {escrito:true}); });
+$('sClose').addEventListener('click', ()=>{ if(setupShow.force){ $('setup').hidden=true; setupShow.force=false; return; } LS.set('sinVincular', true); $('setup').hidden=true; if(!state.started) $('tap').hidden=false; });
 function setupCheck(){
-  if(!S.groqKey && !S.gemKey){ setupShow(); return false; }
+  if(!FSync.on() && !LS.get('sinVincular',false) && !setupShow.force){ setupShow(); return false; }
   if(!$('setup').hidden){ $('setup').hidden=true; setupShow.force=false; if(!state.started) $('tap').hidden=false; }
   return true;
 }
@@ -3964,14 +3993,14 @@ async function start(){
 // el buen día: armado acá mismo (rápido y sin gastar el cerebro)
 function greet(){
   const today=todayISO(), h=new Date().getHours();
-  if(LS.get('greet','')===today || h<6){ say(conFam('Hola')+'. Cuando me necesiten, digan «Friday».', 'happy'); tts.noFollow=true; return; }
+  if(LS.get('greet','')===today || h<6){ say(conFam('Hola')+'. Escríbanme acá abajo o háblenme desde FRIDAY en el celu.', 'happy'); tts.noFollow=true; return; }
   LS.set('greet', today);
   const w=weather.data, parts=[conFam(h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+'.'];
   if(w) parts.push(`En ${S.city||'la ciudad'} hay ${w.temp} grados, ${WMO_LARGO(w.code)}; hoy entre ${w.min} y ${w.max}${w.rainP>=40?', y puede llover':''}.`);
   const ev=gapp.ev.filter(e=>String(e.i).startsWith(today)); if(ev.length) parts.push('En la agenda: '+ev.slice(0,3).map(e=>e.d?e.t:`a las ${hhmm(new Date(e.i))}, ${e.t}`).join('; ')+'.');
   const cs=cumplesProx().filter(c=>c.dias===0); if(cs.length) parts.push(`Hoy cumple ${listaY(cs.map(c=>c.n))}.`);
   const sd=segDue()[0]; if(sd){ parts.push(sd.q.charAt(0).toUpperCase()+sd.q.slice(1)+(/[?]$/.test(sd.q)?'':'?')); sd.done=true; sd.doneAt=Date.now(); segSave(); }
-  else parts.push('Cuando me necesiten, digan «Friday».');
+  else parts.push('Escríbanme acá abajo o háblenme desde el celu.');
   say(parts.join(' '), 'happy'); if(!sd) tts.noFollow=true;
 }
 // ================================================================ FRIDAY OS (by BUFALABS)
@@ -4033,7 +4062,7 @@ function renderApps(){
   $('mini').hidden=!m;
   if(m){ $('miniT').textContent=m.title||''; $('miniA').textContent=(m.artist?m.artist+' · ':'')+({youtube:'en la tablet', tele:'en la tele', spotify:'Spotify', pc:'en la compu'}[m.src]||''); $('miniArt').style.backgroundImage=m.img?`url("${m.img}")`:'';
     const k=m.playing===false?'play':'pause'; if($('miniPP').dataset.k!==k){ $('miniPP').dataset.k=k; $('miniPP').innerHTML=OSI[k]; } $('miniPP').hidden=m.src==='pc'; }
-  const tp=$('tips'); if(tp && !tp.dataset.at || Date.now()-(+tp.dataset.at||0)>40000){ tp.dataset.at=Date.now(); const hs=HINTS(); const k=Math.floor(Date.now()/40000)%hs.length; tp.innerHTML=[hs[k], hs[(k+2)%hs.length]].map(t=>`<span>«${esc(t)}»</span>`).join(''); }
+  const tp=$('tips'); if(tp && !tp.dataset.at || Date.now()-(+tp.dataset.at||0)>40000){ tp.dataset.at=Date.now(); const hs=HINTS(); const k=Math.floor(Date.now()/40000)%hs.length; tp.innerHTML=[hs[k], hs[(k+2)%hs.length]].map(t=>`<button type="button" data-say="${esc(t)}">«${esc(t)}»</button>`).join(''); }
 }
 // abrir una app (a mano o porque FRIDAY está haciendo algo de eso)
 function osOpen(id, opt){
@@ -4095,7 +4124,7 @@ function renderMusCtl(){
 // ---------------------------------------------------------------- llamar
 function renderLlamar(){
   const ps=Call.peers();
-  const html=`<h3>¿A quién llamamos?</h3><p class="lbl">También podés decir «Friday, llamá a la compu» (o «llamá a la compu por voz», sin cámara).</p>`+(ps.length?`<div class="people">${ps.map(p=>{ const on=Date.now()-p.t<25*60000; return `<div class="person"><span class="av">${esc((p.name.replace(/^(la|el) /i,'')[0]||'?').toUpperCase())}</span><span><b>${esc(p.name)}</b><br><small class="${on?'on':''}">${on?'En línea':'Visto '+(p.t?cuandoVisto(p.t):'hace rato')}</small></span><div class="pact"><button type="button" data-call="${esc(p.dev)}">${OSI.llamar} Videollamada</button><button type="button" class="v2" data-callv="${esc(p.dev)}">Solo voz</button></div></div>`; }).join('')}</div>`:`<div class="callempty"><span class="ce-ic">${OSI.llamar}</span><b>Todavía no hay otros aparatos unidos</b><p>Uní la compu o un celu y vas a poder llamarlos con video o solo voz, o decir «Friday, llamá a la compu».</p><button class="nbtn green" type="button" data-golink>Compartir con la compu y el celu</button></div>`);
+  const html=`<h3>¿A quién llamamos?</h3><p class="lbl">También podés escribir «Llamá a la compu» (o «llamá a la compu por voz», sin cámara).</p>`+(ps.length?`<div class="people">${ps.map(p=>{ const on=Date.now()-p.t<25*60000; return `<div class="person"><span class="av">${esc((p.name.replace(/^(la|el) /i,'')[0]||'?').toUpperCase())}</span><span><b>${esc(p.name)}</b><br><small class="${on?'on':''}">${on?'En línea':'Visto '+(p.t?cuandoVisto(p.t):'hace rato')}</small></span><div class="pact"><button type="button" data-call="${esc(p.dev)}">${OSI.llamar} Videollamada</button><button type="button" class="v2" data-callv="${esc(p.dev)}">Solo voz</button></div></div>`; }).join('')}</div>`:`<div class="callempty"><span class="ce-ic">${OSI.llamar}</span><b>Todavía no hay otros aparatos unidos</b><p>Uní la compu o un celu y vas a poder llamarlos con video o solo voz, o decir «Llamá a la compu».</p><button class="nbtn green" type="button" data-golink>Compartir con la compu y el celu</button></div>`);
   const el=$('pLlamar'); if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
 }
 // ---------------------------------------------------------------- intercom: un mensaje que se dice en voz alta en otro aparato
@@ -4144,7 +4173,7 @@ function estStart(tema, totalMin, tandaMin){
 }
 function estPausa(on){
   if(!est.on) return;
-  if(on && !est.pausado){ est.pausado=Date.now(); say('Pausé el estudio. Decí «seguimos» cuando vuelvas.'); }
+  if(on && !est.pausado){ est.pausado=Date.now(); say('Pausé el estudio. Escribí «seguimos» cuando vuelvas.'); }
   else if(!on && est.pausado){ const d=Date.now()-est.pausado; est.faseFin+=d; if(est.fin) est.fin+=d; est.pausado=0; say('¡Seguimos con '+est.tema+'!', 'happy'); }
   estSave(); renderEst();
 }
@@ -4177,7 +4206,7 @@ function estTick(){
 const quiz={ on:false, list:[], i:0, ok:0, fromPausa:false };
 function quizStart(tema){
   const l=fichasHoy(tema); const all=l.length?l:(tema?fichas.filter(f=>norm(f.tema||'').includes(norm(tema))):[]);
-  if(!all.length) return fichas.length ? `No hay fichas para repasar hoy${tema?' de '+tema:''}. ¿Hago fichas nuevas? Decí «hacé fichas de» y el tema.` : 'Todavía no hay fichas. Decí «Friday, hacé fichas de» y el tema, o estudiá con la compu y las armo solas.';
+  if(!all.length) return fichas.length ? `No hay fichas para repasar hoy${tema?' de '+tema:''}. ¿Hago fichas nuevas? Escribí «hacé fichas de» y el tema.` : 'Todavía no hay fichas. Escribí «Hacé fichas de» y el tema, o estudiá con la compu y las armo solas.';
   quiz.list=all.slice(0,10); quiz.i=0; quiz.ok=0; quiz.on=true; quiz.fromPausa=false; Ear.convoUntil=Date.now()+20000;
   return `Dale, son ${quiz.list.length}. Primera: ${quiz.list[0].q}`;
 }
@@ -4203,13 +4232,13 @@ function renderEst(){
     ring=`<div class="ring${est.fase==='pausa'?' pausa':''}"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" class="bg"/><circle cx="50" cy="50" r="45" class="fg" style="stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-left/tot)).toFixed(1)}"/></svg><div><b>${Math.floor(s/60)}:${z2(s%60)}</b><span>${est.pausado?'En pausa':est.fase==='foco'?'Tanda '+est.ciclo:'Pausa'}</span><small>${esc(est.tema)}</small></div></div>
       <div class="estbtns">${est.pausado?'<button class="big-btn" type="button" data-est="seguir">Seguir</button>':'<button class="big-btn alt" type="button" data-est="pausa">Pausa</button>'}<button class="big-btn red" type="button" data-est="fin">Terminar</button></div>`; }
   else ring=`<div class="ring"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" class="bg"/></svg><div><b>25:00</b><span>Tandas de 25 y pausas de 5</span></div></div>
-      <div class="estbtns"><button class="big-btn" type="button" data-est="start" style="background:#A78BFA">Empezar a estudiar</button></div><p class="lbl" style="text-align:center;margin-top:14px">O decí «Friday, modo estudio de historia».</p>`;
+      <div class="estbtns"><button class="big-btn" type="button" data-est="start" style="background:#A78BFA">Empezar a estudiar</button></div><p class="lbl" style="text-align:center;margin-top:14px">O escribí «Modo estudio de historia».</p>`;
   const hoy=fichasHoy(), f=hoy[0], dias=LS.get('estDias',[]);
   let racha=0; { const d=new Date(); if(!dias.includes(isoLocal(d).slice(0,10))) d.setDate(d.getDate()-1); while(dias.includes(isoLocal(d).slice(0,10))){ racha++; d.setDate(d.getDate()-1); } }
   const right=`<h3>Fichas</h3><div class="estnum"><div><b>${hoy.length}</b><span>para repasar hoy</span></div><div><b>${fichas.length}</b><span>en total</span></div><div><b>${racha}</b><span>${racha===1?'día seguido':'días seguidos'}</span></div></div>
     ${f?`<div class="flash" id="flash" data-f="${esc(f.id)}"><small>${esc(f.tema||'Ficha')} · tocá para ver la respuesta</small><p>${esc(f.q)}</p><div class="ans" hidden>${esc(f.a)}</div></div>
       <div class="estbtns"><button class="big-btn alt" type="button" data-fm="mal">No la sabía</button><button class="big-btn" type="button" data-fm="bien" style="background:var(--leaf)">La sabía</button><button class="big-btn alt" type="button" data-est="quiz">Tomámelas en voz alta</button></div>`
-      :`<p class="empty">${fichas.length?'¡Al día! No hay fichas para hoy.':'Todavía no hay fichas.'} Decí <q>Friday, hacé fichas de la Revolución de Mayo</q>. Cuando estudiás en la compu, FRIDAY arma fichas sola con lo que vio.</p>`}`;
+      :`<p class="empty">${fichas.length?'¡Al día! No hay fichas para hoy.':'Todavía no hay fichas.'} Decí <q>Hacé fichas de la Revolución de Mayo</q>. Cuando estudiás en la compu, FRIDAY arma fichas sola con lo que vio.</p>`}`;
   const html=`<div class="cols"><div class="box">${ring}</div><div>${right}</div></div>`;
   if(el.dataset.h!==html){ const keep=el.querySelector('.ans:not([hidden])')&&f&&el.querySelector('#flash')&&el.querySelector('#flash').dataset.f===f.id; el.dataset.h=html; el.innerHTML=html; if(keep) el.querySelector('.ans').hidden=false; }
 }
@@ -4235,7 +4264,7 @@ function renderPrecios(){
   const el=$('pPrecios'); if(!el) return;
   const ws=precios.map(p=>{ const h=p.hist||[], d=h.length>1?h[h.length-1][1]-h[h.length-2][1]:0;
     return `<div class="watch"><b>${esc(p.title||p.q)}</b><span class="p">${p.last?fmtP(p.last):'…'}</span><small>${p.max?'Aviso si baja de '+fmtP(p.max):'Aviso si baja'}${p.min&&p.min<p.last?' · el más bajo: '+fmtP(p.min):''}</small><small class="${d<0?'dn':d>0?'up':''}">${d<0?'▼ bajó '+fmtP(-d):d>0?'▲ subió '+fmtP(d):p.at?'Revisado '+hhmm(new Date(p.at)):'Lo revisa la compu'}</small></div>`; }).join('');
-  const html=`<div class="box"><h3>Precios que sigo</h3>${ws||'<p class="empty">Ninguno. Decí <q>Friday, seguí el precio de las zapatillas Nike Revolution y avisame si bajan de 80 mil</q>.</p>'}</div>`
+  const html=`<div class="box"><h3>Precios que sigo</h3>${ws||'<p class="empty">Ninguno. Decí <q>Seguí el precio de las zapatillas Nike Revolution y avisame si bajan de 80 mil</q>.</p>'}</div>`
     +(mlLast.items.length?`<div class="box" style="margin-top:16px"><h3>Mercado Libre: ${esc(mlLast.q)}</h3><div class="mlres">${mlLast.items.slice(0,6).map(x=>`<a href="${esc(x.url)}" target="_blank" rel="noopener"><i${x.image?` style="background-image:url('${esc(x.image)}')"`:' class="noimg"'}></i><b>${fmtP(x.price)||'—'}</b><span>${esc(x.title)}</span>${x.envio_gratis?'<small style="color:var(--leaf)">Envío gratis</small>':''}</a>`).join('')}</div></div>`:'');
   if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
 }
@@ -4317,7 +4346,7 @@ function osFast(text, nf){
   if(/\b(toma(me|nos)?|repasemos|repasar) (las )?fichas\b/.test(nf)){ const tm=(nf.match(/fichas de (.+)$/)||[])[1]; osOpen('estudio',{auto:true}); sayFast(text, quizStart(tm), 'happy'); return true; }
   const fm=nf.match(/^(?:friday )?(?:hace|hacé|arma|armame|haceme|hacenos|preparame|crea|creame)\w* (?:unas |algunas )?(?:(\d+) )?fichas (?:de|sobre|para) (.+)$/);
   if(fm){ const tema=(String(text).match(/fichas\s+(?:de|sobre|para)\s+(.+?)[.!?\s]*$/i)||[])[1]||fm[2]; pushHist('user', text); setMode('thinking'); focusCard('estudio');
-    fichasCrear(tema, fm[1]).then(n=>{ setMode('idle'); say(n?`Listo, armé ${n} fichas de ${tema}. Cuando quieras, decí «tomame las fichas».`:'No pude armar las fichas. ¿Probamos de nuevo?', n?'happy':'worried'); }); return true; }
+    fichasCrear(tema, fm[1]).then(n=>{ setMode('idle'); say(n?`Listo, armé ${n} fichas de ${tema}. Cuando quieras, escribí «tomame las fichas».`:'No pude armar las fichas. ¿Probamos de nuevo?', n?'happy':'worried'); }); return true; }
   // Mercado Libre: se busca de verdad antes de contestar (nunca inventa)
   if(/\b(mercado ?libre|meli)\b/.test(nf) && pcDev() && !/\b(segui|seguime|avisame si baja)\b/.test(nf)){
     const q=nf.replace(/\b(che|friday|dale|hola|por favor|porfa|buscame|busca|buscar|busques|fijate|fijame|mira|mirame|averigua|averiguame|quiero|necesito|comprar|compraria|que|cuanto|cuantos|sale|salen|cuesta|cuestan|esta|estan|hay|precio|precios|de|del|el|la|los|las|un|una|unos|unas|en|por|para|me|mas|barato|baratos|barata|baratas|economico|economicos|mercado ?libre|meli|publicaciones|opciones|algo|algun|alguna|si)\b/g,' ').replace(/\s+/g,' ').trim();
@@ -4360,10 +4389,10 @@ document.addEventListener('click', e=>{
   const pd=t.closest('[data-protodel]'); if(pd){ protos=protos.filter(x=>x.id!==pd.dataset.protodel); protoSave(); renderProto(); toast('Protocolo borrado'); return; }
   const gd=t.closest('[data-guardia]'); if(gd){ guardiaSet(gd.dataset.guardia==='on'); return; }
   const cp=t.closest('[data-compu]'); if(cp){ const q=cp.dataset.compu; if(q==='pantalla'){ compuPantalla().then(ok=>{ if(!ok) toast('La compu no mandó la pantalla'); }); return; }
-    if(q==='apagar'){ ofrecer('apagar compu', ()=>compuHacer('apagar','',+cp.dataset.min||30).then(r=>say(r.ok?`Listo: la compu se apaga en ${+cp.dataset.min||30} minutos.`:r.txt))); say(`¿Seguro que apago la compu en ${+cp.dataset.min||30} minutos? Decí «sí».`, 'surprised'); Ear.convoUntil=Date.now()+20000; return; }
+    if(q==='apagar'){ ofrecer('apagar compu', ()=>compuHacer('apagar','',+cp.dataset.min||30).then(r=>say(r.ok?`Listo: la compu se apaga en ${+cp.dataset.min||30} minutos.`:r.txt))); say(`¿Seguro que apago la compu en ${+cp.dataset.min||30} minutos? Escribí «sí».`, 'surprised'); Ear.convoUntil=Date.now()+20000; return; }
     compuHacer(q, cp.dataset.v||'', 0).then(r=>toast(r.txt)); return; }
   if(t.closest('#shopAdd')){ const v=$('shopIn').value.trim(); if(v){ shopAdd(v.split(/,|;/).map(s=>s.trim()).filter(Boolean)); $('shopIn').value=''; } return; }
-  if(t.closest('#dock')){ escuchaYa(); return; }
+  if(t.closest('#dock')){ if(!t.closest('#escr')) $('escrIn').focus(); return; }
   if(t.closest('#talk') && !t.closest('#face')){ os.talkHide=true; talkSync(); return; }
 }, true);
 document.addEventListener('keydown', e=>{ if(e.key==='Enter' && e.target && e.target.id==='shopIn'){ $('shopAdd').click(); } });
@@ -4434,7 +4463,7 @@ function renderNoti(){
   else if(noti.busy) body='<p class="empty">Trayendo las noticias…</p>';
   else if(!noti.items.length) body=`<p class="empty">${noti.err?'No pude traer las noticias ('+esc(noti.err)+'). Probá en un rato.':'No hay noticias de esto en los últimos días.'}</p>`;
   else { const [h, ...rest]=noti.items;
-    body=`<div class="ntop"><button class="nbtn" type="button" data-nleer>${OSI.play} Ver el noticiero</button><small>FRIDAY te las lee como en la tele · tocá una y te la cuenta · o decí «contame la segunda»</small></div>
+    body=`<div class="ntop"><button class="nbtn" type="button" data-nleer>${OSI.play} Ver el noticiero</button><small>FRIDAY te las lee como en la tele · tocá una y te la cuenta · o escribí «contame la segunda»</small></div>
     <div class="nmag"><button type="button" class="nhero${h.img?'':' noimg'}" data-nit="0"${h.img?` style="--img:url('${esc(h.img)}')"`:''}><span class="nk">1 · ${meta(h)}</span><b>${esc(h.t)}</b>${h.d?`<small>${esc(h.d)}</small>`:''}</button>
     <ol class="nlist">${rest.map((x,i)=>`<li><button type="button" data-nit="${i+1}">${foto(x,'nth')}<span><b><em>${i+2}</em>${esc(x.t)}</b><small>${meta(x)}</small></span></button></li>`).join('')}</ol></div>`; }
   const html=`<div class="chips ncats">${cats}</div>${body}`; if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; } }
@@ -4521,7 +4550,7 @@ function renderAgenda(){
   for(const x of its.slice(0,30)){ const [dn, dd]=diaTxt(x.at); if(dn!==dia){ dia=dn; tl+=`<h4>${esc(dn)} <small>${esc(dd)}</small></h4>`; }
     const sub=[x.sub, x.tipo!=='evento'?TIPO[x.tipo]:''].filter(Boolean).join(' · '), nx=x===prox && !x.d;
     tl+=`<div class="agev t-${x.tipo}${nx?' next':''}${x.x&&x.x===ask?' ask':''}"${x.x?` data-x="${esc(x.x)}"`:''}><time>${x.d?'Todo el día':hhmm(x.at)}</time><span class="agbar"></span><span class="tx"><b>${esc(x.t)}</b>${sub?`<small>${esc(sub)}</small>`:''}</span>${x.x&&x.x===ask?`<button class="del" type="button" data-del="${esc(x.x)}">Borrar</button>`:nx?`<em>${enCuanto(x.at)}</em>`:''}</div>`; }
-  if(!tl) tl=`<p class="empty">No hay nada en los próximos 14 días. Probá <q>Friday, recordame sacar la basura a las nueve</q>${googleOn()?'':' o conectá Google desde el celu'}.</p>`;
+  if(!tl) tl=`<p class="empty">No hay nada en los próximos 14 días. Probá <q>Recordame sacar la basura a las nueve</q>${googleOn()?'':' o conectá Google desde el celu'}.</p>`;
   // el mes, con puntitos en los días que tienen algo
   const now=new Date(), y=now.getFullYear(), mo=now.getMonth(), first=new Date(y,mo,1), dim=new Date(y,mo+1,0).getDate(), lead=(first.getDay()+6)%7;
   const con=new Set(its.filter(x=>x.at.getMonth()===mo).map(x=>x.at.getDate()));
@@ -4530,7 +4559,7 @@ function renderAgenda(){
   const side=`<aside class="agside">${prox?`<div class="agnext t-${prox.tipo}"><small>Lo próximo</small><b>${esc(prox.t)}</b><span>${esc(diaTxt(prox.at)[0])}${prox.d?'':' a las '+hhmm(prox.at)}${prox.sub?' · '+esc(prox.sub):''}</span>${!prox.d?`<em>${enCuanto(prox.at)}</em>`:''}</div>`:''}
     <div class="agcal"><h5>${esc(mes.charAt(0).toUpperCase()+mes.slice(1))}</h5><div class="cg">${['L','M','M','J','V','S','D'].map(d=>`<b>${d}</b>`).join('')}${cal}</div></div>
     ${notas.length?`<div class="agnotes"><h5>Notas</h5>${notas.slice(-4).reverse().map(n=>`<p data-x="o:${esc(n.id)}" class="agnote${('o:'+n.id)===ask?' ask':''}">${esc(n.t)}${('o:'+n.id)===ask?`<button class="del" type="button" data-del="o:${esc(n.id)}">Borrar</button>`:''}</p>`).join('')}</div>`:''}
-    <p class="aghint">Decí <q>Friday, ¿qué tengo mañana?</q> o <q>anotá el turno del médico el jueves a las 10</q>. Tocá algo para borrarlo.</p></aside>`;
+    <p class="aghint">Decí <q>¿Qué tengo mañana?</q> o <q>anotá el turno del médico el jueves a las 10</q>. Tocá algo para borrarlo.</p></aside>`;
   const html=`<div class="agw"><div class="agtl">${tl}</div>${side}</div>`;
   if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
   if(os.cur==='agenda') $('winS').textContent=prox?`Lo próximo: ${prox.t}${prox.d?'':' · '+enCuanto(prox.at)}`:''; }
@@ -4549,7 +4578,7 @@ function renderIcom(){
     <button class="talkbtn${state.icomTo?' rec':''}" type="button" id="icTalk" aria-label="Hablar">${OSI.mic}</button>
     <p class="talkcap">${state.icomTo?'Te escucho: decí el mensaje…':`Tocá y decí el mensaje: se escucha en voz alta en ${esc((ts.find(t=>t.dev===cur)||{name:'todos'}).name.toLowerCase().replace(/^todos$/,'todos los aparatos'))}.`}</p>
     <div class="chips frases">${ICOM_FRASES.map(f=>`<button type="button" data-icf="${esc(f)}">${esc(f)}</button>`).join('')}</div></div>
-    <div class="icchat"><h3>Mensajes</h3>${chat?`<div class="chat" id="icChat">${chat}</div>`:`<p class="empty">Todavía no hay mensajes. También por voz: <q>Friday, avisale a la compu que la comida está lista</q>.</p>`}</div></div>`;
+    <div class="icchat"><h3>Mensajes</h3>${chat?`<div class="chat" id="icChat">${chat}</div>`:`<p class="empty">Todavía no hay mensajes. También por voz: <q>Avisale a la compu que la comida está lista</q>.</p>`}</div></div>`;
   const el=$('pIcom'); if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; const c=$('icChat'); if(c) c.scrollTop=c.scrollHeight; } }
 // ================================================================ FRIDAY OS (fin)
 
@@ -4839,14 +4868,14 @@ async function cocinaStart(plato, porciones){
   cocina={titulo:r.titulo||plato, base:r.porciones||4, porciones:pr||r.porciones||4, tiempo:r.tiempo||'', ingredientes:(r.ingredientes||[]).map(x=>({c:x.c||'', n:x.n||String(x), ok:false})), pasos:r.pasos.map(p=>({t:p.t||String(p), min:+p.min||0})), i:-1};
   cocSave(); osOpen('cocina');
   const ing=cocina.ingredientes.slice(0,7).map(x=>x.n.toLowerCase());
-  say(`¡Dale! ${cocina.titulo} para ${cocina.porciones}${cocina.tiempo?', más o menos '+cocina.tiempo:''}. Vas a necesitar ${listaY(ing)}${cocina.ingredientes.length>7?' y un par de cosas más que tenés en la pantalla':''}. Cuando tengas todo, decí «empezamos».`, 'excited');
+  say(`¡Dale! ${cocina.titulo} para ${cocina.porciones}${cocina.tiempo?', más o menos '+cocina.tiempo:''}. Vas a necesitar ${listaY(ing)}${cocina.ingredientes.length>7?' y un par de cosas más que tenés en la pantalla':''}. Cuando tengas todo, escribí «empezamos».`, 'excited');
   cocOye();
 }
 function cocOye(extra){ const ms=Math.min(30000, 9000+((tts.shown||'').length*65)+(extra||0)); Ear.convoUntil=Date.now()+ms; }
 function cocPaso(i, decir){
   if(!cocina) return; i=Math.max(0, Math.min(cocina.pasos.length-1, i)); cocina.i=i; cocSave(); renderCocina();
   const p=cocina.pasos[i], ult=i===cocina.pasos.length-1;
-  if(decir!==false) say(`Paso ${i+1}${ult?', el último':''}: ${cantEscala(p.t, cocina.porciones/cocina.base)}${p.min?` Cuando lo pongas, decí «timer» y te aviso a los ${durTxt(p.min*60)}.`:''}`, 'happy');
+  if(decir!==false) say(`Paso ${i+1}${ult?', el último':''}: ${cantEscala(p.t, cocina.porciones/cocina.base)}${p.min?` Cuando lo pongas, escribí «timer» y te aviso a los ${durTxt(p.min*60)}.`:''}`, 'happy');
   cocOye();
 }
 function cocTimer(){ if(!cocina || cocina.i<0) return 'Todavía no empezamos.'; const p=cocina.pasos[cocina.i]; if(!p.min) return 'Este paso no tiene tiempo de espera.'; addTimer(p.min*60, cocina.titulo.split(' ').slice(0,3).join(' ').toLowerCase()); return `Listo, te aviso en ${durTxt(p.min*60)}.`; }
@@ -4867,12 +4896,12 @@ function cocinaIngredientes(){ if(!cocina) return; const k=cocina.porciones/coci
 function renderCocina(){
   const el=$('pCoc'); if(!el) return;
   let html;
-  if(!cocina){ html=`<div class="cols"><div><h3>¿Qué cocinamos?</h3><p class="lbl">Decí <q>Friday, ¿cómo hago milanesas?</q> y te la dicto paso a paso, sin tocar la pantalla: «siguiente», «repetí», «timer», «para 6 personas».</p><div class="chips">${['Milanesas al horno','Fideos con tuco','Tarta de jamón y queso','Torta de banana','Guiso de lentejas','Panqueques'].map(x=>`<button type="button" data-coc="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>
+  if(!cocina){ html=`<div class="cols"><div><h3>¿Qué cocinamos?</h3><p class="lbl">Decí <q>¿Cómo hago milanesas?</q> y te la dicto paso a paso, sin tocar la pantalla: «siguiente», «repetí», «timer», «para 6 personas».</p><div class="chips">${['Milanesas al horno','Fideos con tuco','Tarta de jamón y queso','Torta de banana','Guiso de lentejas','Panqueques'].map(x=>`<button type="button" data-coc="${esc(x)}">${esc(x)}</button>`).join('')}</div></div>
       <div><h3>Las que ya hicimos</h3>${recetas.length?`<div class="chips">${recetas.map(r=>`<button type="button" data-coc="${esc(r.titulo)}">${esc(r.titulo)}</button>`).join('')}</div>`:'<p class="empty">Todavía ninguna. Cada receta que terminen queda acá.</p>'}</div></div>`; }
   else { const k=cocina.porciones/cocina.base, p=cocina.i>=0?cocina.pasos[cocina.i]:null;
     html=`<div class="coc"><div class="box"><h3>${esc(cocina.titulo)}</h3><div class="porc"><button type="button" data-porc="-1" aria-label="Menos">−</button><b>${cocina.porciones}</b><span>porciones</span><button type="button" data-porc="1" aria-label="Más">+</button></div>
       <div class="ings">${cocina.ingredientes.map((x,i)=>`<button type="button" class="${x.ok?'ok':''}" data-ing="${i}"><i></i><span><b>${esc(cantEscala(x.c,k))}</b> ${esc(x.n)}</span></button>`).join('')}</div></div>
-      <div class="paso">${p?`<small>Paso ${cocina.i+1} de ${cocina.pasos.length}</small><p>${esc(cantEscala(p.t,k))}</p>${p.min?`<button class="big-btn" type="button" data-cocx="timer" style="background:#A3E635;color:#132003">⏱ Timer de ${durTxt(p.min*60)}</button>`:''}`:`<small>Cuando tengas todo</small><p>Decí «empezamos» o tocá «Empezar».</p>`}
+      <div class="paso">${p?`<small>Paso ${cocina.i+1} de ${cocina.pasos.length}</small><p>${esc(cantEscala(p.t,k))}</p>${p.min?`<button class="big-btn" type="button" data-cocx="timer" style="background:#A3E635;color:#132003">⏱ Timer de ${durTxt(p.min*60)}</button>`:''}`:`<small>Cuando tengas todo</small><p>Escribí «empezamos» o tocá «Empezar».</p>`}
       <div class="pnav"><button class="big-btn alt" type="button" data-cocx="ant"${!p||cocina.i===0?' disabled':''}>◀ Anterior</button><button class="big-btn alt" type="button" data-cocx="rep">Repetir</button><button class="big-btn" type="button" data-cocx="sig">${!p?'Empezar':cocina.i>=cocina.pasos.length-1?'Terminar':'Siguiente ▶'}</button></div>
       <div class="pbar">${cocina.pasos.map((_,i)=>`<i class="${i<cocina.i?'d':i===cocina.i?'c':''}"></i>`).join('')}</div></div></div>`; }
   if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
@@ -4919,7 +4948,7 @@ function tareasFast(text, nf){
 }
 function renderTareas(){
   const el=$('pTar'); if(!el) return; const hoy=tareasHoy(), p=puntosSemana(), max=Math.max(1,...p.map(x=>x[1]));
-  const html=`<div class="cols"><div><h3>Hoy</h3>${hoy.length?`<div class="tars">${hoy.map(t=>{ const q=tareaTurno(t); return `<div class="tar"><span class="av">${esc((q||'?')[0])}</span><div><b>${esc(t.t)}</b><small>${q?'Le toca a '+esc(q):'Cualquiera'}${t.hora?' · '+t.hora:''} · ${t.pts} puntos</small></div><button class="big-btn" type="button" data-tdone="${esc(t.id)}" style="background:#FACC15;color:#1f1802">Hecha</button></div>`; }).join('')}</div>`:`<p class="empty">${tareas.length?'¡Todo hecho por hoy! 🎉':'Todavía no hay tareas. Decí <q>Friday, agregá la tarea lavar los platos todos los días a las 21, entre Sofi y Pedro</q>.'}</p>`}
+  const html=`<div class="cols"><div><h3>Hoy</h3>${hoy.length?`<div class="tars">${hoy.map(t=>{ const q=tareaTurno(t); return `<div class="tar"><span class="av">${esc((q||'?')[0])}</span><div><b>${esc(t.t)}</b><small>${q?'Le toca a '+esc(q):'Cualquiera'}${t.hora?' · '+t.hora:''} · ${t.pts} puntos</small></div><button class="big-btn" type="button" data-tdone="${esc(t.id)}" style="background:#FACC15;color:#1f1802">Hecha</button></div>`; }).join('')}</div>`:`<p class="empty">${tareas.length?'¡Todo hecho por hoy! 🎉':'Todavía no hay tareas. Decí <q>Agregá la tarea lavar los platos todos los días a las 21, entre Sofi y Pedro</q>.'}</p>`}
       ${tareas.length?`<h3 style="margin-top:22px">Todas</h3><div class="tall">${tareas.map(t=>`<div class="trow"><span>${esc(t.t)}</span><small>${esc(t.cada||'diaria')}${t.hora?' '+t.hora:''}${t.rota&&t.rota.length?' · '+esc(t.rota.join(', ')):''}</small><button type="button" data-tdel="${esc(t.id)}" aria-label="Borrar">×</button></div>`).join('')}</div>`:''}</div>
     <div class="box"><h3>Puntos de la semana</h3>${p.length?`<div class="podio">${p.map(([n,v],i)=>`<div class="pod${i===0?' gold':''}"><span>${i===0?'👑':''}${esc(n)}</span><i style="width:${Math.round(v/max*100)}%"></i><b>${v}</b></div>`).join('')}</div>`:'<p class="empty">Nadie sumó todavía esta semana. Cada tarea hecha suma puntos; si hacés la de otro, ¡5 de yapa! El domingo se anuncia quién ganó.</p>'}</div></div>`;
   if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
@@ -5091,13 +5120,13 @@ function protoFast(text, nf){
   const n=nf.replace(/^(che |dale |bueno |friday )+/,'');
   if(/\bmodo (cielo|noche|estudio|cocina|demo)\b/.test(n)) return false;   // esos son otra cosa
   let m=n.match(/^(?:activa(?:r|me)?|corre(?:r)?|inicia(?:r)?|ejecuta(?:r)?|arranca(?:r)?|pone(?:me)?|lanza(?:r)?)(?: el| la)? (?:protocolo|modo) (.+)$/) || n.match(/^(?:protocolo|modo) (.+)$/);
-  if(m){ const p=protoFind(m[1]); if(p){ pushHist('user', text); protoRun(p); return true; } if(/protocolo/.test(n)){ sayFast(text, `No tengo un protocolo «${m[1]}». Si querés lo armamos: decí «Friday, creá el protocolo ${m[1]}: …» y lo que tiene que hacer.`, 'confused'); return true; } return false; }
+  if(m){ const p=protoFind(m[1]); if(p){ pushHist('user', text); protoRun(p); return true; } if(/protocolo/.test(n)){ sayFast(text, `No tengo un protocolo «${m[1]}». Si querés lo armamos: escribí «Creá el protocolo ${m[1]}: …» y lo que tiene que hacer.`, 'confused'); return true; } return false; }
   const p=protos.find(x=>(x.dice||[]).some(d=>norm(d)===n)); if(p){ pushHist('user', text); protoRun(p); return true; }
   m=String(text).match(/^(?:friday,?\s*)?(?:cre[aá](?:me)?|arm[aá](?:me)?|hac[eé](?:me)?|agreg[aá]|nuevo)\s+(?:un |el )?protocolo\s+(.+)$/i);
   if(m){ pushHist('user', text); protoCrear(m[1]); return true; }
   m=n.match(/^(?:borra|elimina|saca)(?:me)? el protocolo (.+)$/);
   if(m){ const p=protoFind(m[1]); if(!p){ sayFast(text, `No tengo el protocolo «${m[1]}».`); return true; } protos=protos.filter(x=>x!==p); protoSave(); if(os.cur==='proto') renderProto(); sayFast(text, `Listo, borré el protocolo ${p.n}.`); return true; }
-  if(/^(que|cuales) protocolos (tenes|hay)|^(mis )?protocolos$/.test(n)){ sayFast(text, 'Tengo '+listaY(protos.map(x=>x.n))+'. Decí «Friday, protocolo» y el nombre.'); osOpen('proto',{auto:true}); return true; }
+  if(/^(que|cuales) protocolos (tenes|hay)|^(mis )?protocolos$/.test(n)){ sayFast(text, 'Tengo '+listaY(protos.map(x=>x.n))+'. Escribí «Protocolo» y el nombre.'); osOpen('proto',{auto:true}); return true; }
   return false; }
 // «creá el protocolo cena: bajá las luces, poné jazz y avisá a todos que está la comida»
 async function protoCrear(desc){
@@ -5113,15 +5142,15 @@ Usá solo esos. Máximo 8 pasos.`;
     const p={id:'u'+Date.now().toString(36), n:String(j.n).toLowerCase().slice(0,30), ic:String(j.ic||'⚡').slice(0,4), t:'#4CC9FF', dice:(j.dice||[]).map(String).slice(0,4), pasos};
     protos=protos.filter(x=>norm(x.n)!==norm(p.n)); protos.push(p); protoSave();
     setMode('idle'); osOpen('proto',{auto:true});
-    const r=`Listo, armé el protocolo ${p.n}: ${listaY(pasos.map(pasoTxt).map(t=>t.replace(/[«»]/g,'').toLowerCase()))}. Para usarlo decí «Friday, protocolo ${p.n}».`;
+    const r=`Listo, armé el protocolo ${p.n}: ${listaY(pasos.map(pasoTxt).map(t=>t.replace(/[«»]/g,'').toLowerCase()))}. Para usarlo escribí «Protocolo ${p.n}».`;
     say(r, 'happy'); pushHist('assistant', r);
   }catch(e){ setMode('idle'); say('No pude armar el protocolo: '+(e.message||'algo falló')+'. Probá decirme qué tiene que hacer, paso por paso.', 'worried'); } }
 function renderProto(){
   const el=$('pProto'); if(!el) return; const g=guardia;
-  const gcard=`<div class="gcard${g.on?' on':''}"><div><small>MODO GUARDIA</small><b>${g.on?(Date.now()<g.desde?'Se activa en '+Math.ceil((g.desde-Date.now())/1000)+' s':'Activa: vigilando la casa'):'Apagada'}</b><span>${g.on?'Si ve a alguien que no conoce, saca una foto y te la manda al celu (cifrada). Si te reconoce, se desactiva sola.':'Con la cámara de la tablet. Decí «Friday, activá la guardia» o usá el protocolo «me voy».'}</span></div><button type="button" class="gbtn" data-guardia="${g.on?'off':'on'}">${g.on?'Desactivar':'Activar'}</button></div>`
+  const gcard=`<div class="gcard${g.on?' on':''}"><div><small>MODO GUARDIA</small><b>${g.on?(Date.now()<g.desde?'Se activa en '+Math.ceil((g.desde-Date.now())/1000)+' s':'Activa: vigilando la casa'):'Apagada'}</b><span>${g.on?'Si ve a alguien que no conoce, saca una foto y te la manda al celu (cifrada). Si te reconoce, se desactiva sola.':'Con la cámara de la tablet. Escribí «Activá la guardia» o usá el protocolo «me voy».'}</span></div><button type="button" class="gbtn" data-guardia="${g.on?'off':'on'}">${g.on?'Desactivar':'Activar'}</button></div>`
     +(g.eventos.length?`<div class="gev">${g.eventos.slice(-4).reverse().map(e=>`<figure>${e.img?`<img src="${e.img}" alt="">`:''}<figcaption>${hhmm(new Date(e.at))} · ${esc(e.t)}</figcaption></figure>`).join('')}</div>`:'');
-  const cards=protos.map(p=>`<div class="pcard" style="--t:${p.t||'#4CC9FF'}"><button type="button" class="prun" data-proto="${esc(p.id)}"><span class="pic">${esc(p.ic||'⚡')}</span><b>${esc(p.n.charAt(0).toUpperCase()+p.n.slice(1))}</b><small>${esc(p.pasos.map(pasoTxt).slice(0,4).join(' · '))}${p.pasos.length>4?' …':''}</small><em>«Friday, protocolo ${esc(p.n)}»</em></button>${p.id.startsWith('u')?`<button type="button" class="pdel" data-protodel="${esc(p.id)}" aria-label="Borrar">×</button>`:''}</div>`).join('');
-  const html=gcard+`<h3>Protocolos</h3><div class="pgrid">${cards}</div><p class="note">Para armar uno nuevo, decí: <q>Friday, creá el protocolo cena: bajá las luces, poné jazz y avisá a todos que está la comida</q>.</p>`;
+  const cards=protos.map(p=>`<div class="pcard" style="--t:${p.t||'#4CC9FF'}"><button type="button" class="prun" data-proto="${esc(p.id)}"><span class="pic">${esc(p.ic||'⚡')}</span><b>${esc(p.n.charAt(0).toUpperCase()+p.n.slice(1))}</b><small>${esc(p.pasos.map(pasoTxt).slice(0,4).join(' · '))}${p.pasos.length>4?' …':''}</small><em>«Protocolo ${esc(p.n)}»</em></button>${p.id.startsWith('u')?`<button type="button" class="pdel" data-protodel="${esc(p.id)}" aria-label="Borrar">×</button>`:''}</div>`).join('');
+  const html=gcard+`<h3>Protocolos</h3><div class="pgrid">${cards}</div><p class="note">Para armar uno nuevo, decí: <q>Creá el protocolo cena: bajá las luces, poné jazz y avisá a todos que está la comida</q>.</p>`;
   if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; } }
 
 // ---------------------------------------------------------------- la bienvenida: cuando alguien vuelve, lo pone al día
@@ -5218,7 +5247,7 @@ function renderCompu(){
       ${spark}<h3>Lo que más consume</h3><div class="procs">${(d.procs||[]).map(p=>`<div><b>${esc(p.n)}</b><i style="--w:${Math.min(100,p.c)}%"></i><small>${p.c}% · ${p.m>=1024?(p.m/1024).toFixed(1)+' GB':p.m+' MB'}</small><button type="button" data-compu="cerrar" data-v="${esc(p.n)}">Cerrar</button></div>`).join('')}</div></div>`; }
   const acts=`<div class="cacts"><button type="button" data-compu="bloquear">🔒 Bloquear</button><button type="button" data-compu="volumen" data-v="silencio">🔇 Silenciar</button><button type="button" data-compu="volumen" data-v="bajar">🔉 Bajar</button><button type="button" data-compu="volumen" data-v="subir">🔊 Subir</button>${d&&d.apagaEn?`<button type="button" data-compu="cancelar">Cancelar el apagado</button>`:`<button type="button" data-compu="apagar" data-min="30">⏻ Apagar en 30 min</button>`}<button type="button" data-compu="pantalla">🖥️ Ver la pantalla</button></div>`;
   const shot=compu.img==='…'?'<p class="note">Pidiéndole la pantalla a la compu…</p>':compu.img?`<figure class="cshot"><img src="${compu.img}" alt="La pantalla de la compu"><figcaption>La pantalla de la compu a las ${hhmm(new Date(compu.imgAt))}</figcaption></figure>`:'';
-  const all=acts+html+shot+'<p class="note">Por voz: <q>Friday, ¿cómo está la compu?</q>, <q>bloqueá la compu</q>, <q>apagá la compu en 20 minutos</q>, <q>abrí Spotify en la compu</q>, <q>mostrame la pantalla de la compu</q>.</p>';
+  const all=acts+html+shot+'<p class="note">Por voz: <q>¿Cómo está la compu?</q>, <q>bloqueá la compu</q>, <q>apagá la compu en 20 minutos</q>, <q>abrí Spotify en la compu</q>, <q>mostrame la pantalla de la compu</q>.</p>';
   if(el.dataset.h!==all){ el.dataset.h=all; el.innerHTML=all; } }
 function compuFast(text, nf){
   const n=nf.replace(/^(che |dale |friday )+/,''); if(!/\b(compu|computadora|pc|notebook)\b/.test(n)) return false;
@@ -5228,7 +5257,7 @@ function compuFast(text, nf){
   if(/\b(cancela|cancelame|no apagues)\b.*\b(apagado|apagar|apagues)\b|\bno apagues la compu\b/.test(n)) return hacer('cancelar', '', 0, 'Listo, la compu no se apaga.');
   let m=n.match(/\b(apaga|apagame|apagar)( la)? (compu|computadora|pc)( en (\d+|un|una|media) (minutos?|horas?|hora))?/);
   if(m){ let min=1; if(m[5]){ const k=m[5]==='media'?30:/^\d+$/.test(m[5])?+m[5]:1; min=/hora/.test(m[6])?(m[5]==='media'?30:k*60):k; }
-    pushHist('user', text); ofrecer('apagar compu', ()=>compuHacer('apagar','',min).then(r=>say(r.ok?(min>1?`Listo: la compu se apaga en ${min} minutos.`:'Listo: la compu se apaga en un minuto. Decí «cancelá el apagado» si cambiás de idea.'):r.txt)));
+    pushHist('user', text); ofrecer('apagar compu', ()=>compuHacer('apagar','',min).then(r=>say(r.ok?(min>1?`Listo: la compu se apaga en ${min} minutos.`:'Listo: la compu se apaga en un minuto. Escribí «cancelá el apagado» si cambiás de idea.'):r.txt)));
     say(min>1?`¿Seguro que apago la compu en ${min} minutos?`:'¿Seguro que apago la compu ahora?', 'surprised'); Ear.convoUntil=Date.now()+20000; return true; }
   m=n.match(/\b(abri|abrime|abrir)(?: el| la)? (.+?) en la (compu|computadora|pc)$/); if(m) return hacer('abrir', m[2], 0, `Listo, abrí ${m[2]} en la compu.`);
   m=n.match(/\b(cerra|cerrame|cerrar)(?: el| la)? (.+?) en la (compu|computadora|pc)$/); if(m) return hacer('cerrar', m[2], 0, `Listo, cerré ${m[2]}.`);
@@ -5301,11 +5330,11 @@ async function boot(){
     who:()=>(quien.cur && Date.now()-quien.curAt<5*60000) ? quien.cur : '',
     onRing:name=>{ ambOff(); setsShow(false); stopTalk(); osClose(); state.lastUser=Date.now(); faceSet('surprised', 3000); duck(true); Ear.convoUntil=Date.now()+20000;
       // avisa en voz alta quién llama (si atiende sola, el aviso con la cuenta lo da onAutoAnswer)
-      if(S.autoAns!=='si') setTimeout(()=>{ if(Call.ringing) say(`Te llama ${name}. Decí «atendé» o «no».`, 'surprised'); }, 1600); },
-    onAutoAnswer:(name,k)=>{ setTimeout(()=>{ if(Call.ringing) say(`Te llama ${name}. Atiendo en ${k} segundos; si no querés, decí «no».`, 'surprised'); }, 1500); Ear.convoUntil=Date.now()+k*1000+4000; },
+      if(S.autoAns!=='si') setTimeout(()=>{ if(Call.ringing) say(`Te llama ${name}. Escribí «atendé» o «no».`, 'surprised'); }, 1600); },
+    onAutoAnswer:(name,k)=>{ setTimeout(()=>{ if(Call.ringing) say(`Te llama ${name}. Atiendo en ${k} segundos; si no querés, escribí «no».`, 'surprised'); }, 1500); Ear.convoUntil=Date.now()+k*1000+4000; },
     onStart:()=>{ stopTalk(); ambOff(); setsShow(false); if(music.cur && music.cur.src==='youtube' && music.cur.playing!==false){ try{ music.yt.pauseVideo(); }catch(e){} } },
     onEnd:why=>{ state.lastUser=Date.now(); duck(false); if(why) toast(why, 5000); },
-    onMissed:(name, dev)=>{ duck(false); icom.log.push({at:Date.now(), de:name, dev:dev||'', t:'📹 Llamada perdida', leido:false}); icomSave(); addAviso({i:'📹', t:'Llamada perdida', s:'De '+name+' · «Friday, devolvé la llamada»', v:'Te llamó '+name+'. Si querés, decí «devolvé la llamada».'}, true); }
+    onMissed:(name, dev)=>{ duck(false); icom.log.push({at:Date.now(), de:name, dev:dev||'', t:'📹 Llamada perdida', leido:false}); icomSave(); addAviso({i:'📹', t:'Llamada perdida', s:'De '+name+' · «Devolvé la llamada»', v:'Te llamó '+name+'. Si querés, escribí «devolvé la llamada».'}, true); }
   }); state.sleepUntil=LS.get('sleepUntil',0);
   $('mapa').onclick=mapaOff;
   $('tap').onclick=start; $('sClose').onclick=()=>{ $('setup').hidden=true; setupShow.force=false; if(!state.started) $('tap').hidden=false; };

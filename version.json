@@ -1,16 +1,16 @@
 {
- "version": "3.9",
- "titulo": "Más confiable",
+ "version": "4.0",
+ "titulo": "Sin llaves",
  "items": [
   {
-   "icono": "🩺",
-   "titulo": "¿Cómo anduviste?",
-   "texto": "Preguntame «¿cómo anduviste esta semana?» y te digo cómo le fue a cada cerebro. También está en Más → Cerebro."
+   "icono": "🔓",
+   "titulo": "Ya no hacen falta llaves",
+   "texto": "FRIDAY piensa y escucha con el servidor gratis de BufaLabs. Ponés tu nombre y listo: le hablás."
   },
   {
-   "icono": "🧾",
-   "titulo": "Algo anduvo mal",
-   "texto": "Decime «algo anduvo mal» y armo un informe para BufaLabs, sin tus charlas, tu memoria ni tus llaves."
+   "icono": "🔁",
+   "titulo": "Nunca te quedás sin cerebro",
+   "texto": "Si tenías tu llave de Groq, la sigo usando; cuando se queda sin cupo, me paso solo al servidor de BufaLabs."
   }
  ]
 }
