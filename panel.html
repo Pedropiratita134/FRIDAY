@@ -757,6 +757,29 @@ body.ambvid #ytbox iframe{transform:none}
 @media (max-height:640px) and (orientation:landscape){ .clock{font-size:96px} .os{--dock:80px} .dface{width:54px;height:54px;flex-basis:54px} .grid{gap:14px 12px} .app-ic .tile{max-width:92px} .her{--fs:40px} }
 @media (prefers-reduced-motion:reduce){ *{animation:none!important;transition:none!important} }
 body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:none;-webkit-backdrop-filter:none}
+/* ===== Casa 5.1: liviana para cualquier tablet ===== */
+[hidden]{display:none!important}
+html{-webkit-tap-highlight-color:transparent}
+button,a,.app-ic,.dev,.todo,.mini,.dock,.row,.tips button{touch-action:manipulation}
+/* el vidrio borroso (blur) es lo que más traba a una tablet: colores firmes en su lugar */
+.card,.win,.dock,.tap,.enr,.talk::before,#fcBar button,#fcMiniBar button,#fcSnd,.setsbg,.sets{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+.card{background:rgba(16,28,48,.92)}
+.win{background:#09111F}
+.dock{background:rgba(12,22,40,.96)}
+.talk::before{background:linear-gradient(to top, rgba(6,11,20,.97) 50%, rgba(6,11,20,.75) 80%, rgba(6,11,20,0))}
+/* nada se anima a escondidas: la cara respira solo cuando habla, el arranque se va del todo */
+.fface .breathe{animation:none}
+body.talking .talk .fface .breathe{animation:breathe 5s ease-in-out infinite}
+body:not(.talking) .talk .fwrap::before{animation:none}
+.clock .colon,.ambient .aclock .colon{animation:none}
+.boot.off{display:none}
+/* respuesta al toque inmediata */
+.app-ic .tile{transition:transform .12s ease-out}
+.app-ic:active .tile{transform:scale(.93)}
+.dev{transition:transform .12s ease-out, background-color .2s, border-color .2s}
+.dev:active{transform:scale(.96)}
+.dev.busy{animation:none;opacity:.85}
+.win{will-change:transform,opacity}
 </style>
 </head>
 <body class="home">
@@ -853,7 +876,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <label class="fl">Familia <input id="famApe" placeholder="Apellido (por ejemplo: Bufager)" autocomplete="off" spellcheck="false"></label>
       <div class="chips" id="famList"></div>
       <div class="frow"><input id="famIn" placeholder="Nombre (por ejemplo: Mamá, Pedro, Sofi)" autocomplete="off" spellcheck="false"><button class="ghost" id="famAdd" type="button">Agregar</button></div></section>
-    <section><h3>Quién es quién</h3>
+    <section hidden><h3>Quién es quién</h3>
       <p class="lbl">FRIDAY reconoce a cada uno por la cara (con la cámara) y por la voz, para saludarlos por su nombre y saber de quién son las tareas. Las caras y las voces quedan solo en esta tablet.</p>
       <div id="quienList"></div>
       <p class="lbl">Cuándo mira quién es</p>
@@ -880,7 +903,7 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
       <div class="seg" data-k="vozFuerte"><button type="button" data-v="no">Normal</button><button type="button" data-v="si">Más fuerte y clara</button></div>
       <div id="vozLocal"></div>
       <button class="ghost" id="vozTest" type="button">Probar la voz</button></section>
-    <section><h3>FRIDAY mira</h3>
+    <section hidden><h3>FRIDAY mira</h3>
       <p class="lbl">Con la cámara de la tablet, de vez en cuando (solo si algo cambió) y te avisa si ve algo que valga la pena. Las fotos no se guardan. Mientras está prendido, arriba dice «Mirando».</p>
       <div class="seg" data-k="mira"><button type="button" data-v="no">No</button><button type="button" data-v="si">Sí, que mire</button></div>
       <p class="lbl">Cada cuánto</p>
@@ -935,6 +958,19 @@ body.lite .card,body.lite .win,body.lite .dock,body.lite .tap{backdrop-filter:no
 <div class="toast" id="toast"></div>
 <script>
 'use strict';
+// Casa 5.1: si el texto, la clase o el «escondido» ya son esos, no se tocan (cada toque obliga a la tablet a redibujar)
+(function(){
+  const tc=Object.getOwnPropertyDescriptor(Node.prototype,'textContent');
+  Object.defineProperty(Node.prototype,'textContent',{ configurable:true, enumerable:tc.enumerable, get:tc.get, set(v){
+    v=v==null?'':String(v); const c=this.firstChild;
+    if(this.nodeType===1 && ((c===null && v==='') || (c && c===this.lastChild && c.nodeType===3 && c.data===v))) return;
+    tc.set.call(this,v); } });
+  const hd=Object.getOwnPropertyDescriptor(HTMLElement.prototype,'hidden');
+  Object.defineProperty(HTMLElement.prototype,'hidden',{ configurable:true, enumerable:hd.enumerable, get:hd.get, set(v){ if(!!v===hd.get.call(this)) return; hd.set.call(this,v); } });
+  const cn=Object.getOwnPropertyDescriptor(Element.prototype,'className');
+  Object.defineProperty(Element.prototype,'className',{ configurable:true, enumerable:cn.enumerable, get:cn.get, set(v){ if(cn.get.call(this)===String(v)) return; cn.set.call(this,v); } });
+})();
+function setH(el, h){ if(el && el.__h!==h){ el.__h=h; el.innerHTML=h; } }
 // ================================================================ QR propio (para no depender de nada de afuera)
 // Codifica texto (modo byte, corrección M, versiones 1 a 10) y devuelve un SVG.
 const QR=(()=>{
@@ -2285,7 +2321,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='5.0';
+const VERSION='5.1';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2318,6 +2354,7 @@ const palette=()=>({idle:[47,107,227]});
 let S=Object.assign({mueve:'si', reconocer:'hablar', name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', vozFuerte:'no', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const SERVIDOR_BUFALABS='https://bufalabs.pedrobufager.workers.dev/openai/v1', GROQ_DIRECTO=API.groq;
 if(!S.groqKey) S.groqKey='bufalabs';   // sin llave propia: piensa con el servidor de BufaLabs
+S.reconocer='no'; S.mira='no';   // Casa 5.1: pantalla de control, sin cámara
 Object.defineProperty(API, 'groq', { get:()=> (!S.groqKey || S.groqKey==='bufalabs') ? SERVIDOR_BUFALABS : GROQ_DIRECTO });
 const saveS=()=>LS.set('cfg',S);
 // la tablet es de toda la familia: saluda a la familia, no a una persona
@@ -3126,16 +3163,21 @@ async function casaDo(quien, q){
   const targets=tuyaFind(casa.devs, quien);
   if(!targets.length){ const ls=casa.devs.filter(d=>d.tipo==='luz').map(d=>d.nombre); return {ok:false, txt: ls.length?`¿Cuál? Tengo ${listaY(ls)}.`:'No encontré ese aparato.'}; }
   const hechos=[], fallas=[]; let que='';
-  for(const d of targets){
-    casa.busy=d.id; render();
+  casa.ocup=casa.ocup||new Set();
+  await Promise.all(targets.map(async d=>{
+    let cmds=null, what='';
+    try{ [cmds, what]=tuyaCmds(d, accion, valor); }catch(e){ fallas.push(d.nombre+': '+e.message); return; }
+    d.estado=d.estado||{}; const prev=Object.assign({}, d.estado);
+    for(const c of cmds) d.estado[c.code]=c.value;      // se ve al toque; si falla, vuelve como estaba
+    casa.ocup.add(d.id); render();
     try{
-      const [cmds, what]=tuyaCmds(d, accion, valor);
       const r=await tuya('POST',`/v1.0/iot-03/devices/${d.id}/commands`, null, {commands:cmds});
       if(!r.success) throw new Error(r.code===2001||/offline/i.test(r.msg||'')?'está desconectado':tuyaErrTxt(r));
-      for(const c of cmds) d.estado[c.code]=c.value; hechos.push(d.nombre); que=what;
-    }catch(e){ fallas.push(d.nombre+': '+e.message); }
-  }
-  casa.busy=null; LS.set('casaDevs',casa.devs); render();
+      hechos.push(d.nombre); que=what;
+    }catch(e){ d.estado=prev; fallas.push(d.nombre+': '+e.message); }
+    casa.ocup.delete(d.id);
+  }));
+  LS.set('casaDevs',casa.devs); render();
   const allLights=hechos.length>1 && targets.every(d=>d.tipo==='luz');
   let txt = hechos.length===1 ? `Listo, ${hechos[0].toLowerCase()} ${que}.` : hechos.length ? (allLights&&que==='prendida'?'Listo, prendí las luces.':allLights&&que==='apagada'?'Listo, apagué las luces.':`Listo: ${listaY(hechos)}, ${que}.`) : '';
   if(fallas.length) txt+=(txt?' ':'')+'No pude con '+fallas.join('; ')+'.';
@@ -3643,10 +3685,10 @@ function render(){
   { const sp=sharePeers(), pcOk=sp.pc && Date.now()-sp.pc.t<10*60000, ce=sp.cel.length; const lk=(sp.pc?`<span><i class="${pcOk?'ok':''}"></i>Compu</span>`:'')+(ce?`<span><i class="ok"></i>Celu</span>`:''); if($('links').dataset.h!==lk){ $('links').dataset.h=lk; $('links').innerHTML=lk; } }
   // timers arriba, grandes
   const tl=[...timers].sort((a,b)=>a.end-b.end).slice(0,2), C=2*Math.PI*18;
-  $('timers').innerHTML=tl.map(t=>{ const left=Math.max(0,t.end-Date.now()), fr=Math.max(0,Math.min(1,left/(t.dur*1000))), s=Math.ceil(left/1000);
+  setH($('timers'), tl.map(t=>{ const left=Math.max(0,t.end-Date.now()), fr=Math.max(0,Math.min(1,left/(t.dur*1000))), s=Math.ceil(left/1000);
     const txt=s>=3600?`${Math.floor(s/3600)}:${z2(Math.floor(s%3600/60))}:${z2(s%60)}`:`${Math.floor(s/60)}:${z2(s%60)}`;
     return `<div class="tpill${left<60000?' urge':''}"><svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="18" class="bg"/><circle cx="22" cy="22" r="18" class="fg" style="stroke-dasharray:${C.toFixed(1)};stroke-dashoffset:${(C*(1-fr)).toFixed(1)}"/></svg><b>${txt}</b><span>${esc(t.label||'Timer')}</span></div>`; }).join('')
-    + (ringing?`<div class="tpill urge ring"><b>¡Listo!</b><span>${esc(ringing.label||'Timer')}</span></div>`:'');
+    + (ringing?`<div class="tpill urge ring"><b>¡Listo!</b><span>${esc(ringing.label||'Timer')}</span></div>`:''));
   renderHoyTo($('cHoy'), innerHeight>innerWidth?5:5, false); renderCasa(); renderMus(); renderShop(); renderStatus(); renderHint(); renderApps(); renderWidgets(); if(os.cur) renderPane(os.cur);
 }
 const hoyAsk={x:'', until:0};
@@ -3672,20 +3714,20 @@ function renderHoyTo(box, max, full){
 }
 function renderCasa(){
   const el=$('cCasa'), ds=casa.devs.slice(0,16);
-  if(!ds.length){ el.dataset.h=''; el.innerHTML=`<h2>Casa</h2><p class="empty">${workerOn()? (casa.err?esc('No pude ver tus aparatos: '+casa.err):'Buscando tus aparatos…') : 'Las luces se conectan desde el celu, en la configuración de la tablet.'}</p>`; return; }
+  if(!ds.length){ el.dataset.h=''; setH(el, `<h2>Casa</h2><p class="empty">${workerOn()? (casa.err?esc('No pude ver tus aparatos: '+casa.err):'Buscando tus aparatos…') : 'Las luces se conectan desde el celu, en la configuración de la tablet.'}</p>`); return; }
   const on=ds.filter(devOn).length;
-  const h=`<h2>Casa<small>${on?on+(on>1?' prendidas':' prendida'):'Todo apagado'}</small></h2><div class="devs">${ds.map(d=>`<button class="dev${devOn(d)?' on':''}${d.online?'':' off'}${casa.busy===d.id?' busy':''}" data-dev="${esc(d.id)}" type="button">${d.tipo==='aspiradora'?IC.robot:d.tipo==='enchufe'?IC.plug:IC.bulb}<span>${esc(d.nombre)}${!d.online?'<small>Sin conexión</small>':d.tipo==='aspiradora'?`<small>${devOn(d)?'Limpiando':'En la base'}</small>`:''}</span></button>`).join('')}</div>`;
-  if(el.dataset.h!==h){ el.dataset.h=h; el.innerHTML=h; }
+  const h=`<h2>Casa<small>${on?on+(on>1?' prendidas':' prendida'):'Todo apagado'}</small></h2><div class="devs">${ds.map(d=>`<button class="dev${devOn(d)?' on':''}${d.online?'':' off'}${(casa.ocup&&casa.ocup.has(d.id))?' busy':''}" data-dev="${esc(d.id)}" type="button">${d.tipo==='aspiradora'?IC.robot:d.tipo==='enchufe'?IC.plug:IC.bulb}<span>${esc(d.nombre)}${!d.online?'<small>Sin conexión</small>':d.tipo==='aspiradora'?`<small>${devOn(d)?'Limpiando':'En la base'}</small>`:''}</span></button>`).join('')}</div>`;
+  if(el.dataset.h!==h){ el.dataset.h=h; el.__h=h; el.innerHTML=h; }
   if(os.cur==='casa') $('winS').textContent=on?on+(on>1?' prendidas':' prendida'):'Todo apagado';
   renderCtl();
 }
 function renderCtl(){
   const el=$('ctl'); if(!el) return; const ds=casa.devs.filter(d=>d.online!==false).slice(0,6), on=casa.devs.filter(devOn);
-  const h = ds.length ? ds.map(d=>`<button class="dev${devOn(d)?' on':''}${casa.busy===d.id?' busy':''}" data-dev="${esc(d.id)}" type="button">${(el.querySelector(`[data-dev="${CSS.escape(d.id)}"] svg`)||{}).outerHTML||IC_LUZ}<div><span>${esc(d.nombre)}</span><small>${devOn(d)?'Prendida':'Apagada'}</small></div></button>`).join('') + (on.length?`<button class="todo" type="button" data-ctl="apagar">Apagar todo</button>`:'') : '';
+  const h = ds.length ? ds.map(d=>`<button class="dev${devOn(d)?' on':''}${(casa.ocup&&casa.ocup.has(d.id))?' busy':''}" data-dev="${esc(d.id)}" type="button">${(el.querySelector(`[data-dev="${CSS.escape(d.id)}"] svg`)||{}).outerHTML||IC_LUZ}<div><span>${esc(d.nombre)}</span><small>${devOn(d)?'Prendida':'Apagada'}</small></div></button>`).join('') + (on.length?`<button class="todo" type="button" data-ctl="apagar">Apagar todo</button>`:'') : '';
   if(el.dataset.h!==h){ el.dataset.h=h; el.innerHTML=h; }
 }
 const IC_LUZ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>';
-async function apagarTodo(){ const on=casa.devs.filter(devOn); for(const d of on){ try{ await casaDo(d.nombre, 'apagar'); }catch(e){} } renderCtl(); }
+async function apagarTodo(){ const on=casa.devs.filter(devOn); await Promise.all(on.map(d=>casaDo(d.nombre, 'apagar').catch(()=>{}))); renderCtl(); }
 function renderMus(){
   const m=music.cur || (pcInfo.np ? {src:'pc', title:pcInfo.np.t, artist:pcInfo.np.a, img:pcInfo.np.img, playing:true} : null);
   $('mEmpty').hidden=!!m; $('mBox').hidden=!m; $('ytbox').classList.toggle('on', !!(m && m.src==='youtube'));
@@ -3713,7 +3755,7 @@ document.addEventListener('click', e=>{
   if(e.target.closest && e.target.closest('[data-ctl="apagar"]')){ apagarTodo(); return; }
   if(state.amb){ ambOff(); return; }
   const d=e.target.closest && e.target.closest('.dev');
-  if(d){ const dev=casa.devs.find(x=>x.id===d.dataset.dev); if(!dev || casa.busy) return; casaDo(dev.nombre, devOn(dev)?'apagar':'prender').then(r=>{ if(!r.ok) toast(r.txt); else faceSet('wink',1200); }); return; }
+  if(d){ const dev=casa.devs.find(x=>x.id===d.dataset.dev); if(!dev || (casa.ocup&&casa.ocup.has(dev.id))) return; casaDo(dev.nombre, devOn(dev)?'apagar':'prender').then(r=>{ if(!r.ok) toast(r.txt); else faceSet('wink',1200); }); return; }
   const dl=e.target.closest && e.target.closest('[data-del]');
   if(dl){ const t=borrarX(dl.dataset.del); hoyAsk.x=''; render(); toast(t?`Borrado: ${t}`:'Ya no estaba'); faceSet('wink',1200); return; }
   const rw=e.target.closest && e.target.closest('.row[data-x], .agev[data-x], .agnote[data-x]');
@@ -5314,7 +5356,7 @@ async function boot(){
     $('bVer').textContent=nueva?`Actualizada a la versión ${VERSION}`:`Versión ${VERSION}`; $('brandVer').textContent='v'+VERSION; $('tapVer').textContent='FRIDAY Casa · versión '+VERSION;
     if(nueva){ $('brandVer').classList.add('new'); setTimeout(()=>toast(`FRIDAY Casa se actualizó: de la ${antes} a la ${VERSION}`, 9000), 1800); setTimeout(()=>$('brandVer').classList.remove('new'), 6*3600000); }
     LS.set('verVista', VERSION); }catch(e){}
-  setTimeout(()=>$('boot').classList.add('off'), 1400);
+  setTimeout(()=>{ $('boot').classList.add('off'); setTimeout(()=>{ try{ $('boot').remove(); }catch(e){} }, 900); }, 1400);
   // como un sistema propio: el botón "atrás" de Android no la cierra (cierra lo que esté abierto)
   try{ history.pushState({f:1},''); addEventListener('popstate', ()=>{ history.pushState({f:1},''); if(setsOpen()) setsShow(false); else if(!$('mapa').hidden) mapaOff(); else if(amb.on) ambOff(); else if(os.cur) osClose(); }); }catch(e){}
   faceBuild($('face')); faceSet('idle'); budInit(); faceBlink(); applyLight(); render();
@@ -5341,12 +5383,12 @@ async function boot(){
   setInterval(()=>{ render(); checkTimers(); estTick(); if(amb.on) ambTick();
     // la app vuelve sola al inicio (enseguida si la abrió FRIDAY; a los 3 minutos si la abriste vos)
     if(os.cur && state.mode==='idle' && !speakingNow() && !(os.cur==='estudio' && (est.on||quiz.on)) && !(os.cur==='icom' && state.icomTo) && !(os.cur==='cocina' && cocina) && Date.now()-Math.max(state.lastUser, os.at)>(os.auto?25000:180000)) osClose(); }, 1000);
-  Turno.init({ level:()=>stt.level||0, onLose:d=>{ turnoMio.quien=d?Call.label(d, (FSync.st.peers[d]||{}).n):'la compu'; }, onOther:()=>{ Ear.convoUntil=0; },
+  Turno.init({ onLose:d=>{ turnoMio.quien=d?Call.label(d, (FSync.st.peers[d]||{}).n):'la compu'; }, onOther:()=>{ Ear.convoUntil=0; },
     onVeto:d=>{ stopTalk(); turnoMio.quien=d?Call.label(d,(FSync.st.peers[d]||{}).n):'la compu'; turnoPerdi(turnoMio.ult||''); } });
   setInterval(()=>{ proactTick().catch(()=>{}); }, 30000); setTimeout(()=>{ proactTick().catch(()=>{}); }, 20000);
   if(guardia.on){ document.body.classList.add('guardia'); guardia.desde=Math.max(guardia.desde, Date.now()+20000); guardiaLoop(); }
   setInterval(()=>{ if(os.cur==='compu' && !compu.pend && Date.now()-compu.at>4000) compuEstado(); }, 2000);
-  setInterval(talkSync, 250); setInterval(resumenTick, 30000); setInterval(budTick, 450); setInterval(tareasTick, 30000); setInterval(()=>{ quienRonda().catch(()=>{}); }, 6000);
+  setInterval(talkSync, 250); setInterval(resumenTick, 30000); setInterval(budTick, 450); setInterval(tareasTick, 30000); /* (Casa 5: sin cámara ni micrófono propios, no busca caras) */
   setInterval(()=>{ applyLight(); agendaCheck(); autoTick(); }, 30000);
   setInterval(()=>{ const mins=+S.ambMin; if(mins && !amb.on && !setsOpen() && !(os.cur && !os.auto) && state.started && state.mode==='idle' && !speakingNow() && Date.now()-state.lastUser>mins*60000) ambOn(); }, 5000);
   setInterval(()=>{ getWeather(); casaLoad(); agendaLoad(); }, 5*60000);
