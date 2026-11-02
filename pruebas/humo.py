@@ -5,7 +5,7 @@ import asyncio, json, os, re, subprocess, sys, time
 from playwright.async_api import async_playwright
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PUERTO = 8765; BASE = f'http://localhost:{PUERTO}/'
+PUERTO = 8771; BASE = f'http://localhost:{PUERTO}/'
 mal = []
 def ok(nombre, cond, extra=''):
     print(('ok   ' if cond else 'MAL  ') + nombre, '' if cond else str(extra)[:300], flush=True)
