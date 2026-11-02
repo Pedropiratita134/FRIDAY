@@ -11,7 +11,19 @@
 <meta name="description" content="FRIDAY: tu asistente con voz, en el celu. Gratis y sin instalar nada.">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-startup-image" media="(device-width: 440px) and (device-height: 956px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1320x2868.png">
+<link rel="apple-touch-startup-image" media="(device-width: 402px) and (device-height: 874px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1206x2622.png">
+<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1290x2796.png">
+<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1179x2556.png">
+<link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1284x2778.png">
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1170x2532.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1125x2436.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1242x2688.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/828x1792.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)" href="splash/750x1334.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)" href="splash/1242x2208.png">
 <title>FRIDAY</title>
 <style>
 :root{
@@ -25,6 +37,19 @@
 html[data-theme="friday"]{ --ink:#07101c; --accent:#ffb547; --accent-rgb:255,181,71; --accent2:#9ed8ff; --muted:#8f93a3; --card2:rgba(22,28,42,.94); }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--ink);color:var(--text);font:500 16px/1.4 var(--font);overscroll-behavior:none}
+/* que se sienta app: nada de seleccionar al tocar, ni el menú de mantener apretado, ni zoom con doble toque */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:manipulation;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+input,textarea,select,[contenteditable],.msg,.msg *,code,.topic{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+img,svg,canvas{-webkit-user-drag:none}
+@supports (-webkit-touch-callout:none){ input,textarea,select{font-size:max(16px,1em)!important} }   /* iPhone: que no haga zoom al escribir */
+.fila,.big,.chip{transition:transform .12s ease, filter .12s ease}.fila:active,.big:active,.chip:active{transform:scale(.98);filter:brightness(1.18)}
+@media (prefers-reduced-motion:reduce){ .fila,.big,.chip{transition:none}.fila:active,.big:active,.chip:active{transform:none} }
+#instCard{position:fixed;left:12px;right:12px;bottom:calc(92px + var(--safe-b));z-index:40;display:flex;gap:12px;align-items:center;padding:14px 14px 14px 16px;border-radius:20px;background:var(--card2);border:1px solid var(--line2);box-shadow:0 12px 40px rgba(0,0,0,.45);transform:translateY(16px);opacity:0;transition:opacity .25s ease, transform .3s cubic-bezier(.2,.8,.2,1)}
+#instCard.on{transform:none;opacity:1}#instCard[hidden]{display:none}
+#instCard img{width:44px;height:44px;border-radius:12px;flex:0 0 44px}#instCard div{flex:1;min-width:0}#instCard b{display:block;font-size:16px}#instCard small{color:var(--muted);font-size:13.5px;line-height:1.3;display:block}
+#instCard .si{flex:0 0 auto;border:0;border-radius:999px;padding:10px 16px;background:var(--accent);color:var(--ink);font:700 15px var(--font)}#instCard .no{flex:0 0 auto;border:0;background:none;color:var(--muted);font:600 14px var(--font);padding:8px 4px}
+#txt::placeholder{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+details.otra{margin-top:18px;border:1px solid var(--line);border-radius:16px;padding:4px 14px}details.otra summary{cursor:pointer;padding:10px 0;font-weight:700;color:var(--muted)}details.otra[open] summary{color:var(--text)}
 body{display:flex;flex-direction:column;height:100vh;height:100dvh;overflow:hidden;position:relative}
 #bgfx{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
 button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
@@ -1290,9 +1315,16 @@ B.profePrompt = function(){
   <p class="note" id="shNote">Tocá algo para tacharlo. También decile: "agregá yerba a la lista" o "¿qué tengo que comprar?".</p>
 </section>
 
-<!-- AVISOS (ntfy) -->
-<section class="sheet" id="sh-avisos"><div class="grab"></div><button class="volver" data-volver>Volver</button><h3>Avisos que siempre suenan</h3>
-  <p class="note" style="margin-top:0">Una web no puede sonar con todo cerrado. Para eso FRIDAY usa la app gratis <b>ntfy</b>: le deja programados tus recordatorios y te llegan como notificación aunque el celu esté bloqueado y FRIDAY cerrada.</p>
+<!-- AVISOS -->
+<section class="sheet" id="sh-avisos"><div class="grab"></div><button class="volver" data-volver>Volver</button><h3>Avisos</h3>
+  <div class="switch"><div><b>Avisarme con el celu bloqueado</b><div class="note" style="margin:2px 0 0" id="wpNota">Los recordatorios te llegan aunque FRIDAY esté cerrada. Sin instalar nada más.</div></div><input type="checkbox" id="wpOn"></div>
+  <button class="big sec" id="wpTest" type="button">Probar un aviso</button>
+  <p class="note">El servidor de BufaLabs solo sabe <b>a qué hora</b> avisarte. Lo que dice cada recordatorio queda en tu celu.</p>
+  <h4>☀️ Buen día</h4>
+  <div class="switch"><div><b>Resumen del día al abrir FRIDAY a la mañana</b><div class="note" style="margin:2px 0 0">Clima, tu agenda, recordatorios y titulares.</div></div><input type="checkbox" id="bdAuto"></div>
+  <div class="field"><label for="bdHora">Avisarme todos los días a esta hora (vacío = no)</label><input type="time" id="bdHora"></div>
+  <details class="otra"><summary>Otra forma: con la app ntfy</summary>
+  <p class="note" style="margin-top:0">Si preferís, la app gratis <b>ntfy</b> también te los avisa. Con esta forma, el texto del recordatorio pasa por el servidor de ntfy.</p>
   <div id="avPc" class="okline" hidden></div>
   <div id="avOwn">
     <div class="switch"><div><b>Usar avisos con ntfy</b></div><input type="checkbox" id="avOn"></div>
@@ -1302,11 +1334,9 @@ B.profePrompt = function(){
       <li>Volvé y tocá <b>Probar</b>: te tiene que llegar un aviso.</li>
     </ol>
   </div>
-  <button class="big" id="avTest">Probar un aviso</button>
+  <button class="big sec" id="avTest">Probar con ntfy</button>
   <p class="note">Los recordatorios de los próximos 3 días quedan programados; los más lejanos se programan solos cuando abrís FRIDAY. El texto del recordatorio pasa por el servidor de ntfy (no pongas claves ahí).</p>
-  <h4>☀️ Buen día</h4>
-  <div class="switch"><div><b>Resumen del día al abrir FRIDAY a la mañana</b><div class="note" style="margin:2px 0 0">Clima, tu agenda, recordatorios y titulares.</div></div><input type="checkbox" id="bdAuto"></div>
-  <div class="field"><label for="bdHora">Avisarme todos los días a esta hora (vacío = no)</label><input type="time" id="bdHora"></div>
+  </details>
 </section>
 
 <!-- VINCULAR CON LA COMPU -->
@@ -1434,7 +1464,7 @@ B.profePrompt = function(){
   <div class="grupo pad">
     <p class="note" id="installNote"></p>
     <button class="big" id="installBtn" hidden>Instalar FRIDAY</button>
-    <button class="big sec" id="shareBtn">📤 Pasarle FRIDAY a alguien</button>
+    <button class="big sec" id="shareBtn">🤝 Pasale FRIDAY a un amigo</button>
   </div>
 
   <h4>Datos</h4>
@@ -1528,11 +1558,12 @@ B.profePrompt = function(){
 
 <script>
 'use strict';
-const VERSION='4.1';
+const VERSION='4.2';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"4.1","titulo":"La voz de Elena","items":[
-  {"icono":"🗣️","titulo":"Habla con Elena","texto":"El celu ahora habla con Elena, la misma voz natural de la compu. Si preferís la del celu, se cambia en Más → Voz."},
-  {"icono":"🧾","titulo":"Errores que llegan solos","texto":"Si aceptás, cuando algo falla el celu le manda el error a BufaLabs, sin tus charlas ni tus llaves."}]};
+const NOVEDADES_M={"version":"4.2","titulo":"Más app que nunca","items":[
+  {"icono":"🔔","titulo":"Avisos con el celu bloqueado","texto":"Prendelos en Más → Avisos: los recordatorios te llegan aunque FRIDAY esté cerrada, sin instalar otra app. El servidor solo sabe a qué hora avisarte; lo que dice queda en tu celu."},
+  {"icono":"📲","titulo":"Se siente app","texto":"Ya no se estira, no hace zoom sin querer ni selecciona cosas al tocar. Los botones responden con una vibración cortita, y en iPhone abre con su pantalla de presentación."},
+  {"icono":"🤝","titulo":"Pasale FRIDAY a un amigo","texto":"En Más → La app, o decile «pasale FRIDAY a un amigo»."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1555,6 +1586,10 @@ let hist=LS.get('history',[]), memory=LS.get('memory',[]), reminders=LS.get('rem
 let orbState='idle', orbLevel=0;
 const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
 const buzz=(ms=10)=>{ try{ navigator.vibrate && navigator.vibrate(ms); }catch(e){} };
+// el iPhone no tiene vibrate(): un interruptor escondido hace el «tic» de los botones del sistema (iOS 18 o más nuevo)
+const hapt=(()=>{ let lb=null; return ()=>{ try{ if(S && S.haptic===false) return; if(navigator.vibrate){ navigator.vibrate(8); return; }
+  if(!IOS) return; if(!lb){ lb=document.createElement('label'); lb.setAttribute('aria-hidden','true'); lb.style.cssText='position:fixed;left:-99px;top:0;width:1px;height:1px;overflow:hidden;opacity:0'; const i=document.createElement('input'); i.type='checkbox'; i.setAttribute('switch',''); i.tabIndex=-1; lb.appendChild(i); document.body.appendChild(lb); } lb.click(); }catch(e){} }; })();
+document.addEventListener('click', e=>{ const t=e.target.closest && e.target.closest('button, .fila, .chip'); if(t && !t.disabled) hapt(); }, true);
 function toast(t, ms=2800){ const el=$('toast'); el.textContent=t; el.classList.add('on'); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove('on'), ms); }
 function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\s+/g,' ').trim(); }
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]); }
@@ -1810,7 +1845,7 @@ async function webSearch(q){
 }
 
 // ================================================================ recordatorios
-function saveRems(){ LS.set('rems', reminders); }
+function saveRems(){ LS.set('rems', reminders); clearTimeout(saveRems.t); saveRems.t=setTimeout(()=>wpSync(false).catch(()=>{}), 400); }
 function remWhen(r){ const d=new Date(r.at), hoy=new Date(); const man=new Date(); man.setDate(hoy.getDate()+1);
   const dia = d.toDateString()===hoy.toDateString()?'Hoy':d.toDateString()===man.toDateString()?'Mañana':d.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'});
   return dia+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false})+(r.rep?' · '+({diario:'todos los días', semanal:'cada semana', habiles:'de lunes a viernes', finde:'los fines de semana'}[r.rep]||r.rep):''); }
@@ -1864,13 +1899,72 @@ function fireReminders(){
   saveRems(); if(openSheet==='rems') renderRems(); setTimeout(schedulePushes, 500);
 }
 setInterval(fireReminders, 15000);
-document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ fireReminders(); getWeather(); syncWake(); schedulePushes(); } });
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden){ wpMarcar().finally(fireReminders); getWeather(); syncWake(); schedulePushes(); } });
+
+// ================================================================ avisos con el celu bloqueado (Web Push del servidor de BufaLabs)
+// El servidor guarda solo las HORAS. A esa hora le golpea la puerta al celu (un push vacío) y el service worker
+// lee de este mismo celu (caché «friday-datos») qué tenía que avisar. El texto nunca sale del celu.
+const WP={ on:()=>!!(LS.get('wpush',null)||{}).on, datos:'friday-datos' };
+const b64uBytes=t=>Uint8Array.from(atob(String(t).replace(/-/g,'+').replace(/_/g,'/')+'==='.slice((String(t).length+3)%4)), c=>c.charCodeAt(0));
+const wpPuede=()=>'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+function wpBuenDia(){
+  const hora=S.bdHora||''; if(!/^\d{2}:\d{2}$/.test(hora)) return [];
+  const out=[]; for(let i=0;i<3;i++){ const dt=new Date(); dt.setDate(dt.getDate()+i); const [hh,mm]=hora.split(':').map(Number); dt.setHours(hh,mm,0,0);
+    if(dt.getTime()>Date.now()+20000) out.push({id:'bd-'+isoLocal(dt).slice(0,10), at:dt.getTime(), titulo:'☀️ Buen día'+(S.name?', '+S.name:''), texto:'Tocá y te cuento el clima, tu agenda y las noticias.', url:'./#buendia', bd:true}); }
+  return out;
+}
+async function wpSync(forzar){
+  if(PANEL || !('caches' in window)) return;
+  const now=Date.now();
+  const items=reminders.filter(r=>!r.done).map(r=>({id:String(r.id), at:new Date(r.at).getTime(), texto:r.texto})).filter(x=>!isNaN(x.at) && x.at>now-60000).sort((a,b)=>a.at-b.at).slice(0,36);
+  const pr=LS.get('wpPrueba',null);
+  const todos=items.concat(wpBuenDia(), pr && pr.at>now-60000 ? [pr] : []);
+  try{ const c=await caches.open(WP.datos); await c.put('__avisos.json', new Response(JSON.stringify({items:todos, at:now}), {headers:{'Content-Type':'application/json'}})); }catch(e){}
+  if(!WP.on()) return;
+  const horas=[...new Set(todos.map(x=>x.at))].sort((a,b)=>a-b), k=horas.join(',');
+  if(!forzar && k===LS.get('wpHoras','')) return;
+  const r=await BUFIA.servidor('/push/horas', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({horas})});
+  if(r.ok) LS.set('wpHoras', k);
+}
+// lo que el service worker ya avisó con FRIDAY cerrada: no se repite al abrir
+async function wpMarcar(){
+  try{ const r=await (await caches.open(WP.datos)).match('__vistos.json'); if(!r) return; const v=await r.json(); let ch=false;
+    for(const x of reminders){ const t=new Date(x.at).getTime(); if(!x.done && v[x.id+'@'+t]){ x.push=true; ch=true; } }
+    if(ch) LS.set('rems', reminders); }catch(e){}
+}
+async function wpActivar(){
+  if(!wpPuede()){ toast(IOS && !standalone() ? 'En iPhone, primero agregá FRIDAY a la pantalla de inicio (Más → La app) y abrila desde ahí.' : 'Este navegador no deja recibir avisos. Probá con Chrome.', 5000); return false; }
+  const perm=await Notification.requestPermission();
+  if(perm!=='granted'){ toast('Para avisarte, FRIDAY necesita permiso para las notificaciones.', 4500); return false; }
+  try{
+    const reg=await navigator.serviceWorker.ready;
+    const rc=await BUFIA.servidor('/push/clave'); if(!rc.ok) throw new Error('el servidor todavía no tiene los avisos');
+    const clave=(await rc.json()).clave, kb=b64uBytes(clave);
+    let sub=await reg.pushManager.getSubscription();
+    if(sub){ const k=sub.options && sub.options.applicationServerKey; if(k && new Uint8Array(k).join(',')!==kb.join(',')){ await sub.unsubscribe(); sub=null; } }
+    if(!sub) sub=await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:kb});
+    const ra=await BUFIA.servidor('/push/alta', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({sub:sub.toJSON()})});
+    if(!ra.ok) throw new Error('el servidor no lo aceptó');
+    LS.set('wpush', {on:true, at:Date.now()}); LS.del('wpHoras');
+    for(const r of reminders) if(r.pid){ remUnpush(r); r.push=false; }   // lo que estaba en ntfy, ahora lo avisa FRIDAY
+    LS.set('rems', reminders); await wpSync(true); renderAvisos(); try{ remNoteTxt(); }catch(e){}
+    return true;
+  }catch(e){ toast('No pude activar los avisos: '+(e.message||'algo falló'), 4500); return false; }
+}
+async function wpApagar(){
+  LS.set('wpush', {on:false}); LS.del('wpHoras');
+  try{ const reg=await navigator.serviceWorker.ready; const sub=await reg.pushManager.getSubscription(); if(sub) await sub.unsubscribe(); }catch(e){}
+  BUFIA.servidor('/push/baja', {method:'POST'}).catch(()=>{}); renderAvisos(); try{ remNoteTxt(); }catch(e){}
+}
+setTimeout(()=>{ wpSync(false).catch(()=>{}); }, 2500);
+setInterval(()=>{ if(!document.hidden) wpSync(false).catch(()=>{}); }, 10*60000);
 
 // ================================================================ avisos con ntfy (suenan aunque FRIDAY esté cerrada)
 const NTFY='https://ntfy.sh';
 function avOwn(){ let a=LS.get('avisos',null); if(!a || !a.topic){ a={on:false, server:NTFY, topic:'friday-'+[...crypto.getRandomValues(new Uint8Array(9))].map(x=>'abcdefghijkmnpqrstuvwxyz23456789'[x&31]).join('')}; LS.set('avisos',a); } return a; }
 // a dónde van: al mismo tema que la compu (si están vinculadas y la compu tiene avisos) o al propio
-function avisoDest(){ const pc=LS.get('pcNtfy',null); if(pc && pc.topic) return {server:pc.server||NTFY, topic:pc.topic, pc:true}; const a=avOwn(); return a.on ? {server:a.server||NTFY, topic:a.topic} : null; }
+function avisoDest(){ if(WP.on()) return null;   // con los avisos de BufaLabs, ntfy no hace falta
+  const pc=LS.get('pcNtfy',null); if(pc && pc.topic) return {server:pc.server||NTFY, topic:pc.topic, pc:true}; const a=avOwn(); return a.on ? {server:a.server||NTFY, topic:a.topic} : null; }
 async function ntfyPost(dest, o){
   // en JSON: los encabezados no aceptan acentos ni emojis
   const j={topic:dest.topic, message:o.body||'', title:o.title||'FRIDAY', tags:(o.tags||'').split(',').filter(Boolean), priority:o.prio||4, click:o.click||spRedirect()};
@@ -1919,6 +2013,8 @@ async function scheduleBuenDia(dest){
 }
 function todayISO(){ return isoLocal(new Date()).slice(0,10); }
 function renderAvisos(){
+  $('wpOn').checked=WP.on(); $('wpTest').hidden=!WP.on();
+  $('wpNota').textContent = WP.on() ? 'Prendido: te llegan aunque FRIDAY esté cerrada.' : (IOS && !standalone()) ? 'En iPhone funciona con FRIDAY agregada a la pantalla de inicio (iOS 16.4 o más nuevo).' : 'Los recordatorios te llegan aunque FRIDAY esté cerrada. Sin instalar nada más.';
   const pc=LS.get('pcNtfy',null), a=avOwn();
   $('avPc').hidden=!(pc&&pc.topic); $('avOwn').hidden=!!(pc&&pc.topic);
   if(pc&&pc.topic) $('avPc').innerHTML=`✔ Usás los mismos avisos que tu compu (tema <span class="topic">${esc(pc.topic)}</span>). Si ya los activaste en la compu, no tenés que hacer nada más.`;
@@ -1926,12 +2022,14 @@ function renderAvisos(){
   const st=$('avStore'); st.textContent=IOS?'App Store':'Play Store'; st.href=IOS?'https://apps.apple.com/app/ntfy/id1625396347':'https://play.google.com/store/apps/details?id=io.heckel.ntfy';
   $('bdAuto').checked=S.bdAuto!==false; $('bdHora').value=S.bdHora||'';
 }
+$('wpOn').onchange=async e=>{ e.target.disabled=true; if(e.target.checked){ const ok=await wpActivar(); if(ok) toast('🔔 Listo: te aviso aunque tengas el celu bloqueado', 3500); } else await wpApagar(); e.target.disabled=false; renderAvisos(); };
+$('wpTest').onclick=async()=>{ LS.set('wpPrueba', {id:'prueba-'+Date.now(), at:Date.now()+75000, titulo:'🔔 FRIDAY', texto:'¡Anda! Así te van a llegar los recordatorios.'}); try{ await wpSync(true); toast('Bloqueá el celu: en un minuto te llega un aviso de prueba', 5000); }catch(e){ toast('No pude programar la prueba'); } };
 $('avOn').onchange=e=>{ const a=avOwn(); a.on=e.target.checked; LS.set('avisos',a); schedulePushes(); };
 $('avCopy').onclick=()=>{ const t=avOwn().topic; navigator.clipboard?.writeText(t).then(()=>toast('Tema copiado'),()=>toast(t)); };
 $('avTest').onclick=async()=>{ const d=avisoDest(); if(!d){ toast('Primero prendé "Usar avisos con ntfy"'); return; } try{ await ntfyPost(d,{title:'FRIDAY', body:'¡Anda! Así te van a llegar los recordatorios 🔔', tags:'bell', prio:4}); toast('Listo: te tiene que llegar en unos segundos'); }catch(e){ toast('No pude mandarlo ('+e.message+')'); } };
 $('bdAuto').onchange=e=>{ S.bdAuto=e.target.checked; saveS(); };
-$('bdHora').onchange=e=>{ S.bdHora=e.target.value||''; saveS(); if(S.bdHora && !avisoDest()) toast('Para el aviso diario prendé "Usar avisos con ntfy"', 4000); schedulePushes(); };
-function remNoteTxt(){ const d=avisoDest(); $('remNote').innerHTML = d ? '✔ Suenan aunque FRIDAY esté cerrada (con la app <b>ntfy</b>).' : 'Ahora suenan solo con FRIDAY abierta. Para que suenen <b>sí o sí</b>, activá los avisos 👇 (o tocá 📅 para pasarlos al calendario del celu).'; }
+$('bdHora').onchange=e=>{ S.bdHora=e.target.value||''; saveS(); if(S.bdHora && !avisoDest() && !WP.on()) toast('Para el aviso diario prendé «Avisarme con el celu bloqueado»', 4000); schedulePushes(); wpSync(false).catch(()=>{}); };
+function remNoteTxt(){ const d=avisoDest(); $('remNote').innerHTML = WP.on() ? '✔ Te llegan aunque tengas el celu bloqueado.' : d ? '✔ Suenan aunque FRIDAY esté cerrada (con la app <b>ntfy</b>).' : 'Ahora suenan solo con FRIDAY abierta. Para que suenen <b>sí o sí</b>, activá los avisos 👇 (o tocá 📅 para pasarlos al calendario del celu).'; }
 function askNotifPermission(){ try{ if('Notification' in window && Notification.permission==='default') Notification.requestPermission(); }catch(e){} }
 
 // ================================================================ memoria
@@ -2428,6 +2526,9 @@ function bufiaVozCelu(text){
       addMemory('corrección: '+text.slice(0,200)+(m.p?' (cuando preguntó «'+m.p.slice(0,80)+'»)':''));
       bufiaNota=`(Aviso del sistema, no lo dijo el usuario) Antes le preguntó «${m.p.slice(0,300)}», le contestaste «${m.r.replace(/\[\[[^\]]*\]\]/g,'').slice(0,500)}» y te dijo que estuvo mal. Lo que acaba de decir es qué estuvo mal. Agradecé corto y contestá bien la pregunta original teniéndolo en cuenta.`;
       return null; } }
+  if(/\b(pasale|pasa|pasar|comparti|compartir|recomenda|recomendar|mandale|manda) (a )?friday\b|\bfriday a (un|una|mis|mi) (amig|amiga|amigos|amigas|familia|novi)/.test(n)){
+    setTimeout(()=>{ const b=bubble('fr', null); b.innerHTML='<button class="big" type="button" data-compartir>🤝 Compartir FRIDAY</button>'; scrollDown(); }, 500);
+    return 'Dale: tocá el botón y elegí a quién mandársela. ¡Gracias por recomendarme!'; }
   if(/\b(busca|buscame|fijate si hay|hay) (alguna )?(actualizacion|actualizaciones|version nueva)\b|^actualizate$|^(actualiza|actualizar)( la app)?$/.test(n)){ actBuscar(true); return 'Me fijo si hay una versión nueva.'; }
   if(/\b(que hay de nuevo|que tiene de nuevo|que trae (esta|la) version|mostrame (lo nuevo|las novedades)|novedades de (esta|la) version)\b/.test(n)){ setTimeout(()=>actPresentar(true), 300); return 'Te muestro lo nuevo de esta versión.'; }
   const sis=BUFIA.preguntaSistema(text);
@@ -2671,7 +2772,21 @@ function applyTheme(){ document.documentElement.dataset.theme=S.theme==='friday'
 // ================================================================ instalar como app
 let deferredInstall=null;
 addEventListener('beforeinstallprompt', e=>{ e.preventDefault(); deferredInstall=e; renderInstall(); });
-addEventListener('appinstalled', ()=>{ deferredInstall=null; toast('📲 FRIDAY instalada'); renderInstall(); });
+addEventListener('appinstalled', ()=>{ deferredInstall=null; toast('📲 FRIDAY instalada'); renderInstall(); instCard(false); });
+// «Usala como app»: una tarjetita (una vez cada 5 días) si la abrieron desde el navegador
+function instCard(mostrar){
+  let el=$('instCard');
+  if(!mostrar){ if(el){ el.classList.remove('on'); setTimeout(()=>{ el.hidden=true; }, 300); } return; }
+  if(standalone() || PANEL || Date.now()-LS.get('instNo',0)<5*864e5 || !(deferredInstall || IOS)) return;
+  if(!el){ el=document.createElement('div'); el.id='instCard'; el.setAttribute('role','dialog'); el.setAttribute('aria-label','Instalar FRIDAY');
+    el.innerHTML='<img src="icon-192.png" alt=""><div><b>Usala como app</b><small>Pantalla completa, su ícono y avisos con el celu bloqueado.</small></div><button class="si" type="button">'+(IOS?'Cómo':'Instalar')+'</button><button class="no" type="button">Ahora no</button>';
+    document.body.appendChild(el);
+    el.querySelector('.no').onclick=()=>{ LS.set('instNo', Date.now()); instCard(false); };
+    el.querySelector('.si').onclick=async()=>{ if(deferredInstall){ deferredInstall.prompt(); await deferredInstall.userChoice.catch(()=>{}); deferredInstall=null; renderInstall(); instCard(false); } else { instCard(false); LS.set('instNo', Date.now()); showSheet('menu'); setTimeout(()=>{ const n=$('installNote'); if(n) n.scrollIntoView({block:'center', behavior:'smooth'}); }, 350); } };
+  }
+  el.hidden=false; requestAnimationFrame(()=>el.classList.add('on'));
+}
+setTimeout(()=>{ if(!$('setup') || !$('setup').classList.contains('on')) instCard(true); }, 25000);
 const standalone=()=>matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
 function renderInstall(){
   const txt = standalone() ? '✔ Ya la tenés como app.' :
@@ -2682,7 +2797,12 @@ function renderInstall(){
   ['installBtn','installBtn2'].forEach(id=>{ if($(id)) $(id).hidden=!deferredInstall || standalone(); });
 }
 ['installBtn','installBtn2'].forEach(id=>$(id).onclick=async()=>{ if(!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice.catch(()=>{}); deferredInstall=null; renderInstall(); });
-$('shareBtn').onclick=async()=>{ const url=spRedirect(); try{ if(navigator.share) await navigator.share({title:'FRIDAY', text:'Probá FRIDAY, una asistente con voz para el celu (gratis, sin instalar nada):', url}); else { await navigator.clipboard.writeText(url); toast('Link copiado: '+url, 4000); } }catch(e){} };
+async function compartirFriday(){
+  const url='https://bufalabs-arg.github.io/?de=celu', text='Te paso FRIDAY: una inteligencia artificial gratis que te habla y te ayuda, en el celu y en la compu. Probala:';
+  try{ if(navigator.share){ await navigator.share({title:'FRIDAY', text, url}); return; } await navigator.clipboard.writeText(text+' '+url); toast('Link copiado: pegalo donde quieras', 3500); }catch(e){}
+}
+$('shareBtn').onclick=compartirFriday;
+document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('[data-compartir]')) compartirFriday(); });
 
 // ================================================================ bienvenida
 function openSetup(p){ $('setup').classList.add('on'); setupStep(p||1); }
@@ -3737,8 +3857,8 @@ function renderMas(){
   $('perfilN').textContent=S.name||'Vos'; $('avatar').textContent=(S.name||'F').trim().charAt(0).toUpperCase();
   $('perfilC').textContent=[S.city, 'FRIDAY Móvil '+VERSION].filter(Boolean).join(' · ');
   try{ renderVinc(); }catch(e){}
-  let av=false; try{ av=!!avisoDest(); }catch(e){}
-  $('avMenuTxt').textContent=av?'Suenan aunque FRIDAY esté cerrada':'Ahora suenan solo con FRIDAY abierta';
+  let av=false; try{ av=WP.on() || !!avisoDest(); }catch(e){}
+  $('avMenuTxt').textContent=av?'Te llegan con el celu bloqueado':'Ahora suenan solo con FRIDAY abierta';
   $('spMenuTxt').textContent=spOnline()?'Conectado':S.spId?'Sin conectar':'Sin configurar';
   document.querySelectorAll('input[name=tema]').forEach(r=>r.checked=(r.value===(S.theme==='friday'?'friday':'jarvis')));
 }

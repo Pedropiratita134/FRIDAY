@@ -1,7 +1,8 @@
 {
+  "id": "./",
   "name": "FRIDAY",
   "short_name": "FRIDAY",
-  "description": "Tu asistente con voz, en el celu.",
+  "description": "Tu asistente con voz, en el celu. Gratis, hecha en Argentina por BufaLabs.",
   "lang": "es-AR",
   "start_url": "./",
   "scope": "./",
@@ -10,6 +11,12 @@
   "background_color": "#030a14",
   "theme_color": "#030a14",
   "icons": [
+    {
+      "src": "icon-180.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
     {
       "src": "icon-192.png",
       "sizes": "192x192",
@@ -53,6 +60,40 @@
           "sizes": "192x192"
         }
       ]
+    }
+  ],
+  "categories": [
+    "productivity",
+    "utilities",
+    "lifestyle"
+  ],
+  "launch_handler": {
+    "client_mode": [
+      "navigate-existing",
+      "auto"
+    ]
+  },
+  "screenshots": [
+    {
+      "src": "screens/inicio.webp",
+      "sizes": "780x1560",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "FRIDAY arrancando"
+    },
+    {
+      "src": "screens/clima.webp",
+      "sizes": "780x1560",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Le preguntás el clima y te lo muestra"
+    },
+    {
+      "src": "screens/charla.webp",
+      "sizes": "780x1560",
+      "type": "image/webp",
+      "form_factor": "narrow",
+      "label": "Charlás con ella por voz o escribiendo"
     }
   ]
 }

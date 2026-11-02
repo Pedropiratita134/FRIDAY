@@ -1,16 +1,21 @@
 {
- "version": "4.1",
- "titulo": "La voz de Elena",
+ "version": "4.2",
+ "titulo": "Más app que nunca",
  "items": [
   {
-   "icono": "🗣️",
-   "titulo": "Habla con Elena",
-   "texto": "El celu ahora habla con Elena, la misma voz natural de la compu. Si preferís la del celu, se cambia en Más → Voz."
+   "icono": "🔔",
+   "titulo": "Avisos con el celu bloqueado",
+   "texto": "Prendelos en Más → Avisos: los recordatorios te llegan aunque FRIDAY esté cerrada, sin instalar otra app. El servidor solo sabe a qué hora avisarte; lo que dice queda en tu celu."
   },
   {
-   "icono": "🧾",
-   "titulo": "Errores que llegan solos",
-   "texto": "Si aceptás, cuando algo falla el celu le manda el error a BufaLabs, sin tus charlas ni tus llaves."
+   "icono": "📲",
+   "titulo": "Se siente app",
+   "texto": "Ya no se estira, no hace zoom sin querer ni selecciona cosas al tocar. Los botones responden con una vibración cortita, y en iPhone abre con su pantalla de presentación."
+  },
+  {
+   "icono": "🤝",
+   "titulo": "Pasale FRIDAY a un amigo",
+   "texto": "En Más → La app, o decile «pasale FRIDAY a un amigo»."
   }
  ]
 }
