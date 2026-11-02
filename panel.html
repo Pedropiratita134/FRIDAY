@@ -313,6 +313,15 @@ body.noticiero .dock,body.noticiero .talk{visibility:hidden}
 .ctl{display:flex;flex-wrap:wrap;gap:10px}.ctl:empty{display:none}
 .ctl .dev{justify-content:flex-start;flex:1 1 150px;max-width:230px;min-height:0;flex-direction:row;align-items:center;gap:12px;padding:12px 16px;border-radius:20px}
 .ctl .dev svg{width:28px;height:28px;flex:0 0 28px}.ctl .dev span{font-size:17px;-webkit-line-clamp:1}.ctl .dev small{font-size:13px}
+.ctl .escn{display:flex;gap:10px;flex:1 1 100%;flex-wrap:wrap}
+.ctl .esc{flex:1 1 0;min-width:140px;display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:22px;border:1px solid color-mix(in srgb, var(--t) 45%, transparent);background:color-mix(in srgb, var(--t) 14%, var(--card));color:var(--ink);font:600 18px var(--text);cursor:pointer;text-align:left;transition:transform .12s, background .2s}
+.ctl .esc span{font-size:24px;line-height:1}.ctl .esc:active{transform:scale(.96)}
+.ctl .esc.run{background:color-mix(in srgb, var(--t) 38%, var(--card));box-shadow:0 0 0 2px var(--t) inset}
+.ctl .tvq{flex:1 1 100%;display:flex;align-items:center;gap:8px;padding:8px 10px 8px 18px;border-radius:22px;border:1px solid var(--edge);background:var(--card)}
+.ctl .tvq b{flex:1;font:600 17px var(--text);color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ctl .tvq button{flex:0 0 52px;height:52px;border-radius:50%;border:0;background:rgba(255,255,255,.08);color:var(--ink);display:grid;place-items:center;cursor:pointer}
+.ctl .tvq button svg{width:24px;height:24px}.ctl .tvq .pp{background:#3D8BFF;color:#fff}.ctl .tvq button:active{transform:scale(.92)}
+@media (prefers-reduced-motion:reduce){ .ctl .esc{transition:none} }
 .ctl .todo{flex:0 0 auto;padding:12px 18px;border-radius:20px;border:1px solid var(--edge);background:var(--card);color:var(--ink);font:600 16px var(--text);cursor:pointer}
 .tips button{background:none;font-family:inherit;cursor:pointer}
 .widgets{display:flex;gap:14px}.widgets>*{flex:1 1 0}.widgets>.wnews{flex-grow:1.6}
@@ -1709,7 +1718,7 @@ async function wakePeek(frames){
     fd.append('model','whisper-large-v3-turbo'); fd.append('language','es'); fd.append('response_format','json'); fd.append('temperature','0');
     fd.append('prompt','Friday, ');
     Ear.calls.push(Date.now());
-    const r=await fetch(API.groq+'/audio/transcriptions',{method:'POST', headers:{Authorization:'Bearer '+S.groqKey}, body:fd});
+    const r=await fetch(API.groq+'/audio/transcriptions',{method:'POST', headers:grH({}), body:fd});
     if(r.status===429){ const tx=await r.text().catch(()=>''); sttCool('whisper-large-v3-turbo', retryMs(tx, r)); }
     if(!r.ok) return null;
     const d=await r.json(), txt=norm(String(d.text||'')); Ear.peeks++;
@@ -1786,7 +1795,7 @@ async function sttSend(frames, paraElla){
   h.onSending();
   try{
     (wm==='whisper-large-v3-turbo'?Ear.calls:Ear.sendCalls).push(Date.now());
-    const r=await fetch(API.groq+'/audio/transcriptions',{method:'POST', headers:{Authorization:'Bearer '+S.groqKey}, body:fd});
+    const r=await fetch(API.groq+'/audio/transcriptions',{method:'POST', headers:grH({}), body:fd});
     if(r.status===429){ const tx=await r.clone().text().catch(()=>''); sttCool(wm, retryMs(tx, r)); }
     if(!r.ok){ if((r.status===429 || r.status>=500) && wm!=='whisper-large-v3-turbo') stt.turboUntil=Date.now()+10*60000; throw new Error('whisper '+r.status); }
     const d=await r.json(); let txt=(d.text||'').trim();
@@ -2321,7 +2330,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='5.1';
+const VERSION='5.2';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2356,6 +2365,9 @@ const SERVIDOR_BUFALABS='https://bufalabs.pedrobufager.workers.dev/openai/v1', G
 if(!S.groqKey) S.groqKey='bufalabs';   // sin llave propia: piensa con el servidor de BufaLabs
 S.reconocer='no'; S.mira='no';   // Casa 5.1: pantalla de control, sin cámara
 Object.defineProperty(API, 'groq', { get:()=> (!S.groqKey || S.groqKey==='bufalabs') ? SERVIDOR_BUFALABS : GROQ_DIRECTO });
+const CASA_ID=(()=>{ try{ let i=localStorage.getItem('bufia:id'); if(!/^[a-f0-9]{16}$/.test(i||'')){ const a=new Uint8Array(8); crypto.getRandomValues(a); i=[...a].map(x=>x.toString(16).padStart(2,'0')).join(''); localStorage.setItem('bufia:id', i); } return 'casa-'+i; }catch(e){ return ''; } })();
+// cabeceras para el cerebro: con el servidor de BufaLabs va el número de la tablet (sirve para contar usos, no lleva datos tuyos)
+const grH=h=>{ h=Object.assign({}, h, {Authorization:'Bearer '+S.groqKey}); if(API.groq===SERVIDOR_BUFALABS && CASA_ID) h['X-Friday']=CASA_ID; return h; };
 const saveS=()=>LS.set('cfg',S);
 // la tablet es de toda la familia: saluda a la familia, no a una persona
 const FAM=()=>Object.assign({apellido:'', miembros:[]}, S.familia||{});
@@ -3491,7 +3503,7 @@ async function news(){
 async function search(q){
   const fecha=new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
   for(const model of ['groq/compound-mini','groq/compound']){
-    try{ const r=await fetch(API.groq+'/chat/completions',{method:'POST', headers:{'Content-Type':'application/json','Authorization':'Bearer '+S.groqKey}, body:JSON.stringify({model, messages:[{role:'user',content:`Hoy es ${fecha} y estoy en ${S.city||'Argentina'}. Buscá en internet y respondé en español rioplatense, con datos concretos y actuales, en 3 a 6 frases, sin markdown. Pregunta: ${q}`}], max_completion_tokens:600})});
+    try{ const r=await fetch(API.groq+'/chat/completions',{method:'POST', headers:grH({'Content-Type':'application/json'}), body:JSON.stringify({model, messages:[{role:'user',content:`Hoy es ${fecha} y estoy en ${S.city||'Argentina'}. Buscá en internet y respondé en español rioplatense, con datos concretos y actuales, en 3 a 6 frases, sin markdown. Pregunta: ${q}`}], max_completion_tokens:600})});
       if(!r.ok) continue; const d=await r.json(); const t=(d.choices?.[0]?.message?.content||'').replace(/\*\*/g,'').trim(); if(t) return t; }catch(e){}
   }
   return '';
@@ -3548,7 +3560,7 @@ async function llm(messages, onDelta){
     try{
       const body={model, messages, stream:true, temperature:.7, max_completion_tokens:600};
       if(/gpt-oss/.test(model)) body.reasoning_effort='low';
-      const r=await fetch(API.groq+'/chat/completions',{method:'POST', signal:ctl.signal, headers:{'Content-Type':'application/json','Authorization':'Bearer '+S.groqKey}, body:JSON.stringify(body)});
+      const r=await fetch(API.groq+'/chat/completions',{method:'POST', signal:ctl.signal, headers:grH({'Content-Type':'application/json'}), body:JSON.stringify(body)});
       if(r.status===429 || r.status===413 || r.status>=500){ const tx=await r.text().catch(()=>''); tired[model]=Date.now()+(r.status===429?Math.min(30*60000,retryMs(tx,r)):60000); lastErr='Groq '+r.status; continue; }
       if(!r.ok){ lastErr='Groq '+r.status; if(r.status===401) throw new Error('llave'); continue; }
       const rd=r.body.getReader(), dec=new TextDecoder(); let buf='', out='';
@@ -3713,18 +3725,39 @@ function renderHoyTo(box, max, full){
   if(box.dataset.h!==html){ box.dataset.h=html; box.innerHTML=html; }
 }
 function renderCasa(){
+  renderCtl();
   const el=$('cCasa'), ds=casa.devs.slice(0,16);
   if(!ds.length){ el.dataset.h=''; setH(el, `<h2>Casa</h2><p class="empty">${workerOn()? (casa.err?esc('No pude ver tus aparatos: '+casa.err):'Buscando tus aparatos…') : 'Las luces se conectan desde el celu, en la configuración de la tablet.'}</p>`); return; }
   const on=ds.filter(devOn).length;
   const h=`<h2>Casa<small>${on?on+(on>1?' prendidas':' prendida'):'Todo apagado'}</small></h2><div class="devs">${ds.map(d=>`<button class="dev${devOn(d)?' on':''}${d.online?'':' off'}${(casa.ocup&&casa.ocup.has(d.id))?' busy':''}" data-dev="${esc(d.id)}" type="button">${d.tipo==='aspiradora'?IC.robot:d.tipo==='enchufe'?IC.plug:IC.bulb}<span>${esc(d.nombre)}${!d.online?'<small>Sin conexión</small>':d.tipo==='aspiradora'?`<small>${devOn(d)?'Limpiando':'En la base'}</small>`:''}</span></button>`).join('')}</div>`;
   if(el.dataset.h!==h){ el.dataset.h=h; el.__h=h; el.innerHTML=h; }
   if(os.cur==='casa') $('winS').textContent=on?on+(on>1?' prendidas':' prendida'):'Todo apagado';
-  renderCtl();
 }
 function renderCtl(){
   const el=$('ctl'); if(!el) return; const ds=casa.devs.filter(d=>d.online!==false).slice(0,6), on=casa.devs.filter(devOn);
-  const h = ds.length ? ds.map(d=>`<button class="dev${devOn(d)?' on':''}${(casa.ocup&&casa.ocup.has(d.id))?' busy':''}" data-dev="${esc(d.id)}" type="button">${(el.querySelector(`[data-dev="${CSS.escape(d.id)}"] svg`)||{}).outerHTML||IC_LUZ}<div><span>${esc(d.nombre)}</span><small>${devOn(d)?'Prendida':'Apagada'}</small></div></button>`).join('') + (on.length?`<button class="todo" type="button" data-ctl="apagar">Apagar todo</button>`:'') : '';
+  const h = escenasHtml() + teleHtml() + (ds.length ? ds.map(d=>`<button class="dev${devOn(d)?' on':''}${(casa.ocup&&casa.ocup.has(d.id))?' busy':''}" data-dev="${esc(d.id)}" type="button">${(el.querySelector(`[data-dev="${CSS.escape(d.id)}"] svg`)||{}).outerHTML||IC_LUZ}<div><span>${esc(d.nombre)}</span><small>${devOn(d)?'Prendida':'Apagada'}</small></div></button>`).join('') + (on.length?`<button class="todo" type="button" data-ctl="apagar">Apagar todo</button>`:'') : '');
   if(el.dataset.h!==h){ el.dataset.h=h; el.innerHTML=h; }
+}
+// escenas: los protocolos a un toque, primero los que tienen sentido a esta hora
+const ESC_HORA=h=> h>=5&&h<12 ? ['dia','voy','llegue'] : h>=12&&h<19 ? ['llegue','voy','fiesta'] : h>=19 ? ['peli','noche','llegue','fiesta'] : ['noche','peli'];
+function escenasLista(){ let ps=[]; try{ ps=protos; }catch(e){ return []; } const pri=ESC_HORA(new Date().getHours());
+  return ps.map((p,k)=>({p, o:pri.includes(p.id)?pri.indexOf(p.id):10+k})).sort((a,b)=>a.o-b.o).map(x=>x.p).slice(0,4); }
+function escenasHtml(){ let run=null; try{ run=protoSt.corriendo; }catch(e){}
+  const ps=escenasLista(); if(!ps.length) return '';
+  return `<div class="escn" role="group" aria-label="Escenas">${ps.map(p=>`<button type="button" class="esc${run===p.id?' run':''}" data-proto="${esc(p.id)}" style="--t:${esc(p.t||'#4CC9FF')}"><span>${esc(p.ic||'⚡')}</span>${esc(p.n.charAt(0).toUpperCase()+p.n.slice(1))}</button>`).join('')}</div>`; }
+// la tele a mano (si está vinculada): pausa, volumen y siguiente sin abrir nada
+function teleHtml(){ if(!teleOn()) return ''; const m=music.cur, enTele=m&&m.src==='tele', pausada=enTele&&m.playing===false;
+  return `<div class="tvq" role="group" aria-label="La tele"><b>${esc(S.tv.name&&!/youtube/i.test(S.tv.name)?S.tv.name:'La tele')}</b><button type="button" data-tvq="voldn" aria-label="Bajar el volumen de la tele">${OSI.voldn}</button><button type="button" class="pp" data-tvq="${pausada?'seguir':'pausa'}" aria-label="${pausada?'Seguir':'Pausa'}">${pausada?OSI.play:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'}</button><button type="button" data-tvq="volup" aria-label="Subir el volumen de la tele">${OSI.volup}</button><button type="button" data-tvq="siguiente" aria-label="Siguiente en la tele">${OSI.next}</button></div>`; }
+async function teleRapido(c){
+  const m=music.cur;
+  try{
+    if(m && m.src==='tele'){ await musicCtrl(c==='volup'?'volumen':c==='voldn'?'volumen':c, c==='volup'?'sube':c==='voldn'?'baja':''); }
+    else if(c==='pausa') await tv('pause');
+    else if(c==='seguir') await tv('play');
+    else if(c==='siguiente') await tv('next');
+    else { const cur=music.tvVol||30; music.tvVol=Math.max(0,Math.min(100, cur+(c==='volup'?10:-10))); await tv('setVolume',{volume:music.tvVol}); toast('Volumen de la tele: '+music.tvVol); }
+  }catch(e){ toast('La tele no respondió'); }
+  renderCtl(); try{ renderMusCtl(); }catch(e){}
 }
 const IC_LUZ='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0 0 12 3z"/></svg>';
 async function apagarTodo(){ const on=casa.devs.filter(devOn); await Promise.all(on.map(d=>casaDo(d.nombre, 'apagar').catch(()=>{}))); renderCtl(); }
@@ -4405,6 +4438,7 @@ document.addEventListener('click', e=>{
   const ap=t.closest('.app-ic'); if(ap){ e.stopPropagation(); const id=ap.dataset.app; if(id==='cielo'){ osClose(); state.lastUser=Date.now(); setTimeout(()=>ambOn(true), 60); } else osOpen(id); return; }
   if(t.closest('#winBack')){ osClose(); return; }
   if(t.closest('#mini')){ const pp=t.closest('#miniPP'); if(pp){ musicCtrl(pp.dataset.k==='play'?'seguir':'pausa'); return; } osOpen('mus'); return; }
+  const tq=t.closest('[data-tvq]'); if(tq){ teleRapido(tq.dataset.tvq); return; }
   const mc=t.closest('[data-mc]'); if(mc){ musicCtrl(mc.dataset.mc, mc.dataset.v||''); setTimeout(renderMusCtl, 400); return; }
   const mv=t.closest('[data-mv]'); if(mv){ musicMove(mv.dataset.mv).then(r=>say(r)); return; }
   const pl=t.closest('[data-play]'); if(pl){ playMusic(pl.dataset.play).then(r=>say(r,'happy')).catch(err=>say('No pude: '+err.message,'worried')); return; }
@@ -5103,7 +5137,7 @@ const PROTOS_BASE=[
 ];
 let protos=LS.get('protos', null);
 if(!Array.isArray(protos)) protos=PROTOS_BASE.map(p=>Object.assign({}, p));
-const protoSave=()=>LS.set('protos', protos);
+const protoSave=()=>{ LS.set('protos', protos); try{ renderCtl(); }catch(e){} };
 const protoSt={ corriendo:null, silencioUntil:0 };
 function protoFind(q){ const n=norm(q).replace(/^(el |la |los |modo |protocolo )/,'').trim(); if(!n) return null;
   return protos.find(p=>norm(p.n)===n) || protos.find(p=>(p.dice||[]).some(d=>norm(d)===n)) || protos.find(p=>norm(p.n).includes(n) || (n.length>3 && n.includes(norm(p.n)))) || null; }
@@ -5119,7 +5153,7 @@ function protoHud(p, i, fin){
 async function decirYEsperarP(t){ say(t, 'happy'); const t0=Date.now(); while(!speakingNow() && Date.now()-t0<8000) await sleep(120); while(speakingNow() && Date.now()-t0<90000) await sleep(150); }
 async function protoRun(q, op){ op=op||{};
   const p=typeof q==='object'?q:protoFind(q); if(!p){ say(`No tengo ningún protocolo «${q}». ${protos.length?'Tengo '+listaY(protos.map(x=>x.n))+'.':''}`, 'confused'); return false; }
-  if(protoSt.corriendo) return false; protoSt.corriendo=p.id; state.lastUser=Date.now(); ambOff(); faceSet('excited', 2000);
+  if(protoSt.corriendo) return false; protoSt.corriendo=p.id; try{ renderCtl(); }catch(e){} state.lastUser=Date.now(); ambOff(); faceSet('excited', 2000);
   const notas=[];
   try{
     for(let i=0;i<p.pasos.length;i++){ const s=p.pasos[i]; protoHud(p, i);
@@ -5149,7 +5183,7 @@ async function protoRun(q, op){ op=op||{};
     pushHist('assistant', `(activé el protocolo ${p.n})`);
     if(!op.desdeCompu){ try{ FSync.send({k:'aviso', i:p.ic||'⚡', t:'Protocolo '+p.n, s:'Lo activaron en la tablet', v:''}); }catch(e){} }
     return true;
-  } finally { protoSt.corriendo=null; } }
+  } finally { protoSt.corriendo=null; try{ renderCtl(); }catch(e){} } }
 function agendaDecir(c){
   const t0=new Date(); t0.setHours(0,0,0,0); const d0=new Date(t0); if(c==='mañana') d0.setDate(d0.getDate()+1); const d1=new Date(d0); d1.setDate(d1.getDate()+1);
   const its=agItems().filter(x=>x.at>=d0 && x.at<d1 && (c==='mañana' || x.d || x.at>new Date()));

@@ -582,7 +582,7 @@ body.panel{padding-bottom:0}
 // =====================================================================================================
 (function(){
 if(window.BUFIA) return;
-const B = window.BUFIA = { version: 5 };
+const B = window.BUFIA = { version: 6 };
 const GEM = 'https://generativelanguage.googleapis.com/v1beta';
 const conTiempo = (ms) => { const c = new AbortController(); const t = setTimeout(() => c.abort(), ms); return { signal: c.signal, listo: () => clearTimeout(t) }; };
 // B.proxy (lo pone la compu): un puente por FRIDAY.exe para los servicios que el navegador bloquea
@@ -602,6 +602,20 @@ const fmt = (n, dec) => Number(n).toLocaleString('es-AR', { maximumFractionDigit
 B.SERVIDOR = 'https://bufalabs.pedrobufager.workers.dev';
 B.LLAVE = 'bufalabs';
 B.sinLlave = k => !k || k === B.LLAVE;
+// un número al azar por instalación (no dice quién sos): el servidor cuenta cuántos distintos lo usan por día
+B.app = B.app || 'web';
+B.id = function(){
+  let v = ''; try{ v = localStorage.getItem('bufia:id') || ''; }catch(e){}
+  if(!/^[a-z0-9]{16}$/.test(v)){ v = [...crypto.getRandomValues(new Uint8Array(8))].map(x => x.toString(16).padStart(2, '0')).join(''); try{ localStorage.setItem('bufia:id', v); }catch(e){} }
+  return v;
+};
+B.quien = () => String(B.app || 'web').replace(/[^a-z]/g, '').slice(0, 6) + '-' + B.id();
+// pedidos directos al servidor de BufaLabs (la voz, YouTube, el estado, los informes)
+B.servidor = function(ruta, opts){
+  opts = Object.assign({}, opts || {});
+  const h = Object.assign({}, opts.headers || {}); h['X-Friday'] = B.quien(); opts.headers = h;
+  return fetch(B.SERVIDOR + ruta, opts);
+};
 B.ollama = null;
 const OLLAMA = 'http://127.0.0.1:11434';
 const OLLAMA_PREF = [/^gemma3/, /^llama3\.[123]/, /^qwen2\.5/, /^mistral/, /^qwen3/, /^phi/, /./];
@@ -618,6 +632,7 @@ function authDe(o){ const h = o && o.headers; if(!h) return ''; if(typeof h.get 
 function sinAuth(o){ const h = o && o.headers; let n;
   if(h && typeof h.forEach === 'function'){ n = {}; h.forEach((v, k) => { if(k.toLowerCase() !== 'authorization') n[k] = v; }); }
   else { n = Object.assign({}, h || {}); delete n.Authorization; delete n.authorization; }
+  n['X-Friday'] = B.quien();
   return Object.assign({}, o || {}, { headers: n }); }
 function aOllama(f0, o){
   let b; try{ b = JSON.parse(o.body); }catch(e){ return Promise.reject(new TypeError('sin cerebro')); }
@@ -1513,11 +1528,11 @@ B.profePrompt = function(){
 
 <script>
 'use strict';
-const VERSION='4.0';
+const VERSION='4.1';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"4.0","titulo":"Sin llaves","items":[
-  {"icono":"🔓","titulo":"Ya no hacen falta llaves","texto":"FRIDAY piensa y escucha con el servidor gratis de BufaLabs. Ponés tu nombre y listo: le hablás."},
-  {"icono":"🔁","titulo":"Nunca te quedás sin cerebro","texto":"Si tenías tu llave de Groq, la sigo usando; cuando se queda sin cupo, me paso solo al servidor de BufaLabs."}]};
+const NOVEDADES_M={"version":"4.1","titulo":"La voz de Elena","items":[
+  {"icono":"🗣️","titulo":"Habla con Elena","texto":"El celu ahora habla con Elena, la misma voz natural de la compu. Si preferís la del celu, se cambia en Más → Voz."},
+  {"icono":"🧾","titulo":"Errores que llegan solos","texto":"Si aceptás, cuando algo falla el celu le manda el error a BufaLabs, sin tus charlas ni tus llaves."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1533,6 +1548,8 @@ const API={
 let S=Object.assign({name:'', trato:'nombre', city:'', lat:null, lon:null, groqKey:'', gemKey:'', convo:false, theme:'jarvis', voice:'', voz:true, spId:''}, LS.get('cfg',{}));
 const primeraVez=!(LS.get('cfg',{})||{}).groqKey;
 if(!S.groqKey) S.groqKey=BUFIA.LLAVE;   // sin llave propia: el servidor de BufaLabs
+BUFIA.app='celu';
+if(!S.vozV2){ S.voice='__elena'; S.vozV2=true; }   // 4.1: Elena por defecto (se puede volver a la del celu)
 const saveS=()=>LS.set('cfg',S);
 let hist=LS.get('history',[]), memory=LS.get('memory',[]), reminders=LS.get('rems',[]);
 let orbState='idle', orbLevel=0;
@@ -1564,11 +1581,12 @@ function pickVoice(){
   const rank=v=>(/es[-_](AR|US|419|MX|CO|CL|UY)/i.test(v.lang)?0:/es[-_]ES/i.test(v.lang)?2:1) - (/google|paulina|sabina|elena|helena|monica|mónica|female|mujer/i.test(v.name)?0.5:0);
   voices.sort((a,b)=>rank(a)-rank(b));
   voiceObj = voices.find(v=>v.name===S.voice) || voices[0] || null;
-  const sel=$('cfVoice'); if(sel){ sel.innerHTML=voices.length?'':'<option>La del celu</option>'; voices.forEach(v=>{ const o=document.createElement('option'); o.value=v.name; o.textContent=v.name.replace(/Microsoft |Google /,'')+' ('+v.lang+')'; sel.appendChild(o); }); if(voiceObj) sel.value=voiceObj.name; }
+  const sel=$('cfVoice'); if(sel){ sel.innerHTML='<option value="__elena">Elena, la voz de FRIDAY (por internet)</option>'+(voices.length?'':'<option value="">La del celu</option>'); voices.forEach(v=>{ const o=document.createElement('option'); o.value=v.name; o.textContent=v.name.replace(/Microsoft |Google /,'')+' ('+v.lang+')'; sel.appendChild(o); }); sel.value = S.voice==='__elena' ? '__elena' : (voiceObj ? voiceObj.name : ''); }
 }
 if('speechSynthesis' in window){ pickVoice(); speechSynthesis.onvoiceschanged=pickVoice; setTimeout(pickVoice,1200); }
 function unlockAudio(){
   try{ if(!actx){ const C=window.AudioContext||window.webkitAudioContext; if(C) actx=new C(); } if(actx && actx.state==='suspended') actx.resume(); }catch(e){}
+  try{ if(!unlockAudio.el){ unlockAudio.el=1; const a=elenaEl(); a.src='data:audio/mpeg;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjYwLjE2LjEwMAAAAAAAAAAAAAAA//OEwAAAAAAAAAAAAEluZm8AAAAPAAAABgAAAwAAYGBgYGBgYGBgYGBgYGBgYICAgICAgICAgICAgICAgICAoKCgoKCgoKCgoKCgoKCgoMDAwMDAwMDAwMDAwMDAwMDA4ODg4ODg4ODg4ODg4ODg4OD/////////////////////AAAAAExhdmM2MC4zMQAAAAAAAAAAAAAAACQDwAAAAAAAAAMArPq/AQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//NExAAAAANIAAAAAExBTUUzLjEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMu//NExFMAAANIAAAAADEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMu//NExKYAAANIAAAAADEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVTEFNRTMu//NExKwAAANIAAAAADEwMFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NExKwAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV//NExKwAAANIAAAAAFVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVV'; a.volume=0; a.play().then(()=>{ a.pause(); a.volume=1; }).catch(()=>{ a.volume=1; }); } }catch(e){}
   try{ if('speechSynthesis' in window && !unlockAudio.done){ unlockAudio.done=1; const u=new SpeechSynthesisUtterance(' '); u.volume=0; speechSynthesis.speak(u); } }catch(e){}
 }
 document.addEventListener('click', unlockAudio, true);
@@ -1576,9 +1594,37 @@ function speechText(t){
   return String(t).replace(/\[\[[^\]]*\]\]/g,'').replace(/https?:\/\/\S+/g,'').replace(/[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}]/gu,'').replace(/[*_#`>]/g,'')
     .replace(/(\d)\s?%/g,'$1 por ciento').replace(/°C?/g,' grados').replace(/\bkm\/h\b/g,'kilómetros por hora').trim();
 }
+const elena={ q:[], playing:false, el:null, falla:0, tick:null };
+const usaElena=()=> S.voice==='__elena' && navigator.onLine!==false && elena.falla<3;
+function elenaEl(){ if(!elena.el){ elena.el=new Audio(); elena.el.preload='auto'; } return elena.el; }
+function elenaPedir(t){ return BUFIA.servidor('/voz',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({texto:t, voz:'elena'})}).then(r=>r.ok?r.blob():Promise.reject(new Error('voz '+r.status))); }
+// las respuestas largas, en pedazos (la primera frase suena enseguida mientras se piden las otras)
+function elenaPartes(t){ const out=[]; let cur=''; for(const f of t.match(/[^.!?¡¿…]+[.!?…]*\s*/g)||[t]){ if((cur+f).length>260 && cur){ out.push(cur.trim()); cur=''; } cur+=f; } if(cur.trim()) out.push(cur.trim()); return out; }
+function elenaFin(){ elena.playing=false; clearInterval(elena.tick); orbLevel=0; if(!(('speechSynthesis' in window) && speechSynthesis.speaking)){ speakingNow=false; if(orbState==='talk') orbState='idle'; afterSpeech(); } }
+function sayNativo(t, g){ return new Promise(res=>{ if(!('speechSynthesis' in window)) return res(); const u=new SpeechSynthesisUtterance(t); if(voiceObj){ u.voice=voiceObj; u.lang=voiceObj.lang; } else u.lang='es-AR'; u.rate=1.05; u.onboundary=()=>{ orbLevel=1; }; u.onend=u.onerror=()=>res(); if(g===sayGen) speechSynthesis.speak(u); else res(); }); }
+async function elenaSigue(){
+  const it=elena.q.shift();
+  if(!it){ elenaFin(); return; }
+  if(it.g!==sayGen) return elenaSigue();
+  elena.playing=true; speakingNow=true; orbState='talk';
+  let blob=null; try{ blob=await it.p; }catch(e){ elena.falla++; }
+  if(it.g!==sayGen) return elenaSigue();
+  if(!blob){ await sayNativo(it.t, it.g); return elenaSigue(); }
+  const a=elenaEl(); const url=URL.createObjectURL(blob); a.src=url;
+  clearInterval(elena.tick); elena.tick=setInterval(()=>{ orbLevel = a.paused ? 0 : 0.35+Math.random()*0.65; }, 110);
+  a.onended=a.onerror=()=>{ URL.revokeObjectURL(url); elenaSigue(); };
+  try{ await a.play(); elena.falla=0; }catch(e){ URL.revokeObjectURL(url); elena.falla++; await sayNativo(it.t, it.g); elenaSigue(); }
+}
 function say(text){
-  if(!S.voz || !('speechSynthesis' in window)) return;
-  const t=speechText(text); if(!t) return;
+  if(!S.voz) return;
+  const t0=speechText(text); if(!t0) return;
+  if(usaElena()){
+    const g=sayGen; for(const t of elenaPartes(t0)) elena.q.push({t, g, p:elenaPedir(t)});
+    if(!elena.playing){ elena.playing=true; speakingNow=true; orbState='talk'; elenaSigue(); }
+    return;
+  }
+  if(!('speechSynthesis' in window)) return;
+  const t=t0;
   const g=sayGen;
   const u=new SpeechSynthesisUtterance(t); if(voiceObj){ u.voice=voiceObj; u.lang=voiceObj.lang; } else u.lang='es-AR'; u.rate=1.05;
   u.onstart=()=>{ if(g!==sayGen) return; speakingNow=true; orbState='talk'; };
@@ -1586,8 +1632,8 @@ function say(text){
   u.onend=u.onerror=()=>{ if(g!==sayGen) return; if(!speechSynthesis.pending && !speechSynthesis.speaking){ speakingNow=false; if(orbState==='talk') orbState='idle'; afterSpeech(); } };
   speechSynthesis.speak(u);
 }
-function stopVoice(){ sayGen++; try{ speechSynthesis.cancel(); }catch(e){} speakingNow=false; if(orbState==='talk') orbState='idle'; }
-const isSpeaking=()=>speakingNow || ('speechSynthesis' in window && (speechSynthesis.speaking||speechSynthesis.pending));
+function stopVoice(){ sayGen++; try{ speechSynthesis.cancel(); }catch(e){} elena.q=[]; try{ if(elena.el){ elena.el.pause(); } }catch(e){} clearInterval(elena.tick); elena.playing=false; speakingNow=false; if(orbState==='talk') orbState='idle'; }
+const isSpeaking=()=>speakingNow || elena.playing || ('speechSynthesis' in window && (speechSynthesis.speaking||speechSynthesis.pending));
 // modo charla: cuando termina de hablar, te escucha de nuevo
 let convoArm=false;
 function afterSpeech(){
@@ -2348,6 +2394,18 @@ function habitoRevisar(){ try{
 }catch(e){} }
 window.addEventListener('load', ()=>{ setTimeout(habitoRevisar, 9000); setTimeout(()=>{ try{ BUFIA.prepararDia({gem:S.gemKey, groq:S.groqKey}); }catch(e){} }, 6000); });
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') setTimeout(habitoRevisar, 2500); });
+async function infAutoCelu(){
+  try{
+    const errs=BUFIA.errores||[]; infAutoCelu.n=infAutoCelu.n||0;
+    if(errs.length<=infAutoCelu.n || Date.now()-(infAutoCelu.at||0)<600000) return;
+    if(S.infAuto===undefined){ if(LS.get('infPreg',false) || busy || isSpeaking()) return; LS.set('infPreg',true);
+      S.infAuto=confirm('FRIDAY tuvo un error. ¿Querés que mande los errores solos a BufaLabs, sin tus charlas ni tus llaves?'); saveS(); }
+    if(S.infAuto!==true) return;
+    infAutoCelu.n=errs.length; infAutoCelu.at=Date.now();
+    await BUFIA.servidor('/informe',{method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({app:'FRIDAY Móvil', version:VERSION, texto:BUFIA.informe('FRIDAY Móvil', VERSION, 'Enviado solo')})});
+  }catch(e){}
+}
+setInterval(infAutoCelu, 60000);
 async function informeMandarCelu(){
   const tx=BUFIA.informe('FRIDAY Móvil', VERSION, `Pantalla: ${innerWidth}×${innerHeight} · Instalada: ${matchMedia('(display-mode: standalone)').matches?'sí':'no'} · Voz: ${S.voz?'sí':'no'}`);
   try{ await navigator.clipboard.writeText(tx); }catch(e){}

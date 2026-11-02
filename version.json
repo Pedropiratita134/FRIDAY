@@ -1,16 +1,16 @@
 {
- "version": "4.0",
- "titulo": "Sin llaves",
+ "version": "4.1",
+ "titulo": "La voz de Elena",
  "items": [
   {
-   "icono": "🔓",
-   "titulo": "Ya no hacen falta llaves",
-   "texto": "FRIDAY piensa y escucha con el servidor gratis de BufaLabs. Ponés tu nombre y listo: le hablás."
+   "icono": "🗣️",
+   "titulo": "Habla con Elena",
+   "texto": "El celu ahora habla con Elena, la misma voz natural de la compu. Si preferís la del celu, se cambia en Más → Voz."
   },
   {
-   "icono": "🔁",
-   "titulo": "Nunca te quedás sin cerebro",
-   "texto": "Si tenías tu llave de Groq, la sigo usando; cuando se queda sin cupo, me paso solo al servidor de BufaLabs."
+   "icono": "🧾",
+   "titulo": "Errores que llegan solos",
+   "texto": "Si aceptás, cuando algo falla el celu le manda el error a BufaLabs, sin tus charlas ni tus llaves."
   }
  ]
 }
