@@ -1,21 +1,16 @@
 {
- "version": "4.2",
- "titulo": "Más app que nunca",
+ "version": "4.3",
+ "titulo": "Cara nueva",
  "items": [
   {
-   "icono": "🔔",
-   "titulo": "Avisos con el celu bloqueado",
-   "texto": "Prendelos en Más → Avisos: los recordatorios te llegan aunque FRIDAY esté cerrada, sin instalar otra app. El servidor solo sabe a qué hora avisarte; lo que dice queda en tu celu."
+   "icono": "🔵",
+   "titulo": "Ícono nuevo",
+   "texto": "FRIDAY estrena ícono y pantalla de presentación: su núcleo azul, igual en el celu, la tablet y la compu."
   },
   {
-   "icono": "📲",
-   "titulo": "Se siente app",
-   "texto": "Ya no se estira, no hace zoom sin querer ni selecciona cosas al tocar. Los botones responden con una vibración cortita, y en iPhone abre con su pantalla de presentación."
-  },
-  {
-   "icono": "🤝",
-   "titulo": "Pasale FRIDAY a un amigo",
-   "texto": "En Más → La app, o decile «pasale FRIDAY a un amigo»."
+   "icono": "📣",
+   "titulo": "Mensajes de BufaLabs",
+   "texto": "Cuando hay algo importante (una versión nueva, un arreglo), te aparece un mensaje una sola vez."
   }
  ]
 }

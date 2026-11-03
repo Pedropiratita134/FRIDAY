@@ -1478,6 +1478,12 @@ B.profePrompt = function(){
     <p class="note" id="actNota">Me fijo sola si hay una versión nueva.</p>
     <div class="row2"><button class="big sec" id="actBuscar" type="button">Buscar actualizaciones</button><button class="big sec" id="actNuevo" type="button">Ver lo nuevo</button></div>
   </div>
+  <div class="grupo pad" id="creadorBox" hidden>
+    <h4 style="margin-top:0">🛠️ Modo creador</h4>
+    <p class="note">Para el que hace FRIDAY. Con la clave del mando, decile «¿cómo va BufaLabs?», «armame un posteo de la última versión» o «abrí el mando». La clave queda solo en este celu.</p>
+    <div class="field"><label for="cfMando">Clave del mando (TABLERO_KEY)</label><input id="cfMando" type="password" autocomplete="off"></div>
+    <div class="row2"><a class="big sec" href="https://bufalabs-arg.github.io/mando/" target="_blank" rel="noopener" style="text-align:center;text-decoration:none">Abrir el mando</a><button class="big sec" id="creadorOff" type="button">Ocultar</button></div>
+  </div>
   <p class="note pie">FRIDAY Móvil <span id="verTxt"></span> · hecha por BufaLabs · todo queda en este celu</p>
 </section>
 
@@ -1558,12 +1564,11 @@ B.profePrompt = function(){
 
 <script>
 'use strict';
-const VERSION='4.2';
+const VERSION='4.3';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"4.2","titulo":"Más app que nunca","items":[
-  {"icono":"🔔","titulo":"Avisos con el celu bloqueado","texto":"Prendelos en Más → Avisos: los recordatorios te llegan aunque FRIDAY esté cerrada, sin instalar otra app. El servidor solo sabe a qué hora avisarte; lo que dice queda en tu celu."},
-  {"icono":"📲","titulo":"Se siente app","texto":"Ya no se estira, no hace zoom sin querer ni selecciona cosas al tocar. Los botones responden con una vibración cortita, y en iPhone abre con su pantalla de presentación."},
-  {"icono":"🤝","titulo":"Pasale FRIDAY a un amigo","texto":"En Más → La app, o decile «pasale FRIDAY a un amigo»."}]};
+const NOVEDADES_M={"version":"4.3","titulo":"Cara nueva","items":[
+  {"icono":"🔵","titulo":"Ícono nuevo","texto":"FRIDAY estrena ícono y pantalla de presentación: su núcleo azul, igual en el celu, la tablet y la compu."},
+  {"icono":"📣","titulo":"Mensajes de BufaLabs","texto":"Cuando hay algo importante (una versión nueva, un arreglo), te aparece un mensaje una sola vez."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1578,6 +1583,7 @@ const API={
   rss:'https://api.rss2json.com/v1/api.json?rss_url=', spAcc:'https://accounts.spotify.com', spApi:'https://api.spotify.com/v1' };
 let S=Object.assign({name:'', trato:'nombre', city:'', lat:null, lon:null, groqKey:'', gemKey:'', convo:false, theme:'jarvis', voice:'', voz:true, spId:''}, LS.get('cfg',{}));
 const primeraVez=!(LS.get('cfg',{})||{}).groqKey;
+if(LS.get('cfg',null)===null && LS.get('verVista',null)===null) LS.set('verVista', VERSION);   // recién instalada: no hay novedades que presentar
 if(!S.groqKey) S.groqKey=BUFIA.LLAVE;   // sin llave propia: el servidor de BufaLabs
 BUFIA.app='celu';
 if(!S.vozV2){ S.voice='__elena'; S.vozV2=true; }   // 4.1: Elena por defecto (se puede volver a la del celu)
@@ -2526,6 +2532,7 @@ function bufiaVozCelu(text){
       addMemory('corrección: '+text.slice(0,200)+(m.p?' (cuando preguntó «'+m.p.slice(0,80)+'»)':''));
       bufiaNota=`(Aviso del sistema, no lo dijo el usuario) Antes le preguntó «${m.p.slice(0,300)}», le contestaste «${m.r.replace(/\[\[[^\]]*\]\]/g,'').slice(0,500)}» y te dijo que estuvo mal. Lo que acaba de decir es qué estuvo mal. Agradecé corto y contestá bien la pregunta original teniéndolo en cuenta.`;
       return null; } }
+  { const bl=blcVoz(n); if(bl) return bl==='⏳' ? 'Dame un segundo que junto los números.' : bl; }
   if(/\b(pasale|pasa|pasar|comparti|compartir|recomenda|recomendar|mandale|manda) (a )?friday\b|\bfriday a (un|una|mis|mi) (amig|amiga|amigos|amigas|familia|novi)/.test(n)){
     setTimeout(()=>{ const b=bubble('fr', null); b.innerHTML='<button class="big" type="button" data-compartir>🤝 Compartir FRIDAY</button>'; scrollDown(); }, 500);
     return 'Dale: tocá el botón y elegí a quién mandársela. ¡Gracias por recomendarme!'; }
@@ -2797,11 +2804,71 @@ function renderInstall(){
   ['installBtn','installBtn2'].forEach(id=>{ if($(id)) $(id).hidden=!deferredInstall || standalone(); });
 }
 ['installBtn','installBtn2'].forEach(id=>$(id).onclick=async()=>{ if(!deferredInstall) return; deferredInstall.prompt(); await deferredInstall.userChoice.catch(()=>{}); deferredInstall=null; renderInstall(); });
+// ================================================================ BufaLabs: mensajes para todos y el modo creador
+const BLC={ clave:()=>{ try{ return localStorage.getItem('bufalabs:tablero')||''; }catch(e){ return ''; } }, mando:'https://bufalabs-arg.github.io/mando/' };
+async function blcJSON(u, o, ms){ const c=new AbortController(); const t=setTimeout(()=>c.abort(), ms||8000); try{ const r=await fetch(u, Object.assign({signal:c.signal, cache:'no-store'}, o||{})); if(!r.ok) return r.status===401?{mal:true}:null; return await r.json(); }catch(e){ return null; } finally{ clearTimeout(t); } }
+async function blcMensaje(){
+  if(PANEL) return; const p=await blcJSON(BUFIA.SERVIDOR+'/ping', {}, 6000);
+  if(p && p.mensaje && p.mensaje.id && LS.get('blMsj','')!==p.mensaje.id){ LS.set('blMsj', p.mensaje.id); bubble('fr', '📣 Mensaje de BufaLabs: '+p.mensaje.texto); buzz([20,40,20]); }
+}
+setTimeout(()=>blcMensaje().catch(()=>{}), 8000);
+setInterval(()=>{ if(!document.hidden) blcMensaje().catch(()=>{}); }, 15*60000);
+document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) blcMensaje().catch(()=>{}); });
+async function blcInforme(){
+  const k=BLC.clave(); const [e, is]=await Promise.all([ k?blcJSON(BUFIA.SERVIDOR+'/admin/estado', {headers:{'X-Clave':k}}, 9000):null, blcJSON('https://api.github.com/repos/Bufalabs-arg/bufalabs-arg.github.io/issues?state=open&per_page=30', {}, 8000) ]);
+  const p=[];
+  if(e && e.mal) return 'La clave del mando no anda. Revisala en Más → Modo creador.';
+  if(e && e.ok){ const h=e.hoyD||{}; p.push(`hoy usaron FRIDAY ${h.gente===1?'una persona':(h.gente||0)+' personas'}`, `vienen ${e.semana||0} por día esta semana`);
+    const lh=(e.links||[]).reduce((a,x)=>a+x.hoy,0); if(lh) p.push(`${lh} llegaron por links compartidos`);
+    const fl=(e.cupos||[]).filter(x=>x.pct!=null && x.pct<15); p.push(fl.length?`ojo, a la llave ${fl.map(x=>x.llave).join(' y ')} le queda poco cupo`:'las llaves tienen cupo');
+    if(e.siesta) p.push('el servidor está de siesta'); }
+  else if(!k) p.push('para los números poné la clave del mando en Más → Modo creador');
+  else p.push('el servidor no me dio los números');
+  if(Array.isArray(is)) p.push(is.some(i=>i.title==='Chequeo: algo para revisar en BufaLabs')?'el chequeo automático marcó algo para revisar':'el chequeo de anoche dio todo en verde');
+  return `Así está BufaLabs${trato()?', '+trato():''}: ${p.join(', ').replace(/, ([^,]*)$/,' y $1')}.`;
+}
+async function blcPosteo(n){
+  const red=/\b(instagram|insta|ig)\b/.test(n)?'instagram':/\b(twitter|tuit|tweet|x)\b/.test(n)?'x':'instagram';
+  const nov=await blcJSON('https://bufalabs-arg.github.io/herramientas/novedades.json', {}, 8000);
+  if(!Array.isArray(nov) || !nov.length) return null;
+  const app=/\b(celu|movil)\b/.test(n)?'celu':/\b(compu|pc)\b/.test(n)?'compu':'';
+  const u=(app?nov.find(x=>x.app===app):null)||nov[0], link='https://bufalabs-arg.github.io/?de='+(red==='x'?'x':'ig');
+  const pr=`Sos el community manager de BufaLabs, un laboratorio chico de Córdoba, Argentina, que hace FRIDAY: una inteligencia artificial gratis para la compu y el celu. Escribí UN posteo para ${red==='x'?'X (Twitter), de menos de 260 caracteres incluyendo el link':'Instagram, de 3 a 6 líneas cortas'} sobre esta actualización, en español rioplatense, cercano y sin exagerar (no inventes nada que no esté acá):
+FRIDAY ${u.version}: ${u.titulo}. ${u.resumen}
+${(u.items||[]).map(x=>'- '+x[0]+': '+x[1]).join('\n')}
+${red==='instagram'?'Terminá con «Link en el perfil» y 3 a 5 hashtags (#BufaLabs #FRIDAY e inteligencia artificial).':'Terminá con este link: '+link}
+Respondé solo con el texto del posteo.`;
+  const t=(await BUFIA.pedir(pr, {gem:S.gemKey, groq:S.groqKey}, {max:400, temp:0.7})).trim().replace(/^["«]|["»]$/g,'');
+  return t ? {t, red, v:u.version} : null;
+}
+function blcVoz(n){
+  if(/\b(abri|abrime|mostrame) (el |la )?(mando|centro de mando|app de mando)\b/.test(n)){ window.open(BLC.mando, '_blank', 'noopener'); return 'Te abrí el mando de BufaLabs.'; }
+  if(/\b(como (va|anda|esta|viene) bufalabs|estado de bufalabs|informe de (la empresa|bufalabs)|cuanta gente (uso|usa|usaron) friday)\b/.test(n)){
+    blcInforme().then(t=>frSay(t)).catch(()=>frSay('No pude juntar los números de BufaLabs.')); return '⏳'; }
+  if(/\b(arma|armame|escribi|escribime|hace|haceme|prepara|preparame) (un |el )?(posteo|post|publicacion|tuit|tweet)\b/.test(n) && /\b(version|actualizacion|novedad|friday|bufalabs)\b/.test(n)){
+    blcPosteo(n).then(r=>{ if(!r){ frSay('No me salió el posteo ahora. Probá en un ratito.'); return; }
+      frSay(`Te armé el posteo para ${r.red==='x'?'X':'Instagram'} sobre FRIDAY ${r.v}:`);
+      const b=bubble('fr', null); const pre=document.createElement('div'); pre.style.whiteSpace='pre-wrap'; pre.textContent=r.t; b.appendChild(pre);
+      const row=document.createElement('div'); row.className='row2'; row.style.marginTop='10px';
+      const c1=document.createElement('button'); c1.className='big sec'; c1.type='button'; c1.textContent='📋 Copiar'; c1.onclick=()=>{ navigator.clipboard?.writeText(r.t).then(()=>toast('Posteo copiado'),()=>toast('No pude copiarlo')); };
+      const c2=document.createElement('button'); c2.className='big'; c2.type='button'; c2.textContent=r.red==='x'?'Publicar en X':'Compartir'; c2.onclick=()=>{ if(r.red==='x') window.open('https://x.com/intent/post?text='+encodeURIComponent(r.t),'_blank','noopener'); else if(navigator.share) navigator.share({text:r.t}).catch(()=>{}); else navigator.clipboard?.writeText(r.t); };
+      row.append(c1,c2); b.appendChild(row); scrollDown(); }).catch(()=>frSay('No me salió el posteo.'));
+    return '⏳ Lo escribo…'; }
+  return null;
+}
+// tocá 7 veces la versión (en Más, abajo de todo): aparece el modo creador
+let verToques=[];
+function creadorPintar(){ const on=LS.get('creador',false); $('creadorBox').hidden=!on; if(on) $('cfMando').value=BLC.clave(); }
 async function compartirFriday(){
   const url='https://bufalabs-arg.github.io/?de=celu', text='Te paso FRIDAY: una inteligencia artificial gratis que te habla y te ayuda, en el celu y en la compu. Probala:';
   try{ if(navigator.share){ await navigator.share({title:'FRIDAY', text, url}); return; } await navigator.clipboard.writeText(text+' '+url); toast('Link copiado: pegalo donde quieras', 3500); }catch(e){}
 }
 $('shareBtn').onclick=compartirFriday;
+$('verTxt').parentNode.addEventListener('click', ()=>{ const t=Date.now(); verToques=verToques.filter(x=>t-x<3000); verToques.push(t);
+  if(verToques.length>=7){ verToques=[]; const on=!LS.get('creador',false); LS.set('creador', on); creadorPintar(); buzz([30,50,30,50,60]); toast(on?'🛠️ Modo creador activado':'Modo creador oculto', 2500); if(on) setTimeout(()=>$('creadorBox').scrollIntoView({block:'center', behavior:'smooth'}), 200); } });
+$('cfMando').addEventListener('change', e=>{ try{ const v=e.target.value.trim(); if(v) localStorage.setItem('bufalabs:tablero', v); else localStorage.removeItem('bufalabs:tablero'); }catch(x){} toast(e.target.value.trim()?'Listo, ya te cuento cómo va BufaLabs':'Clave borrada'); });
+$('creadorOff').onclick=()=>{ LS.set('creador', false); creadorPintar(); };
+creadorPintar();
 document.addEventListener('click', e=>{ if(e.target.closest && e.target.closest('[data-compartir]')) compartirFriday(); });
 
 // ================================================================ bienvenida
