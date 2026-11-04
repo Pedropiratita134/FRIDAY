@@ -1,11 +1,11 @@
 {
- "version": "4.5",
- "titulo": "La siesta",
+ "version": "4.6",
+ "titulo": "Mensajes a medida",
  "items": [
   {
-   "icono": "😴",
-   "titulo": "La siesta de FRIDAY",
-   "texto": "Cuando en BufaLabs le hacemos ajustes, FRIDAY se duerme con una animación, te cuenta por qué y a qué hora vuelve. Se despierta sola."
+   "icono": "📣",
+   "titulo": "Mensajes a medida",
+   "texto": "Los avisos de BufaLabs te llegan solo si son para el celu."
   }
  ]
 }

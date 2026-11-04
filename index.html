@@ -1366,7 +1366,7 @@ html.fx-mark42 body{background-image:radial-gradient(ellipse at 50% 120%,rgba(18
 // el texto que se escribió en el mando. Se despiertan solas a la hora (o antes, si la despiertan desde el mando).
 // La app define: SIESTA.iniciar({servidor, clave, alDormir, alDespertar}).
 const SIESTA = (() => {
-  const S = { on: false, hasta: 0, texto: '', srv: '', clave: () => '', alDormir: null, alDespertar: null, ult: 0, prox: null, reloj: null, capa: null };
+  const S = { on: false, hasta: 0, texto: '', srv: '', clave: () => '', alDormir: null, alDespertar: null, alMensaje: null, ult: 0, prox: null, reloj: null, capa: null };
   const DEF = 'Estoy durmiendo una siesta: en BufaLabs me están haciendo unos ajustes. Vuelvo en un rato.';
   const quieto = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   async function pedir(u, o, ms) {
@@ -1460,7 +1460,7 @@ const SIESTA = (() => {
   async function mirar(forzar) {
     if (!S.srv || (!forzar && Date.now() - S.ult < 20000)) return; S.ult = Date.now();
     const r = await pedir(S.srv + '/ping', {}, 6000); let p = null; try { p = r && r.ok ? await r.json() : null; } catch (e) { }
-    if (p && p.ok !== false) await aplicar(p.siesta);
+    if (p && p.ok !== false) { await aplicar(p.siesta); if (p.mensaje && p.mensaje.id && S.alMensaje) { try { S.alMensaje(p.mensaje); } catch (e) { } } }
     else if (S.on && Date.now() > S.hasta + 60000) despertar();   // sin internet: a la hora se despierta igual
   }
   function vuelta() { clearTimeout(S.prox); S.prox = setTimeout(async () => { if (!document.hidden) await mirar(); vuelta(); }, S.on ? 60000 : 180000); }
@@ -1851,10 +1851,10 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='4.5';
+const VERSION='4.6';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"4.5","titulo":"La siesta","items":[
-  {"icono":"😴","titulo":"La siesta de FRIDAY","texto":"Cuando en BufaLabs le hacemos ajustes, FRIDAY se duerme con una animación, te cuenta por qué y a qué hora vuelve. Se despierta sola."}]};
+const NOVEDADES_M={"version":"4.6","titulo":"Mensajes a medida","items":[
+  {"icono":"📣","titulo":"Mensajes a medida","texto":"Los avisos de BufaLabs te llegan solo si son para el celu."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -3098,7 +3098,7 @@ const BLC={ clave:()=>{ try{ return localStorage.getItem('bufalabs:tablero')||''
 async function blcJSON(u, o, ms){ const c=new AbortController(); const t=setTimeout(()=>c.abort(), ms||8000); try{ const r=await fetch(u, Object.assign({signal:c.signal, cache:'no-store'}, o||{})); if(!r.ok) return r.status===401?{mal:true}:null; return await r.json(); }catch(e){ return null; } finally{ clearTimeout(t); } }
 async function blcMensaje(){
   if(PANEL) return; const p=await blcJSON(BUFIA.SERVIDOR+'/ping', {}, 6000);
-  if(p && p.mensaje && p.mensaje.id && LS.get('blMsj','')!==p.mensaje.id){ LS.set('blMsj', p.mensaje.id); bubble('fr', '📣 Mensaje de BufaLabs: '+p.mensaje.texto); buzz([20,40,20]); }
+  if(p && p.mensaje && p.mensaje.id && LS.get('blMsj','')!==p.mensaje.id && (!p.mensaje.app || p.mensaje.app==='todas' || p.mensaje.app==='celu')){ LS.set('blMsj', p.mensaje.id); bubble('fr', '📣 Mensaje de BufaLabs: '+p.mensaje.texto); buzz([20,40,20]); }
 }
 setTimeout(()=>blcMensaje().catch(()=>{}), 8000);
 if(typeof SIESTA!=='undefined') SIESTA.iniciar({ servidor: BUFIA.SERVIDOR, clave: ()=>BLC.clave(),
@@ -3113,7 +3113,8 @@ async function blcInforme(){
   if(e && e.ok){ const h=e.hoyD||{}; p.push(`hoy usaron FRIDAY ${h.gente===1?'una persona':(h.gente||0)+' personas'}`, `vienen ${e.semana||0} por día esta semana`);
     const lh=(e.links||[]).reduce((a,x)=>a+x.hoy,0); if(lh) p.push(`${lh} llegaron por links compartidos`);
     const fl=(e.cupos||[]).filter(x=>x.pct!=null && x.pct<15); p.push(fl.length?`ojo, a la llave ${fl.map(x=>x.llave).join(' y ')} le queda poco cupo`:'las llaves tienen cupo');
-    if(e.siesta) p.push('el servidor está de siesta'); }
+    if(e.siesta) p.push('el servidor está de siesta');
+    const ta=(e.tareas||[]).filter(x=>!x.hecha), tp=ta.filter(x=>x.prio); if(ta.length) p.push(`tenés ${ta.length===1?'una tarea pendiente':ta.length+' tareas pendientes'}${tp.length?' (la importante: «'+tp[0].t+'»)':''}`); }
   else if(!k) p.push('para los números poné la clave del mando en Más → Modo creador');
   else p.push('el servidor no me dio los números');
   if(Array.isArray(is)) p.push(is.some(i=>i.title==='Chequeo: algo para revisar en BufaLabs')?'el chequeo automático marcó algo para revisar':'el chequeo de anoche dio todo en verde');

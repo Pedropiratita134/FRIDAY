@@ -2330,7 +2330,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='5.3';
+const VERSION='5.4';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2795,7 +2795,7 @@ function chime(kind){
 // el texto que se escribió en el mando. Se despiertan solas a la hora (o antes, si la despiertan desde el mando).
 // La app define: SIESTA.iniciar({servidor, clave, alDormir, alDespertar}).
 const SIESTA = (() => {
-  const S = { on: false, hasta: 0, texto: '', srv: '', clave: () => '', alDormir: null, alDespertar: null, ult: 0, prox: null, reloj: null, capa: null };
+  const S = { on: false, hasta: 0, texto: '', srv: '', clave: () => '', alDormir: null, alDespertar: null, alMensaje: null, ult: 0, prox: null, reloj: null, capa: null };
   const DEF = 'Estoy durmiendo una siesta: en BufaLabs me están haciendo unos ajustes. Vuelvo en un rato.';
   const quieto = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
   async function pedir(u, o, ms) {
@@ -2889,7 +2889,7 @@ const SIESTA = (() => {
   async function mirar(forzar) {
     if (!S.srv || (!forzar && Date.now() - S.ult < 20000)) return; S.ult = Date.now();
     const r = await pedir(S.srv + '/ping', {}, 6000); let p = null; try { p = r && r.ok ? await r.json() : null; } catch (e) { }
-    if (p && p.ok !== false) await aplicar(p.siesta);
+    if (p && p.ok !== false) { await aplicar(p.siesta); if (p.mensaje && p.mensaje.id && S.alMensaje) { try { S.alMensaje(p.mensaje); } catch (e) { } } }
     else if (S.on && Date.now() > S.hasta + 60000) despertar();   // sin internet: a la hora se despierta igual
   }
   function vuelta() { clearTimeout(S.prox); S.prox = setTimeout(async () => { if (!document.hidden) await mirar(); vuelta(); }, S.on ? 60000 : 180000); }
@@ -2913,7 +2913,8 @@ const SIESTA = (() => {
 
 SIESTA.iniciar({ servidor: SERVIDOR_BUFALABS,
   alDormir: ()=>{ try{ stopTalk(); }catch(e){} },
-  alDespertar: ()=>{ try{ say('¡Ya me desperté! Todos los sistemas en línea.'); }catch(e){} } });
+  alDespertar: ()=>{ try{ say('¡Ya me desperté! Todos los sistemas en línea.'); }catch(e){} },
+  alMensaje: m=>{ if(m.app && m.app!=='todas' && m.app!=='casa') return; if(LS.get('blMsj','')===m.id) return; LS.set('blMsj', m.id); try{ say('Mensaje de BufaLabs: '+m.texto); }catch(e){} } });
 function userSaid(text, how){
   text=String(text).trim(); if(!text) return;
   if(SIESTA.on){ SIESTA.ronquido(); return; }
