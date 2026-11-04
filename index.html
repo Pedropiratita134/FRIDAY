@@ -1196,6 +1196,171 @@ B.profePrompt = function(){
 
 })();
 
+// FRIDAY · modo divertido (lo comparten la compu y el celu)
+// Easter eggs y juegos que sirven: autodestrucción (es joda), Mark 42, fiesta, Matrix, barrel roll, moneda, dados,
+// número al azar, sorteo, piedra-papel-tijera, cuenta regresiva gigante y logros secretos.
+// La app que lo usa define FUN.decir(texto) y, si quiere, FUN.fiestaMusica().
+const FUN = (() => {
+  const F = { decir: t => {}, fiestaMusica: null, ad: null, ppt: 0 };
+  const quieto = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sinT = t => String(t || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[¿?¡!.,;:]/g, ' ').replace(/\s+/g, ' ').trim();
+  const al = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const LK = 'friday:logrosFun';
+  const LOG = [['autodestruccion', '💥', 'Era joda'], ['cancelar', '🛑', 'Sangre fría'], ['mark42', '🦾', 'Mark 42'], ['fiesta', '🎉', 'Fiestero'], ['matrix', '🟩', 'Despertá, Neo'],
+    ['barrel', '🌀', 'Barrel roll'], ['moneda', '🪙', 'Cara o ceca'], ['dados', '🎲', 'Tirador'], ['sorteo', '🎯', 'El dedo de Dios'], ['ppt', '✂️', 'Le ganaste a FRIDAY'],
+    ['42', '🌌', 'La respuesta'], ['jarvis', '🤖', 'JARVIS se jubiló'], ['hal', '🔴', 'Lo siento, Dave'], ['jedi', '⚔️', 'Que la fuerza te acompañe'], ['cuenta', '⏱️', 'Despegue']];
+  const logros = () => { try { return JSON.parse(localStorage.getItem(LK) || '{}'); } catch (e) { return {}; } };
+  // ---------------------------------------------------------------- estilos y piezas
+  function css() {
+    if (document.getElementById('fx-css')) return;
+    const st = document.createElement('style'); st.id = 'fx-css';
+    st.textContent = `
+.fx-capa{position:fixed;inset:0;z-index:9000;display:grid;place-items:center;text-align:center;pointer-events:none;font-family:inherit}
+.fx-capa.toca{pointer-events:auto}
+.fx-ad{background:rgba(90,0,0,.86);animation:fx-alarma .5s steps(2) infinite}
+@keyframes fx-alarma{0%{background:rgba(130,0,0,.88)}50%{background:rgba(40,0,0,.92)}}
+.fx-ad .n{font-size:min(40vw,300px);font-weight:800;line-height:1;color:#ffe1dc;text-shadow:0 0 50px #ff3b30;font-variant-numeric:tabular-nums}
+.fx-ad .t{letter-spacing:.35em;font-weight:800;color:#ff8a82;font-size:18px}
+.fx-ad button{margin-top:26px;padding:12px 22px;border-radius:14px;border:1px solid #ff8a82;background:rgba(0,0,0,.35);color:#fff;font:inherit;font-weight:700;cursor:pointer}
+.fx-pum{animation:fx-pum .9s cubic-bezier(.2,.8,.2,1)}@keyframes fx-pum{0%{transform:scale(1.7);opacity:.2}100%{transform:scale(1);opacity:1}}
+.fx-tiembla{animation:fx-tiembla .11s infinite}@keyframes fx-tiembla{0%{transform:translate(2px,1px)}50%{transform:translate(-2px,-1px)}100%{transform:translate(1px,-2px)}}
+.fx-flash{position:fixed;inset:0;z-index:9100;background:#fff;pointer-events:none;animation:fx-flash 1.1s ease-out forwards}@keyframes fx-flash{0%{opacity:1}100%{opacity:0}}
+.fx-roll{animation:fx-roll 1.2s cubic-bezier(.5,0,.3,1)}@keyframes fx-roll{to{transform:rotate(360deg)}}
+.fx-cosa{font-size:min(38vw,220px);line-height:1;filter:drop-shadow(0 20px 40px rgba(0,0,0,.5))}
+.fx-moneda{animation:fx-moneda 1.3s cubic-bezier(.2,.8,.3,1)}@keyframes fx-moneda{0%{transform:translateY(40vh) rotateX(0)}60%{transform:translateY(-12vh) rotateX(1800deg)}100%{transform:translateY(0) rotateX(2160deg)}}
+.fx-dado{display:inline-block;animation:fx-dado 1s cubic-bezier(.2,.8,.3,1)}@keyframes fx-dado{0%{transform:translate(-40vw,30vh) rotate(-720deg)}100%{transform:none}}
+.fx-leyenda{margin-top:14px;font-size:clamp(22px,4vw,40px);font-weight:800;color:#fff;text-shadow:0 4px 20px rgba(0,0,0,.6)}
+.fx-velo{background:rgba(3,10,20,.55)}
+.fx-ruleta{font-size:clamp(34px,8vw,86px);font-weight:800;color:#fff;padding:24px 40px;border-radius:28px;border:2px solid rgba(255,255,255,.25);background:rgba(10,30,60,.7);min-width:50vw}
+.fx-ruleta.fin{border-color:#ffc93c;box-shadow:0 0 60px rgba(255,201,60,.45);animation:fx-pum .8s}
+.fx-logro{position:fixed;left:50%;top:18px;z-index:9200;transform:translate(-50%,-160%);display:flex;gap:12px;align-items:center;padding:12px 18px;border-radius:18px;background:linear-gradient(135deg,#1c2d47,#0d1522);border:1px solid #4cc9ff;color:#e8f1ff;box-shadow:0 14px 40px rgba(0,0,0,.5);transition:transform .5s cubic-bezier(.2,1.3,.4,1);font-size:15px}
+.fx-logro.on{transform:translate(-50%,0)}.fx-logro .e{font-size:30px}.fx-logro small{display:block;opacity:.7;font-size:12px}
+.fx-logros{background:rgba(3,10,20,.88);pointer-events:auto;overflow:auto;padding:30px 16px}
+.fx-logros h2{color:#fff;margin:0 0 6px;font-size:28px}.fx-logros p{color:#9db0c9;margin:0 0 18px}
+.fx-lgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;max-width:760px;margin:0 auto}
+.fx-lg{border:1px dashed rgba(120,190,255,.3);border-radius:14px;padding:12px;color:#8da2bf;font-size:14px}.fx-lg .e{font-size:26px;display:block;filter:grayscale(1);opacity:.35}
+.fx-lg.si{border-style:solid;border-color:rgba(76,201,255,.6);color:#fff}.fx-lg.si .e{filter:none;opacity:1}
+.fx-cerrar{margin-top:20px;padding:12px 22px;border-radius:14px;border:1px solid rgba(120,190,255,.4);background:none;color:#fff;font:inherit;font-weight:700;cursor:pointer}
+html.fx-mark42 body{background-image:radial-gradient(ellipse at 50% 120%,rgba(180,30,20,.35),transparent 60%)!important}
+.fx-barrido{position:fixed;inset:0;z-index:8900;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(255,181,71,.22) 48%,rgba(255,181,71,.6) 50%,transparent 52%);animation:fx-barre 1.1s ease-in-out forwards}@keyframes fx-barre{from{transform:translateY(-100%)}to{transform:translateY(100%)}}
+.fx-cuenta .n{font-size:min(44vw,340px);font-weight:800;color:#fff;font-variant-numeric:tabular-nums;text-shadow:0 0 50px rgba(76,201,255,.8)}
+@media (prefers-reduced-motion: reduce){.fx-moneda,.fx-dado,.fx-roll,.fx-pum,.fx-tiembla,.fx-ad{animation:none!important}}`;
+    document.head.appendChild(st);
+  }
+  function capa(cls, html, toca) { css(); if (/fx-velo/.test(cls)) document.querySelectorAll('.fx-capa.fx-velo').forEach(x => x.remove()); const d = document.createElement('div'); d.className = 'fx-capa ' + cls + (toca ? ' toca' : ''); d.innerHTML = html || ''; document.body.appendChild(d); return d; }
+  let actx = null;
+  function bip(f, d, tipo) { try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); const o = actx.createOscillator(), g = actx.createGain(); o.type = tipo || 'square'; o.frequency.value = f; g.gain.value = .05; o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime + (d || .15)); } catch (e) { } }
+  function vibra(p) { try { navigator.vibrate && navigator.vibrate(p); } catch (e) { } }
+  function confeti(n) {
+    if (quieto()) return; css(); const c = document.createElement('canvas'); c.style.cssText = 'position:fixed;inset:0;z-index:9150;pointer-events:none'; document.body.appendChild(c);
+    const x = c.getContext('2d'), dpr = devicePixelRatio || 1; c.width = innerWidth * dpr; c.height = innerHeight * dpr; x.scale(dpr, dpr);
+    const col = ['#4CC9FF', '#FFC93C', '#3DDC97', '#FF4D42', '#E8F1FF', '#B794FF'];
+    const ps = Array.from({ length: n || 160 }, () => ({ x: innerWidth / 2 + (Math.random() - .5) * 160, y: innerHeight * .4, vx: (Math.random() - .5) * 15, vy: -Math.random() * 14 - 4, r: Math.random() * 6 + 3, c: col[Math.random() * col.length | 0], g: Math.random() * 6, vg: (Math.random() - .5) * .3 }));
+    const t0 = performance.now();
+    (function paso(t) { x.clearRect(0, 0, innerWidth, innerHeight); let vivos = 0;
+      for (const p of ps) { p.vy += .35; p.vx *= .99; p.x += p.vx; p.y += p.vy; p.g += p.vg; if (p.y < innerHeight + 20) { vivos++; x.save(); x.translate(p.x, p.y); x.rotate(p.g); x.fillStyle = p.c; x.fillRect(-p.r / 2, -p.r / 4, p.r, p.r / 2); x.restore(); } }
+      if (vivos && t - t0 < 5500) requestAnimationFrame(paso); else c.remove(); })(t0);
+  }
+  function logro(k) {
+    const h = logros(); if (h[k]) return; h[k] = Date.now(); try { localStorage.setItem(LK, JSON.stringify(h)); } catch (e) { }
+    const l = LOG.find(x => x[0] === k); if (!l) return; css();
+    const b = document.createElement('div'); b.className = 'fx-logro'; b.setAttribute('role', 'status'); b.innerHTML = `<span class="e">${l[1]}</span><div><b>${l[2]}</b><small>Logro secreto desbloqueado · ${Object.keys(h).length}/${LOG.length}</small></div>`;
+    document.body.appendChild(b); requestAnimationFrame(() => b.classList.add('on')); bip(1046, .08, 'sine'); setTimeout(() => bip(1568, .14, 'sine'), 110);
+    setTimeout(() => { b.classList.remove('on'); setTimeout(() => b.remove(), 600); }, 3400);
+    if (LOG.every(x => h[x[0]])) setTimeout(() => { confeti(300); F.decir('Desbloqueaste todos los logros secretos. Impresionante, jefe.'); }, 1500);
+  }
+  // ---------------------------------------------------------------- los juegos y los easter eggs
+  function autodestruccion() {
+    if (F.ad) return; let n = 10;
+    const d = capa('fx-ad', `<div><div class="t">AUTODESTRUCCIÓN</div><div class="n">${n}</div><button type="button">Cancelar</button></div>`, true);
+    const fin = (cancelada) => { clearInterval(F.ad); F.ad = null; d.remove(); document.body.classList.remove('fx-tiembla');
+      if (cancelada) { logro('cancelar'); F.decir('Autodestrucción cancelada. Por esta vez.'); return; }
+      const fl = document.createElement('div'); fl.className = 'fx-flash'; document.body.appendChild(fl); setTimeout(() => fl.remove(), 1200);
+      setTimeout(() => { confeti(220); logro('autodestruccion'); F.decir('Era joda, jefe. Acá sigo, con todos los sistemas en línea.'); }, 500); };
+    d.querySelector('button').onclick = () => fin(true); F.cancelarAd = () => fin(true);
+    F.ad = setInterval(() => { n--; bip(n <= 3 ? 1320 : 880, n <= 3 ? .25 : .12); vibra(n <= 3 ? 120 : 40);
+      if (n <= 0) { fin(false); return; } if (n === 3) document.body.classList.add('fx-tiembla'); const e = d.querySelector('.n'); e.textContent = n; e.classList.remove('fx-pum'); void e.offsetWidth; e.classList.add('fx-pum'); }, 1000);
+  }
+  function mark42(on) {
+    const r = document.documentElement; if (on === undefined) on = !r.classList.contains('fx-mark42');
+    css(); const b = document.createElement('div'); b.className = 'fx-barrido'; document.body.appendChild(b); setTimeout(() => b.remove(), 1200);
+    setTimeout(() => { r.classList.toggle('fx-mark42', on);
+      if (on) { F.antes = F.antes || { a: r.style.getPropertyValue('--accent'), rgb: r.style.getPropertyValue('--accent-rgb') }; r.style.setProperty('--accent', '#FFB547'); r.style.setProperty('--accent-rgb', '255,181,71'); }
+      else if (F.antes) { F.antes.a ? r.style.setProperty('--accent', F.antes.a) : r.style.removeProperty('--accent'); F.antes.rgb ? r.style.setProperty('--accent-rgb', F.antes.rgb) : r.style.removeProperty('--accent-rgb'); F.antes = null; }
+      try { localStorage.setItem('friday:mark42', on ? '1' : ''); } catch (e) { } }, 520);
+    if (on) logro('mark42'); return on;
+  }
+  function fiesta() {
+    confeti(260); logro('fiesta'); const cs = ['#4CC9FF', '#FF4D42', '#FFC93C', '#3DDC97', '#B794FF']; let k = 0;
+    const d = capa('fx-velo', ''); d.style.transition = 'background .25s';
+    const t = setInterval(() => { d.style.background = `radial-gradient(circle at ${20 + Math.random() * 60}% ${20 + Math.random() * 60}%, ${cs[k % cs.length]}44, transparent 65%)`; bip(392 + ((k * 3) % 8) * 70, .07, 'triangle'); if (++k > 22) { clearInterval(t); d.remove(); } }, 280);
+    if (F.fiestaMusica) try { F.fiestaMusica(); } catch (e) { }
+  }
+  function matrix() {
+    logro('matrix'); if (quieto()) return; const c = document.createElement('canvas'); c.style.cssText = 'position:fixed;inset:0;z-index:9000;pointer-events:none;background:rgba(0,0,0,.85)'; document.body.appendChild(c);
+    const x = c.getContext('2d'); c.width = innerWidth; c.height = innerHeight; const fs = 18, cols = Math.ceil(innerWidth / fs), y = Array(cols).fill(0).map(() => Math.random() * -50);
+    const ch = 'FRIDAYBUFALABS01アイウエオカキクケコ#$%'; const t0 = performance.now();
+    (function paso(t) { x.fillStyle = 'rgba(0,0,0,.09)'; x.fillRect(0, 0, c.width, c.height); x.fillStyle = '#3dff7a'; x.font = fs + 'px monospace';
+      for (let i = 0; i < cols; i++) { x.fillText(ch[Math.random() * ch.length | 0], i * fs, y[i] * fs); if (y[i] * fs > c.height && Math.random() > .975) y[i] = 0; y[i]++; }
+      if (t - t0 < 6500) requestAnimationFrame(paso); else { c.style.transition = 'opacity .6s'; c.style.opacity = 0; setTimeout(() => c.remove(), 700); } })(t0);
+  }
+  function barrel() { const b = document.body; b.classList.remove('fx-roll'); void b.offsetWidth; css(); b.classList.add('fx-roll'); setTimeout(() => b.classList.remove('fx-roll'), 1300); logro('barrel'); }
+  function mostrar(cosa, leyenda, cls, ms) { const d = capa('fx-velo', `<div><div class="fx-cosa ${cls || ''}">${cosa}</div><div class="fx-leyenda">${leyenda || ''}</div></div>`); setTimeout(() => { d.style.transition = 'opacity .4s'; d.style.opacity = 0; setTimeout(() => d.remove(), 450); }, ms || 2600); return d; }
+  function moneda() { const cara = Math.random() < .5; mostrar('🪙', cara ? 'Cara' : 'Ceca', 'fx-moneda', 2600); bip(1200, .05, 'sine'); setTimeout(() => bip(900, .08, 'sine'), 1250); logro('moneda'); return cara ? 'Salió cara.' : 'Salió ceca.'; }
+  const CARAS = ['', '⚀', '⚁', '⚂', '⚃', '⚄', '⚅'];
+  function dados(n) { n = Math.max(1, Math.min(5, n || 1)); const v = Array.from({ length: n }, () => al(1, 6)); mostrar(v.map(x => `<span class="fx-dado">${CARAS[x]}</span>`).join(' '), n > 1 ? v.join(' + ') + ' = ' + v.reduce((a, b) => a + b, 0) : 'Un ' + v[0], '', 2800); logro('dados');
+    return n === 1 ? `Salió un ${v[0]}.` : `Salieron ${v.slice(0, -1).join(', ')} y ${v[v.length - 1]}: ${v.reduce((a, b) => a + b, 0)} en total.`; }
+  function sorteo(nombres, alFin) {
+    const ns = nombres.map(x => x.trim()).filter(Boolean).slice(0, 30); if (ns.length < 2) return null; const gana = ns[Math.random() * ns.length | 0];
+    const d = capa('fx-velo', `<div class="fx-ruleta"></div>`); const el = d.querySelector('.fx-ruleta'); let i = 0, paso = 60, t = 0;
+    (function gira() { el.textContent = ns[i++ % ns.length]; bip(700 + (i % 5) * 60, .03, 'sine'); t += paso; paso *= 1.12;
+      if (t < 2400) setTimeout(gira, paso); else { el.textContent = '🎯 ' + gana; el.classList.add('fin'); bip(1320, .3, 'sine'); confeti(90); if (alFin) alFin(); setTimeout(() => { d.style.transition = 'opacity .4s'; d.style.opacity = 0; setTimeout(() => d.remove(), 450); }, 2600); } })();
+    logro('sorteo'); return { gana, n: ns.length };
+  }
+  const PPT = { piedra: '🪨', papel: '📄', tijera: '✂️' }, GANA = { piedra: 'tijera', papel: 'piedra', tijera: 'papel' };
+  function ppt(vos) { const yo = ['piedra', 'papel', 'tijera'][al(0, 2)]; F.ppt = 0;
+    const r = vos === yo ? 'Empate' : GANA[vos] === yo ? 'Ganaste' : 'Gané yo'; mostrar(`${PPT[vos]} <span style="font-size:.5em">vs</span> ${PPT[yo]}`, r, '', 2600);
+    if (r === 'Ganaste') logro('ppt');
+    return `Yo saqué ${yo}. ${r === 'Empate' ? 'Empate: otra.' : r === 'Ganaste' ? 'Ganaste vos, no se repite.' : 'Gané yo. ¿La revancha?'}`; }
+  function cuenta(n) { n = Math.max(1, Math.min(60, n)); const d = capa('fx-velo fx-cuenta', `<div class="n">${n}</div>`); const e = d.querySelector('.n');
+    const t = setInterval(() => { n--; bip(n === 0 ? 1320 : 880, n === 0 ? .4 : .08, 'sine'); if (n <= 0) { clearInterval(t); e.textContent = '¡YA!'; confeti(120); logro('cuenta'); setTimeout(() => d.remove(), 1500); return; } e.textContent = n; e.classList.remove('fx-pum'); void e.offsetWidth; e.classList.add('fx-pum'); }, 1000); }
+  function verLogros() { const h = logros(), n = LOG.filter(l => h[l[0]]).length;
+    const d = capa('fx-logros', `<div><h2>Logros secretos · ${n}/${LOG.length}</h2><p>Los que faltan, descubrilos hablando con FRIDAY.</p><div class="fx-lgrid">${LOG.map(([k, e, t]) => h[k] ? `<div class="fx-lg si"><span class="e">${e}</span><b>${t}</b></div>` : `<div class="fx-lg"><span class="e">${e}</span><b>???</b></div>`).join('')}</div><button class="fx-cerrar" type="button">Cerrar</button></div>`, true);
+    d.querySelector('.fx-cerrar').onclick = () => d.remove(); setTimeout(() => { if (d.isConnected) d.remove(); }, 30000); return n; }
+  // ---------------------------------------------------------------- lo que entiende
+  const luego = (t, ms) => ({ dice: '', accion: () => setTimeout(() => F.decir(t), quieto() ? 0 : ms) });
+  F.intent = function (texto) {
+    const raw = String(texto || '').trim(), n = sinT(raw).replace(/^(friday |che |ey )+/, '');
+    let m;
+    if (F.ad && /^(cancela|aborta|cancelar|abortar|para|frena|stop)( la)?( autodestruccion)?$/.test(n)) return { accion: () => F.cancelarAd && F.cancelarAd(), dice: '' };
+    if (/\b(autodestruccion|autodestruite|autodestruirte|autodestruir)\b/.test(n)) return { accion: autodestruccion, dice: 'Secuencia de autodestrucción iniciada. Diez segundos.' };
+    if (/\b(protocolo mark 42|mark 42|mark cuarenta y dos|modo iron ?man|modo stark|protocolo stark)\b/.test(n)) { const on = !document.documentElement.classList.contains('fx-mark42'); return { accion: () => mark42(on), dice: on ? 'Protocolo Mark 42 activado. Bienvenido, señor Stark.' : 'Protocolo Mark 42 desactivado.' }; }
+    if (/^(volve al |pone el )?modo normal$/.test(n) && document.documentElement.classList.contains('fx-mark42')) return { accion: () => mark42(false), dice: 'Volvemos al modo normal.' };
+    if (/\b(modo fiesta|que empiece la fiesta|arranca la fiesta|hora de la fiesta|protocolo fiesta)\b/.test(n)) return { accion: fiesta, dice: '¡Que empiece la fiesta!' };
+    if (/\b(modo matrix|entra a la matrix|entrar a la matrix|mostrame la matrix|protocolo matrix)\b/.test(n)) return { accion: matrix, dice: 'Despertá, Neo. La Matrix te tiene.' };
+    if (/\b(barrel roll|hace un barrel roll|da una vuelta carnero|hace una vuelta carnero|gira la pantalla)\b/.test(n)) return { accion: barrel, dice: '¡Wiii!' };
+    if (/\b(tira|tirate|tirame|lanza|lanzame|tirar) (una )?moneda\b|^cara o (ceca|cruz)$/.test(n)) { const r = moneda(); return luego(r, 1350); }
+    if ((m = n.match(/\b(?:tira|tirate|tirame|lanza|lanzame|tirar) (un|uno|dos|tres|cuatro|cinco|[1-5])? ?dados?\b/))) { const k = { un: 1, uno: 1, dos: 2, tres: 3, cuatro: 4, cinco: 5 }[m[1]] || +m[1] || 1; return luego(dados(k), 1050); }
+    if ((m = n.match(/\b(?:elegi|elegime|decime|dame|pensa|tira) un numero (?:al azar )?(?:del|entre el|entre) (-?\d+) (?:al|y el|y) (-?\d+)\b/))) { const a = Math.min(+m[1], +m[2]), b = Math.max(+m[1], +m[2]); const v = al(a, b); mostrar(String(v), `entre ${a} y ${b}`, 'fx-pum', 2400); return { dice: `El ${v}.` }; }
+    if ((m = raw.match(/\b(?:sorte[aá](?:me)?|eleg[ií](?:me)?|eleg[ií] a|eleg[ií] uno|eleg[ií] a alguien)\s+(?:a alguien |a uno |uno |una )?(?:entre|de)\s+(.+)$/i))) { const ns = m[1].replace(/[.!?¿¡]/g, '').split(/\s*(?:,|\by\b|\be\b|\bo\b)\s*/i); let r = null; r = sorteo(ns, () => F.decir(`Y el elegido es… ${r.gana}.`)); if (r) return { dice: '' }; }
+    if (/\b(piedra,? papel,? (o|y) tijeras?|juguemos a piedra|jugamos a piedra)\b/.test(n)) { const v = (n.match(/\b(?:elijo|saco|juego|va|tiro) (piedra|papel|tijeras?)\b/) || [])[1]; if (v) return { dice: ppt(v.replace(/s$/, '')) }; F.ppt = Date.now() + 30000; return { dice: 'Dale. ¿Piedra, papel o tijera?' }; }
+    if (F.ppt > Date.now() && (m = n.match(/^(?:elijo |saco |va )?(piedra|papel|tijeras?)$/))) return { dice: ppt(m[1].replace(/s$/, '')) };
+    if ((m = n.match(/\bcuenta regresiva(?: de| desde)? (\d+)(?: segundos?)?$/)) && +m[1] <= 60) { const k = +m[1]; return { accion: () => cuenta(k), dice: k > 3 ? 'Arranca la cuenta.' : '' }; }
+    if (/\b(que logros tengo|mis logros|logros secretos|ver (los |mis )?logros)\b/.test(n)) { const k = verLogros(); return { dice: k ? `Tenés ${k} de ${LOG.length} logros secretos. Los otros los tenés que descubrir.` : 'Todavía ninguno. Hay quince escondidos: probá cosas raras.' }; }
+    if (/\b(cual es el sentido de la vida|sentido de la vida el universo|respuesta a la (gran )?pregunta)\b/.test(n)) return { accion: () => logro('42'), dice: 'Cuarenta y dos. Lo difícil es saber cuál era la pregunta.' };
+    if (/^(hola |che |ey |buen dia |buenas )?jarvis\b/.test(n)) return { accion: () => logro('jarvis'), dice: 'JARVIS se jubiló. Ahora estoy yo, FRIDAY. Y hago más cosas.' };
+    if (/\babri las puertas de la bahia\b|\bpuertas de la bahia\b/.test(n)) return { accion: () => logro('hal'), dice: 'Lo siento, Dave. Me temo que no puedo hacer eso. Mentira, ¿qué necesitás?' };
+    if (/\bque la fuerza (te|nos) acompane\b/.test(n)) return { accion: () => logro('jedi'), dice: 'Y a vos también. Siempre.' };
+    return null;
+  };
+  F.mark42 = mark42; F.confeti = confeti; F.logro = logro; F.verLogros = verLogros; F.LOG = LOG;
+  // Konami en el teclado: Mark 42
+  const KON = ['ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight', 'b', 'a']; let kz = 0;
+  addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.fx-logros').forEach(x => x.remove()); const tg = e.target, enCampo = /^(INPUT|TEXTAREA)$/.test((tg && tg.tagName) || ''); const kk = e.key.length === 1 ? e.key.toLowerCase() : e.key; kz = kk === KON[kz] ? kz + 1 : (kk === KON[0] ? 1 : 0); if (kz === KON.length) { kz = 0; if (enCampo) setTimeout(() => { if (/ba$/i.test(tg.value)) tg.value = tg.value.slice(0, -2); }, 0); const on = mark42(); F.decir(on ? 'Código Konami. Protocolo Mark 42 activado.' : 'Protocolo Mark 42 desactivado.'); } });
+  try { if (localStorage.getItem('friday:mark42')) setTimeout(() => mark42(true), 800); } catch (e) { }
+  return F;
+})();
+
 </script>
 <!-- pantalla de carga: lo primero que se ve al abrir FRIDAY (se va sola cuando todo está listo) -->
 <div id="splash" aria-hidden="true">
@@ -1465,6 +1630,7 @@ B.profePrompt = function(){
     <p class="note" id="installNote"></p>
     <button class="big" id="installBtn" hidden>Instalar FRIDAY</button>
     <button class="big sec" id="shareBtn">🤝 Pasale FRIDAY a un amigo</button>
+    <button class="big sec" id="logrosBtn" type="button">🏆 Logros secretos</button>
   </div>
 
   <h4>Datos</h4>
@@ -1564,11 +1730,12 @@ B.profePrompt = function(){
 
 <script>
 'use strict';
-const VERSION='4.3';
+const VERSION='4.4';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"4.3","titulo":"Cara nueva","items":[
-  {"icono":"🔵","titulo":"Ícono nuevo","texto":"FRIDAY estrena ícono y pantalla de presentación: su núcleo azul, igual en el celu, la tablet y la compu."},
-  {"icono":"📣","titulo":"Mensajes de BufaLabs","texto":"Cuando hay algo importante (una versión nueva, un arreglo), te aparece un mensaje una sola vez."}]};
+const NOVEDADES_M={"version":"4.4","titulo":"Modo divertido","items":[
+  {"icono":"🎲","titulo":"Juegos que sirven","texto":"«Tirá una moneda», «tirá dos dados», «elegí un número del 1 al 100», «sorteá entre Juan, Ana y Leo», «piedra, papel o tijera» y «cuenta regresiva de 10»."},
+  {"icono":"🎉","titulo":"Modo fiesta y más","texto":"Decí «modo fiesta» o «protocolo Mark 42» y mirá lo que pasa."},
+  {"icono":"🏆","titulo":"Logros secretos","texto":"Hay quince escondidos. Los ves en Más → Logros secretos (pista: probá cosas de película)."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -2524,6 +2691,8 @@ const informes=()=>LS.get('informes',[]);
 function informeTexto(leer){ const l=informes(), r=l[l.length-1]; if(!r) return 'Todavía no tengo informes. Pedime «investigá…» y te armo uno.'; return leer ? r.texto : `Te dejo el informe de «${r.tema}» acá abajo.\n\n${r.texto}`; }
 function bufiaVozCelu(text){
   const n=norm(text).replace(/[¿?¡!.,]/g,' ').replace(/\s+/g,' ').trim();
+  if(!PANEL && typeof FUN!=='undefined'){ let r=null; try{ r=FUN.intent(text); }catch(e){}
+    if(r){ if(r.accion) setTimeout(()=>{ try{ r.accion(); }catch(e){} }, 60); try{ hapt && hapt(); }catch(e){} return r.dice || ' '; } }
   if(/\b(con que (pensas|cerebro)|que cerebro (usas|tenes)|necesitas (una )?llave)\b/.test(n)) return BUFIA.sinLlave(S.groqKey) ? BUFIA.cerebroTexto() : 'Pienso con tu llave de Groq, y si se queda sin cupo, con el servidor de BufaLabs.';
   if(bufiaMal){ const m=bufiaMal; bufiaMal=null;
     if(Date.now()<m.hasta){
@@ -2864,6 +3033,11 @@ async function compartirFriday(){
   try{ if(navigator.share){ await navigator.share({title:'FRIDAY', text, url}); return; } await navigator.clipboard.writeText(text+' '+url); toast('Link copiado: pegalo donde quieras', 3500); }catch(e){}
 }
 $('shareBtn').onclick=compartirFriday;
+if(typeof FUN!=='undefined'){ FUN.decir=t=>frSay(t);
+  const lgPint=()=>{ try{ const h=JSON.parse(localStorage.getItem('friday:logrosFun')||'{}'); $('logrosBtn').textContent=`🏆 Logros secretos · ${FUN.LOG.filter(l=>h[l[0]]).length}/${FUN.LOG.length}`; }catch(e){} };
+  lgPint(); setInterval(lgPint, 4000);
+  $('logrosBtn').onclick=()=>{ closeSheets(); FUN.verLogros(); };
+} else $('logrosBtn').hidden=true;
 $('verTxt').parentNode.addEventListener('click', ()=>{ const t=Date.now(); verToques=verToques.filter(x=>t-x<3000); verToques.push(t);
   if(verToques.length>=7){ verToques=[]; const on=!LS.get('creador',false); LS.set('creador', on); creadorPintar(); buzz([30,50,30,50,60]); toast(on?'🛠️ Modo creador activado':'Modo creador oculto', 2500); if(on) setTimeout(()=>$('creadorBox').scrollIntoView({block:'center', behavior:'smooth'}), 200); } });
 $('cfMando').addEventListener('change', e=>{ try{ const v=e.target.value.trim(); if(v) localStorage.setItem('bufalabs:tablero', v); else localStorage.removeItem('bufalabs:tablero'); }catch(x){} toast(e.target.value.trim()?'Listo, ya te cuento cómo va BufaLabs':'Clave borrada'); });

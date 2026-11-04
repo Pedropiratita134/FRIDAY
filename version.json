@@ -1,16 +1,21 @@
 {
- "version": "4.3",
- "titulo": "Cara nueva",
+ "version": "4.4",
+ "titulo": "Modo divertido",
  "items": [
   {
-   "icono": "🔵",
-   "titulo": "Ícono nuevo",
-   "texto": "FRIDAY estrena ícono y pantalla de presentación: su núcleo azul, igual en el celu, la tablet y la compu."
+   "icono": "🎲",
+   "titulo": "Juegos que sirven",
+   "texto": "«Tirá una moneda», «tirá dos dados», «elegí un número del 1 al 100», «sorteá entre Juan, Ana y Leo», «piedra, papel o tijera» y «cuenta regresiva de 10»."
   },
   {
-   "icono": "📣",
-   "titulo": "Mensajes de BufaLabs",
-   "texto": "Cuando hay algo importante (una versión nueva, un arreglo), te aparece un mensaje una sola vez."
+   "icono": "🎉",
+   "titulo": "Modo fiesta y más",
+   "texto": "Decí «modo fiesta» o «protocolo Mark 42» y mirá lo que pasa."
+  },
+  {
+   "icono": "🏆",
+   "titulo": "Logros secretos",
+   "texto": "Hay quince escondidos. Los ves en Más → Logros secretos (pista: probá cosas de película)."
   }
  ]
 }
