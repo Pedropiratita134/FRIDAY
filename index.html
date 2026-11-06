@@ -572,13 +572,72 @@ body.panel{padding-bottom:0}
 #auto.oye #autoMic{background:var(--accent);color:var(--ink);animation:autoLate 1.2s ease-in-out infinite}
 @keyframes autoLate{50%{box-shadow:0 0 90px rgba(var(--accent-rgb),.7)}}
 #autoSalir{border:1px solid var(--line2);background:var(--card);color:var(--text);border-radius:14px;padding:14px 26px;font:700 17px var(--font)}
+
+/* ================================================================ 5.0 · más humana */
+:root{ --ink:#0a1220; --accent:#62b6ff; --accent-rgb:98,182,255; --accent2:#ff9f8a; --text:#eef3fb; --muted:#9aabc2;
+  --card:rgba(255,255,255,.055); --card2:rgba(18,30,50,.97); --line:rgba(255,255,255,.09); --line2:rgba(255,255,255,.16);
+  --font:"Nunito","Segoe UI",system-ui,-apple-system,sans-serif; --display:"Fredoka","Nunito","Segoe UI",sans-serif; --r5:22px; }
+html[data-theme="friday"]{ --accent:#ffb547; --accent-rgb:255,181,71; }
+html,body{background:#0a1220}
+body{font-family:var(--font);background:radial-gradient(90% 50% at 50% -8%,rgba(var(--accent-rgb),.20),transparent 70%),radial-gradient(70% 40% at 105% 105%,rgba(255,159,138,.12),transparent 70%),#0a1220 !important}
+#bgfx{display:none!important}
+.brand{font:600 20px/1 var(--display);letter-spacing:.02em;color:var(--text);text-shadow:none}
+.dot.ok{box-shadow:none}
+#hola{font-family:var(--display);font-weight:600;letter-spacing:0}
+.invita{margin:6px 0 0;color:var(--muted);font-size:16px}
+.clock .t{font-family:var(--display);letter-spacing:.04em;text-shadow:none;color:var(--muted)}
+.msg{font-size:17px;line-height:1.45}
+.msg.fr{border-left:0;border-radius:22px 22px 22px 6px;background:rgba(255,255,255,.07);box-shadow:0 1px 0 rgba(255,255,255,.04) inset}
+.msg.fr::before{content:none}
+.msg.yo{background:var(--accent);color:#06121f;border-radius:22px 22px 6px 22px;font-weight:600}
+.msg.sis{font-size:14px;color:var(--muted)}
+.typing i{border-radius:50%;transform:none!important;background:var(--muted)}
+.chip{border:0;background:rgba(255,255,255,.08);font-weight:700;padding:9px 14px}
+.chip:active{transform:scale(.96)}
+.round{border-radius:50%;border:0;background:rgba(255,255,255,.08);color:var(--text)}
+#txt{border-radius:24px;border:1px solid var(--line2);background:rgba(255,255,255,.06);font-family:var(--font)}
+#send{background:var(--accent);color:#06121f}
+#mic{background:var(--accent);color:#06121f;border:0;box-shadow:0 10px 26px rgba(var(--accent-rgb),.35)}
+.sheet{border-radius:28px 28px 0 0}
+.sheet h3{font:600 23px/1.2 var(--display);letter-spacing:0;text-transform:none;color:var(--text);margin-bottom:14px}
+.sheet h4{letter-spacing:0;text-transform:none}
+.big{border-radius:18px;letter-spacing:0;font-weight:800;border:0;background:var(--accent);color:#06121f}
+.big.sec{background:rgba(255,255,255,.08);color:var(--text)}
+#tabs button.on{color:var(--accent)}
+#setup h1{letter-spacing:.06em;text-shadow:none;font-family:var(--display)}
+.upn .et,#auto .et{letter-spacing:.04em;font-family:var(--display)}
+#hoy h2{font:600 19px var(--display)}
+.hf{border-radius:20px}
+/* la tablet de la casa */
+.tab5{display:grid;gap:12px;grid-template-columns:minmax(0,1fr);width:100%;min-width:0}
+#tabBox{min-width:0;max-width:100%}
+.tab5 .hablar{display:flex;align-items:center;gap:14px;width:100%;padding:18px;border-radius:22px;border:0;background:linear-gradient(135deg,rgba(var(--accent-rgb),.9),rgba(var(--accent-rgb),.65));color:#06121f;font:800 19px var(--font);text-align:left}
+.tab5 .hablar span{font-size:30px}.tab5 .hablar small{display:block;font:600 14px var(--font);opacity:.8}
+.tab5 .hablar.on{background:#ffb020}
+.tab5 .fila5{display:flex;align-items:center;gap:12px;padding:14px 16px;border-radius:20px;background:rgba(255,255,255,.06)}
+.tab5 .fila5 b{display:block;font-size:17px}.tab5 .fila5 small{display:block;color:var(--muted);font-size:14px}.tab5 .fila5>div{flex:1;min-width:0}
+.tab5 .fila5 .e{font-size:26px}
+.tab5 .sw5{border:0;border-radius:999px;padding:10px 16px;font:800 15px var(--font);background:rgba(255,255,255,.12);color:var(--text)}
+.tab5 .sw5.on{background:#ff6b7d;color:#fff}
+.tele5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.tele5 button{height:54px;border-radius:16px;border:0;background:rgba(255,255,255,.08);color:var(--text);font:800 15px var(--font)}
+.tele5 .pp{background:var(--accent);color:#06121f}
+.tab5 form{display:flex;gap:8px}.tab5 form input{flex:1;min-width:0;height:48px;border-radius:16px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--text);padding:0 14px;font:600 16px var(--font)}
+.tab5 form button{border:0;border-radius:16px;padding:0 16px;background:var(--accent);color:#06121f;font:800 15px var(--font)}
+.tab5 .frases{display:flex;flex-wrap:wrap;gap:8px}.tab5 .frases button{border:0;border-radius:999px;padding:9px 13px;background:rgba(255,255,255,.08);color:var(--text);font:700 14px var(--font)}
+/* modo manejo */
+#auto .auto5{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:440px}
+#auto .auto5 button{min-height:84px;border-radius:22px;border:0;background:rgba(255,255,255,.09);color:var(--text);font:800 18px var(--font);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
+#auto .auto5 button span{font-size:30px}
+#autoMic{font-family:var(--display);letter-spacing:.02em}
+#auto .reloj5{font:600 clamp(40px,12vw,64px)/1 var(--display);color:var(--text)}
 #camBtn{width:44px;height:44px;flex:none;color:var(--muted)}
 #camBtn .ic{width:22px;height:22px}
 .gasto{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px solid var(--line)}
 .gasto button{background:none;border:0;color:var(--muted);font-size:16px}
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Orbitron:wght@500;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 <script>
@@ -1540,7 +1599,7 @@ const SIESTA = (() => {
 </header>
 
 <section id="stage">
-  <div class="saludo"><h1 id="hola">Hola</h1><p class="hoyl"><span id="clkD"></span><span class="wx" id="wxChip"></span></p></div>
+  <div class="saludo"><h1 id="hola">Hola</h1><p class="hoyl"><span id="clkD"></span><span class="wx" id="wxChip"></span></p><p class="invita" id="invita"></p></div>
   <canvas id="face" aria-label="FRIDAY"></canvas>
   <div class="clock"><div class="t" id="clkT"></div></div>
   <div id="heard"></div>
@@ -1554,6 +1613,7 @@ const SIESTA = (() => {
   <button class="chip" id="agChip" data-s="¿Qué tengo en la agenda estos días?" hidden>📅 Agenda</button>
   <button class="chip" data-s="Contame las noticias de hoy">📰 Noticias</button>
   <button class="chip" id="hfChip">🙌 Manos libres</button>
+  <button class="chip" id="autoChip">🚗 Manejando</button>
   <button class="chip" data-s="Contame algo interesante">✨ Sorprendeme</button>
 </nav>
 <footer id="bar">
@@ -1561,7 +1621,7 @@ const SIESTA = (() => {
   <input type="file" id="adjIn" accept="image/*,application/pdf" hidden>
   <button class="round" id="camBtn" aria-label="Sacar una foto y preguntar"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.6"/></svg></button>
   <input type="file" id="camIn" accept="image/*" capture="environment" hidden>
-  <textarea id="txt" rows="1" placeholder="Escribile a FRIDAY…" enterkeyhint="send" autocomplete="off"></textarea>
+  <textarea id="txt" rows="1" placeholder="Escribime…" enterkeyhint="send" autocomplete="off"></textarea>
   <button class="round" id="send" aria-label="Mandar"><svg class="ic" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-2.5-6.5L4 12z"/></svg></button>
   <button class="round" id="mic" aria-label="Hablar"><svg class="ic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/></svg></button>
 </footer>
@@ -1592,6 +1652,9 @@ const SIESTA = (() => {
   <div id="agBox"></div>
   <button class="big sec" data-sheet="avisos">🔔 Que suenen siempre, aunque cierres todo</button>
 </section>
+
+<!-- LA TABLET DE LA CASA -->
+<section class="sheet" id="sh-tablet"><div class="grab"></div><h3>La tablet de la casa</h3><div id="tabBox"></div></section>
 
 <!-- LISTA DE COMPRAS -->
 <section class="sheet" id="sh-compras"><div class="grab"></div><h3>Compras</h3>
@@ -1846,15 +1909,19 @@ const SIESTA = (() => {
   <video id="psVideo" playsinline muted hidden></video>
   <button id="psScan" hidden>📷 O escaneá el QR de la compu</button>
 </div>
-<div id="auto" aria-live="polite"><div class="et">MODO AUTO</div><p id="autoTx">Te escucho después de cada respuesta. Hablame tranquilo.</p><button id="autoMic" type="button">HABLAR</button><button id="autoSalir" type="button">Salir del modo auto</button></div>
+<div id="auto" aria-live="polite"><div class="et">🚗 Modo manejo</div><div class="reloj5" id="autoReloj"></div><p id="autoTx">Te escucho después de cada respuesta. Hablame tranquilo.</p><button id="autoMic" type="button">Hablar</button>
+<div class="auto5"><button type="button" data-auto="musica"><span>🎵</span>Música</button><button type="button" data-auto="ir"><span>🧭</span>Ir a…</button><button type="button" data-auto="msj"><span>💬</span>Mensaje</button><button type="button" data-auto="clima"><span>🌤️</span>Clima</button></div><button id="autoSalir" type="button">Salir del modo manejo</button></div>
 <div id="tapgo"><button id="tapBtn"><span id="tapIc"></span><b id="tapTxt"></b></button><button id="tapNo">Ahora no</button></div>
 
 <script>
 'use strict';
-const VERSION='4.6';
+const VERSION='5.0';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"4.6","titulo":"Mensajes a medida","items":[
-  {"icono":"📣","titulo":"Mensajes a medida","texto":"Los avisos de BufaLabs te llegan solo si son para el celu."}]};
+const NOVEDADES_M={"version":"5.0","titulo":"Más humana","items":[
+  {"icono":"🙂","titulo":"FRIDAY tiene cara","texto":"La misma carita de la tablet: te mira, parpadea, sonríe y mueve la boca cuando habla. Y todo se ve más cálido y fácil de leer."},
+  {"icono":"🏠","titulo":"La tablet, a un toque","texto":"Si tenés FRIDAY Casa, en el inicio aparece «La tablet de la casa»: le hablás con un botón, activás la guardia y manejás la tele."},
+  {"icono":"🛡️","titulo":"La guardia te avisa siempre","texto":"Si la tablet ve a alguien, te suena el celu aunque tengas FRIDAY cerrada (con «Avisos con el celu bloqueado» prendido)."},
+  {"icono":"🚗","titulo":"Modo manejo","texto":"Tocá «🚗 Manejando»: botones grandes para la música, ir a algún lado con el mapa, mandar un mensaje y el clima. Y te escucha sola."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -1887,7 +1954,8 @@ function norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[
 function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]); }
 function trato(){ return S.trato==='jefe'?'jefe':S.trato==='senor'?'señor':(S.name||''); }
 function confirmBox(text){ return new Promise(res=>{ $('askTxt').textContent=text; $('ask').classList.add('on'); const done=v=>{ $('ask').classList.remove('on'); res(v); }; $('askYes').onclick=()=>done(true); $('askNo').onclick=()=>done(false); }); }
-function setStatus(kind, txt){ $('dot').className='dot'+(kind?' '+kind:''); $('stTxt').textContent=(txt==='Lista' && window.hfOn) ? 'Decí "Friday"…' : txt; }
+const ST_HUM={'Lista':'Acá estoy','Iniciando…':'Despertando…','Escuchando…':'Te escucho…','Con problemas':'Algo no anda'};
+function setStatus(kind, txt){ $('dot').className='dot'+(kind?' '+kind:''); $('stTxt').textContent=(txt==='Lista' && window.hfOn) ? 'Decí «Friday»…' : (ST_HUM[txt]||txt); }
 
 // ================================================================ charla en pantalla
 const chat=$('chat');
@@ -2048,7 +2116,7 @@ document.addEventListener('click', e=>{
 // ================================================================ hojas
 let openSheet=null;
 let volverA=null;
-function showSheet(name){ const antes=openSheet; closeSheets(true); const el=$('sh-'+name); if(!el) return; volverA=(antes && antes!==name)?antes:(['vinc','avisos'].includes(name)?'menu':null); openSheet=name; el.scrollTop=0; marcarTab(); el.classList.add('on'); $('shade').classList.add('on'); buzz();
+function showSheet(name){ if(name==='tablet') try{ renderTablet(); }catch(e){} const antes=openSheet; closeSheets(true); const el=$('sh-'+name); if(!el) return; volverA=(antes && antes!==name)?antes:(['vinc','avisos'].includes(name)?'menu':null); openSheet=name; el.scrollTop=0; marcarTab(); el.classList.add('on'); $('shade').classList.add('on'); buzz();
   ({rems:renderRems, musica:spOpen, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc, compras:renderCompras})[name]?.(); }
 function closeSheets(keep){ document.querySelectorAll('.sheet.on').forEach(s=>s.classList.remove('on')); if(!keep) $('shade').classList.remove('on'); if(openSheet==='menu') readMenu(); if(openSheet==='vinc') scanStop(); openSheet=null; clearInterval(spState.t); if(!keep){ marcarTab(); try{ renderHoy(); }catch(e){} } }
 $('shade').onclick=()=>closeSheets();
@@ -2235,11 +2303,11 @@ async function wpActivar(){
     let sub=await reg.pushManager.getSubscription();
     if(sub){ const k=sub.options && sub.options.applicationServerKey; if(k && new Uint8Array(k).join(',')!==kb.join(',')){ await sub.unsubscribe(); sub=null; } }
     if(!sub) sub=await reg.pushManager.subscribe({userVisibleOnly:true, applicationServerKey:kb});
-    const ra=await BUFIA.servidor('/push/alta', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({sub:sub.toJSON()})});
+    const ra=await BUFIA.servidor('/push/alta', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({sub:sub.toJSON(), timbre:timbreTok()})});
     if(!ra.ok) throw new Error('el servidor no lo aceptó');
     LS.set('wpush', {on:true, at:Date.now()}); LS.del('wpHoras');
     for(const r of reminders) if(r.pid){ remUnpush(r); r.push=false; }   // lo que estaba en ntfy, ahora lo avisa FRIDAY
-    LS.set('rems', reminders); await wpSync(true); renderAvisos(); try{ remNoteTxt(); }catch(e){}
+    LS.set('rems', reminders); await wpSync(true); renderAvisos(); try{ remNoteTxt(); }catch(e){} timbreCompartir(true);
     return true;
   }catch(e){ toast('No pude activar los avisos: '+(e.message||'algo falló'), 4500); return false; }
 }
@@ -2899,6 +2967,10 @@ async function ask(text){
     if(autoModo && /\b(sali|salir|termina|apaga)( del)? modo (auto|manejo)\b|^(llegue|ya llegue)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); autoPoner(false); frSay('Listo, llegaste. Salí del modo auto.'); return; }
     const gv=gastoDeVoz(text); if(gv){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(gv); return; }
   }
+  if(!PANEL && autoPend && Date.now()-autoPend.at<60000){ const ap=autoPend; autoPend=null; txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text});
+    if(ap.k==='ir'){ const d=text.replace(/^\s*(a|al|a la|hasta)\s+/i,'').replace(/[.?!]+$/,''); irA(d); frSay('Te abro el mapa para ir a '+d+'.'); return; }
+    if(ap.k==='msj'){ window.open('https://wa.me/?text='+encodeURIComponent(text), '_blank', 'noopener'); frSay('Te abrí WhatsApp con el mensaje: elegí a quién y mandalo cuando estés parado.'); return; } }
+  if(!PANEL){ const dest=irDeVoz(text); if(dest && dest.length<80){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); irA(dest); frSay('Dale, te abro el mapa para ir a '+dest+'.'); return; } }
   if(!PANEL && celuJarvis(text)) return;
   if(!PANEL){ const bv=bufiaVozCelu(text); if(bv){ closeSheets(); txt.value=''; autoGrow(); stopVoice(); $('heard').textContent=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(bv); return; } }
   if(!S.groqKey){ if(!PANEL) openSetup(2); return; }
@@ -3893,6 +3965,8 @@ function handleHash(){
   if(h==='#hablar'){ clear(); needTap('🎤','Tocá y hablame', ()=>recStart(false)); return true; }
   if(h==='#manoslibres'){ clear(); needTap('🙌','Tocá para activar manos libres', hfStart); return true; }
   if(h==='#compras'){ clear(); showSheet('compras'); return true; }
+  if(h==='#guardia' || h==='#tablet'){ clear(); setTimeout(()=>showSheet('tablet'), 400); return true; }
+  if(h==='#manejo'){ clear(); needTap('🚗','Tocá para el modo manejo', ()=>$('autoChip').click()); return true; }
   return false;
 }
 addEventListener('hashchange', ()=>{ if(S.groqKey) handleHash(); });
@@ -3979,12 +4053,52 @@ async function aCompu(text){
 // el intercom en el celu (mientras la app está abierta): lo dice y lo muestra
 // la guardia y los protocolos viven en la tablet: desde acá se activan, y llegan las fotos si ve a alguien
 function tabPeer(){ try{ return FSync.peersOf('tablet')[0]||null; }catch(e){ return null; } }
+// 5.0: la tablet a un toque. Lo que tocás acá viaja cifrado a la tablet (como si se lo dijeras)
+function tabDecir(t, aviso){ const tb=tabPeer(); if(!tb){ toast('No hay ninguna tablet unida'); return false; } FSync.send({k:'oir', to:tb.dev, t:String(t).slice(0,400), de:S.name||''}); buzz(12); if(aviso!==false) toast('🏠 Se lo pasé a la tablet: «'+t+'»', 2600); return true; }
+function tabGuardia(){ return LS.get('tabGuardia', {on:false, at:0}); }
+function renderTablet(){
+  const el=$('tabBox'); if(!el) return; const tb=tabPeer();
+  if(!tb){ el.innerHTML=`<div class="tab5"><p>FRIDAY Casa es FRIDAY en una tablet: el reloj, la música, la tele, las luces y la guardia de la casa. La tablet no tiene micrófono: <b>el micrófono es tu celu</b>.</p>
+    <p>Para unirlas: en la tablet tocá ⚙️ → <b>Compartir con la compu y el celu</b>, y acá en <b>Más → Tu compu → «Escanear el QR»</b> apuntale al código.</p></div>`; return; }
+  const g=tabGuardia(), vist=tb.t && Date.now()-tb.t<30*60000;
+  el.innerHTML=`<div class="tab5">
+    <button type="button" class="hablar${micTab?' on':''}" id="t5Hablar"><span>${micTab?'🎙':'🗣️'}</span><div>${micTab?'Hablándole a la tablet':'Hablarle a la tablet'}<small>${micTab?'Lo que digas lo escucha y lo contesta ella. Tocá para volver.':'Tocá, y lo que me digas lo contesta la tablet en voz alta.'}</small></div></button>
+    <div class="fila5"><span class="e">🛡️</span><div><b>Guardia</b><small>${g.on?'Activa: si ve a alguien, te avisa con una foto':'Apagada'}${WP.on()?'':' · para que te suene con FRIDAY cerrada, prendé los avisos'}</small></div><button type="button" class="sw5${g.on?' on':''}" id="t5Guardia">${g.on?'Desactivar':'Activar'}</button></div>
+    ${WP.on()?'':'<button type="button" class="big sec" data-sheet="avisos" style="margin:0">🔔 Que la guardia me suene aunque cierre FRIDAY</button>'}
+    <div class="fila5" style="display:block"><b style="margin-bottom:10px">📺 La tele</b>
+      <div class="tele5"><button type="button" data-t5="volvé al anterior en la tele" aria-label="Anterior">⏮</button><button type="button" data-t5="bajá la tele" aria-label="Bajar el volumen">🔉</button><button type="button" class="pp" data-t5p aria-label="Pausa o seguir">⏯</button><button type="button" data-t5="subí la tele" aria-label="Subir el volumen">🔊</button><button type="button" data-t5="pasá el video de la tele" aria-label="Siguiente">⏭</button></div>
+      <form id="t5Tele" autocomplete="off" style="margin-top:10px"><input id="t5TeleQ" placeholder="¿Qué pongo en la tele?" enterkeyhint="send"><button>Poner</button></form></div>
+    <div class="frases">${['Llegué','Me voy','Apagá todas las luces','Poné música tranqui','¿Qué hay en la agenda hoy?','Buenas noches'].map(f=>`<button type="button" data-t5="${esc(f)}">${esc(f)}</button>`).join('')}</div>
+    <p class="note">${vist?'La tablet está conectada.':'La tablet no se conecta hace rato: fijate que esté prendida y con internet.'} ${esc(tb.name||'')}</p></div>`;
+}
+let t5Pausa=false;
+document.addEventListener('click', e=>{
+  if(e.target.closest('#t5Hablar')){ const on=!micTab; micTabPoner(on); renderTablet(); if(on){ closeSheets(); toast('🎙 Ahora le hablás a la tablet: tocá el micrófono', 3500); } return; }
+  if(e.target.closest('#t5Guardia')){ const g=tabGuardia(), on=!g.on, tb=tabPeer(); if(!tb) return; FSync.send({k:'guardia', on, est:1, to:tb.dev}); LS.set('tabGuardia', {on, at:Date.now()}); renderTablet(); try{ renderHoy(); }catch(x){} toast(on?'🛡️ La tablet activa la guardia en 30 segundos':'Guardia desactivada', 3500); return; }
+  const b=e.target.closest('[data-t5]'); if(b){ tabDecir(b.dataset.t5); return; }
+  if(e.target.closest('[data-t5p]')){ t5Pausa=!t5Pausa; tabDecir(t5Pausa?'pausá la tele':'seguí la tele'); }
+});
+document.addEventListener('submit', e=>{ if(e.target.id!=='t5Tele') return; e.preventDefault(); const q=$('t5TeleQ').value.trim(); if(!q) return; $('t5TeleQ').value=''; tabDecir('poné '+q+' en la tele'); });
+// el timbre de la guardia: la llave que le paso a la tablet (cifrada) para que me despierte el celu aunque FRIDAY esté cerrada
+function timbreTok(){ let t=LS.get('timbre',''); if(!/^[A-Za-z0-9_-]{24,64}$/.test(t)){ const a=new Uint8Array(24); crypto.getRandomValues(a); t=btoa(String.fromCharCode(...a)).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); LS.set('timbre', t); } return t; }
+async function timbreCompartir(forzar){
+  try{ if(!FSync.on()) return; const tbs=FSync.peersOf('tablet'); if(!tbs.length) return;
+    const on=WP.on(), id=BUFIA.quien(), tok=timbreTok(), k=(on?'1':'0')+'|'+tbs.map(t=>t.dev).sort().join(',');
+    if(!forzar && LS.get('timbreK','')===k) return;
+    for(const t of tbs) await FSync.send(on?{k:'timbre', to:t.dev, id, tok}:{k:'timbre', to:t.dev, id, tok, off:1});
+    LS.set('timbreK', k);
+    // y el service worker sabe quién es este celu, para leer el buzón cuando suena el timbre
+    try{ const c=await caches.open(WP.datos); await c.put('__yo.json', new Response(JSON.stringify({id, tok}), {headers:{'Content-Type':'application/json'}})); }catch(e){}
+  }catch(e){} }
+setTimeout(()=>timbreCompartir(), 15000); setInterval(()=>timbreCompartir(), 10*60000);
 function celuJarvis(text){
   const n=String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\b(friday|viernes)\b/g,' ').replace(/\s+/g,' ').trim();
   const t=tabPeer(), dec=r=>{ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(r); return true; };
   let m;
   if(/^(activa|prende|pone|arma)(me)?( la| el)? (guardia|vigilancia|alarma)( de la casa)?$|^(vigila|cuida) la casa$/.test(n)){ if(!t) return dec('La guardia es con la cámara de la tablet, y no hay ninguna unida.'); FSync.send({k:'guardia', on:true, est:1, to:t.dev}); return dec('Listo: la tablet activa la guardia en 30 segundos. Si ve a alguien, te llega la foto acá.'); }
   if(/^(desactiva|apaga|saca|desarma)(me)?( la| el)? (guardia|vigilancia|alarma)$/.test(n)){ if(!t) return false; FSync.send({k:'guardia', on:false, est:1, to:t.dev}); return dec('Listo, desactivé la guardia.'); }
+  if(t && /\b(tele|tv|television)\b/.test(n) && !/\b(netflix|prende|prendeme|encende)\b/.test(n)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); tabDecir(text, false); frSay('Se lo pasé a la tablet.'); return true; }
+  if(t && /^(llegue|ya llegue|estoy en casa|me voy|nos vamos|buenas noches)$/.test(n)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); tabDecir(text, false); frSay('Le avisé a la tablet.'); return true; }
   if((m=n.match(/^(?:activa(?:r|me)? |corre |pone(?:me)? )?(?:el )?protocolo (.+)$/))){ if(!t) return dec('Los protocolos viven en la tablet, y no hay ninguna unida.'); FSync.send({k:'proto', n:m[1], to:t.dev}); return dec(`Listo, activo el protocolo ${m[1]} en la casa.`); }
   return false; }
 async function guardiaFoto(o){
@@ -3996,7 +4110,8 @@ async function guardiaFoto(o){
   if(o._att){ try{ const b=await FSync.openFile(o._att); const u=URL.createObjectURL(new Blob([b], {type:'image/jpeg'})); $('gImg').innerHTML=`<img src="${u}" alt="Foto de la guardia" style="width:100%;border-radius:14px">`; }catch(e){ $('gImg').textContent='No pude abrir la foto ('+(e.message||e)+').'; } }
 }
 function celuMsg(o){
-  if(o.k==='guardia' && !o.est){ guardiaFoto(o); return; }
+  if(o.k==='guardia' && o.est){ LS.set('tabGuardia', {on:!!o.on, at:Date.now()}); if(openSheet==='tablet') renderTablet(); try{ renderHoy(); }catch(e){} return; }
+  if(o.k==='guardia' && !o.est){ LS.set('tabGuardia', {on:true, at:Date.now()}); guardiaFoto(o); return; }
   if(o.k==='aviso' && o.icom){ try{ buzz([80,60,80]); }catch(e){} toast('📢 '+(o.de||'Mensaje')+': '+(o.s||''), 7000); frSay(o.v||((o.de||'Mensaje')+': '+(o.s||''))); }
 }
 async function panelMsg(o){
@@ -4099,7 +4214,7 @@ function drawBg(){
 }
 addEventListener('resize', ()=>drawBg());
 
-const face={ kind:'core', eo:.95, bl:0, by:0, mc:.3, mo:0, lx:0, ly:0, nextBlink:0, blinkAt:0, energy:0, rot:0, sweep:0, last:0, syl:0 };
+const face={ kind:'avatar', eo:.95, bl:0, by:0, mc:.3, mo:0, lx:0, ly:0, nextBlink:0, blinkAt:0, energy:0, rot:0, sweep:0, last:0, syl:0 };
 function rr(c,x,y,w,h,r){ c.beginPath(); c.moveTo(x+r,y); c.lineTo(x+w-r,y); c.quadraticCurveTo(x+w,y,x+w,y+r); c.lineTo(x+w,y+h-r); c.quadraticCurveTo(x+w,y+h,x+w-r,y+h); c.lineTo(x+r,y+h); c.quadraticCurveTo(x,y+h,x,y+h-r); c.lineTo(x,y+r); c.quadraticCurveTo(x,y,x+r,y); c.closePath(); }
 function drawAvatarFace(c,R,t,now,dt){
   const st=orbState, f=face, TAU=Math.PI*2, k=1-Math.exp(-dt*11), km=1-Math.exp(-dt*28);
@@ -4113,14 +4228,14 @@ function drawAvatarFace(c,R,t,now,dt){
   if(now>f.nextBlink){ f.blinkAt=now; f.nextBlink=now+2200+Math.random()*4200; }
   const bp=(now-f.blinkAt)/150, open=1-((bp>=0&&bp<1)?Math.sin(bp*Math.PI):0)*0.95;
   const [r,g,b]=ACC, rgb=`${r},${g},${b}`, dk=`${(r*.7)|0},${(g*.72)|0},${(b*.8)|0}`;
-  const W=R*2.5, H=R*2.15, rad=R*0.38, bob=Math.sin(t*1.3)*R*0.018;
+  const W=R*2.5, H=R*2.2, rad=R*0.82, bob=Math.sin(t*1.3)*R*0.03;
   c.save(); c.translate(0,bob);
   const hg=c.createRadialGradient(0,0,R*.6,0,0,R*2.1); hg.addColorStop(0,`rgba(${rgb},${.2+f.energy*.25})`); hg.addColorStop(1,`rgba(${rgb},0)`);
   c.fillStyle=hg; c.beginPath(); c.arc(0,0,R*2.1,0,TAU); c.fill();
-  rr(c,-W/2-R*.07,-H/2-R*.07,W+R*.14,H+R*.14,rad+R*.05); c.fillStyle='#050b12'; c.fill(); c.strokeStyle=`rgba(${rgb},.55)`; c.lineWidth=2; c.stroke();
+
   rr(c,-W/2,-H/2,W,H,rad); const sg=c.createLinearGradient(0,-H/2,0,H/2); sg.addColorStop(0,`rgba(${rgb},.97)`); sg.addColorStop(1,`rgba(${dk},.97)`);
   c.fillStyle=sg; c.shadowColor=`rgba(${rgb},.85)`; c.shadowBlur=28; c.fill(); c.shadowBlur=0;
-  c.save(); rr(c,-W/2,-H/2,W,H,rad); c.clip(); c.fillStyle='rgba(255,255,255,.05)'; for(let y=-H/2;y<H/2;y+=4) c.fillRect(-W/2,y,W,1);
+  c.save(); rr(c,-W/2,-H/2,W,H,rad); c.clip(); 
   const hl=c.createLinearGradient(0,-H/2,0,-H/2+H*.6); hl.addColorStop(0,'rgba(255,255,255,.26)'); hl.addColorStop(1,'rgba(255,255,255,0)'); c.fillStyle=hl; c.fillRect(-W/2,-H/2,W,H*.6); c.restore();
   c.fillStyle='#fff'; c.strokeStyle='#fff'; c.lineCap='round'; c.shadowColor='rgba(255,255,255,.7)'; c.shadowBlur=10;
   const ex=R*.5, ey=-R*.14+f.ly*R*.05, lxo=f.lx*R*.07;
@@ -4128,8 +4243,9 @@ function drawAvatarFace(c,R,t,now,dt){
     const ew=R*.19, eh=Math.max(R*.02,R*.24*f.eo*open), px=side*ex+lxo, py=ey;
     c.beginPath(); c.ellipse(px,py,ew,eh,0,0,TAU); c.fill();
     const ang=side<0?f.bl:-f.bl*0.4, bw=R*.44, by=py-R*.36+f.by*R*.5-(eh-R*.24)*.6;
-    c.lineWidth=R*.065; c.beginPath(); c.moveTo(px+side*bw/2, by-ang*bw*.5); c.lineTo(px-side*bw/2, by+ang*bw*.5); c.stroke();
+    if(st==='listen'||st==='think'){ c.lineWidth=R*.055; c.beginPath(); c.moveTo(px+side*bw/2.4, by-ang*bw*.5); c.lineTo(px-side*bw/2.4, by+ang*bw*.5); c.stroke(); }
   }
+  if(st!=='think'){ c.save(); c.shadowBlur=0; c.fillStyle='rgba(255,150,170,.42)'; for(const side of [-1,1]){ c.beginPath(); c.ellipse(side*R*.84, R*.2, R*.17, R*.1, 0, 0, TAU); c.fill(); } c.restore(); c.fillStyle='#fff'; c.strokeStyle='#fff'; c.shadowColor='rgba(255,255,255,.7)'; c.shadowBlur=10; }
   const my=R*.5, mw=R*.5+f.mo*R*.1, cv=f.mc*R*.2;
   c.lineWidth=R*.065; c.beginPath(); c.moveTo(-mw/2,my);
   if(f.mo>0.06){ const op=f.mo*R*.42; c.quadraticCurveTo(0,my+cv*2,mw/2,my); c.quadraticCurveTo(0,my+cv*2+op*2,-mw/2,my); c.closePath(); c.fillStyle='rgba(6,20,32,.92)'; c.fill(); c.stroke(); }
@@ -4181,7 +4297,9 @@ function faceLoop(cv, scale){
 
 
 // ================================================================ arranque
-function tickClock(){ const d=new Date(), h=d.getHours(); $('clkT').textContent=d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false}); const f=d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'}); $('clkD').textContent=f.charAt(0).toUpperCase()+f.slice(1);
+const INVITA=['¿En qué te doy una mano?','Contame, ¿qué hacemos hoy?','Tocá el micrófono y hablame tranquilo.','Pedime lo que quieras: un recordatorio, música, una receta…','¿Te cuento cómo viene el día?'];
+function invitaPintar(){ const e=$('invita'); if(!e) return; const h=new Date().getHours(); e.textContent=h>=23||h<6?'¿Todavía despierto? Acá estoy si me necesitás.':INVITA[Math.floor(Date.now()/3600000)%INVITA.length]; }
+function tickClock(){ invitaPintar(); const d=new Date(), h=d.getHours(); $('clkT').textContent=d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false}); const f=d.toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long'}); $('clkD').textContent=f.charAt(0).toUpperCase()+f.slice(1);
   const t=trato(); $('hola').textContent=(h<6?'Buenas noches':h<13?'Buen día':h<20?'Buenas tardes':'Buenas noches')+(t?', '+t:''); }
 // ================================================================ 3.0: el inicio, la agenda y Más
 function diaCorto(d){ const h=new Date(); h.setHours(0,0,0,0); const x=new Date(d); x.setHours(0,0,0,0); const k=Math.round((x-h)/86400000);
@@ -4195,6 +4313,7 @@ function renderHoy(){
   const pend=compras.filter(x=>!x.h);
   if(pend.length) filas.push(['🛒', pend.length===1?'1 cosa para comprar':pend.length+' cosas para comprar', pend.slice(0,3).map(x=>x.t).join(', ')+(pend.length>3?'…':''), 'compras']);
   if(!filas.length) filas.push(['✨', 'Nada pendiente', 'Decime «recordame…» o anotalo en Agenda', 'rems']);
+  try{ if(tabPeer()){ const g=tabGuardia(); filas.unshift(['🏠', 'La tablet de la casa', micTab?'🎙 Le estás hablando a la tablet':g.on?'🛡️ Guardia activa · tocá para verla':'Hablale, la guardia y la tele', 'tablet']); } }catch(e){}
   let compu='';
   if(!FSync.on()) compu=`<button class="hf sutil" data-sheet="vinc"><span class="hi">💻</span><span class="ht"><b>Uní el celu a tu compu</b><small>Comparten memoria, recordatorios y agenda</small></span><span class="chev" aria-hidden="true"></span></button>`;
   el.innerHTML=`<h2>Tu día</h2><div class="grupo">${filas.map(f=>`<button class="hf" data-sheet="${f[3]}"><span class="hi">${f[0]}</span><span class="ht"><b>${esc(f[1])}</b><small>${esc(f[2])}</small></span><span class="chev" aria-hidden="true"></span></button>`).join('')}</div>${compu}`;
@@ -4240,7 +4359,21 @@ $('adjIn').onchange=()=>{ const f=$('adjIn').files[0]; $('adjIn').value=''; reci
 $('camIn').onchange=()=>{ const f=$('camIn').files[0]; $('camIn').value=''; recibirArchivo(f); };
 $('camBtn').onclick=()=>{ if(!S.gemKey){ toast('Para mirar fotos hace falta la llave de Gemini (Más → Cerebro)'); return; } $('camIn').click(); };
 $('autoMic').onclick=()=>{ unlockAudio && unlockAudio(); if(isSpeaking()) stopVoice(); recStart(false); };
-$('autoSalir').onclick=()=>{ autoPoner(false); frSay('Listo, salí del modo auto.'); };
+$('autoSalir').onclick=()=>{ autoPoner(false); frSay('Listo, salí del modo manejo.'); };
+$('autoChip').onclick=()=>{ autoPoner(true); frSay('Modo manejo. Te escucho solita después de cada respuesta: hablame tranquilo y con los ojos en la calle.'); };
+setInterval(()=>{ if(autoModo) $('autoReloj').textContent=new Date().toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false}); }, 5000);
+// ir a algún lado y mandar un mensaje: abre el mapa o WhatsApp con todo armado
+let autoPend=null;
+function irA(dest){ dest=String(dest||'').trim(); if(!dest) return false;
+  const u=(S.mapas==='waze')?'https://waze.com/ul?q='+encodeURIComponent(dest)+'&navigate=yes':'https://www.google.com/maps/dir/?api=1&travelmode=driving&destination='+encodeURIComponent(dest);
+  window.open(u, '_blank', 'noopener'); return true; }
+function irDeVoz(text){ const m=String(text).match(/^\s*(?:friday,?\s*)?(?:llev[aá]me|and[aá]|vamos|naveg[aá]|c[oó]mo (?:llego|voy|hago para ir)|quiero ir|guiame|guíame)\s+(?:a|al|a la|hasta|para|hacia)\s+(.+?)[.?!]*\s*$/i); return m?m[1]:''; }
+document.addEventListener('click', e=>{ const b=e.target.closest('[data-auto]'); if(!b) return; buzz(15);
+  const k=b.dataset.auto;
+  if(k==='musica') ask('Poné música que me guste');
+  else if(k==='clima') ask('¿Cómo está el clima hoy?');
+  else if(k==='ir'){ autoPend={k:'ir', at:Date.now()}; frSay('¿A dónde vamos?'); }
+  else if(k==='msj'){ autoPend={k:'msj', at:Date.now()}; frSay('¿Qué mensaje mando? Decímelo y te abro WhatsApp para elegir a quién.'); } });
 
 (async function boot(){
   applyTheme(); tickClock(); setInterval(tickClock, 10000);

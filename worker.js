@@ -24,7 +24,7 @@ const SCOPES = 'https://www.googleapis.com/auth/calendar.events https://www.goog
 let tuya = { host: null, tok: '', exp: 0 };
 
 const CORS = { 'Access-Control-Allow-Origin': '*', 'Access-Control-Allow-Headers': 'Content-Type, X-Friday-Key', 'Access-Control-Allow-Methods': 'GET, POST, OPTIONS', 'Access-Control-Max-Age': '86400', 'Access-Control-Expose-Headers': 'X-Words, X-Voz-Via' };
-const VERSION = 8;
+const VERSION = 9;
 const form = o => new URLSearchParams(Object.entries(o).map(([k, v]) => [k, String(v)]));
 const json = (o, status = 200) => new Response(JSON.stringify(o), { status, headers: { 'Content-Type': 'application/json; charset=utf-8', ...CORS } });
 const enc = new TextEncoder();
@@ -318,13 +318,18 @@ async function tvCmd(env, screenId, sc, args) {
   const sid = (b.text.match(/\["c","([^"]+)"/) || [])[1], gs = (b.text.match(/\["S","([^"]+)"/) || [])[1];
   if (!sid || !gs) return { ok: false, error: b.status === 401 || b.status === 410 ? 'la tele se desvinculó: vinculala de nuevo' : 'YouTube no aceptó la conexión (' + b.status + ')' };
   const on = /LOUNGE_SCREEN/.test(b.text);
-  if (sc === 'estado') return { ok: true, on };
+  // lo que la tele cuenta al conectarse: qué suena, en qué segundo va y el volumen
+  const ev = {}; for (const m of b.text.matchAll(/\["(nowPlaying|onStateChange|onVolumeChanged)",(\{[^{}]*\})\]/g)) { try { ev[m[1]] = { ...(ev[m[1]] || {}), ...JSON.parse(m[2]) }; } catch (e) { } }
+  const np = { ...(ev.nowPlaying || {}), ...(ev.onStateChange || {}) }, vo = ev.onVolumeChanged || {};
+  const estado = { on, videoId: np.videoId || '', state: np.state != null ? +np.state : null, tiempo: np.currentTime != null ? +np.currentTime : null, dura: np.duration != null ? +np.duration : null,
+    volumen: vo.volume != null ? +vo.volume : null, mute: vo.muted === 'true' || vo.muted === true };
+  if (sc === 'estado') return { ok: true, ...estado };
   let aid = 0; for (const m of b.text.matchAll(/\[(\d+),\[/g)) aid = Math.max(aid, +m[1]);
   const body = { count: 1, ofs: 0, req0__sc: sc };
   for (const [k, v] of Object.entries(args || {})) body['req0_' + k] = v;
   const c = await loungePost(env, '/bc/bind', { name, loungeIdToken: tok, SID: sid, AID: aid, gsessionid: gs, device: 'REMOTE_CONTROL', app: 'youtube-desktop', VER: 8, v: 2, RID: 2, CVER: 1 }, body);
   if (c.status >= 300) return { ok: false, on, error: 'la tele no tomó el pedido (' + c.status + ')' };
-  return { ok: true, on };
+  return { ok: true, ...estado };
 }
 
 // ---------------------------------------------------------------- Google (agenda y mails)
@@ -428,7 +433,7 @@ export default {
 
     if (p === '/tv/cmd' && req.method === 'POST') {
       let b = {}; try { b = await req.json(); } catch (e) { }
-      const ok = ['setPlaylist', 'play', 'pause', 'next', 'previous', 'setVolume', 'stopVideo', 'estado'];
+      const ok = ['setPlaylist', 'play', 'pause', 'next', 'previous', 'setVolume', 'stopVideo', 'estado', 'seekTo', 'addVideo'];
       if (!b.screenId || !ok.includes(b.sc)) return json({ ok: false, error: 'pedido no permitido' }, 400);
       try { return json(await tvCmd(env, String(b.screenId), b.sc, b.args || {})); } catch (e) { return json({ ok: false, error: e.message }); }
     }

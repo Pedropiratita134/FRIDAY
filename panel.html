@@ -541,6 +541,7 @@ body.inapp .you{font-size:18px;margin-bottom:8px}body.inapp .hint{display:none}
 body.inapp.talking .win{bottom:calc(var(--dock) + 110px)}
 /* ---------- FRIDAY que pasea ---------- */
 .dface{visibility:hidden}
+#buddy,#fcall,body.ambvid #ytbox{zoom:calc(1 / var(--z, 1))}
 #buddy{position:fixed;left:0;top:0;width:64px;height:64px;z-index:8;transition-property:transform,width,height,opacity;transition-timing-function:cubic-bezier(.45,.05,.3,1);touch-action:none;cursor:grab;filter:drop-shadow(0 10px 18px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(76,201,255,.25))}
 #buddy.hid{opacity:0;pointer-events:none}
 #buddy.held{cursor:grabbing;filter:drop-shadow(0 22px 26px rgba(0,0,0,.6)) drop-shadow(0 0 30px rgba(76,201,255,.5))}
@@ -789,6 +790,50 @@ body:not(.talking) .talk .fwrap::before{animation:none}
 .dev:active{transform:scale(.96)}
 .dev.busy{animation:none;opacity:.85}
 .win{will-change:transform,opacity}
+/* ---------- 6.0: la guardia, la tele y el celu ---------- */
+.celuChip{flex:none;border:1px solid var(--edge-2);background:var(--card-2);color:var(--ink);border-radius:999px;padding:10px 16px;font:600 16px var(--text);cursor:pointer;white-space:nowrap}
+body.chica .celuChip{display:none}
+.box.cay{max-width:620px;text-align:left}.box.cay h3{font:700 28px var(--disp);margin:0 0 10px}.box.cay ol{margin:10px 0 14px;padding-left:24px;line-height:1.6;font-size:19px}.box.cay .gbtn{margin:6px 10px 0 0}
+#gdOv{position:fixed;inset:0;z-index:900;display:grid;place-items:center;text-align:center;background:radial-gradient(60% 50% at 50% 42%,rgba(255,107,125,.10),transparent 70%),#020409;color:var(--ink);animation:gdIn .8s ease}
+@keyframes gdIn{from{opacity:0}}
+.gdo-in{max-width:min(720px,90vw)}
+.gdo-esc{position:relative;width:150px;height:150px;margin:0 auto 20px;display:grid;place-items:center;color:#FF8A99}
+.gdo-esc svg{width:96px;height:96px;filter:drop-shadow(0 0 22px rgba(255,107,125,.55))}
+.gdo-esc i{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,107,125,.45);animation:gdOnda 3s ease-out infinite}.gdo-esc i+i{animation-delay:1.5s}
+@keyframes gdOnda{0%{transform:scale(.6);opacity:.9}100%{transform:scale(1.6);opacity:0}}
+#gdOv.cuenta .gdo-esc{color:var(--lamp)}#gdOv.cuenta .gdo-esc i{border-color:rgba(255,181,71,.5)}#gdOv.cuenta .gdo-esc svg{filter:drop-shadow(0 0 22px rgba(255,181,71,.5))}
+#gdOv.sincam .gdo-esc{color:var(--ink-3)}#gdOv.sincam .gdo-esc i{display:none}
+#gdOv h2{font:700 46px/1.05 var(--disp);margin:0 0 10px}#gdOv p{color:var(--ink-2);font-size:20px;margin:0 auto 22px;max-width:36ch}
+.gdo-ev{margin:0 0 22px}.gdo-ev b{display:block;color:#FF8A99;margin-bottom:10px}.gdo-ev>div{display:flex;gap:10px;justify-content:center}.gdo-ev figure{margin:0}.gdo-ev img{width:130px;height:98px;object-fit:cover;border-radius:12px}.gdo-ev figcaption{font-size:14px;color:var(--ink-2);margin-top:4px}
+.gdo-off{position:relative;overflow:hidden;min-height:64px;padding:0 34px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.06);color:var(--ink);font:700 19px var(--text);cursor:pointer;touch-action:none}
+.gdo-prog{position:absolute;inset:0;background:rgba(255,107,125,.45);transform-origin:left;transform:scaleX(0)}.gdo-off b{position:relative}
+.gdo-tip{display:block;color:var(--ink-3);font-size:15px;margin-top:14px}
+.gd-top{display:flex;align-items:center;gap:22px;padding:22px 26px;border-radius:26px;background:var(--card-2);border:1px solid var(--edge);margin-bottom:14px}
+.gd-top.on{background:linear-gradient(140deg,rgba(255,107,125,.22),rgba(255,107,125,.05));border-color:rgba(255,107,125,.45)}
+.gd-esc{flex:none;width:78px;height:78px;border-radius:24px;display:grid;place-items:center;background:rgba(255,107,125,.14);color:#FF8A99}.gd-esc svg{width:46px;height:46px}
+.gd-tx{flex:1;min-width:0}.gd-tx small{font:700 14px var(--text);color:var(--ink-2)}.gd-tx b{display:block;font:700 30px/1.1 var(--disp);margin:4px 0 6px}.gd-tx span{color:var(--ink-2);font-size:17px;line-height:1.4}
+.gbtn.big{min-height:64px;padding:0 34px;font-size:20px}
+.gd-mal{background:rgba(255,181,71,.12);border:1px solid rgba(255,181,71,.4);border-radius:16px;padding:12px 16px;margin:0 0 14px}
+.gd-cols{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}.gd-box{background:var(--card);border:1px solid var(--edge);border-radius:22px;padding:18px 20px}
+.gd-box h3,.gd-h{font:700 20px var(--disp);margin:0 0 12px}.gd-av{margin:0 0 12px;font-size:17px;line-height:1.45}
+.tl-vinc{max-width:640px;margin:20px auto;text-align:center}.tl-ic{width:96px;height:96px;margin:0 auto 14px;border-radius:28px;display:grid;place-items:center;background:rgba(56,189,248,.14);color:#38BDF8}.tl-ic svg{width:56px;height:56px}
+.tl-vinc h3{font:700 32px var(--disp);margin:0 0 10px}.tl-vinc ol{text-align:left;display:inline-block;font-size:20px;line-height:1.7;margin:0 0 18px}
+.tl-cols{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:16px;align-items:start}
+.tl-now,.tl-pon{background:var(--card);border:1px solid var(--edge);border-radius:26px;padding:20px}
+.tl-art{aspect-ratio:16/9;border-radius:18px;background:#000 center/cover no-repeat;display:grid;place-items:center;color:var(--ink-3);margin-bottom:14px}.tl-art svg{width:70px;height:70px}
+.tl-info small{color:var(--ink-2);font-size:15px}.tl-info b{display:block;font:700 24px/1.2 var(--disp);margin:4px 0 10px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.tl-bar{height:6px;border-radius:6px;background:rgba(255,255,255,.1);overflow:hidden}.tl-bar i{display:block;height:100%;background:#38BDF8;border-radius:6px;transition:width .6s linear}.tl-t{font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.tl-rem{display:flex;justify-content:center;align-items:center;gap:12px;margin:16px 0 12px}
+.tl-rem button{width:64px;height:64px;border-radius:50%;border:1px solid var(--edge-2);background:var(--card-2);display:grid;place-items:center;font:700 17px var(--text);cursor:pointer}.tl-rem button svg{width:28px;height:28px}
+.tl-rem .pp{width:84px;height:84px;background:#38BDF8;color:#04121f;border:0}.tl-rem .pp svg{width:36px;height:36px}
+.tl-vol{display:flex;align-items:center;gap:10px}.tl-vol button{width:48px;height:48px;border-radius:14px;border:1px solid var(--edge);background:var(--card-2);display:grid;place-items:center;cursor:pointer}.tl-vol button svg{width:22px;height:22px}
+.tl-vol input{flex:1;accent-color:#38BDF8;height:36px}.tl-vol .tl-mute{width:auto;padding:0 14px;font:600 15px var(--text)}.tl-vol .tl-mute.on{background:#38BDF8;color:#04121f}
+.pane .ghost{margin:10px 8px 0 0;min-height:50px;padding:10px 20px;border-radius:16px;border:1px solid rgba(76,201,255,.35);background:none;color:var(--friday);font:600 17px var(--text);cursor:pointer}
+.tl-pon .gbtn{background:#38BDF8;color:#04121f}.tl-art{aspect-ratio:auto;height:clamp(120px,24vh,210px)}
+.tl-pon h3{font:700 22px var(--disp);margin:0 0 12px}#tlForm{display:flex;gap:10px}#tlForm input{flex:1;min-width:0;height:56px;border-radius:16px;border:1px solid var(--edge-2);background:var(--void);color:var(--ink);padding:0 16px;font:400 19px var(--text)}
+.tl-cola{margin-top:10px}.tl-cola.on{border-color:#38BDF8;color:#38BDF8}
+.tl-picks{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.tl-picks button{display:flex;align-items:center;gap:10px;text-align:left;padding:12px 14px;border-radius:16px;border:1px solid var(--edge);background:var(--card-2);font:600 16px var(--text);cursor:pointer}.tl-picks span{font-size:22px}
+@media (max-width:1000px){ .tl-cols,.gd-cols{grid-template-columns:1fr} }
 </style>
 </head>
 <body class="home">
@@ -850,6 +895,8 @@ body:not(.talking) .talk .fwrap::before{animation:none}
       <div class="pane" data-app="icom" id="pIcom"></div>
       <div class="pane" data-app="noti" id="pNoti"></div>
       <div class="pane" data-app="proto" id="pProto"></div>
+      <div class="pane" data-app="guardia" id="pGuardia"></div>
+      <div class="pane" data-app="tele" id="pTele"></div>
       <div class="pane" data-app="compu" id="pCompu"></div>
       <div class="pane" data-app="estudio" id="pEst"></div>
       <div class="pane" data-app="shop"><div class="cols"><div><article class="card" id="cShop" data-k="shop"></article><div class="addrow"><input id="shopIn" placeholder="Agregar a la lista…" autocomplete="off" spellcheck="false"><button class="big-btn" id="shopAdd" type="button">Agregar</button></div></div><div id="pPrecios"></div></div></div>
@@ -859,7 +906,7 @@ body:not(.talking) .talk .fwrap::before{animation:none}
       <div class="pane" data-app="tareas" id="pTar"></div>
     </div>
   </section>
-  <footer class="dock" id="dock"><div class="dface fface" id="dFace"></div><div class="status" id="status"><i></i><span>Lista</span></div><form class="escr" id="escr" autocomplete="off"><input id="escrIn" type="text" enterkeyhint="send" maxlength="400" placeholder="Escribile a FRIDAY…" aria-label="Escribile a FRIDAY"><button type="submit" aria-label="Mandar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form><span class="celuchip">o hablale desde el celu</span><div class="dline" id="dline"></div></footer>
+  <footer class="dock" id="dock"><div class="dface fface" id="dFace"></div><div class="status" id="status"><i></i><span>Lista</span></div><button type="button" class="celuChip" id="celuChip" aria-label="Cómo hablarme desde el celu">📱 Hablame desde el celu</button><form class="escr" id="escr" autocomplete="off"><input id="escrIn" type="text" enterkeyhint="send" maxlength="400" placeholder="Escribile a FRIDAY…" aria-label="Escribile a FRIDAY"><button type="submit" aria-label="Mandar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form><div class="dline" id="dline"></div></footer>
 </div>
 <div class="talk" id="talk" aria-live="polite"><div class="fwrap"><div id="face" class="fface" aria-label="FRIDAY"></div></div>
   <div class="tx"><p class="you" id="you"></p><p class="her" id="her"></p><div class="hint" id="hint"></div></div></div>
@@ -918,6 +965,9 @@ body:not(.talking) .talk .fwrap::before{animation:none}
       <p class="lbl">Cada cuánto</p>
       <div class="seg" data-k="miraMin"><button type="button" data-v="2">2 min</button><button type="button" data-v="5">5 min</button><button type="button" data-v="15">15 min</button></div>
       <p class="note">Además, cuando quieras: «¿Qué ves?», «mirá esto», «¿cómo me queda?».</p></section>
+    <section><h3>Tamaño de la pantalla</h3>
+      <p class="lbl">FRIDAY se acomoda sola a esta pantalla. Si la ves muy grande o muy chica, cambialo acá (o decile «achicá la pantalla»).</p>
+      <div class="seg" data-k="tam"><button type="button" data-v="chico">Más chico</button><button type="button" data-v="auto">Automático</button><button type="button" data-v="grande">Más grande</button></div></section>
     <section><h3>Subtítulos</h3>
       <div class="seg" data-k="subs"><button type="button" data-v="normales">Normales</button><button type="button" data-v="grandes">Grandes</button></div></section>
     <section hidden><h3>Oído</h3>
@@ -942,7 +992,7 @@ body:not(.talking) .talk .fwrap::before{animation:none}
       <div class="seg" data-k="ambMin"><button type="button" data-v="2">A los 2 min</button><button type="button" data-v="5">A los 5 min</button><button type="button" data-v="15">A los 15 min</button><button type="button" data-v="0">Nunca</button></div></section>
     <section><h3>Conexiones</h3><ul class="conns" id="conns"></ul>
       <p class="note" id="shareNote"></p>
-      <button class="ghost" id="setLink" type="button">Compartir con la compu y el celu</button><button class="ghost" id="setQR" type="button">Configurar desde el celu</button><button class="ghost" id="setReload" type="button">Volver a cargar</button><button class="ghost" id="setChq" type="button">Hacer el chequeo</button></section>
+      <button class="ghost" id="setLink" type="button">Compartir con la compu y el celu</button><button class="ghost" id="setQR" type="button">Configurar desde el celu</button><button class="ghost" id="setCelu" type="button">Hablarme desde el celu</button><button class="ghost" id="setReload" type="button">Volver a cargar</button><button class="ghost" id="setChq" type="button">Hacer el chequeo</button></section>
     <p class="ver" id="setVer"></p>
   </div>
 </aside>
@@ -2330,7 +2380,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='5.4';
+const VERSION='6.0';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -2360,7 +2410,7 @@ const palette=()=>({idle:[47,107,227]});
   }catch(e){}
   LS.set('migrado',true);
 })();
-let S=Object.assign({mueve:'si', reconocer:'hablar', name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', vozFuerte:'no', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
+let S=Object.assign({tam:'auto', mueve:'si', reconocer:'hablar', name:'', city:'', lat:null, lon:null, groqKey:'', gemKey:'', micMode:'normal', vozFuerte:'no', mira:'no', miraMin:5, wake:true, autoAns:'no', patience:1.2, musicSrc:'youtube', voz:'elena', vozVel:'normal', subs:'normales', musicOut:'tablet', ambMin:2, worker:null, workerV:0, google:null, spotify:null, tv:null, music:'auto'}, LS.get('cfg',{}));
 const SERVIDOR_BUFALABS='https://bufalabs.pedrobufager.workers.dev/openai/v1', GROQ_DIRECTO=API.groq;
 if(!S.groqKey) S.groqKey='bufalabs';   // sin llave propia: piensa con el servidor de BufaLabs
 S.reconocer='no'; S.mira='no';   // Casa 5.1: pantalla de control, sin cámara
@@ -3343,7 +3393,8 @@ function onMsg(o){
   if(jarvisMsg(o)) return;
   if(o.k==='oi'){ Turno.onMsg(o); return; }
   // el celu hace de micrófono (beta): lo que dijiste cerca del celu, la tablet lo escucha y te contesta
-  if(o.k==='oir' && o.t){ if(o.to && FSync.cfg && o.to!==FSync.cfg.dev) return; userSaid(String(o.t).slice(0,400), {celu:true}); return; }
+  if(o.k==='timbre' && o.id && o.tok){ const ts=LS.get('timbres',{}); if(o.off) delete ts[o.f]; else ts[o.f]={f:o.f, id:String(o.id).slice(0,50), tok:String(o.tok).slice(0,64)}; LS.set('timbres', ts); if(os.cur==='guardia') renderGuardia(); return; }
+  if(o.k==='oir' && o.t){ if(o.to && FSync.cfg && o.to!==FSync.cfg.dev) return; toast('📱 '+(o.de?'Desde el celu de '+o.de:'Desde el celu')+': «'+String(o.t).slice(0,60)+'»', 3500); userSaid(String(o.t).slice(0,400), {celu:true}); return; }
   const q=o.id && pcq[o.id];
   if(o.k==='ack' && q){ clearTimeout(q.t); q.t=setTimeout(()=>{ delete pcq[o.id]; q.res(null); }, 60000); }
   else if(o.k==='res' && q && o.fin){ clearTimeout(q.t); delete pcq[o.id]; q.res(o.r||(o.notes?{ok:true, notes:o.notes}:null)); if(o.r && o.r.ok) setTimeout(()=>casaLoad(true), 800); }
@@ -3874,6 +3925,97 @@ function escenasHtml(){ let run=null; try{ run=protoSt.corriendo; }catch(e){}
 // la tele a mano (si está vinculada): pausa, volumen y siguiente sin abrir nada
 function teleHtml(){ if(!teleOn()) return ''; const m=music.cur, enTele=m&&m.src==='tele', pausada=enTele&&m.playing===false;
   return `<div class="tvq" role="group" aria-label="La tele"><b>${esc(S.tv.name&&!/youtube/i.test(S.tv.name)?S.tv.name:'La tele')}</b><button type="button" data-tvq="voldn" aria-label="Bajar el volumen de la tele">${OSI.voldn}</button><button type="button" class="pp" data-tvq="${pausada?'seguir':'pausa'}" aria-label="${pausada?'Seguir':'Pausa'}">${pausada?OSI.play:'<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="5" width="4" height="14" rx="1.2"/><rect x="14" y="5" width="4" height="14" rx="1.2"/></svg>'}</button><button type="button" data-tvq="volup" aria-label="Subir el volumen de la tele">${OSI.volup}</button><button type="button" data-tvq="siguiente" aria-label="Siguiente en la tele">${OSI.next}</button></div>`; }
+// 6.0: la app Tele. Muestra lo que suena en la tele (con el servicio de la casa v9), y tiene el control remoto
+const teleSt={on:null, videoId:'', state:null, tiempo:null, dura:null, volumen:null, mute:false, at:0, err:'', mirando:null, titulos:{}};
+const teleV9=()=>(S.workerV||0)>=9;
+async function teleEstado(){ if(!teleOn()) return; try{ const r=await tv('estado'); Object.assign(teleSt, {on:r.on, videoId:r.videoId||'', state:r.state, tiempo:r.tiempo, dura:r.dura, at:Date.now(), err:''}); if(r.volumen!=null){ teleSt.volumen=r.volumen; music.tvVol=r.volumen; teleSt.mute=!!r.mute; }
+    if(teleSt.videoId && !teleSt.titulos[teleSt.videoId]){ const m=music.cur; if(m && m.src==='tele' && m.id===teleSt.videoId) teleSt.titulos[teleSt.videoId]=m.title; else { const l=(music.tvList||[]).find(v=>v.id===teleSt.videoId); if(l) teleSt.titulos[teleSt.videoId]=l.title; } }
+    if(music.cur && music.cur.src==='tele'){ if(teleSt.state===2 || teleSt.state===0) music.cur.playing=false; else if(teleSt.state===1) music.cur.playing=true; if(teleSt.videoId && teleSt.videoId!==music.cur.id){ const t=teleSt.titulos[teleSt.videoId]; music.cur.id=teleSt.videoId; music.cur.img=`https://i.ytimg.com/vi/${teleSt.videoId}/hqdefault.jpg`; music.cur.title=t||'En la tele'; } }
+  }catch(e){ teleSt.err=e.message; teleSt.at=Date.now(); } if(os.cur==='tele') renderTele(); }
+function teleMirar(on){ clearInterval(teleSt.mirando); teleSt.mirando=null; if(on && teleOn()){ teleEstado(); teleSt.mirando=setInterval(()=>{ if(!document.hidden) teleEstado(); }, 6000); } }
+const mmss=x=>{ x=Math.max(0, Math.round(+x||0)); return Math.floor(x/60)+':'+String(x%60).padStart(2,'0'); };
+const TELE_PICKS=[['🎶','Música para la previa'],['📰','Noticias en vivo'],['😌','Música tranqui para trabajar'],['🌧️','Lluvia para dormir'],['🍳','Recetas fáciles'],['🧒','Dibujitos para chicos']];
+function renderTele(){
+  const el=$('pTele'); if(!el) return; let html;
+  if(!teleOn()){
+    html=`<div class="tl-vinc"><div class="tl-ic">${OSI.tele}</div><h3>Vinculá la tele</h3>
+      ${!workerOn()?'<p>Primero hace falta el servicio de la casa (se arma desde el celu, en la configuración de la tablet).</p>':`<ol><li>En la tele, abrí <b>YouTube</b>.</li><li>Andá a <b>Ajustes → Vincular con código de TV</b> (o «Conectar con el teléfono»).</li><li>La tele te muestra un código de 12 números: escribilo acá.</li></ol><button type="button" class="gbtn big" id="tlVinc">Escribir el código</button>`}</div>`;
+  } else {
+    const t=teleSt, m=music.cur&&music.cur.src==='tele'?music.cur:null, vid=t.videoId||(m&&m.id)||'', tit=(vid&&t.titulos[vid])||(m&&m.title)||(vid?'Un video en la tele':'');
+    const juega=t.state===1 || (t.state==null && m && m.playing!==false), prog=t.dura>0&&t.tiempo!=null?Math.min(100, t.tiempo/t.dura*100):0;
+    const nom=S.tv.name&&!/youtube/i.test(S.tv.name)?S.tv.name:'La tele';
+    html=`<div class="tl-cols"><section class="tl-now">
+        <div class="tl-art"${vid?` style="background-image:url('https://i.ytimg.com/vi/${esc(vid)}/hqdefault.jpg')"`:''}>${vid?'':OSI.tele}</div>
+        <div class="tl-info"><small>${esc(nom)}${t.on===false?' · apagada o sin YouTube abierto':''}</small><b>${esc(tit||'Nada sonando')}</b>
+          ${teleV9()&&t.dura>0?`<div class="tl-bar"><i style="width:${prog}%"></i></div><span class="tl-t">${mmss(t.tiempo)} / ${mmss(t.dura)}</span>`:''}</div>
+        <div class="tl-rem" role="group" aria-label="Control de la tele">
+          <button type="button" data-tl="anterior" aria-label="Anterior">${OSI.prev}</button>
+          ${teleV9()?`<button type="button" data-tl="atras" aria-label="Atrasar 10 segundos">−10</button>`:''}
+          <button type="button" class="pp" data-tl="${juega?'pausa':'seguir'}" aria-label="${juega?'Pausa':'Seguir'}">${juega?OSI.pause:OSI.play}</button>
+          ${teleV9()?`<button type="button" data-tl="adelante" aria-label="Adelantar 30 segundos">+30</button>`:''}
+          <button type="button" data-tl="siguiente" aria-label="Siguiente">${OSI.next}</button></div>
+        <div class="tl-vol"><button type="button" data-tl="voldn" aria-label="Bajar el volumen">${OSI.voldn}</button>
+          <input type="range" id="tlVol" min="0" max="100" step="5" value="${t.volumen!=null?t.volumen:(music.tvVol||30)}" aria-label="Volumen de la tele"><button type="button" data-tl="volup" aria-label="Subir el volumen">${OSI.volup}</button>
+          <button type="button" class="tl-mute${t.mute?' on':''}" data-tl="mute">${t.mute?'Con sonido':'Silenciar'}</button></div>
+        ${!teleV9()?'<p class="note">Para ver qué está sonando y adelantar, actualizá el código del servicio de la casa (desde el celu).</p>':''}
+      </section>
+      <section class="tl-pon"><h3>¿Qué ponemos en la tele?</h3>
+        <form id="tlForm" autocomplete="off"><input id="tlQ" placeholder="Soda Stereo, noticias, una receta…" aria-label="Qué poner en la tele"><button type="submit" class="gbtn">Poner</button></form>
+        ${teleV9()?'<button type="button" class="ghost tl-cola" id="tlCola">+ Agregar a la cola en vez de cambiar</button>':''}
+        <div class="tl-picks">${TELE_PICKS.map(([e,q])=>`<button type="button" data-tlq="${esc(q)}"><span>${e}</span>${esc(q)}</button>`).join('')}</div>
+        <p class="note">También por voz: «pausá la tele», «subí la tele», «adelantá un minuto», «poné Coldplay en la tele», «agregá Queen a la tele».</p>
+        <button type="button" class="ghost" data-tl="apagar">Cortar lo que suena en la tele</button></section></div>`;
+  }
+  if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
+}
+async function teleHacer(c, x){
+  if(!teleOn()){ toast('La tele todavía no está vinculada'); return 'La tele todavía no está vinculada: abrí la app Tele y vinculala.'; }
+  const m=music.cur, v=teleSt.volumen!=null?teleSt.volumen:(music.tvVol||30);
+  try{
+    if(c==='pausa'){ await tv('pause'); if(m&&m.src==='tele') m.playing=false; teleSt.state=2; }
+    else if(c==='seguir'){ await tv('play'); if(m&&m.src==='tele') m.playing=true; teleSt.state=1; }
+    else if(c==='siguiente') await tv('next');
+    else if(c==='anterior') await tv('previous');
+    else if(c==='apagar'){ await tv('stopVideo'); if(m&&m.src==='tele'){ music.cur=null; } teleSt.videoId=''; }
+    else if(c==='volup' || c==='voldn' || c==='vol'){ const n=c==='vol'?Math.max(0,Math.min(100,+x)):Math.max(0,Math.min(100, v+(c==='volup'?(x||10):-(x||10)))); await tv('setVolume',{volume:n}); teleSt.volumen=n; music.tvVol=n; teleSt.mute=false; }
+    else if(c==='mute'){ const n=teleSt.mute?(teleSt.volAntes||30):0; if(!teleSt.mute) teleSt.volAntes=v; await tv('setVolume',{volume:n}); teleSt.mute=!teleSt.mute; teleSt.volumen=n; }
+    else if(c==='adelante' || c==='atras'){ if(!teleV9()) return 'Para adelantar hace falta actualizar el servicio de la casa.'; await teleEstado(); const nt=Math.max(0,(teleSt.tiempo||0)+(c==='adelante'?(x||30):-(x||10))); await tv('seekTo',{newTime:Math.round(nt)}); teleSt.tiempo=nt; }
+    else if(c==='cola'){ if(!teleV9()) return 'Para encolar hace falta actualizar el servicio de la casa.'; const vs=musOrden(await ytBuscar(x), x); if(!vs[0]) return `No encontré «${x}».`; await tv('addVideo',{videoId:vs[0].id}); teleSt.titulos[vs[0].id]=vs[0].title; music.tvList=(music.tvList||[]).concat([vs[0]]); toast('➕ En la cola: '+clean(vs[0].title), 4000); setTimeout(teleEstado, 1500); return `Listo, agregué ${clean(vs[0].title)} a la cola de la tele.`; }
+    else if(c==='poner'){ const vs=musOrden(await ytBuscar(x), x); const v1=await tvPlay(vs, 0); teleSt.titulos[v1.id]=v1.title; setTimeout(teleEstado, 2500); renderTele(); return `Dale, ${clean(v1.title)} en la tele.`; }
+  }catch(e){ const t=e.message==='tele_apagada'?'La tele está apagada o no tiene YouTube abierto.':'La tele no respondió.'; toast(t); renderTele(); return t; }
+  renderTele(); renderCtl(); try{ renderMusCtl(); }catch(e){} setTimeout(teleEstado, 1200); return '';
+}
+document.addEventListener('click', e=>{
+  if(e.target.closest('#celuChip')){ celuAyuda(); return; }
+  const b=e.target.closest('[data-tl]'); if(b){ teleHacer(b.dataset.tl); if(navigator.vibrate) navigator.vibrate(8); return; }
+  const q=e.target.closest('[data-tlq]'); if(q){ teleHacer(teleSt.cola?'cola':'poner', q.dataset.tlq).then(t=>{ if(t) toast(t, 3500); }); return; }
+  if(e.target.closest('#tlVinc')){ padShow(); return; }
+  if(e.target.closest('#tlCola')){ teleSt.cola=!teleSt.cola; e.target.closest('#tlCola').classList.toggle('on', teleSt.cola); e.target.closest('#tlCola').textContent=teleSt.cola?'✓ Agrego a la cola (tocá para cambiar)':'+ Agregar a la cola en vez de cambiar'; }
+});
+document.addEventListener('submit', e=>{ if(e.target.id!=='tlForm') return; e.preventDefault(); const q=$('tlQ').value.trim(); if(!q) return; $('tlQ').value='';
+  teleHacer(teleSt.cola?'cola':'poner', q).then(t=>{ if(t) toast(t, 3500); }); });
+document.addEventListener('change', e=>{ if(e.target.id==='tlVol') teleHacer('vol', e.target.value); });
+// la tele por voz
+function teleFast(text, nf){
+  const n=nf.replace(/^(che |dale |friday )+/,''); let m;
+  const tl='(la )?(tele|tv|television)';
+  const r=(c, x, ok)=>{ pushHist('user', text); teleHacer(c, x).then(t=>say(t||ok, 'happy')); return true; };
+  if(!/\b(tele|tv|television)\b/.test(n)) return false;
+  if(new RegExp(`^(pausa|pausá|pone pausa|para|frena)( (a|en))? ${tl}$`).test(n)) return r('pausa', 0, 'Listo, pausé la tele.');
+  if(new RegExp(`^(segui|seguí|reanuda|dale play|play)( (a|en))? ${tl}$|^(volve a poner|despausa) ${tl}$`).test(n)) return r('seguir', 0, 'Sigue la tele.');
+  if(new RegExp(`^(siguiente|pasa(la)?|saltea|el que sigue)( (en|de))? ${tl}$|^pasa el video de ${tl}$`).test(n)) return r('siguiente', 0, 'Va el siguiente.');
+  if(new RegExp(`^(anterior|volve al anterior)( (en|de))? ${tl}$`).test(n)) return r('anterior', 0, 'Vuelvo al anterior.');
+  if(new RegExp(`^(subi|subile|subí|subile el volumen a|subi el volumen de) ${tl}( un poco| mucho)?$`).test(n)) return r('volup', /mucho/.test(n)?25:10, 'Subí el volumen de la tele.');
+  if(new RegExp(`^(baja|bajale|bajá|bajale el volumen a|baja el volumen de) ${tl}( un poco| mucho)?$`).test(n)) return r('voldn', /mucho/.test(n)?25:10, 'Bajé el volumen de la tele.');
+  if((m=n.match(new RegExp(`^(pone|deja) (el volumen de )?${tl} (al|en) (\\d{1,3})( por ciento)?$`)))) return r('vol', +m[6], `Volumen de la tele en ${m[6]}.`);
+  if(new RegExp(`^(silencia|mutea|callá|calla|sacale el sonido a) ${tl}$`).test(n)) return r('mute', 0, 'Silencié la tele.');
+  if(new RegExp(`^(corta|saca|apaga lo que suena en|frena todo en) ${tl}$`).test(n)) return r('apagar', 0, 'Corté lo que sonaba en la tele.');
+  if((m=n.match(new RegExp(`^(adelanta|adelantale)( ${tl})?( (?<q>\\d+|un|una|medio) (?<u>segundos?|minutos?))?( (en|a) ${tl})?$`)))){ const g=m.groups||{}, q=g.q==='un'||g.q==='una'?1:g.q==='medio'?0.5:+g.q||0, s2=/minuto/.test(g.u||'')?q*60:q||30; return r('adelante', s2, 'Adelanté.'); }
+  if((m=n.match(new RegExp(`^(atrasa|atrasale|retrocede)( ${tl})?( (?<q>\\d+|un|una) (?<u>segundos?|minutos?))?( (en|a) ${tl})?$`)))){ const g=m.groups||{}, q=g.q==='un'||g.q==='una'?1:+g.q||0, s2=/minuto/.test(g.u||'')?q*60:q||10; return r('atras', s2, 'Volví un poco.'); }
+  if((m=n.match(new RegExp(`^(agrega|agregá|suma|encola|pone despues) (.+?) (a|en) (la cola de )?${tl}$`)))) { const q=text.replace(/^\s*(che,?\s*|friday,?\s*)*(agreg[aá]|sum[aá]|encol[aá]|pon[eé] despu[eé]s)\s+/i,'').replace(/\s+(a|en)\s+(la cola de\s+)?(la\s+)?(tele|tv|televisi[oó]n)\s*[.!]*$/i,''); return r('cola', q, ''); }
+  if(/^(que (esta sonando|suena|hay|estan pasando) en|que pasan en) (la )?(tele|tv)$/.test(n)){ pushHist('user', text); teleEstado().then(()=>{ const v=teleSt.videoId, t=v&&teleSt.titulos[v]; say(!teleOn()?'La tele no está vinculada.':teleSt.on===false?'La tele está apagada o sin YouTube abierto.':v?(t?`En la tele está ${clean(t)}.`:'En la tele hay un video, pero no sé cuál es.'):'En la tele no está sonando nada.', 'happy'); }); return true; }
+  if(/^(abri|mostrame|abrime) (la app de )?(la )?(tele|tv|control de la tele|control remoto)$/.test(n)){ pushHist('user', text); osOpen('tele'); say('Acá está el control de la tele.', 'happy'); return true; }
+  return false; }
 async function teleRapido(c){
   const m=music.cur;
   try{
@@ -3943,7 +4085,29 @@ Mira.init({
 function gearShow(){ const g=$('gear'); g.classList.add('on'); clearTimeout(gearShow.t); gearShow.t=setTimeout(()=>g.classList.remove('on'), 6000); }
 const setsOpen=()=>$('sets').classList.contains('on');
 function setsShow(on){ $('sets').classList.toggle('on', on); $('setBg').classList.toggle('on', on); $('gear').classList.remove('on'); if(on){ ambOff(); setsRender(); micMeter(); } state.lastUser=Date.now(); }
-function setsApply(){ document.body.classList.toggle('subs-big', S.subs==='grandes'); }
+function setsApply(){ document.body.classList.toggle('subs-big', S.subs==='grandes'); tamApply(); }
+// el tamaño de todo: automático según la pantalla, y un toque más chico o más grande si lo pedís
+const TAM={chico:0.86, normal:1, grande:1.14};
+function tamApply(){
+  const r=document.documentElement, z0=tamApply.z||1;
+  const ancho=innerWidth, alto=innerHeight, por=alto>ancho;   // innerWidth no cambia con el zoom: es la pantalla de verdad
+  let z=por ? Math.min(ancho/800, alto/1280) : Math.min(ancho/1280, alto/800);
+  z=Math.max(0.5, Math.min(1.35, z*(TAM[S.tam]||1)));
+  z=Math.round(z*100)/100; if(Math.abs(z-z0)<0.01 && r.style.zoom) return;
+  tamApply.z=z; r.style.zoom=z; r.style.setProperty('--z', z); document.body.classList.toggle('chica', z<0.8);
+  try{ if(bud.el && bud.mode==='home'){ const h=budHome(); budPut(h.x, h.y, h.s, 0); } }catch(e){}
+}
+addEventListener('resize', ()=>{ clearTimeout(tamApply.t); tamApply.t=setTimeout(tamApply, 150); });
+addEventListener('orientationchange', ()=>setTimeout(tamApply, 300));
+function tamFast(text, nf){
+  const n=nf.replace(/^(che |dale |friday )+/,'');
+  let v=null;
+  if(/^(agranda|agrandame|agrandar|hace mas grande|pone mas grande|ponela mas grande)( (la pantalla|todo|las letras|la letra))?$|^(todo )?mas grande$|^no veo nada$/.test(n)) v=S.tam==='chico'?'normal':'grande';
+  else if(/^(achica|achicame|achicar|hace mas chico|pone mas chico|ponela mas chica)( (la pantalla|todo|las letras|la letra))?$|^(todo )?mas chico$|^(queda|esta|se ve) (muy |re )?grande$/.test(n)) v=S.tam==='grande'?'normal':'chico';
+  else if(/^(tamano|pantalla) (normal|automatico)$|^volve al tamano normal$/.test(n)) v='auto';
+  if(!v) return false;
+  S.tam=v; saveS(); tamApply.z=tamApply.z||1; tamApply(); if($('sets').classList.contains('on')) setsRender();
+  sayFast(text, v==='grande'?'Listo, todo más grande.':v==='chico'?'Listo, todo más chico.':'Listo, volví al tamaño que le queda bien a esta pantalla.', 'happy'); return true; }
 function setsRender(){
   document.querySelectorAll('#sets .seg').forEach(g=>{ const v=String(S[g.dataset.k]); g.querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===v))); });
   const wv=S.workerV||0, n=$('vozNote');
@@ -4031,7 +4195,7 @@ function setsInit(){
       if(k==='voz' || k==='vozVel'){ tts.cache.clear(); tts.failUntil=0; }
       if(k==='vozFuerte'){ voiceBoostSet(v==='si'); setTimeout(()=>say(v==='si'?'Así sueno más fuerte. ¿Se escucha mejor?':'Volví a la voz normal.', 'happy'), 200); }
       if(k==='voiceLocal'){ tts.voice=null; say('Así sueno con esta voz.', 'happy'); }
-      if(k==='subs') setsApply();
+      if(k==='subs' || k==='tam') setsApply();
       if(k==='mira' || k==='miraMin') miraApply();
       if(k==='musicOut' && v==='tele' && !(S.tv && S.tv.screenId)) setTimeout(()=>{ if(workerOn() && (S.workerV||0)>=2) padShow(); }, 250);
       setsRender(); return; }
@@ -4039,6 +4203,7 @@ function setsInit(){
     else if(e.target.id==='tvLink') padShow();
     else if(e.target.id==='tvOff'){ S.tv=null; if(S.musicOut==='tele') S.musicOut='tablet'; saveS(); setsRender(); toast('La tele quedó desvinculada'); }
     else if(e.target.id==='setQR'){ setsShow(false); setupShow(true); }
+    else if(e.target.id==='setCelu'){ setsShow(false); celuAyuda(); }
     else if(e.target.closest('[data-call]')){ const p=Call.peers().find(x=>x.dev===e.target.closest('[data-call]').dataset.call); setsShow(false); Call.start(p).then(err=>{ if(err) say(err,'worried'); }); }
     else if(e.target.id==='setLink'){ setsShow(false); setupShow(true, 'link'); }
     else if(e.target.id==='setReload') location.reload();
@@ -4059,6 +4224,20 @@ function setsInit(){
   };
 }
 const pad={d:''};
+// «hablame desde el celu»: cómo se hace, paso a paso (y el QR para unir el celu si todavía no está)
+function celuAyuda(){
+  const celus=(()=>{ try{ return FSync.peersOf('celu'); }catch(e){ return []; } })();
+  let el=$('celuAy'); if(!el){ el=document.createElement('div'); el.id='celuAy'; el.className='pad'; document.body.appendChild(el);
+    el.addEventListener('click', e=>{ if(e.target===el || e.target.closest('#cayNo')) el.hidden=true; if(e.target.closest('#cayUnir')){ el.hidden=true; setupShow(true, 'link'); } }); }
+  el.innerHTML=`<div class="box cay"><h3>Hablame desde el celu</h3>
+    ${celus.length?`<p>Ya ${celus.length===1?'hay un celu unido':'hay '+celus.length+' celus unidos'} (${celus.map(c=>esc(c.name||'celu')).join(', ')}). En el celu:</p>
+      <ol><li>Abrí <b>FRIDAY Móvil</b>.</li><li>En el inicio tocá <b>«🏠 La tablet de la casa»</b>.</li><li>Tocá <b>«🎙 Hablarle a la tablet»</b> y hablá: yo te escucho y te contesto acá.</li></ol>
+      <p class="note">También podés decirle al celu «hablale a la tablet». Para que vuelva a contestarte el celu, decí «volvé».</p>`
+    :`<p>Esta tablet no tiene micrófono propio: el micrófono es tu celu. Primero hay que unirlos (una sola vez):</p>
+      <ol><li>Tocá <b>«Unir el celu»</b> acá abajo: aparece un código.</li><li>En el celu abrí <b>FRIDAY Móvil → Más → Tu compu → «Escanear el QR»</b> y apuntale a este código.</li><li>Listo: en el inicio del celu vas a ver <b>«🏠 La tablet de la casa»</b>, con el botón para hablarme.</li></ol>
+      <button type="button" class="gbtn big" id="cayUnir">Unir el celu</button>`}
+    <button type="button" class="ghost" id="cayNo">Cerrar</button></div>`;
+  el.hidden=false; }
 function padShow(){ pad.d=''; $('padSt').textContent=''; padPaint(); $('tvPad').hidden=false; }
 function padPaint(){ const d=(pad.d+'············').slice(0,12); $('padD').innerHTML=[0,4,8].map(i=>d.slice(i,i+4).replace(/·+/g,m=>`<span class="ph">${m}</span>`)).join(' '); $('padGo').disabled=pad.d.length!==12; }
 
@@ -4201,7 +4380,7 @@ function greet(){
   const ev=gapp.ev.filter(e=>String(e.i).startsWith(today)); if(ev.length) parts.push('En la agenda: '+ev.slice(0,3).map(e=>e.d?e.t:`a las ${hhmm(new Date(e.i))}, ${e.t}`).join('; ')+'.');
   const cs=cumplesProx().filter(c=>c.dias===0); if(cs.length) parts.push(`Hoy cumple ${listaY(cs.map(c=>c.n))}.`);
   const sd=segDue()[0]; if(sd){ parts.push(sd.q.charAt(0).toUpperCase()+sd.q.slice(1)+(/[?]$/.test(sd.q)?'':'?')); sd.done=true; sd.doneAt=Date.now(); segSave(); }
-  else parts.push('Escríbanme acá abajo o háblenme desde el celu.');
+  else parts.push('Escríbanme acá abajo o háblenme desde el celu: abajo a la derecha les muestro cómo.');
   say(parts.join(' '), 'happy'); if(!sd) tts.noFollow=true;
 }
 // ================================================================ FRIDAY OS (by BUFALABS)
@@ -4226,12 +4405,14 @@ const OSI={
   volup:SV('<path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 9.5a4 4 0 0 1 0 5M18.5 7a7.5 7.5 0 0 1 0 10"/>'), voldn:SV('<path d="M4 10v4h3l5 4V6L7 10z"/><path d="M16 12h4"/>'),
   noti:SV('<path d="M4 5.5h12.5v13a2 2 0 0 0 2 2H6a2 2 0 0 1-2-2z"/><path d="M16.5 9H20v9.5a2 2 0 0 1-4 0"/><path d="M7.5 9h6M7.5 12.5h6M7.5 16h4"/>'),
   proto:SV('<path d="M13 2.5 4.5 13.5H11l-1 8 8.5-11H12z"/>'),
+  guardia:SV('<path d="M12 3l7.5 3v5.5c0 4.6-3.2 8.3-7.5 9.5-4.3-1.2-7.5-4.9-7.5-9.5V6z"/><path d="M9 12l2 2 4-4"/>'),
+  tele:SV('<rect x="3" y="5" width="18" height="12" rx="2"/><path d="M8.5 21h7M12 17v4"/><path d="M10.5 9v4l3.5-2z" fill="currentColor"/>'),
   compu:SV('<rect x="3" y="4.5" width="18" height="12" rx="2"/><path d="M8.5 20h7M12 16.5V20"/><path d="M7 12.5l2.5-3 2 2 3-4 2.5 3"/>'),
   mic:SV('<rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21"/>',2)
 };
 const APPS=[
   {id:'casa', n:'Casa', t:'#FFB547'}, {id:'mus', n:'Música', t:'#FF5FA2'}, {id:'cocina', n:'Cocina', t:'#A3E635'}, {id:'tareas', n:'Tareas', t:'#FACC15'}, {id:'estudio', n:'Estudio', t:'#A78BFA'}, {id:'shop', n:'Compras', t:'#34D3C4'},
-  {id:'agenda', n:'Agenda', t:'#4CC9FF'}, {id:'noti', n:'Noticias', t:'#FFC24B'}, {id:'icom', n:'Intercom', t:'#FF8A3D'}, {id:'llamar', n:'Llamar', t:'#4ADE80'}, {id:'cam', n:'Cámara', t:'#F87171'}, {id:'proto', n:'Protocolos', t:'#4CC9FF'}, {id:'compu', n:'Compu', t:'#5FD39A'}, {id:'cielo', n:'Cielo', t:'#7C8BFF'}, {id:'ajustes', n:'Ajustes', t:'#94A3B8'}
+  {id:'agenda', n:'Agenda', t:'#4CC9FF'}, {id:'noti', n:'Noticias', t:'#FFC24B'}, {id:'icom', n:'Intercom', t:'#FF8A3D'}, {id:'llamar', n:'Llamar', t:'#4ADE80'}, {id:'cam', n:'Cámara', t:'#F87171'}, {id:'guardia', n:'Guardia', t:'#FF6B7D'}, {id:'tele', n:'Tele', t:'#38BDF8'}, {id:'proto', n:'Protocolos', t:'#4CC9FF'}, {id:'compu', n:'Compu', t:'#5FD39A'}, {id:'cielo', n:'Cielo', t:'#7C8BFF'}
 ];
 const os={ cur:null, auto:false, at:0, talkHide:false, cam:null };
 const appOf=id=>APPS.find(a=>a.id===id);
@@ -4248,7 +4429,9 @@ function appSub(id){
   if(id==='cocina') return cocina ? [cocina.i>=0?`Paso ${cocina.i+1} de ${cocina.pasos.length}`:cocina.titulo, true] : ['', false];
   if(id==='tareas'){ const h=tareasHoy().length; const p=puntosSemana()[0]; return [h?h+(h>1?' para hoy':' para hoy'):(p?'👑 '+p[0]:''), false, h]; }
   if(id==='cam') return [Mira.on?'Mirando':'', Mira.on];
-  if(id==='proto') return [guardia.on?'Guardia activa':'', guardia.on];
+  if(id==='proto') return ['', false];
+  if(id==='guardia') return [guardia.on?(Date.now()<guardia.desde?'Por activarse':'Vigilando'):'', guardia.on, guardia.eventos.filter(e=>e.at>guardia.vistoAt).length||0];
+  if(id==='tele'){ const m=music.cur; return teleOn() ? [m&&m.src==='tele'?(m.title||'En la tele'):'', !!(m&&m.src==='tele'&&m.playing!==false)] : ['', false]; }
   if(id==='compu'){ const p=pcDev() && FSync.st.peers[pcDev()]; return [p && Date.now()-p.t<25*60000 ? 'En línea' : '', false]; }
   if(id==='noti') return [noti.items[0] && Date.now()-noti.at<3600000 ? (noti.items[0].src||'') : '', false];
   return ['', false];
@@ -4279,9 +4462,11 @@ function osOpen(id, opt){
   $('winIc').style.setProperty('--t', a.t); $('winIc').innerHTML=OSI[id]; $('winT').textContent=a.n; $('winS').textContent='';
   renderPane(id);
   if(id==='cam') camStart();
+  if(id==='tele') teleMirar(true);
+  if(id==='guardia'){ clearInterval(renderGuardia.t); renderGuardia.t=setInterval(()=>{ if(os.cur==='guardia') renderGuardia(); }, 1000); }
   if(id==='icom'){ icom.log.forEach(x=>x.leido=true); icomSave(); }
 }
-function osLeave(id){ if(id==='compu'){ compu.img=null; } if(id==='cam') camStop(); if(id==='icom' && state.icomTo) icomCancel(); }
+function osLeave(id){ if(id==='tele') teleMirar(false); if(id==='guardia'){ clearInterval(renderGuardia.t); guardia.vistoAt=Date.now(); guardiaSave(); } if(id==='compu'){ compu.img=null; } if(id==='cam') camStop(); if(id==='icom' && state.icomTo) icomCancel(); }
 function osClose(){
   if(!os.cur) return; osLeave(os.cur); os.cur=null; os.auto=false;
   document.body.classList.remove('inapp'); document.body.classList.add('home'); $('win').setAttribute('aria-hidden','true');
@@ -4300,7 +4485,7 @@ function renderPane(id){
   else if(id==='shop') renderPrecios(); else if(id==='cam') renderCam(); else if(id==='mus') renderMusCtl();
   else if(id==='agenda') renderAgenda();
   else if(id==='cocina') renderCocina(); else if(id==='tareas') renderTareas();
-  else if(id==='proto') renderProto(); else if(id==='compu'){ renderCompu(); if(Date.now()-compu.at>4000 && !compu.pend) compuEstado(); }
+  else if(id==='proto') renderProto(); else if(id==='guardia') renderGuardia(); else if(id==='tele') renderTele(); else if(id==='compu'){ renderCompu(); if(Date.now()-compu.at>4000 && !compu.pend) compuEstado(); }
   else if(id==='noti'){ renderNoti(); if(!noti.busy && ((!noti.items.length && Date.now()-noti.at>60000) || Date.now()-noti.at>10*60000)) notiAbrir(noti.q?'':(noti.cat||'portada'), noti.q); }
 }
 // ---------------------------------------------------------------- FRIDAY sube cuando escucha o habla
@@ -4515,6 +4700,8 @@ function osFast(text, nf){
   if(cocFast(text, nf)) return true;
   if(tareasFast(text, nf)) return true;
   if(saludoFast(text, nf)) return true;
+  if(tamFast(text, nf)) return true;
+  if(teleFast(text, nf)) return true;
   if(guardiaFast(text, nf)) return true;
   if(compuFast(text, nf)) return true;
   if(protoFast(text, nf)) return true;
@@ -5371,30 +5558,47 @@ function bienvenidaTxt(n, corto){
   return partes.join(' '); }
 
 // ---------------------------------------------------------------- modo guardia: la cámara vigila cuando no hay nadie
-const guardia=Object.assign({on:false, desde:0, eventos:[], vistoAt:0}, LS.get('guardia',{}), {loop:null, prev:null, mov:0, ultAlerta:0, alertas:[]});
-const guardiaSave=()=>LS.set('guardia', {on:guardia.on, desde:guardia.desde, eventos:guardia.eventos.slice(-6), vistoAt:guardia.vistoAt});
-function guardiaSet(on, op){ op=op||{};
+// 6.0: antes de activarse prueba la cámara (si no anda, lo dice), vigila con un fondo que aprende (no la engaña el ruido
+// de la cámara ni una luz que se prende), saca 3 fotos, le toca el timbre al celu aunque FRIDAY esté cerrada, y mientras
+// vigila la pantalla queda oscura con un escudo (para desactivarla hay que mantener apretado, o que te reconozca).
+const guardia=Object.assign({on:false, desde:0, eventos:[], vistoAt:0}, LS.get('guardia',{}), {loop:null, fondo:null, ruido:6, hits:[], ultAlerta:0, alertas:[], camOk:null});
+const guardiaSave=()=>LS.set('guardia', {on:guardia.on, desde:guardia.desde, eventos:guardia.eventos.slice(-8), vistoAt:guardia.vistoAt});
+async function guardiaSet(on, op){ op=op||{};
   if(on===guardia.on && !op.forzar) { if(!op.silencio) say(on?'La guardia ya está activa.':'La guardia ya estaba apagada.'); return; }
-  guardia.on=on; guardia.desde=on?Date.now()+(op.demora!=null?op.demora:30)*1000:0; guardia.prev=null; guardia.mov=0; guardiaSave();
-  if(on){ guardiaLoop(); if(!op.silencio) say(`Guardia activada. Empiezo a vigilar en ${Math.round((guardia.desde-Date.now())/1000)} segundos.`, 'happy'); }
-  else { clearTimeout(guardia.loop); guardia.loop=null; if(!op.silencio) say('Guardia desactivada.', 'happy'); setTimeout(()=>{ try{ camSuelta(); }catch(e){} }, 1000); }
-  document.body.classList.toggle('guardia', on); if(os.cur==='proto') renderProto(); render();
+  if(on){
+    // primero: ¿anda la cámara?
+    let v=null; try{ v=await camVideo(); }catch(e){ v=null; }
+    if(!v || !v.videoWidth){ guardia.camOk=false; if(!op.silencio || op.remoto) say('No puedo activar la guardia: no me deja usar la cámara. Fijate que Chrome tenga permiso para la cámara de esta tablet.', 'worried');
+      try{ if(op.remoto) FSync.send({k:'aviso', t:'FRIDAY · Guardia', s:'No pude activar la guardia: la cámara de la tablet no anda.'}); }catch(e){} if(os.cur==='guardia') renderGuardia(); return; }
+    guardia.camOk=true;
+  }
+  guardia.on=on; guardia.desde=on?Date.now()+(op.demora!=null?op.demora:30)*1000:0; guardia.fondo=null; guardia.hits=[]; guardiaSave();
+  if(on){ guardiaLoop(); if(!op.silencio) say(`Guardia activada. Empiezo a vigilar en ${Math.round((guardia.desde-Date.now())/1000)} segundos: salí tranquilo.`, 'happy'); }
+  else { clearTimeout(guardia.loop); guardia.loop=null; sirena(false); if(!op.silencio) say('Guardia desactivada.', 'happy'); setTimeout(()=>{ try{ camSuelta(); }catch(e){} }, 1000); }
+  document.body.classList.toggle('guardia', on); gdOv(); if(os.cur==='proto') renderProto(); if(os.cur==='guardia') renderGuardia(); render();
   if(!op.remoto){ try{ FSync.send({k:'guardia', on, est:1}); }catch(e){} } }
 async function guardiaLoop(){
   clearTimeout(guardia.loop); if(!guardia.on) return;
-  guardia.loop=setTimeout(guardiaLoop, 1200);
+  guardia.loop=setTimeout(guardiaLoop, 700);
+  gdOv();
   if(Date.now()<guardia.desde || Call.active || os.cam || quien.enroll) return;
-  let v; try{ v=await camVideo(); }catch(e){ return; } if(!v || !v.videoWidth) return;
-  const c=guardia.cv||(guardia.cv=document.createElement('canvas')); c.width=64; c.height=48; const x=c.getContext('2d', {willReadFrequently:true});
-  x.drawImage(v, 0, 0, 64, 48); const d=x.getImageData(0,0,64,48).data, g=new Float32Array(64*48); let mean=0;
+  let v; try{ v=await camVideo(); }catch(e){ v=null; }
+  if(!v || !v.videoWidth){ if(guardia.camOk!==false){ guardia.camOk=false; gdOv(); } return; }
+  if(guardia.camOk!==true){ guardia.camOk=true; gdOv(); }
+  const W=80, H=60, c=guardia.cv||(guardia.cv=document.createElement('canvas')); c.width=W; c.height=H; const x=c.getContext('2d', {willReadFrequently:true});
+  x.drawImage(v, 0, 0, W, H); const d=x.getImageData(0,0,W,H).data, g=new Float32Array(W*H); let mean=0;
   for(let i=0;i<g.length;i++){ g[i]=(d[i*4]*0.3+d[i*4+1]*0.59+d[i*4+2]*0.11); mean+=g[i]; } mean/=g.length;
   for(let i=0;i<g.length;i++) g[i]-=mean;   // sin el brillo general: que prender una luz no cuente como alguien
-  const prev=guardia.prev; guardia.prev=g; if(!prev) return;
-  let cambio=0; for(let i=0;i<g.length;i++) if(Math.abs(g[i]-prev[i])>28) cambio++;
-  const frac=cambio/g.length;
-  if(frac>0.6){ guardia.mov=0; return; }        // cambió todo (la cámara se ajustó): no es alguien
-  guardia.mov = frac>0.05 ? guardia.mov+1 : 0;
-  if(guardia.mov>=2){ guardia.mov=0; await guardiaVio(v); } }
+  if(!guardia.fondo){ guardia.fondo=g; return; }
+  const f=guardia.fondo; let cambio=0, dif=0;
+  for(let i=0;i<g.length;i++){ const e=Math.abs(g[i]-f[i]); dif+=e; if(e>Math.max(22, guardia.ruido*3.2)) cambio++; }
+  const frac=cambio/g.length; guardia.ruido=guardia.ruido*0.97+Math.min(30, dif/g.length)*0.03;   // cuánto «tiembla» esta cámara sola
+  const quieto=frac<0.02;
+  for(let i=0;i<g.length;i++) f[i]+= (g[i]-f[i])*(quieto?0.12:0.015);   // el fondo aprende lo que no se mueve
+  if(frac>0.7){ guardia.fondo=g; guardia.hits=[]; return; }   // cambió todo (la cámara se ajustó, se cortó la luz): no es alguien
+  guardia.hits.push(frac>0.035?1:0); guardia.hits=guardia.hits.slice(-3);
+  if(guardia.hits.reduce((a,b)=>a+b,0)>=2){ guardia.hits=[]; await guardiaVio(v); } }
+function gdFoto(v, ancho){ const c=document.createElement('canvas'); c.width=ancho; c.height=Math.round(ancho*v.videoHeight/v.videoWidth); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height); return c; }
 async function guardiaVio(v){
   // ¿es alguien de la familia? entonces es que llegó: se desactiva sola y lo recibe
   let ns=[]; try{ if(conCara().length) ns=await quienMira(); }catch(e){}
@@ -5403,18 +5607,80 @@ async function guardiaVio(v){
   const now=Date.now(); guardia.alertas=guardia.alertas.filter(t=>now-t<3600000);
   if(now-guardia.ultAlerta<90000 || guardia.alertas.length>=10) return;
   guardia.ultAlerta=now; guardia.alertas.push(now);
-  // la foto: chica para la tablet, mediana (cifrada) para el celu
-  const c=document.createElement('canvas'); c.width=640; c.height=Math.round(640*v.videoHeight/v.videoWidth); c.getContext('2d').drawImage(v, 0, 0, c.width, c.height);
-  const t=document.createElement('canvas'); t.width=200; t.height=Math.round(200*c.height/c.width); t.getContext('2d').drawImage(c, 0, 0, t.width, t.height);
-  const ev={at:now, t:'Movimiento', img:t.toDataURL('image/jpeg', 0.6)}; guardia.eventos.push(ev); guardia.eventos=guardia.eventos.slice(-6); guardiaSave(); if(os.cur==='proto') renderProto();
-  try{ const blob=await new Promise(r=>c.toBlob(r, 'image/jpeg', 0.72)); const bytes=new Uint8Array(await blob.arrayBuffer());
-    await FSync.sendFile({k:'guardia', t:'Vi movimiento en casa', at:now}, bytes, 'guardia.bin'); }catch(e){ console.warn('guardia foto', e); }
-  try{ if(pcDev()) pcCall('aviso_celu', {titulo:'FRIDAY · Guardia', texto:`Vi movimiento en casa a las ${hhmm(new Date(now))}. Abrí FRIDAY Móvil para ver la foto.`, prioridad:5, forzar:true}); }catch(e){}
-  faceSet('surprised', 4000); say('Hola. Esta casa está protegida por FRIDAY: ya le avisé a la familia.', 'surprised'); }
+  // tres fotos (ahora, al segundo y a los dos segundos): la mejor es la del medio, casi siempre
+  const fotos=[gdFoto(v, 640)]; for(const ms of [1000, 1000]){ await sleep(ms); try{ const v2=await camVideo(); if(v2 && v2.videoWidth) fotos.push(gdFoto(v2, 640)); }catch(e){} }
+  const c=fotos[Math.min(1, fotos.length-1)], t=document.createElement('canvas'); t.width=220; t.height=Math.round(220*c.height/c.width); t.getContext('2d').drawImage(c, 0, 0, t.width, t.height);
+  const ev={at:now, t:'Movimiento', img:t.toDataURL('image/jpeg', 0.62)}; guardia.eventos.push(ev); guardia.eventos=guardia.eventos.slice(-8); guardiaSave(); gdOv(); if(os.cur==='guardia') renderGuardia();
+  const hora=hhmm(new Date(now));
+  guardiaTimbre('🚨 La tablet vio movimiento', `En casa, a las ${hora}, con la guardia activa. Tocá para ver la foto.`);
+  for(const f of fotos.slice(0, 2)){ try{ const blob=await new Promise(r=>f.toBlob(r, 'image/jpeg', 0.72)); const bytes=new Uint8Array(await blob.arrayBuffer());
+    await FSync.sendFile({k:'guardia', t:'Vi movimiento en casa', at:now}, bytes, 'guardia.bin'); }catch(e){ console.warn('guardia foto', e); } }
+  try{ if(pcDev()) pcCall('aviso_celu', {titulo:'FRIDAY · Guardia', texto:`Vi movimiento en casa a las ${hora}. Abrí FRIDAY Móvil para ver la foto.`, prioridad:5, forzar:true}); }catch(e){}
+  if(S.gdAviso==='sirena'){ sirena(true); setTimeout(()=>sirena(false), 20000); say('Atención. Esta casa está protegida por FRIDAY. Ya le avisé a la familia y estoy grabando.', 'surprised'); }
+  else if(S.gdAviso!=='silencio'){ faceSet('surprised', 4000); say('Hola. Esta casa está protegida por FRIDAY: ya le avisé a la familia.', 'surprised'); } }
+// el timbre: el servidor de BufaLabs despierta al celu aunque FRIDAY esté cerrada (lo arma el celu con «avisos con el celu bloqueado»)
+async function guardiaTimbre(titulo, texto){
+  const ts=LS.get('timbres',{}), base=SERVIDOR_BUFALABS.replace(/\/openai\/v1$/,''); let n=0;
+  await Promise.all(Object.values(ts).map(async x=>{ try{ const r=await fetch(base+'/push/timbre', {method:'POST', headers:{'Content-Type':'application/json', 'X-Friday':CASA_ID||'casa-tablet00000'}, body:JSON.stringify({para:x.id, tok:x.tok, titulo, texto, url:'./#guardia'})});
+    if(r.ok) n++; else if(r.status===403){ delete ts[x.f]; LS.set('timbres', ts); } }catch(e){} }));
+  return n; }
+// la sirena: dos tonos que suben y bajan (solo si la elegiste)
+let sirenaT=null, sirenaCtx=null;
+function sirena(on){ clearInterval(sirenaT); sirenaT=null; try{ if(sirenaCtx){ sirenaCtx.close(); sirenaCtx=null; } }catch(e){}
+  if(!on) return; try{ sirenaCtx=new (window.AudioContext||window.webkitAudioContext)(); const o=sirenaCtx.createOscillator(), g=sirenaCtx.createGain(); o.type='sawtooth'; g.gain.value=0.25; o.connect(g); g.connect(sirenaCtx.destination); o.start();
+    let k=0; sirenaT=setInterval(()=>{ k++; o.frequency.setTargetAtTime(k%2?1250:750, sirenaCtx.currentTime, 0.08); }, 450); }catch(e){} }
+// la pantalla de la guardia: oscura, con el escudo; para salir hay que mantener apretado
+function gdOv(){
+  let el=$('gdOv'); const on=guardia.on;
+  if(!on){ if(el) el.remove(); return; }
+  if(!el){ el=document.createElement('div'); el.id='gdOv'; el.setAttribute('role','dialog'); el.setAttribute('aria-label','Modo guardia');
+    el.innerHTML=`<div class="gdo-in"><div class="gdo-esc">${OSI.guardia}<i></i><i></i></div><h2 id="gdoT"></h2><p id="gdoS"></p><div class="gdo-ev" id="gdoEv"></div>
+      <button type="button" class="gdo-off" id="gdoOff"><span class="gdo-prog" id="gdoProg"></span><b>Mantené apretado para desactivar</b></button><small class="gdo-tip">O decí «llegué» desde el celu. Si te conozco la cara, me desactivo sola.</small></div>`;
+    document.body.appendChild(el);
+    const b=el.querySelector('#gdoOff'); let t0=0, raf=0;
+    const paso=()=>{ const p=Math.min(1,(performance.now()-t0)/1500); $('gdoProg').style.transform=`scaleX(${p})`; if(p>=1){ t0=0; guardiaSet(false); return; } raf=requestAnimationFrame(paso); };
+    const suelta=()=>{ cancelAnimationFrame(raf); t0=0; $('gdoProg').style.transform='scaleX(0)'; };
+    b.addEventListener('pointerdown', e=>{ e.preventDefault(); t0=performance.now(); raf=requestAnimationFrame(paso); });
+    ['pointerup','pointerleave','pointercancel'].forEach(k=>b.addEventListener(k, suelta)); }
+  const falta=Math.ceil((guardia.desde-Date.now())/1000), vigila=falta<=0;
+  el.classList.toggle('cuenta', !vigila); el.classList.toggle('sincam', guardia.camOk===false);
+  const T=vigila?(guardia.camOk===false?'La cámara no responde':'Guardia activa'):`Me activo en ${falta} s`;
+  const S2=vigila?(guardia.camOk===false?'Estoy intentando de nuevo. Fijate que nadie haya tapado la cámara.':`Vigilando la casa desde las ${hhmm(new Date(guardia.desde))}. Si veo a alguien, te aviso al celu con una foto.`):'Salí tranquilo: cuando termine la cuenta empiezo a vigilar.';
+  if($('gdoT').textContent!==T) $('gdoT').textContent=T; if($('gdoS').textContent!==S2) $('gdoS').textContent=S2;
+  const evs=guardia.eventos.filter(e=>e.at>=guardia.desde-30000), k=evs.length+'|'+(evs[0]&&evs[0].at);
+  if($('gdoEv').dataset.k!==k){ $('gdoEv').dataset.k=k; $('gdoEv').innerHTML=evs.length?`<b>${evs.length===1?'Vi movimiento una vez':'Vi movimiento '+evs.length+' veces'}</b><div>${evs.slice(-4).reverse().map(e=>`<figure><img src="${e.img}" alt=""><figcaption>${hhmm(new Date(e.at))}</figcaption></figure>`).join('')}</div>`:''; } }
+// la app Guardia
+function renderGuardia(){
+  const el=$('pGuardia'); if(!el) return; const g=guardia, falta=Math.ceil((g.desde-Date.now())/1000);
+  const ts=Object.keys(LS.get('timbres',{})).length, celus=(()=>{ try{ return FSync.peersOf('celu').length; }catch(e){ return 0; } })();
+  const est=g.on?(falta>0?`Se activa en ${falta} s`:'Vigilando la casa'):'Apagada';
+  const html=`<div class="gd-top${g.on?' on':''}"><div class="gd-esc">${OSI.guardia}</div><div class="gd-tx"><small>Modo guardia</small><b>${est}</b>
+      <span>${g.on?'Si ve a alguien que no conoce, saca fotos y te las manda al celu. Si te reconoce, se desactiva sola.':'La cámara de la tablet vigila mientras no hay nadie. Te avisa al celu con una foto.'}</span></div>
+      <button type="button" class="gbtn big" data-guardia="${g.on?'off':'on'}">${g.on?'Desactivar':'Activar'}</button></div>
+    ${g.camOk===false?'<p class="gd-mal">⚠️ La última vez la cámara no anduvo. Revisá el permiso de la cámara en Chrome (el candadito, arriba).</p>':''}
+    <div class="gd-cols"><section class="gd-box"><h3>Cuando ve a alguien</h3>
+      <div class="seg gdseg" data-gd="gdAviso"><button type="button" data-v="aviso" aria-pressed="${(S.gdAviso||'aviso')==='aviso'}">Le habla</button><button type="button" data-v="sirena" aria-pressed="${S.gdAviso==='sirena'}">Sirena</button><button type="button" data-v="silencio" aria-pressed="${S.gdAviso==='silencio'}">En silencio</button></div>
+      <p class="note">Siempre te avisa al celu. «Le habla» le dice que la casa está protegida; «Sirena» suena fuerte 20 segundos.</p></section>
+    <section class="gd-box"><h3>Avisos al celu</h3>
+      <p class="gd-av">${ts?`✅ ${ts===1?'Un celu recibe':ts+' celus reciben'} el aviso aunque tengan FRIDAY cerrada.`:celus?'📱 El celu recibe las fotos cuando tiene FRIDAY abierta. Para que le llegue aunque esté cerrada: en el celu, Más → Avisos con el celu bloqueado.':'📱 Todavía no hay ningún celu unido: tocá ⚙️ Ajustes → Compartir con la compu y el celu.'}</p>
+      <button type="button" class="ghost" id="gdProbar">Probar el aviso</button></section></div>
+    ${g.eventos.length?`<h3 class="gd-h">Lo último que vio</h3><div class="gev">${g.eventos.slice(-6).reverse().map(e=>`<figure>${e.img?`<img src="${e.img}" alt="">`:''}<figcaption>${diaHora(e.at)}</figcaption></figure>`).join('')}</div><button type="button" class="ghost" id="gdBorrar">Borrar las fotos</button>`:'<p class="note">Todavía no vio a nadie. Decí «Activá la guardia» o usá el protocolo «me voy».</p>'}`;
+  if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
+}
+function diaHora(at){ const d=new Date(at), h=new Date(); return (d.toDateString()===h.toDateString()?'Hoy':d.toLocaleDateString('es-AR',{weekday:'short', day:'numeric'}))+' '+hhmm(d); }
+document.addEventListener('click', async e=>{
+  const sg=e.target.closest('.gdseg button'); if(sg){ S[sg.parentElement.dataset.gd]=sg.dataset.v; saveS(); renderGuardia(); if(sg.dataset.v==='sirena'){ sirena(true); setTimeout(()=>sirena(false), 1200); } return; }
+  if(e.target.closest('#gdBorrar')){ guardia.eventos=[]; guardiaSave(); renderGuardia(); toast('Listo, borré las fotos de la guardia'); return; }
+  if(e.target.closest('#gdProbar')){ const b=e.target.closest('#gdProbar'); b.disabled=true; b.textContent='Mandando…';
+    const n=await guardiaTimbre('🛡️ Prueba de la guardia', 'Así te va a llegar el aviso si la tablet ve a alguien.');
+    try{ FSync.send({k:'aviso', t:'🛡️ Prueba de la guardia', s:'Así te llega el aviso si la tablet ve a alguien.'}); }catch(x){}
+    b.disabled=false; b.textContent='Probar el aviso'; toast(n?'Listo: te tiene que sonar el celu.':'Lo mandé a los celus unidos (les llega con FRIDAY abierta).', 4000); }
+});
 function guardiaFast(text, nf){
   const n=nf.replace(/^(che |dale |friday )+/,'');
   if(/^(activa|prende|pone|arma|enciende)(me)?( la| el)? (guardia|vigilancia|modo guardia|alarma)$|^(modo guardia|vigila la casa|cuida la casa|quedate de guardia)$/.test(n)){ pushHist('user', text); guardiaSet(true); return true; }
   if(/^(desactiva|apaga|saca|desarma|para)(me)?( la| el)? (guardia|vigilancia|modo guardia|alarma)$/.test(n)){ pushHist('user', text); guardiaSet(false); return true; }
+  if(/^(abri|mostrame|abrime) (la )?(guardia|app de la guardia)$/.test(n)){ pushHist('user', text); osOpen('guardia'); say('Acá está la guardia.', 'happy'); return true; }
   if(/^(como esta|esta activa|que paso con) la guardia$|^(la )?guardia$/.test(n)){ sayFast(text, guardia.on ? `La guardia está activa${guardia.eventos.length?'; la última vez que vi movimiento fue a las '+hhmm(new Date(guardia.eventos[guardia.eventos.length-1].at)):' y no vi a nadie'}.` : 'La guardia está apagada.'); return true; }
   return false; }
 
@@ -5546,7 +5812,7 @@ async function boot(){
   Turno.init({ onLose:d=>{ turnoMio.quien=d?Call.label(d, (FSync.st.peers[d]||{}).n):'la compu'; }, onOther:()=>{ Ear.convoUntil=0; },
     onVeto:d=>{ stopTalk(); turnoMio.quien=d?Call.label(d,(FSync.st.peers[d]||{}).n):'la compu'; turnoPerdi(turnoMio.ult||''); } });
   setInterval(()=>{ proactTick().catch(()=>{}); }, 30000); setTimeout(()=>{ proactTick().catch(()=>{}); }, 20000);
-  if(guardia.on){ document.body.classList.add('guardia'); guardia.desde=Math.max(guardia.desde, Date.now()+20000); guardiaLoop(); }
+  if(guardia.on){ document.body.classList.add('guardia'); guardia.desde=Math.max(guardia.desde, Date.now()+20000); guardiaLoop(); gdOv(); }
   setInterval(()=>{ if(os.cur==='compu' && !compu.pend && Date.now()-compu.at>4000) compuEstado(); }, 2000);
   setInterval(talkSync, 250); setInterval(resumenTick, 30000); setInterval(budTick, 450); setInterval(tareasTick, 30000); /* (Casa 5: sin cámara ni micrófono propios, no busca caras) */
   setInterval(()=>{ applyLight(); agendaCheck(); autoTick(); }, 30000);

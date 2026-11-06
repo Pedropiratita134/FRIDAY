@@ -1,11 +1,26 @@
 {
- "version": "4.6",
- "titulo": "Mensajes a medida",
+ "version": "5.0",
+ "titulo": "Más humana",
  "items": [
   {
-   "icono": "📣",
-   "titulo": "Mensajes a medida",
-   "texto": "Los avisos de BufaLabs te llegan solo si son para el celu."
+   "icono": "🙂",
+   "titulo": "FRIDAY tiene cara",
+   "texto": "La misma carita de la tablet: te mira, parpadea, sonríe y mueve la boca cuando habla. Y todo se ve más cálido y fácil de leer."
+  },
+  {
+   "icono": "🏠",
+   "titulo": "La tablet, a un toque",
+   "texto": "Si tenés FRIDAY Casa, en el inicio aparece «La tablet de la casa»: le hablás con un botón, activás la guardia y manejás la tele."
+  },
+  {
+   "icono": "🛡️",
+   "titulo": "La guardia te avisa siempre",
+   "texto": "Si la tablet ve a alguien, te suena el celu aunque tengas FRIDAY cerrada (con «Avisos con el celu bloqueado» prendido)."
+  },
+  {
+   "icono": "🚗",
+   "titulo": "Modo manejo",
+   "texto": "Tocá «🚗 Manejando»: botones grandes para la música, ir a algún lado con el mapa, mandar un mensaje y el clima. Y te escucha sola."
   }
  ]
 }
