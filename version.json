@@ -1,7 +1,12 @@
 {
- "version": "5.3",
- "titulo": "Casa, familia y estudio",
+ "version": "5.4",
+ "titulo": "Casa, familia, estudio y la tele",
  "items": [
+  {
+   "icono": "📺",
+   "titulo": "La tele, de toda la familia",
+   "texto": "FRIDAY Tele ahora saluda a la familia y trae el resumen del día, noticias, música y videos, temporizador y modo ambiente. Pedíselo desde acá: «poné Soda Stereo en la tele»."
+  },
   {
    "icono": "🍳",
    "titulo": "¿Qué cocino?",

@@ -2126,9 +2126,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='5.3';
+const VERSION='5.4';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "5.3", "titulo": "Casa, familia y estudio", "items": [{"icono": "🍳", "titulo": "¿Qué cocino?", "texto": "Sacale una foto a la heladera y te digo tres cosas ricas con lo que hay. La que elijas, la tablet te la guía paso a paso."}, {"icono": "👨‍👩‍👧", "titulo": "Tu familia en FRIDAY", "texto": "Uní a tu familia: «avisale a mamá que llego tarde» le suena en el celu. Y comparten una lista."}, {"icono": "💊", "titulo": "Remedios con aviso", "texto": "Te recuerda el remedio. Si en media hora no marcás «Ya lo tomé», le avisa a quien vos digas."}, {"icono": "🌙", "titulo": "Cuentos, juegos y la tarea", "texto": "«Contame un cuento para Juli», trivia, adiviná el animal, mímica, y la tarea explicada paso a paso con una foto."}, {"icono": "🎙️", "titulo": "Oye Siri, Friday", "texto": "Hablale desde el auto, con los AirPods o el reloj. Está en Casa y familia → Siri."}, {"icono": "📺", "titulo": "FRIDAY en la tele", "texto": "La nueva app FRIDAY Tele para teles LG: se une con tu celu escribiendo un código."}]};
+const NOVEDADES_M={"version": "5.4", "titulo": "Casa, familia, estudio y la tele", "items": [{"icono": "📺", "titulo": "La tele, de toda la familia", "texto": "FRIDAY Tele ahora saluda a la familia y trae el resumen del día, noticias, música y videos, temporizador y modo ambiente. Pedíselo desde acá: «poné Soda Stereo en la tele»."}, {"icono": "🍳", "titulo": "¿Qué cocino?", "texto": "Sacale una foto a la heladera y te digo tres cosas ricas con lo que hay. La que elijas, la tablet te la guía paso a paso."}, {"icono": "👨‍👩‍👧", "titulo": "Tu familia en FRIDAY", "texto": "Uní a tu familia: «avisale a mamá que llego tarde» le suena en el celu. Y comparten una lista."}, {"icono": "💊", "titulo": "Remedios con aviso", "texto": "Te recuerda el remedio. Si en media hora no marcás «Ya lo tomé», le avisa a quien vos digas."}, {"icono": "🌙", "titulo": "Cuentos, juegos y la tarea", "texto": "«Contame un cuento para Juli», trivia, adiviná el animal, mímica, y la tarea explicada paso a paso con una foto."}, {"icono": "🎙️", "titulo": "Oye Siri, Friday", "texto": "Hablale desde el auto, con los AirPods o el reloj. Está en Casa y familia → Siri."}, {"icono": "📺", "titulo": "FRIDAY en la tele", "texto": "La nueva app FRIDAY Tele para teles LG: se une con tu celu escribiendo un código."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -4308,14 +4308,14 @@ Si no es una planta, {"es_planta":false}.`;
     const K=crypto.getRandomValues(new Uint8Array(32)), f={k:b64u(K), nombre:nombreFam, yo:{mid:nid(), nombre:yo}, v:0, datos:null};
     const L=await famLlaves(f); const r=await srv('/familia/crear', {fid:L.fid, tok:L.tok});
     if(!r.j.ok){ toast(r.j.mensaje||'No pude crear la familia ahora. Probá en un rato.'); return false; }
-    LS.set('familia', f); await famCambiar(d=>{ d.nombre=nombreFam; d.miembros=[yoMiembro(f, yo)]; d.lista=[]; d.recados=[]; }); siriPerfil(); return true; }
+    LS.set('familia', f); await famCambiar(d=>{ d.nombre=nombreFam; d.miembros=[yoMiembro(f, yo)]; d.lista=[]; d.recados=[]; }); siriPerfil(); try{ famATeles(); }catch(e){} return true; }
   async function famInvitar(){ const f=fam(); if(!f) return null; const code=azar(8);
     const r=await H.sobreDejar(code, {tipo:'familia', k:f.k, nombre:f.nombre, de:f.yo.nombre}); return r.j.ok?code:null; }
   async function famUnirme(code, yo){
     const {r, o}=await H.sobreAbrir(code, false);
     if(!o || o.tipo!=='familia'){ toast(r.st===0?'Sin conexión':'Ese código no anda o ya venció (dura 30 minutos)'); return false; }
     const f={k:o.k, nombre:o.nombre, yo:{mid:nid(), nombre:yo}, v:0, datos:null}; LS.set('familia', f);
-    const ok=await famCambiar(d=>{ d.miembros=(d.miembros||[]).filter(m=>m.mid!==f.yo.mid).concat([yoMiembro(f, yo)]); }); siriPerfil();
+    const ok=await famCambiar(d=>{ d.miembros=(d.miembros||[]).filter(m=>m.mid!==f.yo.mid).concat([yoMiembro(f, yo)]); }); siriPerfil(); try{ famATeles(); }catch(e){}
     return ok; }
   // si cambió mi timbre (prendí los avisos), lo actualizo en la familia
   async function famRevisarYo(){ const f=fam(); if(!f || !f.datos) return; const m=(f.datos.miembros||[]).find(x=>x.mid===f.yo.mid); const c=WP.on()?{para:BUFIA.quien(), tok:timbreTok()}:null;
@@ -4509,7 +4509,8 @@ Si la foto no tiene un ejercicio, {"enunciado":""}.`);
   function renderTele(){ const el=$('hgTeleBox'); if(!el) return; const tv=teles();
     el.innerHTML=`${tv.length?`<div class="hg-caja"><h5>📺 ${esc(tv[0].n||'La tele')}</h5><p class="note">${Date.now()-tv[0].t<15*60000?'Prendida':'Apagada o sin conexión'}</p>
         <div class="addrow"><input id="hgTvTxt" placeholder="Decile algo a la tele" enterkeyhint="send" autocomplete="off"><button id="hgTvIr">Mandar</button></div>
-        <div class="hg-fila2" style="margin-top:10px"><button class="hg-mini" data-tv="¿Cómo está el clima hoy?">🌤️ El clima</button><button class="hg-mini" data-tv="trivia">❓ Trivia en la tele</button><button class="hg-mini" data-tv="cuento">🌙 Un cuento</button></div></div>`:''}
+        <div class="hg-fila2" style="margin-top:10px"><button class="hg-mini" data-tv="Buen día">☀️ Buen día</button><button class="hg-mini" data-tv="Mostrame las noticias">📰 Noticias</button><button class="hg-mini" data-tv="Poné música tranquila instrumental">🎵 Música tranqui</button><button class="hg-mini" data-tv="Poné un timer de 10 minutos">⏱️ Timer 10 min</button><button class="hg-mini" data-tv="trivia">❓ Trivia</button><button class="hg-mini" data-tv="cuento">🌙 Un cuento</button><button class="hg-mini" data-tv="Modo ambiente">🌌 Ambiente</button></div>
+        <p class="note">También por voz: «poné Soda Stereo en la tele», «mostrame las noticias en la tele», «timer de 15 minutos en la tele».</p></div>`:''}
       <div class="hg-caja"><h5>${tv.length?'Unir otra tele':'Unir la tele'}</h5><p class="note">Abrí <b>FRIDAY Tele</b> en la tele LG: te muestra un código. Escribilo acá.</p>
         <div class="hg-form"><input id="hgTvCod" placeholder="Código de la tele (ej: K7QM-2XHA)" maxlength="12" autocapitalize="characters" autocomplete="off"><button class="big" id="hgTvUnir">Unir la tele</button></div>
         <p class="note">¿Todavía no la tenés? <a href="https://bufalabs-arg.github.io/tele/" target="_blank" rel="noopener">Cómo instalar FRIDAY Tele</a>.</p></div>`;
@@ -4518,10 +4519,14 @@ Si la foto no tiene un ejercicio, {"enunciado":""}.`);
     $('hgTvUnir').onclick=async()=>{ const c=limpiarCod($('hgTvCod').value); if(c.length!==8){ toast('El código de la tele tiene 8 letras'); return; }
       if(!FSync.on()){ toast('Primero entrá con tu cuenta de BufaLabs (Más → Tu cuenta)', 4500); return; }
       $('hgTvUnir').disabled=true;
-      const r=await H.sobreDejar(c, {tipo:'tele', code:FSync.cfg.code, s:FSync.cfg.server, n:S.name||'', city:S.city||'', lat:S.lat, lon:S.lon, voz:S.voz!==false});
+      const f=fam(); const r=await H.sobreDejar(c, {tipo:'tele', code:FSync.cfg.code, s:FSync.cfg.server, n:S.name||'', city:S.city||'', lat:S.lat, lon:S.lon, voz:S.voz!==false, fam:f?{k:f.k, nombre:f.nombre}:null});
       $('hgTvUnir').disabled=false;
       if(r.j.ok){ toast('📺 ¡Listo! En unos segundos la tele dice hola', 5000); $('hgTvCod').value=''; } else toast('No pude unir la tele. Probá de nuevo.'); };
   }
+  function famATeles(){ const f=fam(); if(!f) return; const env=LS.get('famTeleEnv',{}); let ch=false;
+    for(const tv of teles()){ if(env[tv.dev]===f.k.slice(0,12)) continue; FSync.send({k:'famTele', to:tv.dev, fam:{k:f.k, nombre:f.nombre}}); env[tv.dev]=f.k.slice(0,12); ch=true; }
+    if(ch) LS.set('famTeleEnv', env); }
+  H.famATeles=famATeles; H.famCrear=famCrear;
   H.teleDecir=t=>{ const tv=teles()[0]; if(!tv) return false; FSync.send({k:'oir', to:tv.dev, t:String(t).slice(0,400), de:S.name||''}); return true; };
 
   // ================================================================ las hojas
@@ -4567,6 +4572,7 @@ Si la foto no tiene un ejercicio, {"enunciado":""}.`);
     if(/^(ayudame|ayudanos|me ayudas|ayuda) con (la |mi |una )?tarea$|^(la )?tarea$/.test(n)){ dec('Dale. Sacale una foto al ejercicio.'); showSheet('tarea'); return true; }
     if(/^(que le pasa a )?(mi |la |esta )?planta|^mis plantas$/.test(n) && n.length<40){ dec('Sacale una foto a la planta.'); showSheet('plantas'); return true; }
     if(/^(oye )?siri$|^(friday en siri|el atajo de siri|configurar siri|activa siri)$/.test(n)){ dec(''); showSheet('siri'); return true; }
+    if(/ (en|a) la tele$/.test(n) && n.length>12 && teles().length && !/^(unir|uni|conecta)/.test(n)){ const t=String(text).replace(/\s*(en|a) la tele\s*[.!?]*$/i,''); H.teleDecir(t); return dec('Listo, se lo pasé a la tele.'); }
     if((m=n.match(/^(?:decile|deci|avisale|avisa) (?:a|en) la tele (?:que )?(.+)$/))){ if(H.teleDecir(m[1])) return dec('Se lo pasé a la tele.'); return dec('No tengo ninguna tele unida. Abrí FRIDAY Tele en la tele y unila desde Casa y familia.'); }
     if(/^(unir|uni|conecta|conectar) (la )?tele$|^friday tele$/.test(n)){ dec(''); showSheet('tele'); return true; }
     return false; };
@@ -4576,7 +4582,7 @@ Si la foto no tiene un ejercicio, {"enunciado":""}.`);
     try{ enlazar(); }catch(e){ console.warn(e); }
     const ciclo=async()=>{ if(document.hidden) return; try{ bannerRemedio(); }catch(e){} };
     setInterval(ciclo, 60000); setTimeout(ciclo, 6000);
-    const alAbrir=async()=>{ try{ await siriTraer(); }catch(e){} try{ if(fam()){ await famBajar(); await famRevisarYo(); } }catch(e){}
+    const alAbrir=async()=>{ try{ await siriTraer(); }catch(e){} try{ if(fam()){ await famBajar(); await famRevisarYo(); famATeles(); } }catch(e){}
       try{ if(meds().length && Date.now()-LS.get('remPlanAt',0)>12*3600000) await remPlanServidor(); }catch(e){}
       try{ const a=LS.get('atajo',null); if(a && Date.now()-(a.at||0)>24*3600000) await siriPerfil(); }catch(e){} };
     window.addEventListener('load', ()=>setTimeout(alAbrir, 4000));
