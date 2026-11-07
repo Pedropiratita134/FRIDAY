@@ -1,26 +1,26 @@
 {
- "version": "5.0",
- "titulo": "Más humana",
+ "version": "5.1",
+ "titulo": "El changuito",
  "items": [
   {
-   "icono": "🙂",
-   "titulo": "FRIDAY tiene cara",
-   "texto": "La misma carita de la tablet: te mira, parpadea, sonríe y mueve la boca cuando habla. Y todo se ve más cálido y fácil de leer."
+   "icono": "📸",
+   "titulo": "Sacale una foto al precio",
+   "texto": "En Compras → Changuito, sacale una foto a la etiqueta del precio o al descuento: FRIDAY lee el producto, el precio y la promo, le pone la imagen y te va sumando."
+  },
+  {
+   "icono": "🏷️",
+   "titulo": "Las promos, bien hechas",
+   "texto": "2x1, 3x2, «2da al 70%», «llevando 2, 25% menos»: lo calcula según cuántos lleves, te dice cuánto ahorrás y si te conviene llevar uno más."
+  },
+  {
+   "icono": "🧾",
+   "titulo": "Revisá el ticket",
+   "texto": "Al final, sacale una foto al ticket y FRIDAY te dice si te cobraron algo de más."
   },
   {
    "icono": "🏠",
-   "titulo": "La tablet, a un toque",
-   "texto": "Si tenés FRIDAY Casa, en el inicio aparece «La tablet de la casa»: le hablás con un botón, activás la guardia y manejás la tele."
-  },
-  {
-   "icono": "🛡️",
-   "titulo": "La guardia te avisa siempre",
-   "texto": "Si la tablet ve a alguien, te suena el celu aunque tengas FRIDAY cerrada (con «Avisos con el celu bloqueado» prendido)."
-  },
-  {
-   "icono": "🚗",
-   "titulo": "Modo manejo",
-   "texto": "Tocá «🚗 Manejando»: botones grandes para la música, ir a algún lado con el mapa, mandar un mensaje y el clima. Y te escucha sola."
+   "titulo": "La tablet a la vista",
+   "texto": "Ahora está en el inicio, en «🏠 Tablet», y en Más."
   }
  ]
 }

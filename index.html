@@ -625,6 +625,59 @@ body{font-family:var(--font);background:radial-gradient(90% 50% at 50% -8%,rgba(
 .tab5 form{display:flex;gap:8px}.tab5 form input{flex:1;min-width:0;height:48px;border-radius:16px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--text);padding:0 14px;font:600 16px var(--font)}
 .tab5 form button{border:0;border-radius:16px;padding:0 16px;background:var(--accent);color:#06121f;font:800 15px var(--font)}
 .tab5 .frases{display:flex;flex-wrap:wrap;gap:8px}.tab5 .frases button{border:0;border-radius:999px;padding:9px 13px;background:rgba(255,255,255,.08);color:var(--text);font:700 14px var(--font)}
+/* la tablet a la vista */
+#quick .chip-tab{background:rgba(var(--accent-rgb),.22);color:var(--text)}#quick .chip-tab.on{background:#ffb020;color:#06121f}
+@media (max-height:760px){ #face{height:clamp(110px,17vh,150px)} .invita{display:none} }
+.brand{text-shadow:none!important;filter:none!important;font-weight:700!important}
+/* compras */
+.cm-top h3{margin-bottom:10px}
+.cm-seg{display:flex;gap:6px;background:rgba(255,255,255,.06);border-radius:16px;padding:4px;margin-bottom:14px}
+.cm-seg button{flex:1;border:0;background:none;color:var(--muted);font:800 14.5px var(--font);border-radius:12px;padding:10px 4px;position:relative;white-space:nowrap}
+.cm-seg button[aria-selected=true]{background:var(--accent);color:#06121f}
+.cm-b{position:absolute;top:-4px;right:-2px;min-width:18px;height:18px;border-radius:9px;background:#ff6b7d;color:#fff;font-size:11px;line-height:18px;padding:0 4px}.cm-b:empty{display:none}
+.cm-frec{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 4px}.cm-frec small,.cm-falta small{width:100%;color:var(--muted);font-size:13px;font-weight:700}
+.cm-frec button,.cm-falta button{border:0;border-radius:999px;padding:8px 12px;background:rgba(255,255,255,.07);color:var(--text);font:700 14px var(--font)}
+.cm-sec{margin:16px 2px 2px;font:800 13.5px var(--font);color:var(--muted)}
+.cm-it .cm-tx{flex:1;min-width:0;display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+.cm-q{font-size:13px;font-weight:800;color:var(--accent);background:rgba(var(--accent-rgb),.14);border-radius:8px;padding:1px 7px}
+.cm-it.tacha b{animation:cmTacha .35s ease}@keyframes cmTacha{50%{transform:translateX(6px)}}
+.cm-ir{margin-top:16px;background:linear-gradient(135deg,var(--accent),#8fd0ff)}
+.cm-total{text-align:center;padding:18px 16px 14px;border-radius:24px;background:linear-gradient(160deg,rgba(var(--accent-rgb),.22),rgba(var(--accent-rgb),.05));margin-bottom:12px}
+.cm-total small{display:block;color:var(--muted);font-weight:700}
+.cm-total b{display:block;font:700 46px/1.1 var(--display);margin:2px 0;font-variant-numeric:tabular-nums}.cm-total b.pum{animation:cmPum .45s cubic-bezier(.2,1.4,.4,1)}
+@keyframes cmPum{0%{transform:scale(1.18);color:var(--accent)}100%{transform:none}}
+.cm-total.chico b{font-size:36px}
+.cm-ahorro{display:block;color:#4ade80;font-weight:800;font-size:14.5px;min-height:1px}
+.cm-pres{position:relative;display:block;width:100%;margin-top:10px;height:34px;border:0;border-radius:12px;overflow:hidden;background:rgba(255,255,255,.08);color:var(--text);font:700 14px var(--font)}
+.cm-pres i{position:absolute;left:0;top:0;bottom:0;background:rgba(74,222,128,.35);transition:width .5s}.cm-pres.ojo i{background:rgba(255,176,32,.45)}.cm-pres.mal i{background:rgba(255,107,125,.5)}
+.cm-pres span{position:relative}.cm-pres.nada{background:none;border:1px dashed var(--line2);color:var(--muted)}
+.cm-foto{display:flex;align-items:center;justify-content:center;gap:10px;min-height:66px;font-size:18px}.cm-foto span{font-size:26px}
+.cm-falta{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0 4px}
+.cm-prod{display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:12px;align-items:center;padding:12px;border-radius:20px;background:rgba(255,255,255,.055);margin-top:10px}
+.cm-prod.nuevo{animation:cmEntra .5s cubic-bezier(.2,1.2,.4,1)}@keyframes cmEntra{from{transform:translateY(-10px) scale(.96);opacity:0}}
+.cm-img{width:64px;height:64px;border-radius:16px;background:#fff center/cover no-repeat;display:grid;place-items:center;font-size:28px}
+.cm-info{min-width:0}.cm-info b{display:block;font-size:16px;line-height:1.25}.cm-info small{display:block;color:var(--muted);font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cm-pr{margin-top:3px;font-weight:800;font-size:14.5px}.cm-pr s{color:var(--muted);font-weight:600}.cm-pr em{font-style:normal;background:#ff6b7d;color:#fff;border-radius:7px;padding:1px 6px;font-size:12.5px}
+.cm-cond{font-size:12px;color:#ffb020;font-weight:700}
+.cm-sube,.cm-baja,.cm-pista{display:block;font-size:12.5px;font-weight:700;margin-top:3px}.cm-sube{color:#ff8a99}.cm-baja{color:#4ade80}.cm-pista{color:#ffd166}
+.cm-der{text-align:right}.cm-der>b{display:block;font:700 18px var(--display);margin-bottom:6px;font-variant-numeric:tabular-nums}
+.cm-step{display:inline-flex;align-items:center;gap:2px;background:rgba(255,255,255,.08);border-radius:12px}
+.cm-step button{width:34px;height:34px;border:0;background:none;color:var(--text);font:800 18px var(--font)}.cm-step span{min-width:20px;text-align:center;font-weight:800}
+.cm-edit{grid-column:1/-1;display:grid;gap:8px;padding-top:6px}
+.cm-edit label{display:grid;gap:4px;font-size:13px;color:var(--muted);font-weight:700}
+.cm-edit input,.cm-edit select{height:44px;border-radius:12px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--text);padding:0 12px;font:600 16px var(--font)}
+.cm-listo{height:44px;border:0;border-radius:12px;background:var(--accent);color:#06121f;font:800 15px var(--font)}
+.cm-prod.leyendo .cm-img{opacity:.8}.cm-scan,.cm-tk .cm-scan{height:4px;border-radius:4px;margin-top:8px;background:linear-gradient(90deg,transparent,var(--accent),transparent);background-size:50% 100%;background-repeat:no-repeat;animation:cmScan 1s linear infinite}
+@keyframes cmScan{from{background-position:-50% 0}to{background-position:150% 0}}
+.cm-manual{display:block;margin:12px auto;border:0;background:none;color:var(--accent);font:800 15px var(--font)}
+.cm-tk{margin-top:12px;padding:14px 16px;border-radius:18px;background:rgba(255,255,255,.06)}.cm-tk.bien{background:rgba(74,222,128,.14)}.cm-tk.mal{background:rgba(255,107,125,.14)}
+.cm-tk b{display:block;font-size:16px}.cm-tk small{display:block;color:var(--muted);margin-top:6px}.cm-tk ul{margin:8px 0 0;padding-left:18px}
+.cm-h{border-radius:18px;background:rgba(255,255,255,.055);margin-top:10px;padding:12px 14px}
+.cm-h summary{display:flex;justify-content:space-between;gap:10px;font-weight:700;list-style:none;cursor:pointer}.cm-h summary::-webkit-details-marker{display:none}
+.cm-h ul{list-style:none;margin:10px 0 0;padding:0}.cm-h li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px solid var(--line);font-size:14.5px}.cm-h small{color:#4ade80;font-weight:700}
+.cm-conf{position:fixed;top:-30px;z-index:99;font-size:26px;font-style:normal;pointer-events:none;animation:cmCae 2s ease-in forwards}
+@keyframes cmCae{to{transform:translateY(105vh) rotate(260deg)}}
+@media (prefers-reduced-motion:reduce){ .cm-total b.pum,.cm-prod.nuevo,.cm-conf{animation:none} }
 /* modo manejo */
 #auto .auto5{display:grid;grid-template-columns:1fr 1fr;gap:12px;width:100%;max-width:440px}
 #auto .auto5 button{min-height:84px;border-radius:22px;border:0;background:rgba(255,255,255,.09);color:var(--text);font:800 18px var(--font);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px}
@@ -1608,6 +1661,7 @@ const SIESTA = (() => {
 </section>
 <main id="chat" aria-live="polite"></main>
 <nav id="quick">
+  <button class="chip chip-tab" id="tabChip" data-sheet="tablet">🏠 Tablet</button>
   <button class="chip" id="bdChip">☀️ Buen día</button>
   <button class="chip" data-s="¿Cómo está el clima hoy?">🌤️ Clima</button>
   <button class="chip" id="agChip" data-s="¿Qué tengo en la agenda estos días?" hidden>📅 Agenda</button>
@@ -1654,14 +1708,34 @@ const SIESTA = (() => {
 </section>
 
 <!-- LA TABLET DE LA CASA -->
-<section class="sheet" id="sh-tablet"><div class="grab"></div><h3>La tablet de la casa</h3><div id="tabBox"></div></section>
+<section class="sheet" id="sh-tablet"><div class="grab"></div><h3>La tablet de la casa</h3><div id="tabBox"></div><a class="fila" href="tablet.html" style="margin-top:14px"><span class="fi">⚙️</span><span class="ft"><b>Configurar FRIDAY Casa</b><small>La tablet, el servicio de la casa, la tele y las luces</small></span><span class="chev" aria-hidden="true"></span></a></section>
 
 <!-- LISTA DE COMPRAS -->
-<section class="sheet" id="sh-compras"><div class="grab"></div><h3>Compras</h3>
-  <div class="addrow"><input id="shIn" placeholder="Leche, pan, 2 kg de papa…" autocomplete="off" enterkeyhint="done"><button id="shAdd">Agregar</button></div>
-  <div id="shList"></div>
-  <div class="row2"><button class="big sec" id="shClear">Borrar lo comprado</button><button class="big sec" id="shShare">📤 Compartir</button></div>
-  <p class="note" id="shNote">Tocá algo para tacharlo. También decile: "agregá yerba a la lista" o "¿qué tengo que comprar?".</p>
+<section class="sheet" id="sh-compras"><div class="grab"></div>
+  <div class="cm-top"><h3>Compras</h3>
+    <div class="cm-seg" role="tablist" aria-label="Compras"><button type="button" data-cm="lista" role="tab" aria-selected="true">📝 Lista</button><button type="button" data-cm="chango" role="tab" aria-selected="false">🛒 Changuito<span class="cm-b" id="cmBadge"></span></button><button type="button" data-cm="hist" role="tab" aria-selected="false">🧾 Historial</button></div></div>
+  <div id="cm-lista">
+    <div class="addrow"><input id="shIn" placeholder="Leche, pan, 2 kg de papa…" autocomplete="off" enterkeyhint="done"><button id="shAdd">Agregar</button></div>
+    <div class="cm-frec" id="shFrec"></div>
+    <div id="shList"></div>
+    <button class="big cm-ir" id="cmIr" type="button">🛒 Empezar a comprar</button>
+    <div class="row2"><button class="big sec" id="shClear">Borrar lo comprado</button><button class="big sec" id="shShare">📤 Compartir</button></div>
+    <p class="note" id="shNote"></p>
+  </div>
+  <div id="cm-chango" hidden>
+    <div class="cm-total"><small id="cmCuantos">El changuito está vacío</small><b id="cmTotal">$0</b><span class="cm-ahorro" id="cmAhorro"></span>
+      <button type="button" class="cm-pres" id="cmPres"></button></div>
+    <button class="big cm-foto" id="cmFoto" type="button"><span>📸</span>Sacale una foto al precio</button>
+    <input type="file" id="cmFotoIn" accept="image/*" capture="environment" hidden>
+    <div class="cm-falta" id="cmFalta"></div>
+    <div id="cmItems"></div>
+    <button type="button" class="cm-manual" id="cmManual">+ Agregar sin foto</button>
+    <div class="row2"><button class="big sec" id="cmTicket" type="button">🧾 Revisar el ticket</button><button class="big" id="cmFin" type="button">✅ Terminar</button></div>
+    <input type="file" id="cmTicketIn" accept="image/*" capture="environment" hidden>
+    <div id="cmTicketRes"></div>
+    <p class="note">Sacale una foto a la etiqueta del precio, al cartel del descuento o al producto con su precio: leo el nombre, el precio y la promo, y te voy sumando. Las promos tipo 2x1 o «2da al 70%» las calculo según cuántos lleves.</p>
+  </div>
+  <div id="cm-hist" hidden><div id="cmHist"></div></div>
 </section>
 
 <!-- AVISOS -->
@@ -1745,7 +1819,7 @@ const SIESTA = (() => {
     <button class="fila" data-sheet="vinc"><span class="fi">💻</span><span class="ft"><b>Tu compu</b><small id="vMenuBtn">Sin vincular</small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="avisos"><span class="fi">🔔</span><span class="ft"><b>Avisos y buen día</b><small id="avMenuTxt"></small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="musica"><span class="fi">🎵</span><span class="ft"><b>Spotify</b><small id="spMenuTxt"></small></span><span class="chev" aria-hidden="true"></span></button>
-    <a class="fila" href="tablet.html"><span class="fi">🏠</span><span class="ft"><b>La tablet de la casa <span class="etq">Beta</span></b><small>Configurar FRIDAY Casa</small></span><span class="chev" aria-hidden="true"></span></a>
+    <button class="fila" data-sheet="tablet"><span class="fi">🏠</span><span class="ft"><b>La tablet de la casa <span class="etq">Beta</span></b><small>Hablarle, la guardia y la tele</small></span><span class="chev" aria-hidden="true"></span></button>
   </div>
 
   <h4>Vos</h4>
@@ -1915,13 +1989,13 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='5.0';
+const VERSION='5.1';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"5.0","titulo":"Más humana","items":[
-  {"icono":"🙂","titulo":"FRIDAY tiene cara","texto":"La misma carita de la tablet: te mira, parpadea, sonríe y mueve la boca cuando habla. Y todo se ve más cálido y fácil de leer."},
-  {"icono":"🏠","titulo":"La tablet, a un toque","texto":"Si tenés FRIDAY Casa, en el inicio aparece «La tablet de la casa»: le hablás con un botón, activás la guardia y manejás la tele."},
-  {"icono":"🛡️","titulo":"La guardia te avisa siempre","texto":"Si la tablet ve a alguien, te suena el celu aunque tengas FRIDAY cerrada (con «Avisos con el celu bloqueado» prendido)."},
-  {"icono":"🚗","titulo":"Modo manejo","texto":"Tocá «🚗 Manejando»: botones grandes para la música, ir a algún lado con el mapa, mandar un mensaje y el clima. Y te escucha sola."}]};
+const NOVEDADES_M={"version":"5.1","titulo":"El changuito","items":[
+  {"icono":"📸","titulo":"Sacale una foto al precio","texto":"En Compras → Changuito, sacale una foto a la etiqueta del precio o al descuento: FRIDAY lee el producto, el precio y la promo, le pone la imagen y te va sumando."},
+  {"icono":"🏷️","titulo":"Las promos, bien hechas","texto":"2x1, 3x2, «2da al 70%», «llevando 2, 25% menos»: lo calcula según cuántos lleves, te dice cuánto ahorrás y si te conviene llevar uno más."},
+  {"icono":"🧾","titulo":"Revisá el ticket","texto":"Al final, sacale una foto al ticket y FRIDAY te dice si te cobraron algo de más."},
+  {"icono":"🏠","titulo":"La tablet a la vista","texto":"Ahora está en el inicio, en «🏠 Tablet», y en Más."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -2117,7 +2191,7 @@ document.addEventListener('click', e=>{
 let openSheet=null;
 let volverA=null;
 function showSheet(name){ if(name==='tablet') try{ renderTablet(); }catch(e){} const antes=openSheet; closeSheets(true); const el=$('sh-'+name); if(!el) return; volverA=(antes && antes!==name)?antes:(['vinc','avisos'].includes(name)?'menu':null); openSheet=name; el.scrollTop=0; marcarTab(); el.classList.add('on'); $('shade').classList.add('on'); buzz();
-  ({rems:renderRems, musica:spOpen, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc, compras:renderCompras})[name]?.(); }
+  ({rems:renderRems, musica:spOpen, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc, compras:()=>cmVer(chango.items.length&&cmVista!=='hist'?'chango':cmVista)})[name]?.(); }
 function closeSheets(keep){ document.querySelectorAll('.sheet.on').forEach(s=>s.classList.remove('on')); if(!keep) $('shade').classList.remove('on'); if(openSheet==='menu') readMenu(); if(openSheet==='vinc') scanStop(); openSheet=null; clearInterval(spState.t); if(!keep){ marcarTab(); try{ renderHoy(); }catch(e){} } }
 $('shade').onclick=()=>closeSheets();
 $('menuBtn').onclick=()=>showSheet('menu');
@@ -2965,6 +3039,7 @@ async function ask(text){
     if(/^(mira esto|mirá esto|que es esto|saca(me)? una foto|fijate esto|sacale una foto( a esto)?|mira lo que te muestro)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); needTap('📷','Tocá para sacar la foto', ()=>$('camIn').click()); return; }
     if(/^(modo auto|modo manejo|modo auto(movil)?|estoy manejando|voy manejando|voy a manejar|modo conducir)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); autoPoner(true); frSay('Modo auto: te escucho solita después de cada respuesta. Cuando llegues, decí «salí del modo auto».'); return; }
     if(autoModo && /\b(sali|salir|termina|apaga)( del)? modo (auto|manejo)\b|^(llegue|ya llegue)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); autoPoner(false); frSay('Listo, llegaste. Salí del modo auto.'); return; }
+    const cv=changoDeVoz(nm2); if(cv){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(cv); return; }
     const gv=gastoDeVoz(text); if(gv){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(gv); return; }
   }
   if(!PANEL && autoPend && Date.now()-autoPend.at<60000){ const ap=autoPend; autoPend=null; txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text});
@@ -3630,7 +3705,7 @@ function syncApply(changes){
       if(ch){ saveS(); getWeather(true); } }
   }
   if(memCh) LS.set('memory',memory);
-  if(shopCh){ LS.set('compras',compras); if(openSheet==='compras') renderCompras(); }
+  if(shopCh){ LS.set('compras',compras); if(openSheet==='compras'){ if(cmVista==='chango') cmPintar(); else if(cmVista==='lista') renderCompras(); } }
   if(ecoCh && openSheet==='rems') renderRems();
   if(remCh){ saveRems(); if(openSheet==='rems') renderRems(); setTimeout(schedulePushes, 400); }
 }
@@ -3801,7 +3876,7 @@ function renderEcoM(){
 // ================================================================ lista de compras (compartida con la compu)
 let compras=LS.get('compras',[]);
 const shopNorm=t=>norm(String(t||'')).replace(/^(un|una|unos|unas|el|la|los|las)\s+/,'');
-function shopSave(){ LS.set('compras',compras); if(openSheet==='compras') renderCompras(); }
+function shopSave(){ LS.set('compras',compras); if(openSheet==='compras'){ if(cmVista==='chango') cmPintar(); else if(cmVista==='lista') renderCompras(); } }
 function shopFind(q){ const n=shopNorm(q); if(!n) return null; return compras.find(x=>shopNorm(x.t)===n) || compras.find(x=>shopNorm(x.t).includes(n) || n.includes(shopNorm(x.t))); }
 function shopAdd(txt){
   const items=String(txt||'').split(/[;\n]|,\s*|\s+y\s+(?=\D)/).map(x=>x.trim().replace(/[.]$/,'')).filter(x=>x.length>1);
@@ -3809,7 +3884,7 @@ function shopAdd(txt){
   for(const it of items){
     const ex=compras.find(x=>shopNorm(x.t)===shopNorm(it));
     if(ex){ if(ex.h){ ex.h=false; added.push(it); } continue; }
-    compras.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), t:it.charAt(0).toUpperCase()+it.slice(1), h:false}); added.push(it);
+    compras.push({id:Date.now().toString(36)+Math.random().toString(36).slice(2,6), t:it.charAt(0).toUpperCase()+it.slice(1), h:false}); added.push(it); try{ shopFrecSumar(it); }catch(e){}
   }
   shopSave(); return added;
 }
@@ -3822,23 +3897,244 @@ function shopDo(accion, arg){
   return '';
 }
 function shopPrompt(){ const p=compras.filter(x=>!x.h).map(x=>x.t), h=compras.filter(x=>x.h).map(x=>x.t); return (p.length?p.join(', '):'vacía')+(h.length?` (ya comprado: ${h.join(', ')})`:''); }
+// secciones del súper, en el orden en que se recorre
+const SECC=[['verdu','🥬','Verdulería',/\b(papas?|cebollas?|tomates?|lechugas?|zanahorias?|bananas?|manzanas?|naranjas?|limon(es)?|paltas?|ajos?|morron(es)?|zapallos?|zapallitos?|batatas?|frutillas?|verduras?|frutas?|perejil|acelga|espinaca|peras?|uvas?|choclos?|berenjenas?|zucchinis?|pepinos?|mandarinas?|kiwis?|duraznos?|anana|rucula|albahaca|puerro|apio|remolacha|brocoli|coliflor|repollo|champinones|hongos)\b/],
+  ['carne','🥩','Carnicería',/\b(carne|pollo|milanesas?|asado|picada|chorizos?|morcillas?|cerdo|bondiola|vacio|matambre|nalga|peceto|cuadril|hamburguesas?|pescado|merluza|salmon|suprema|pechugas?|costillas?|bife|lomo|osobuco|carre|patitas)\b/],
+  ['lacteo','🧀','Lácteos y fiambres',/\b(leche|yogures?|yogurt|quesos?|manteca|crema|dulce de leche|jamon|salame|fiambres?|mortadela|huevos?|ricota|muzzarella|mozzarella|cremoso|queso rallado|postrecitos?|flan|tapas? de (empanadas?|tarta))\b/],
+  ['pan','🥖','Panadería',/\b(pan|facturas?|medialunas?|pan lactal|bizcochos?|prepizzas?|budin|tostadas|grisines|pan rallado)\b/],
+  ['alma','🥫','Almacén',/\b(arroz|fideos|harina|azucar|aceite|yerba|cafe|te|sal|galletitas?|atun|pure|salsa|mayonesa|ketchup|mostaza|lentejas|porotos|arvejas|polenta|avena|cereal(es)?|mermelada|cacao|vinagre|caldos?|aceitunas|latas?|edulcorante|chocolate|golosinas?|alfajor(es)?|snacks?|papas fritas|mani|levadura|especias|oregano|pimienta|condimento|tomate triturado|pure de tomate)\b/],
+  ['bebida','🥤','Bebidas',/\b(agua|gaseosas?|coca|coca cola|sprite|fanta|pepsi|jugos?|cervezas?|vinos?|fernet|soda|aquarius|speed|energizante|sidra|levite|tonica|aperitivo)\b/],
+  ['limpia','🧽','Limpieza',/\b(lavandina|detergente|jabon (en polvo|liquido para ropa)|suavizante|esponjas?|trapos?|desodorante de ambiente|limpiador|bolsas? de residuos?|rollo de cocina|papel de cocina|servilletas|escoba|cif|virulana|blem|lustramuebles|insecticida|raid|fuyi|repelente|guantes)\b/],
+  ['perfu','🧴','Perfumería',/\b(shampoo|champu|acondicionador|jabon|pasta de dientes|dentifrico|cepillo de dientes|desodorante|papel higienico|toallitas|toallas femeninas|panales|algodon|crema de manos|protector solar|afeitadora|hilo dental|maquinitas?|perfume|alcohol en gel)\b/],
+  ['conge','🧊','Congelados',/\b(helados?|hielo|nuggets|congelad[ao]s?|pizza congelada|empanadas congeladas|bocaditos|medallones|vegetales congelados)\b/],
+  ['masco','🐾','Mascotas',/\b(alimento para (perro|gato)|comida (de|para) (perro|gato)|balanceado|piedras? (para|de) gato|dog chow|pedigree|whiskas|cat chow)\b/],
+  ['otro','🛒','Otras cosas',/./]];
+function shopSecc(t){ const n=norm(String(t||'')); for(const s2 of SECC) if(s2[3].test(n)) return s2; return SECC[SECC.length-1]; }
+// «2 kg de papa» → cantidad «2 kg» y la cosa «Papa»
+function shopPartes(t){ const m=String(t||'').match(/^\s*(\d+(?:[.,]\d+)?\s*(?:kg|kilos?|g|gr|gramos|l|lts?|litros?|cc|ml|paquetes?|packs?|latas?|botellas?|docenas?|unidades|u)?|una docena|medio kilo|un kilo|un paquete|media docena)\s+(?:de\s+)?(.+)$/i);
+  return m ? {cant:m[1].trim(), cosa:m[2].charAt(0).toUpperCase()+m[2].slice(1)} : {cant:'', cosa:String(t||'')}; }
+function shopFrecSumar(t){ const f=LS.get('shopFrec',{}), k=shopNorm(shopPartes(t).cosa); if(!k) return; f[k]=(f[k]||0)+1; LS.set('shopFrec', f); }
 function renderCompras(){
   const box=$('shList'); box.innerHTML='';
-  if(!compras.length) box.innerHTML='<div class="vacio">La lista está vacía. Escribí arriba o decile a FRIDAY «agregá leche a la lista».</div>';
-  for(const x of [...compras.filter(i=>!i.h), ...compras.filter(i=>i.h)]){
-    const it=document.createElement('div'); it.className='item'+(x.h?' done':'');
-    it.innerHTML='<input type="checkbox"><div><b></b></div><button aria-label="Sacar">✕</button>';
-    it.querySelector('input').checked=!!x.h; it.querySelector('b').textContent=x.t;
-    it.onclick=e=>{ buzz(8); if(e.target.tagName==='BUTTON') compras=compras.filter(y=>y!==x); else x.h=!x.h; shopSave(); };
-    box.appendChild(it);
-  }
-  $('shClear').hidden=!compras.some(x=>x.h);
-  $('shNote').textContent = (FSync.on() ? 'Se comparte con la compu. ' : '') + 'Tocá algo para tacharlo. También decile: "agregá yerba a la lista" o "¿qué tengo que comprar?".';
+  const pend=compras.filter(i=>!i.h), hechas=compras.filter(i=>i.h);
+  if(!compras.length) box.innerHTML='<div class="vacio">La lista está vacía. Escribí arriba, tocá algo de «lo de siempre» o decile a FRIDAY «agregá leche a la lista».</div>';
+  const grupos=new Map(); for(const x of pend){ const sc=shopSecc(shopPartes(x.t).cosa); if(!grupos.has(sc[0])) grupos.set(sc[0], {sc, l:[]}); grupos.get(sc[0]).l.push(x); }
+  const fila=x=>{ const p=shopPartes(x.t), it=document.createElement('div'); it.className='item cm-it'+(x.h?' done':'');
+    it.innerHTML='<input type="checkbox" aria-label="Ya está"><div class="cm-tx"><b></b></div><button aria-label="Sacar">✕</button>';
+    it.querySelector('input').checked=!!x.h; it.querySelector('b').textContent=p.cosa; if(p.cant){ const q=document.createElement('span'); q.className='cm-q'; q.textContent=p.cant; it.querySelector('.cm-tx').appendChild(q); }
+    it.onclick=e=>{ buzz(8); if(e.target.tagName==='BUTTON') compras=compras.filter(y=>y!==x); else { x.h=!x.h; if(x.h) it.classList.add('tacha'); } shopSave(); };
+    return it; };
+  for(const sc of SECC){ const g=grupos.get(sc[0]); if(!g) continue; const h=document.createElement('div'); h.className='cm-sec'; h.textContent=sc[1]+' '+sc[2]+' · '+g.l.length; box.appendChild(h); g.l.forEach(x=>box.appendChild(fila(x))); }
+  if(hechas.length){ const h=document.createElement('div'); h.className='cm-sec'; h.textContent='✓ Ya lo tenés · '+hechas.length; box.appendChild(h); hechas.forEach(x=>box.appendChild(fila(x))); }
+  // lo de siempre: lo que más agregás y no está en la lista
+  const f=LS.get('shopFrec',{}), ya=new Set(compras.map(x=>shopNorm(shopPartes(x.t).cosa)));
+  const top=Object.entries(f).filter(([k,v])=>v>=2 && !ya.has(k)).sort((a,b)=>b[1]-a[1]).slice(0,10);
+  const base=['leche','pan','huevos','yerba','fideos','tomates','papas','queso','yogur','arroz'].filter(k=>!ya.has(k));
+  const sug=(top.length>=4?top.map(x=>x[0]):[...top.map(x=>x[0]), ...base.filter(k=>!top.some(t=>t[0]===k))]).slice(0,10);
+  $('shFrec').innerHTML=sug.length?'<small>'+(top.length?'Lo de siempre':'Para empezar')+'</small>'+sug.map(k=>`<button type="button" data-frec="${esc(k)}">${shopSecc(k)[1]} ${esc(k.charAt(0).toUpperCase()+k.slice(1))}</button>`).join(''):'';
+  $('shClear').hidden=!hechas.length;
+  $('cmIr').textContent=chango.items.length?`🛒 Seguir comprando · ${pesos(cmTotal())}`:'🛒 Empezar a comprar';
+  $('shNote').textContent=(FSync.on()?'Se comparte con la compu. ':'')+'Tocá algo para tacharlo. También decile: «agregá yerba a la lista» o «¿qué tengo que comprar?».';
 }
+$('shFrec').addEventListener('click', e=>{ const b=e.target.closest('[data-frec]'); if(!b) return; buzz(8); shopAdd(b.dataset.frec); });
 $('shAdd').onclick=()=>{ const v=$('shIn').value; if(!v.trim()) return; shopAdd(v); $('shIn').value=''; $('shIn').focus(); };
 $('shIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('shAdd').click(); } });
 $('shClear').onclick=()=>{ compras=compras.filter(x=>!x.h); shopSave(); };
-$('shShare').onclick=async()=>{ const p=compras.filter(x=>!x.h).map(x=>'• '+x.t).join('\n'); if(!p){ toast('La lista está vacía'); return; } const t='🛒 Lista de compras\n'+p; try{ if(navigator.share) await navigator.share({text:t}); else { await navigator.clipboard.writeText(t); toast('Lista copiada'); } }catch(e){} };
+$('shShare').onclick=async()=>{ const p=compras.filter(x=>!x.h); if(!p.length){ toast('La lista está vacía'); return; }
+  const g={}; for(const x of p){ const sc=shopSecc(shopPartes(x.t).cosa); (g[sc[0]]=g[sc[0]]||{sc, l:[]}).l.push(x.t); }
+  const t='🛒 Lista de compras\n'+SECC.filter(sc=>g[sc[0]]).map(sc=>`\n${sc[1]} ${sc[2]}\n`+g[sc[0]].l.map(x=>'• '+x).join('\n')).join('\n');
+  try{ if(navigator.share) await navigator.share({text:t}); else { await navigator.clipboard.writeText(t); toast('Lista copiada'); } }catch(e){} };
+
+// ================================================================ el changuito: foto al precio → lista con imagen y total
+let chango=Object.assign({items:[], pres:0, desde:0}, LS.get('chango',{}));
+const cmGuardar=()=>{ LS.set('chango', chango); };
+let cmVista='lista';
+function cmVer(v){ cmVista=v; for(const k of ['lista','chango','hist']){ $('cm-'+k).hidden=k!==v; } document.querySelectorAll('.cm-seg [data-cm]').forEach(b=>b.setAttribute('aria-selected', b.dataset.cm===v));
+  if(v==='lista') renderCompras(); else if(v==='chango') cmPintar(); else cmHist(); $('sh-compras').scrollTop=0; }
+document.querySelector('.cm-seg').addEventListener('click', e=>{ const b=e.target.closest('[data-cm]'); if(b){ buzz(6); cmVer(b.dataset.cm); } });
+$('cmIr').onclick=()=>{ if(!chango.desde){ chango.desde=Date.now(); cmGuardar(); } cmVer('chango'); };
+// lo que cuesta una línea, con la promo según cuántos lleves
+function cmSub(it){ const q=Math.max(0, +it.q||0), p=Math.max(0, +it.p||0), pr=it.pr||{};
+  if(pr.t==='nxm' && pr.n>pr.m && pr.m>0){ const g=Math.floor(q/pr.n); return (g*pr.m + q%pr.n)*p; }
+  if(pr.t==='2da' && pr.pct>0){ return q*p - Math.floor(q/2)*p*Math.min(100,pr.pct)/100; }
+  if(pr.t==='llevando' && pr.n>1 && pr.pct>0) return q>=pr.n ? q*p*(1-Math.min(100,pr.pct)/100) : q*p;
+  return q*p; }
+function cmAhorroDe(it){ const lista=(+it.pl>+it.p? +it.pl : +it.p)*(+it.q||0); return Math.max(0, lista-cmSub(it)); }
+const cmTotal=()=>chango.items.reduce((a,it)=>a+cmSub(it),0), cmAhorro=()=>chango.items.reduce((a,it)=>a+cmAhorroDe(it),0);
+function cmPromoTxt(it){ const pr=it.pr||{}; if(pr.t==='nxm') return `${pr.n}x${pr.m}`; if(pr.t==='2da') return `2da al ${pr.pct}%`; if(pr.t==='llevando') return `Llevando ${pr.n}: −${pr.pct}%`; if(+it.pl>+it.p) return `−${Math.round((1-it.p/it.pl)*100)}%`; return ''; }
+// ¿conviene llevar uno más? (2x1 con uno solo, etc.)
+function cmPista(it){ const pr=it.pr||{}, q=+it.q||0, p=+it.p||0;
+  if(pr.t==='nxm' && q%pr.n!==0){ const falta=pr.n-q%pr.n; if(pr.n-pr.m>=falta) return `Llevando ${falta===1?'uno más':falta+' más'}, ${pr.n-pr.m===falta?'te lo regalan':'pagás menos por unidad'}`; }
+  if(pr.t==='2da' && q%2===1) return `El otro te sale ${pesos(p*(1-pr.pct/100))} (no ${pesos(p)})`;
+  if(pr.t==='llevando' && q<pr.n) return `Llevando ${pr.n} ahorrás ${pesos(pr.n*p*pr.pct/100)}`;
+  return ''; }
+function cmPintar(){
+  const t=cmTotal(), a=cmAhorro(), n=chango.items.reduce((x,it)=>x+(+it.q||0),0);
+  const T=$('cmTotal'); const ant=+T.dataset.v||0; T.dataset.v=t; if(Math.round(ant)!==Math.round(t)){ T.classList.remove('pum'); void T.offsetWidth; T.classList.add('pum'); } T.textContent=pesos(t);
+  $('cmCuantos').textContent=n?(n===1?'1 cosa en el changuito':n+' cosas en el changuito'):'El changuito está vacío';
+  $('cmAhorro').textContent=a>=1?'Ahorrás '+pesos(a)+' con las promos':'';
+  const pr=chango.pres||0; const pb=$('cmPres');
+  if(pr){ const k=t/pr; pb.className='cm-pres '+(k>1?'mal':k>.85?'ojo':'bien'); pb.innerHTML=`<i style="width:${Math.min(100,k*100)}%"></i><span>${k>1?'Te pasaste '+pesos(t-pr)+' de':'Te quedan '+pesos(pr-t)+' de'} ${pesos(pr)}</span>`; }
+  else { pb.className='cm-pres nada'; pb.innerHTML='<span>💰 Poner un presupuesto</span>'; }
+  $('cmBadge').textContent=n?String(n):'';
+  // lo que falta de la lista
+  const falta=compras.filter(x=>!x.h);
+  $('cmFalta').innerHTML=falta.length?'<small>Te falta de la lista</small>'+falta.slice(0,12).map(x=>`<button type="button" data-tachar="${esc(x.id)}">${shopSecc(shopPartes(x.t).cosa)[1]} ${esc(shopPartes(x.t).cosa)}</button>`).join(''):(compras.length?'<small>✓ Tenés todo lo de la lista</small>':'');
+  const box=$('cmItems');
+  if(!chango.items.length){ box.innerHTML='<div class="vacio">Todavía nada. Sacale una foto al precio de lo primero que agarres 📸</div>'; return; }
+  box.innerHTML=chango.items.slice().reverse().map(it=>{ const sub=cmSub(it), pt=cmPromoTxt(it), pista=cmPista(it), img=it.img||it.foto;
+    const dif=it.ant && it.ant.p>0 && Math.abs(it.p-it.ant.p)/it.ant.p>=0.03 ? (it.p>it.ant.p?`<span class="cm-sube">↑ ${Math.round((it.p/it.ant.p-1)*100)}% desde la última vez (${pesos(it.ant.p)})</span>`:`<span class="cm-baja">↓ ${Math.round((1-it.p/it.ant.p)*100)}% más barato que la última vez</span>`) : '';
+    return `<div class="cm-prod${it.abierto?' abierto':''}${it.nuevo?' nuevo':''}" data-id="${esc(it.id)}">
+      <div class="cm-img"${img?` style="background-image:${[it.img,it.foto].filter(Boolean).map(u=>`url('${esc(u)}')`).join(',')}"`:''}>${img?'':'🛍️'}</div>
+      <div class="cm-info"><b>${esc(it.n||'Producto')}</b><small>${esc([it.m,it.d].filter(Boolean).join(' · '))}${it.pu?' · '+esc(it.pu):''}</small>
+        <div class="cm-pr">${pesos(it.p)}${+it.pl>+it.p?` <s>${pesos(it.pl)}</s>`:''}${pt?` <em>${esc(pt)}</em>`:''}${it.cond?` <span class="cm-cond">${esc(it.cond)}</span>`:''}</div>${dif}${pista?`<span class="cm-pista">💡 ${esc(pista)}</span>`:''}</div>
+      <div class="cm-der"><b>${pesos(sub)}</b><div class="cm-step"><button type="button" data-q="-1" aria-label="${it.q<=1?'Sacar':'Uno menos'}">${it.q<=1?'🗑':'−'}</button><span>${it.q}</span><button type="button" data-q="1" aria-label="Uno más">+</button></div></div>
+      ${it.abierto?`<div class="cm-edit"><label>Nombre<input data-e="n" value="${esc(it.n||'')}"></label><label>Precio por unidad<input data-e="p" inputmode="decimal" value="${esc(String(it.p||''))}"></label>
+        <label>Promo<select data-e="pr"><option value="">Sin promo</option>${[['nxm|2|1','2x1'],['nxm|3|2','3x2'],['nxm|4|3','4x3'],['2da|50','2da al 50%'],['2da|70','2da al 70%'],['2da|80','2da al 80%'],['llevando|2|25','Llevando 2: −25%'],['llevando|3|30','Llevando 3: −30%']].map(([v,l])=>`<option value="${v}"${cmPrVal(it)===v?' selected':''}>${l}</option>`).join('')}</select></label>
+        <button type="button" class="cm-listo" data-cerrar>Listo</button></div>`:''}
+    </div>`; }).join('');
+  chango.items.forEach(it=>{ delete it.nuevo; });
+}
+const cmPrVal=it=>{ const p=it.pr||{}; return p.t==='nxm'?`nxm|${p.n}|${p.m}`:p.t==='2da'?`2da|${p.pct}`:p.t==='llevando'?`llevando|${p.n}|${p.pct}`:''; };
+$('cmItems').addEventListener('click', e=>{
+  const card=e.target.closest('.cm-prod'); if(!card) return; const it=chango.items.find(x=>x.id===card.dataset.id); if(!it) return;
+  const q=e.target.closest('[data-q]'); if(q){ buzz(8); it.q=(+it.q||0)+(+q.dataset.q); if(it.q<=0){ chango.items=chango.items.filter(x=>x!==it); toast('Saqué '+(it.n||'eso')+' del changuito'); } cmGuardar(); cmPintar(); return; }
+  if(e.target.closest('[data-cerrar]')){ it.abierto=false; cmGuardar(); cmPintar(); return; }
+  if(e.target.closest('.cm-edit')) return;
+  chango.items.forEach(x=>{ if(x!==it) x.abierto=false; }); it.abierto=!it.abierto; cmPintar(); });
+$('cmItems').addEventListener('change', e=>{ const f=e.target.closest('[data-e]'); if(!f) return; const it=chango.items.find(x=>x.id===e.target.closest('.cm-prod').dataset.id); if(!it) return;
+  if(f.dataset.e==='n') it.n=f.value.trim()||it.n;
+  if(f.dataset.e==='p'){ const v=cmNum(f.value); if(v>0) it.p=v; }
+  if(f.dataset.e==='pr'){ const [t,a,b]=f.value.split('|'); it.pr=!t?{}:t==='nxm'?{t, n:+a, m:+b}:t==='2da'?{t, pct:+a}:{t, n:+a, pct:+b}; }
+  cmGuardar(); cmPintar(); });
+$('cmFalta').addEventListener('click', e=>{ const b=e.target.closest('[data-tachar]'); if(!b) return; const x=compras.find(y=>y.id===b.dataset.tachar); if(x){ x.h=true; shopSave(); buzz(8); cmPintar(); toast('✓ '+x.t+' tachado'); } });
+$('cmPres').onclick=()=>{ const v=prompt('¿Cuánto querés gastar en esta compra? (vacío para sacar el presupuesto)', chango.pres?String(Math.round(chango.pres)):''); if(v===null) return; chango.pres=cmNum(v)||0; cmGuardar(); cmPintar(); };
+$('cmManual').onclick=()=>{ const n=prompt('¿Qué es?'); if(!n||!n.trim()) return; const p=cmNum(prompt('¿Cuánto sale (por unidad)?')||''); if(!(p>0)){ toast('Sin precio no lo puedo sumar'); return; }
+  cmAgregar({nombre:n.trim(), precio:p}); };
+// «$ 1.450,50» → 1450.5
+function cmNum(v){ if(typeof v==='number') return v; let t=String(v||'').replace(/[^\d.,]/g,''); if(!t) return 0;
+  if(/,\d{1,2}$/.test(t)) t=t.replace(/\./g,'').replace(',', '.'); else if(/\.\d{3}($|\D)/.test(t) && !/\.\d{1,2}$/.test(t)) t=t.replace(/\./g,''); else t=t.replace(/,/g,''); const n=parseFloat(t); return isFinite(n)?n:0; }
+// sumar algo al changuito (de la foto o a mano)
+async function cmAgregar(r, fotoUrl){
+  const nombre=String(r.nombre||'').trim()||'Producto', p=cmNum(r.precio);
+  const pr={}; const t=String(r.promo&&r.promo.tipo||'');
+  if(t==='nxm' && +r.promo.n>+r.promo.m && +r.promo.m>0){ pr.t='nxm'; pr.n=+r.promo.n; pr.m=+r.promo.m; }
+  else if(t==='2da' && +r.promo.pct>0){ pr.t='2da'; pr.pct=Math.min(100,+r.promo.pct); }
+  else if(t==='llevando' && +r.promo.n>1 && +r.promo.pct>0){ pr.t='llevando'; pr.n=+r.promo.n; pr.pct=Math.min(100,+r.promo.pct); }
+  const key=norm([nombre, r.marca, r.detalle].filter(Boolean).join(' ')).replace(/[^a-z0-9 ]/g,'').trim();
+  const precios=LS.get('precios',{}), ant=precios[key];
+  // si ya está en el changuito (misma cosa, mismo precio), suma uno
+  const ya=chango.items.find(x=>x.k===key && Math.abs(x.p-p)<0.5);
+  if(ya){ ya.q++; ya.nuevo=true; cmGuardar(); cmPintar(); toast('➕ Otro '+nombre+': '+pesos(cmTotal())); return ya; }
+  const it={id:Date.now().toString(36)+Math.random().toString(36).slice(2,5), k:key, n:nombre, m:String(r.marca||'').trim(), d:String(r.detalle||'').trim(), p, pl:cmNum(r.precio_lista)>p?cmNum(r.precio_lista):0, pr,
+    cond:String(r.condicion||'').trim().slice(0,40), pu:String(r.precio_por||'').trim().slice(0,30), q:Math.max(1, Math.round(+r.cantidad||1)), ean:/^\d{8,14}$/.test(String(r.ean||''))?String(r.ean):'', foto:fotoUrl||'', at:Date.now(), nuevo:true,
+    ant:ant && Date.now()-ant.at>3600e3 ? ant : null};
+  chango.items.push(it); if(!chango.desde) chango.desde=Date.now();
+  if(p>0){ precios[key]={p, at:Date.now(), n:nombre}; const ks=Object.keys(precios); if(ks.length>400) delete precios[ks.sort((a,b)=>precios[a].at-precios[b].at)[0]]; LS.set('precios', precios); }
+  // si está en la lista, la tacha sola
+  const nn=norm(nombre+' '+(r.marca||''));
+  const enLista=compras.find(x=>!x.h && (()=>{ const c=shopNorm(shopPartes(x.t).cosa).replace(/s\b/g,''); return c.length>2 && nn.replace(/s\b/g,'').split(/\s+/).some(w=>w===c || (c.length>4 && w.startsWith(c))) || nn.includes(c); })());
+  if(enLista){ enLista.h=true; it.lista=enLista.id; shopSave(); }
+  cmGuardar(); cmPintar();
+  toast(`🛒 ${nombre}: ${pesos(p)}${enLista?' · taché «'+enLista.t+'» de la lista':''} · Total ${pesos(cmTotal())}`, 3800);
+  // la imagen del producto: si la etiqueta tiene el código de barras, la busco en Open Food Facts
+  if(it.ean) cmImagenEAN(it);
+  return it; }
+async function cmImagenEAN(it){ try{ const c=new AbortController(); setTimeout(()=>c.abort(), 6000);
+  const r=await fetch(`https://world.openfoodfacts.org/api/v2/product/${it.ean}.json?fields=image_front_small_url,image_front_url,product_name`, {signal:c.signal}); if(!r.ok) return;
+  const j=await r.json(); const u=j && j.product && (j.product.image_front_small_url||j.product.image_front_url); if(u && /^https:\/\//.test(u)){ it.img=u; cmGuardar(); if(cmVista==='chango') cmPintar(); } }catch(e){} }
+// la foto: la achico, la mira la IA y recorto el producto
+$('cmFoto').onclick=()=>$('cmFotoIn').click();
+$('cmFotoIn').onchange=async()=>{ const f=$('cmFotoIn').files[0]; $('cmFotoIn').value=''; if(!f) return; cmLeerFoto(f); };
+async function cmLeerFoto(f){
+  let url; try{ url=await achicarFotoA(f, 1280); }catch(e){ toast('No pude abrir la foto'); return; }
+  const box=$('cmItems'); const tmp=document.createElement('div'); tmp.className='cm-prod leyendo'; tmp.innerHTML=`<div class="cm-img" style="background-image:url('${url}')"></div><div class="cm-info"><b>Leyendo el precio…</b><small>Un segundito</small><div class="cm-scan"></div></div>`;
+  if(box.querySelector('.vacio')) box.innerHTML=''; box.prepend(tmp); buzz(10);
+  const r=await cmIA(url, CM_PROMPT_PRECIO);
+  tmp.remove();
+  if(!r || r.no_es_precio || !(cmNum(r.precio)>0)){ cmPintar(); toast(r && r.no_es_precio ? 'No veo un precio en esa foto. Probá más cerca de la etiqueta.' : 'No pude leer el precio. Probá de nuevo, más cerca y con luz.', 4500); if(r && r.nombre && !(cmNum(r.precio)>0)){ const p=cmNum(prompt(`Veo «${r.nombre}», pero no el precio. ¿Cuánto sale?`)||''); if(p>0) cmAgregar(Object.assign(r, {precio:p}), await cmRecorte(url, r.caja)); } return; }
+  const it=await cmAgregar(r, await cmRecorte(url, r.caja));
+  if(it && it.ant && it.ant.p>0 && it.p>it.ant.p*1.1) setTimeout(()=>toast(`📈 ${it.n} subió ${Math.round((it.p/it.ant.p-1)*100)}% desde la última vez`, 4000), 4000);
+}
+function achicarFotoA(file, max){ return new Promise((ok,mal)=>{ const u=URL.createObjectURL(file), im=new Image();
+  im.onload=()=>{ const k=Math.min(1, max/Math.max(im.width, im.height)), c=document.createElement('canvas'); c.width=Math.round(im.width*k); c.height=Math.round(im.height*k);
+    c.getContext('2d').drawImage(im,0,0,c.width,c.height); URL.revokeObjectURL(u); ok(c.toDataURL('image/jpeg',0.82)); };
+  im.onerror=()=>{ URL.revokeObjectURL(u); mal(new Error('foto')); }; im.src=u; }); }
+// recorta el producto de la foto (si la IA dijo dónde está); si no, el centro
+function cmRecorte(url, caja){ return new Promise(ok=>{ const im=new Image(); im.onload=()=>{ const W=im.width, H=im.height; let x0=0, y0=0, w=W, h=H;
+    if(Array.isArray(caja) && caja.length===4 && caja.every(v=>isFinite(+v))){ let [a,b,c,d]=caja.map(Number); if(Math.max(a,b,c,d)<=1.01){ a*=1000; b*=1000; c*=1000; d*=1000; }
+      const yy0=Math.max(0,Math.min(a,c)), xx0=Math.max(0,Math.min(b,d)), yy1=Math.min(1000,Math.max(a,c)), xx1=Math.min(1000,Math.max(b,d));
+      if((yy1-yy0)*(xx1-xx0)>=1000*1000*0.02){ x0=xx0/1000*W; y0=yy0/1000*H; w=(xx1-xx0)/1000*W; h=(yy1-yy0)/1000*H; } }
+    const lado=Math.min(Math.max(w,h)*1.08, W, H), cx=x0+w/2, cy=y0+h/2, sx=Math.max(0,Math.min(W-lado, cx-lado/2)), sy=Math.max(0,Math.min(H-lado, cy-lado/2));
+    const c=document.createElement('canvas'); c.width=c.height=180; c.getContext('2d').drawImage(im, sx, sy, lado, lado, 0, 0, 180, 180); ok(c.toDataURL('image/jpeg', 0.72)); };
+  im.onerror=()=>ok(''); im.src=url; }); }
+const CM_PROMPT_PRECIO=`Sos un lector de precios de supermercados de Argentina. Te mando una foto de una etiqueta de precio de góndola, un cartel de oferta o un producto con su precio. Devolvé SOLO un objeto JSON, sin texto antes ni después:
+{"nombre":"nombre corto del producto, como lo diría una persona (ej: Leche entera)","marca":"marca o vacío","detalle":"tamaño o presentación (ej: 1 L, 500 g) o vacío","precio":número,"precio_lista":número o 0,"promo":{"tipo":"ninguna|nxm|2da|llevando","n":número,"m":número,"pct":número},"condicion":"si el descuento es solo con un banco, billetera o día, ponelo corto (ej: Con Modo, Miércoles con Banco Nación); si no, vacío","precio_por":"precio por kilo o litro si figura (ej: $2.900/kg) o vacío","ean":"el código de barras si se leen los números, o vacío","caja":[ymin,xmin,ymax,xmax],"no_es_precio":false}
+Reglas:
+- "precio" es lo que sale UNA unidad en la caja, ya con los descuentos directos (ej: «antes $1.800, ahora $1.450» → precio 1450, precio_lista 1800; «20% off» sobre $1.000 → precio 800, precio_lista 1000).
+- Las promos por cantidad NO se descuentan del precio: «2x1» → tipo nxm, n 2, m 1; «3x2» → nxm 3 y 2; «70% en la 2da unidad» → tipo 2da, pct 70; «llevando 2, 25% off» → tipo llevando, n 2, pct 25. Si el descuento es solo con banco o billetera, NO lo descuentes: ponelo en "condicion".
+- Los números van sin signos ni puntos de miles: «$ 1.450,50» → 1450.5.
+- "caja" es dónde está el PRODUCTO en la foto (si no se ve el producto, la etiqueta), en coordenadas de 0 a 1000.
+- Si la foto no tiene ningún precio, "no_es_precio": true.`;
+const CM_PROMPT_TICKET=`Te mando la foto de un ticket de supermercado de Argentina. Devolvé SOLO un objeto JSON, sin texto antes ni después:
+{"tienda":"nombre del súper o vacío","total":número,"items":[{"nombre":"lo que dice el renglón","cant":número,"monto":número}],"descuentos":número}
+Reglas: "monto" es lo que se cobró en ese renglón (cantidad × precio, después de descuentos que estén en el mismo renglón). Números sin signos ni puntos de miles («1.450,50» → 1450.5). "descuentos" es la suma de las líneas de descuento o promociones (positivo), o 0. Si no es un ticket, devolvé {"total":0,"items":[]}.`;
+function jsonDe(t){ if(!t) return null; t=String(t).replace(/```json|```/g,''); const i=t.indexOf('{'), j=t.lastIndexOf('}'); if(i<0||j<=i) return null; try{ return JSON.parse(t.slice(i, j+1)); }catch(e){ return null; } }
+// la IA que mira: Gemini si tenés llave (lee mejor los números); si no, Llama 4 Scout (con tu llave de Groq o el servidor de BufaLabs)
+async function cmIA(dataUrl, prompt){
+  if(S.gemKey){ for(const model of ['gemini-flash-latest','gemini-2.5-flash','gemini-flash-lite-latest']){
+    try{ const r=await fetch(`${API.gem}/models/${model}:generateContent?key=${encodeURIComponent(S.gemKey)}`, {method:'POST', headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({contents:[{role:'user', parts:[{inline_data:{mime_type:'image/jpeg', data:dataUrl.split(',')[1]}}, {text:prompt}]}], generationConfig:{temperature:0.1, maxOutputTokens:2000, responseMimeType:'application/json'}})});
+      if(!r.ok) continue; const d=await r.json(); const j=jsonDe((d.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('')); if(j) return j; }catch(e){} } }
+  try{ const r=await fetch(API.groq+'/chat/completions', {method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+S.groqKey},
+      body:JSON.stringify({model:'meta-llama/llama-4-scout-17b-16e-instruct', temperature:0.1, max_completion_tokens:1200, messages:[{role:'user', content:[{type:'text', text:prompt}, {type:'image_url', image_url:{url:dataUrl}}]}]})});
+    if(r.ok){ const d=await r.json(); const j=jsonDe(d.choices?.[0]?.message?.content); if(j) return j; } }catch(e){}
+  return null; }
+// revisar el ticket: ¿te cobraron lo que decía la góndola?
+$('cmTicket').onclick=()=>{ if(!chango.items.length){ toast('Primero sumá cosas al changuito'); return; } $('cmTicketIn').click(); };
+$('cmTicketIn').onchange=async()=>{ const f=$('cmTicketIn').files[0]; $('cmTicketIn').value=''; if(!f) return;
+  const res=$('cmTicketRes'); res.innerHTML='<div class="cm-tk"><b>Leyendo el ticket…</b><div class="cm-scan"></div></div>';
+  let url; try{ url=await achicarFotoA(f, 1800); }catch(e){ res.innerHTML=''; toast('No pude abrir la foto'); return; }
+  const r=await cmIA(url, CM_PROMPT_TICKET);
+  if(!r || !(cmNum(r.total)>0)){ res.innerHTML='<div class="cm-tk mal"><b>No pude leer el ticket.</b><small>Probá con el ticket estirado, entero y con luz.</small></div>'; return; }
+  res.innerHTML=cmCompararTicket(r); res.scrollIntoView({block:'nearest', behavior:'smooth'}); };
+function cmCompararTicket(r){
+  const tot=cmNum(r.total), mio=cmTotal(), dif=tot-mio, lines=(r.items||[]).map(x=>({n:String(x.nombre||''), m:cmNum(x.monto), usado:false}));
+  const pal=t=>norm(t).replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>2);
+  const malos=[];
+  for(const it of chango.items){ const ws=pal(it.n+' '+(it.m||'')); let best=null, bs=0;
+    for(const l of lines){ if(l.usado) continue; const lw=pal(l.n); const sc=ws.filter(w=>lw.some(x=>x.startsWith(w.slice(0,5))||w.startsWith(x.slice(0,5)))).length; if(sc>bs){ bs=sc; best=l; } }
+    if(best && bs>0){ best.usado=true; const esp=cmSub(it); if(best.m>esp*1.02+5) malos.push(`${it.n}: te cobraron ${pesos(best.m)} y en la góndola salía ${pesos(esp)}`); } }
+  const sobran=lines.filter(l=>!l.usado && l.m>0).slice(0,6);
+  const bien=Math.abs(dif)<=Math.max(20, mio*0.01) && !malos.length;
+  return `<div class="cm-tk ${bien?'bien':'mal'}"><b>${bien?'✅ El ticket coincide con tu changuito':dif>0?`⚠️ El ticket da ${pesos(dif)} más que tu changuito`:'🤔 El ticket da '+pesos(-dif)+' menos que tu changuito'}</b>
+    <small>Ticket ${pesos(tot)}${r.tienda?' · '+esc(r.tienda):''} · Changuito ${pesos(mio)}${cmNum(r.descuentos)>0?' · descuentos en el ticket '+pesos(cmNum(r.descuentos)):''}</small>
+    ${malos.length?'<ul>'+malos.map(m=>`<li>${esc(m)}</li>`).join('')+'</ul><small>Mostrale la foto de la etiqueta a la caja: tiene que respetar el precio de la góndola.</small>':''}
+    ${sobran.length&&!bien?'<small>En el ticket hay cosas que no anotaste: '+sobran.map(l=>esc(l.n)+' '+pesos(l.m)).join(', ')+'.</small>':''}</div>`;
+}
+// terminar: va al historial y a tus gastos, y saca de la lista lo que compraste
+$('cmFin').onclick=()=>{ if(!chango.items.length){ toast('El changuito está vacío'); return; }
+  const tot=cmTotal(), aho=cmAhorro(); if(!confirm(`¿Terminás la compra? Total ${pesos(tot)}${aho>=1?', ahorraste '+pesos(aho):''}.`)) return;
+  const tienda=(prompt('¿Dónde compraste? (opcional)')||'').trim().slice(0,40);
+  const h=LS.get('comprasHist',[]); h.unshift({at:Date.now(), total:Math.round(tot), ahorro:Math.round(aho), tienda, items:chango.items.map(it=>({n:it.n, q:it.q, s:Math.round(cmSub(it)), p:it.p}))}); LS.set('comprasHist', h.slice(0,60));
+  try{ const g=gastos(); g.push({monto:Math.round(tot), en:tienda?'el súper ('+tienda+')':'el súper', at:Date.now()}); while(g.length>500) g.shift(); LS.set('gastos', g); }catch(e){}
+  compras=compras.filter(x=>!x.h); shopSave();
+  chango={items:[], pres:chango.pres||0, desde:0}; cmGuardar(); $('cmTicketRes').innerHTML='';
+  confetiCompras(); cmVer('hist'); frSay(`Listo, compra terminada: ${pesos(tot)}${aho>=1?' y ahorraste '+pesos(aho)+' con las promos':''}. Lo anoté en tus gastos.`); };
+function confetiCompras(){ try{ for(let i=0;i<18;i++){ const e=document.createElement('i'); e.className='cm-conf'; e.textContent=['🛒','💸','✨','🎉'][i%4]; e.style.left=(5+Math.random()*90)+'%'; e.style.animationDelay=(Math.random()*.4)+'s'; document.body.appendChild(e); setTimeout(()=>e.remove(), 2200); } }catch(e){} }
+function cmHist(){
+  const h=LS.get('comprasHist',[]), d=new Date(), ini=new Date(d.getFullYear(), d.getMonth(), 1).getTime(), mes=h.filter(x=>x.at>=ini);
+  const tm=mes.reduce((a,x)=>a+x.total,0), am=mes.reduce((a,x)=>a+(x.ahorro||0),0);
+  $('cmHist').innerHTML=(h.length?`<div class="cm-total chico"><small>Este mes en el súper</small><b>${pesos(tm)}</b><span class="cm-ahorro">${mes.length===1?'1 compra':mes.length+' compras'}${am>=1?' · ahorraste '+pesos(am):''}</span></div>`:'')
+    +(h.length?h.map(x=>`<details class="cm-h"><summary><span>${new Date(x.at).toLocaleDateString('es-AR',{weekday:'short', day:'numeric', month:'short'})}${x.tienda?' · '+esc(x.tienda):''}</span><b>${pesos(x.total)}</b></summary>
+      <ul>${x.items.map(i=>`<li><span>${i.q>1?i.q+' × ':''}${esc(i.n)}</span><span>${pesos(i.s)}</span></li>`).join('')}</ul>${x.ahorro?`<small>Ahorraste ${pesos(x.ahorro)} con promos</small>`:''}</details>`).join('')
+      :'<div class="vacio">Acá van a quedar tus compras: cuánto gastaste, dónde y qué llevaste.</div>');
+}
+// por voz: «¿cuánto llevo en el changuito?», «empezá la compra»
+function changoDeVoz(n){
+  if(/\b(cuanto (llevo|va|voy|suma|da)|cuanto (es|esta) el total)\b.*\b(changuito|chango|carrito|compra|super)\b|^cuanto llevo$/.test(n)){ const t=cmTotal(), q=chango.items.reduce((a,it)=>a+(+it.q||0),0); return q?`Llevás ${pesos(t)} en ${q===1?'una cosa':q+' cosas'}${cmAhorro()>=1?', y ahorrás '+pesos(cmAhorro())+' con promos':''}${chango.pres?(t>chango.pres?'. Te pasaste del presupuesto por '+pesos(t-chango.pres):'. Te quedan '+pesos(chango.pres-t)+' del presupuesto'):''}.`:'El changuito está vacío. Abrí Compras → Changuito y sacale una foto al precio.'; }
+  if(/^(empeza|empezamos|arranca|arrancamos|abri|abrime)( (la|el|mi))? (compra|changuito|chango)$|^(estoy|ya estoy) en el super$/.test(n)){ showSheet('compras'); $('cmIr').click(); return 'Abrí el changuito: sacale una foto al precio de cada cosa y te voy sumando.'; }
+  return ''; }
 
 // ================================================================ manos libres: decí "Friday" y te escucha
 const hf={on:false, st:null, src:null, proc:null, z:null, pre:[], preLen:0, seg:null, segLen:0, segT0:0, lastLoud:0, loudN:0, floor:0.006, calls:[], wl:null, sending:0, sr:null, armed:0};
@@ -4054,6 +4350,8 @@ async function aCompu(text){
 // la guardia y los protocolos viven en la tablet: desde acá se activan, y llegan las fotos si ve a alguien
 function tabPeer(){ try{ return FSync.peersOf('tablet')[0]||null; }catch(e){ return null; } }
 // 5.0: la tablet a un toque. Lo que tocás acá viaja cifrado a la tablet (como si se lo dijeras)
+function tabChipPintar(){ const c=$('tabChip'); if(!c) return; const tb=tabPeer(); c.textContent=tb?(micTab?'🎙 Hablándole a la tablet':(tabGuardia().on?'🏠 Tablet · 🛡️':'🏠 Hablarle a la tablet')):'🏠 Tablet'; c.classList.toggle('on', !!micTab); }
+setInterval(tabChipPintar, 4000); setTimeout(tabChipPintar, 1500);
 function tabDecir(t, aviso){ const tb=tabPeer(); if(!tb){ toast('No hay ninguna tablet unida'); return false; } FSync.send({k:'oir', to:tb.dev, t:String(t).slice(0,400), de:S.name||''}); buzz(12); if(aviso!==false) toast('🏠 Se lo pasé a la tablet: «'+t+'»', 2600); return true; }
 function tabGuardia(){ return LS.get('tabGuardia', {on:false, at:0}); }
 function renderTablet(){
