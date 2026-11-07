@@ -2380,7 +2380,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='6.1';
+const VERSION='6.2';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -6129,7 +6129,22 @@ async function proactPedir(){
     finally{ proact.pidiendo=false; } } }
 
 // ---------------------------------------------------------------- lo que llega de otros aparatos
+// 6.2: la receta que elegiste en el celu (¿Qué cocino?) y los cuentos para dormir
+function recetaDelCelu(o){
+  const r=o.receta||{}; if(!Array.isArray(r.pasos) || !r.pasos.length) return;
+  cocina={titulo:String(r.titulo||'La receta').slice(0,80), base:+r.porciones||2, porciones:+r.porciones||2, tiempo:'', ingredientes:(r.ingredientes||[]).slice(0,30).map(x=>({c:'', n:String(x), ok:false})), pasos:r.pasos.slice(0,30).map(p=>({t:String(p.t||p), min:+p.min||0})), i:-1};
+  cocSave(); osOpen('cocina');
+  say(`¡Llegó la receta desde el celu${o.de?' de '+o.de:''}! ${cocina.titulo}. Fijate los ingredientes en la pantalla y, cuando tengas todo, decí «empezamos».`, 'excited'); cocOye(); }
+function cuentoDelCelu(o){
+  let ov=document.getElementById('cuOv');
+  if(!ov){ ov=document.createElement('div'); ov.id='cuOv'; ov.style.cssText='position:fixed;inset:0;z-index:80;background:rgba(18,12,30,.94);color:#fff6ea;display:flex;flex-direction:column;padding:4vh 5vw;font-family:var(--disp,inherit)';
+    ov.innerHTML='<div style="display:flex;align-items:center;gap:16px"><b id="cuOvT" style="flex:1;font-size:clamp(26px,3.4vw,44px);color:#ffcf7a"></b><button id="cuOvX" style="font-size:20px;padding:12px 20px;border-radius:16px;border:0;background:rgba(255,255,255,.14);color:#fff">Cerrar</button></div><div id="cuOvP" style="flex:1;overflow-y:auto;margin-top:2vh;font-size:clamp(20px,2.5vw,32px);line-height:1.6;white-space:pre-wrap"></div>';
+    document.body.appendChild(ov); ov.querySelector('#cuOvX').onclick=()=>{ try{ stopTalk(); }catch(e){} ov.remove(); }; }
+  ov.querySelector('#cuOvT').textContent='🌙 '+String(o.titulo||'Un cuento'); ov.querySelector('#cuOvP').textContent=String(o.texto||'');
+  say(String(o.titulo||'')+'. '+String(o.texto||'').replace(/\n+/g,' '), 'happy'); }
 function jarvisMsg(o){
+  if(o.k==='cocina' && o.receta){ recetaDelCelu(o); return true; }
+  if(o.k==='cuento' && o.texto){ cuentoDelCelu(o); return true; }
   if(o.k==='guardia' && o.est){ if(!!o.on!==guardia.on){ guardiaSet(!!o.on, {silencio:true, remoto:true, demora:o.on?30:0}); say(o.on?'Me pidieron desde el celu que active la guardia. La activo en 30 segundos.':'Desactivaron la guardia desde el celu.', 'happy'); } return true; }
   if(o.k==='guardia') return true;   // (la foto que mandó esta misma tablet)
   if(o.k==='proto' && o.n){ const p=protoFind(o.n); if(p) protoRun(p, {desdeCompu:true}); else FSync.send({k:'aviso', to:o.f, i:'⚡', t:'No hay protocolo «'+o.n+'» en la tablet', s:'', v:''}); return true; }

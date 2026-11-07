@@ -1,26 +1,36 @@
 {
- "version": "5.2",
- "titulo": "Tu cuenta de BufaLabs",
+ "version": "5.3",
+ "titulo": "Casa, familia y estudio",
  "items": [
   {
-   "icono": "🔐",
-   "titulo": "Tu cuenta de BufaLabs",
-   "texto": "Entrás con tu mail y una clave. Lo tuyo se guarda cifrado: ni BufaLabs lo puede leer. Está en Más → Tu cuenta."
+   "icono": "🍳",
+   "titulo": "¿Qué cocino?",
+   "texto": "Sacale una foto a la heladera y te digo tres cosas ricas con lo que hay. La que elijas, la tablet te la guía paso a paso."
   },
   {
-   "icono": "🔄",
-   "titulo": "Todo se conecta solo",
-   "texto": "Con la misma cuenta en el celu, la compu y la tablet, se unen solos y comparten la memoria y los recordatorios. Sin QR ni códigos."
+   "icono": "👨‍👩‍👧",
+   "titulo": "Tu familia en FRIDAY",
+   "texto": "Uní a tu familia: «avisale a mamá que llego tarde» le suena en el celu. Y comparten una lista."
   },
   {
-   "icono": "📱",
-   "titulo": "Celu nuevo, FRIDAY de siempre",
-   "texto": "Si cambiás de celu, entrás con tu mail y vuelve todo: tu nombre, tus listas, tus recordatorios y tus ajustes."
+   "icono": "💊",
+   "titulo": "Remedios con aviso",
+   "texto": "Te recuerda el remedio. Si en media hora no marcás «Ya lo tomé», le avisa a quien vos digas."
   },
   {
-   "icono": "🛟",
-   "titulo": "Si te olvidás la clave",
-   "texto": "Al crear la cuenta te doy un código de rescate. Con él entrás y elegís otra clave, sin perder nada."
+   "icono": "🌙",
+   "titulo": "Cuentos, juegos y la tarea",
+   "texto": "«Contame un cuento para Juli», trivia, adiviná el animal, mímica, y la tarea explicada paso a paso con una foto."
+  },
+  {
+   "icono": "🎙️",
+   "titulo": "Oye Siri, Friday",
+   "texto": "Hablale desde el auto, con los AirPods o el reloj. Está en Casa y familia → Siri."
+  },
+  {
+   "icono": "📺",
+   "titulo": "FRIDAY en la tele",
+   "texto": "La nueva app FRIDAY Tele para teles LG: se une con tu celu escribiendo un código."
   }
  ]
 }

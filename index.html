@@ -691,6 +691,51 @@ body{font-family:var(--font);background:radial-gradient(90% 50% at 50% -8%,rgba(
 </style>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ===== casa, familia y estudio (5.3) ===== */
+.hg-mosaico{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:6px}
+.hg-mosaico button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:14px 6px 12px;border-radius:18px;border:1px solid var(--line);background:var(--card);text-align:center;min-height:118px}
+.hg-mosaico span{font-size:30px;line-height:1.1}.hg-mosaico b{font-size:14.5px;line-height:1.2}.hg-mosaico small{font-size:12px;color:var(--muted);line-height:1.25}
+.hg-mosaico button:active{transform:scale(.97)}
+.hg-form{display:flex;flex-direction:column;gap:9px;margin:4px 0 10px}
+.hg-form input,.hg-horas input{width:100%;padding:12px 13px;border:1px solid var(--line2);border-radius:13px;background:rgba(255,255,255,.04);outline:none;color:var(--text);font-size:16px}
+.hg-horas{display:flex;flex-wrap:wrap;gap:8px}.hg-horas input{width:auto;flex:1 1 120px}
+.hg-fila2{display:flex;gap:8px;flex-wrap:wrap}
+.hg-mini{padding:8px 13px;border-radius:999px;border:1px solid var(--line2);background:rgba(var(--accent-rgb),.08);font-size:14px;font-weight:600}
+.hg-mini.si{background:rgba(var(--accent-rgb),.25)}
+.hg-caja{border:1px solid var(--line);border-radius:18px;background:var(--card);padding:14px;margin:12px 0}
+.hg-caja h5{margin:0 0 6px;font-size:17px}.hg-caja p{margin:6px 0;line-height:1.45}
+.hg-caja ol,.hg-caja ul{margin:6px 0;padding-left:22px;line-height:1.5}.hg-caja li{margin:4px 0}
+.hg-caja .hg-fila2{margin-top:10px}
+.hg-tag{display:inline-block;font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;background:rgba(var(--accent-rgb),.15);color:var(--accent);margin-right:6px}
+.hg-tag.mal{background:rgba(255,110,110,.15);color:#ff9d9d}.hg-tag.ok{background:rgba(110,220,150,.15);color:#8ee6ad}
+.hg-cargando{display:flex;align-items:center;gap:12px;padding:16px;border-radius:16px;border:1px dashed var(--line2);margin:12px 0;color:var(--muted)}
+.hg-cargando i{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--line2);border-top-color:var(--accent);animation:hgGira .8s linear infinite;flex:none}
+@keyframes hgGira{to{transform:rotate(360deg)}}
+.hg-item{display:flex;align-items:center;gap:10px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:var(--card);margin:7px 0}
+.hg-item .t{flex:1;min-width:0}.hg-item .t b{display:block}.hg-item .t small{color:var(--muted);font-size:13px}
+.hg-item button{flex:none;padding:7px 11px;border-radius:11px;border:1px solid var(--line2);background:rgba(255,255,255,.04)}
+.hg-item img{width:46px;height:46px;border-radius:11px;object-fit:cover;flex:none}
+.hg-pend{display:flex;flex-direction:column;gap:10px;padding:16px;border-radius:18px;background:linear-gradient(135deg,rgba(var(--accent-rgb),.22),rgba(var(--accent-rgb),.06));border:1px solid var(--line2);margin:4px 0 12px}
+.hg-pend b{font-size:18px}
+#hgBanner{position:fixed;left:12px;right:12px;top:calc(10px + env(safe-area-inset-top,0px));z-index:45;display:flex;align-items:center;gap:12px;padding:12px 12px 12px 16px;border-radius:18px;background:var(--card2);border:1px solid var(--line2);box-shadow:0 12px 36px rgba(0,0,0,.5);animation:pop .25s ease-out}
+#hgBanner .t{flex:1;min-width:0;font-size:15px;line-height:1.35}#hgBanner button{flex:none;padding:10px 14px;border-radius:13px;border:0;background:var(--accent);color:#04121f;font-weight:800}
+#hgBanner .x{background:transparent;color:var(--muted);border:1px solid var(--line2)}
+.hg-cuento{white-space:pre-wrap;line-height:1.65;font-size:17px}
+.hg-ops{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.hg-ops button{padding:13px 14px;border-radius:14px;border:1px solid var(--line2);background:rgba(255,255,255,.04);text-align:left;font-size:16px}
+.hg-ops button.ok{background:rgba(110,220,150,.18);border-color:#6fd69a}.hg-ops button.mal{background:rgba(255,110,110,.15);border-color:#ff8b8b}
+.hg-grande{font:700 34px/1.15 var(--display,inherit);text-align:center;margin:18px 0 6px;letter-spacing:.01em}
+.hg-reloj{font-size:44px;font-weight:800;text-align:center;font-variant-numeric:tabular-nums}
+.hg-codigo{font:700 24px/1 ui-monospace,Menlo,monospace;letter-spacing:.12em;text-align:center;padding:14px;border-radius:14px;background:rgba(var(--accent-rgb),.1);margin:8px 0}
+.hg-pasos{counter-reset:p;list-style:none;padding:0;margin:8px 0}
+.hg-pasos li{counter-increment:p;position:relative;padding:10px 0 10px 40px;border-bottom:1px solid var(--line);line-height:1.45}
+.hg-pasos li::before{content:counter(p);position:absolute;left:0;top:9px;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:rgba(var(--accent-rgb),.18);color:var(--accent);font-weight:800;font-size:14px}
+.hg-copiar{display:flex;gap:8px;align-items:center;margin:6px 0}.hg-copiar code{flex:1;min-width:0;overflow-wrap:anywhere;font-size:13px;padding:9px 10px;border-radius:10px;background:rgba(255,255,255,.06)}
+.hg-copiar button{flex:none;padding:9px 12px;border-radius:10px;border:1px solid var(--line2);background:rgba(var(--accent-rgb),.12);font-weight:700}
+.hg-chat{display:flex;flex-direction:column;gap:8px;margin:10px 0;max-height:46vh;overflow-y:auto}
+.hg-chat div{padding:9px 12px;border-radius:14px;max-width:85%;line-height:1.4}.hg-chat .yo{align-self:flex-end;background:rgba(var(--accent-rgb),.18)}.hg-chat .fr{align-self:flex-start;background:var(--card);border:1px solid var(--line)}
+</style>
 </head>
 <body>
 <script>
@@ -1662,6 +1707,7 @@ const SIESTA = (() => {
 <main id="chat" aria-live="polite"></main>
 <nav id="quick">
   <button class="chip chip-tab" id="tabChip" data-sheet="tablet">🏠 Tablet</button>
+  <button class="chip" data-sheet="hogar">✨ Casa y familia</button>
   <button class="chip" id="bdChip">☀️ Buen día</button>
   <button class="chip" data-s="¿Cómo está el clima hoy?">🌤️ Clima</button>
   <button class="chip" id="agChip" data-s="¿Qué tengo en la agenda estos días?" hidden>📅 Agenda</button>
@@ -1811,6 +1857,87 @@ const SIESTA = (() => {
   </div>
 </section>
 
+
+<!-- ===== CASA, FAMILIA Y ESTUDIO (5.3) ===== -->
+<section class="sheet" id="sh-hogar"><div class="grab"></div><h3>Casa, familia y estudio</h3>
+  <p class="note">Tocá una o pedíselo hablando: «¿qué cocino?», «contame un cuento», «juguemos», «ayudame con la tarea».</p>
+  <div class="hg-mosaico">
+    <button data-sheet="cocina"><span>🍳</span><b>¿Qué cocino?</b><small>Foto a la heladera</small></button>
+    <button data-sheet="remedios"><span>💊</span><b>Remedios</b><small>Con aviso a la familia</small></button>
+    <button data-sheet="familia"><span>👨‍👩‍👧</span><b>Familia</b><small>Recados y lista</small></button>
+    <button data-sheet="cuentos"><span>🌙</span><b>Cuentos</b><small>Para dormir</small></button>
+    <button data-sheet="juegos"><span>🎲</span><b>Juegos</b><small>Trivia, adiviná, mímica</small></button>
+    <button data-sheet="tarea"><span>📚</span><b>La tarea</b><small>Foto al ejercicio</small></button>
+    <button data-sheet="plantas"><span>🪴</span><b>Plantas</b><small>¿Qué le pasa?</small></button>
+    <button data-sheet="siri"><span>🎙️</span><b>Siri</b><small>En el auto y con auriculares</small></button>
+    <button data-sheet="tele"><span>📺</span><b>La tele</b><small>FRIDAY Tele (LG)</small></button>
+  </div>
+</section>
+
+<section class="sheet" id="sh-cocina"><div class="grab"></div><h3>¿Qué cocino?</h3>
+  <p class="note">Sacale una foto a la heladera (o a la alacena) y te digo tres cosas ricas para hacer con lo que hay.</p>
+  <button class="big" id="hgCocFoto">📷 Foto a la heladera</button>
+  <div class="addrow"><input id="hgCocTxt" placeholder="O escribí: tengo pollo, papas y crema" enterkeyhint="go" autocomplete="off"><button id="hgCocIr">Ver</button></div>
+  <div id="hgCocRes"></div>
+</section>
+
+<section class="sheet" id="sh-plantas"><div class="grab"></div><h3>Plantas</h3>
+  <p class="note">Sacale una foto a la planta: te digo qué es, cómo está y qué hacer. Y te recuerdo regarla.</p>
+  <button class="big" id="hgPlFoto">📷 Foto a la planta</button>
+  <div id="hgPlRes"></div>
+  <h4>Tus plantas</h4>
+  <div id="hgPlLista"></div>
+</section>
+
+<section class="sheet" id="sh-remedios"><div class="grab"></div><h3>Remedios</h3>
+  <div id="hgRmPend"></div>
+  <form class="hg-form" id="hgRmForm" autocomplete="off">
+    <input id="hgRmNom" placeholder="¿Qué remedio? (ej: Enalapril)" maxlength="40" required>
+    <input id="hgRmDosis" placeholder="Cuánto (ej: 1 pastilla) — opcional" maxlength="40">
+    <div class="hg-horas" id="hgRmHoras"><input type="time" value="08:00" aria-label="Hora"></div>
+    <div class="hg-fila2"><button type="button" class="hg-mini" id="hgRmMasHora">+ Otra hora</button></div>
+    <button class="big" type="submit">Agregar remedio</button>
+  </form>
+  <h4>Los de todos los días</h4>
+  <div id="hgRmLista"></div>
+  <div class="hg-caja" id="hgRmFam"></div>
+</section>
+
+<section class="sheet" id="sh-familia"><div class="grab"></div><h3>Familia</h3>
+  <div id="hgFamBox"></div>
+</section>
+
+<section class="sheet" id="sh-cuentos"><div class="grab"></div><h3>Cuentos para dormir</h3>
+  <form class="hg-form" id="hgCuForm" autocomplete="off">
+    <input id="hgCuNom" placeholder="¿Para quién? (ej: Juli)" maxlength="30">
+    <input id="hgCuGusta" placeholder="¿Qué le gusta? (ej: dinosaurios, su perro Toto)" maxlength="80">
+    <div class="reps" id="hgCuLargo" role="radiogroup" aria-label="Largo"><button type="button" data-l="corto" class="on">Cortito</button><button type="button" data-l="mediano">Mediano</button><button type="button" data-l="largo">Largo</button></div>
+    <button class="big" type="submit">🌙 Inventar un cuento</button>
+  </form>
+  <div id="hgCuRes"></div>
+  <h4>Los últimos</h4>
+  <div id="hgCuLista"></div>
+</section>
+
+<section class="sheet" id="sh-juegos"><div class="grab"></div><h3>Juegos</h3>
+  <div id="hgJgBox"></div>
+</section>
+
+<section class="sheet" id="sh-tarea"><div class="grab"></div><h3>Ayuda con la tarea</h3>
+  <p class="note">Sacale una foto al ejercicio. Te lo explico paso a paso, sin darte la respuesta de una: primero lo pensás vos.</p>
+  <div class="addrow"><input id="hgTaGrado" placeholder="¿Qué grado o año? (ej: 5to grado)" maxlength="30" autocomplete="off"></div>
+  <button class="big" id="hgTaFoto" style="margin-top:10px">📷 Foto al ejercicio</button>
+  <div id="hgTaRes"></div>
+</section>
+
+<section class="sheet" id="sh-siri"><div class="grab"></div><h3>Siri: FRIDAY en el auto</h3>
+  <div id="hgSiriBox"></div>
+</section>
+
+<section class="sheet" id="sh-tele"><div class="grab"></div><h3>La tele</h3>
+  <div id="hgTeleBox"></div>
+</section>
+
 <!-- AJUSTES -->
 <section class="sheet" id="sh-menu"><div class="grab"></div><h3>Más</h3>
   <div class="perfil"><div class="avatar" id="avatar">F</div><div><b id="perfilN">Vos</b><small id="perfilC"></small></div></div>
@@ -1822,6 +1949,14 @@ const SIESTA = (() => {
     <button class="fila" data-sheet="avisos"><span class="fi">🔔</span><span class="ft"><b>Avisos y buen día</b><small id="avMenuTxt"></small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="musica"><span class="fi">🎵</span><span class="ft"><b>Spotify</b><small id="spMenuTxt"></small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="tablet"><span class="fi">🏠</span><span class="ft"><b>La tablet de la casa <span class="etq">Beta</span></b><small>Hablarle, la guardia y la tele</small></span><span class="chev" aria-hidden="true"></span></button>
+  </div>
+
+  <h4>Casa, familia y estudio</h4>
+  <div class="grupo">
+    <button class="fila" data-sheet="hogar"><span class="fi">✨</span><span class="ft"><b>Casa, familia y estudio</b><small>Cocina, remedios, cuentos, juegos, la tarea</small></span><span class="chev" aria-hidden="true"></span></button>
+    <button class="fila" data-sheet="familia"><span class="fi">👨‍👩‍👧</span><span class="ft"><b>Familia</b><small>Recados y lista compartida</small></span><span class="chev" aria-hidden="true"></span></button>
+    <button class="fila" data-sheet="siri"><span class="fi">🎙️</span><span class="ft"><b>Siri</b><small>«Oye Siri, Friday» en el auto</small></span><span class="chev" aria-hidden="true"></span></button>
+    <button class="fila" data-sheet="tele"><span class="fi">📺</span><span class="ft"><b>La tele</b><small>FRIDAY Tele para teles LG</small></span><span class="chev" aria-hidden="true"></span></button>
   </div>
 
   <h4>Vos</h4>
@@ -1991,13 +2126,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='5.2';
+const VERSION='5.3';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"5.2","titulo":"Tu cuenta de BufaLabs","items":[
-  {"icono":"🔐","titulo":"Tu cuenta de BufaLabs","texto":"Entrás con tu mail y una clave. Lo tuyo se guarda cifrado: ni BufaLabs lo puede leer. Está en Más → Tu cuenta."},
-  {"icono":"🔄","titulo":"Todo se conecta solo","texto":"Con la misma cuenta en el celu, la compu y la tablet, se unen solos y comparten la memoria y los recordatorios. Sin QR ni códigos."},
-  {"icono":"📱","titulo":"Celu nuevo, FRIDAY de siempre","texto":"Si cambiás de celu, entrás con tu mail y vuelve todo: tu nombre, tus listas, tus recordatorios y tus ajustes."},
-  {"icono":"🛟","titulo":"Si te olvidás la clave","texto":"Al crear la cuenta te doy un código de rescate. Con él entrás y elegís otra clave, sin perder nada."}]};
+const NOVEDADES_M={"version": "5.3", "titulo": "Casa, familia y estudio", "items": [{"icono": "🍳", "titulo": "¿Qué cocino?", "texto": "Sacale una foto a la heladera y te digo tres cosas ricas con lo que hay. La que elijas, la tablet te la guía paso a paso."}, {"icono": "👨‍👩‍👧", "titulo": "Tu familia en FRIDAY", "texto": "Uní a tu familia: «avisale a mamá que llego tarde» le suena en el celu. Y comparten una lista."}, {"icono": "💊", "titulo": "Remedios con aviso", "texto": "Te recuerda el remedio. Si en media hora no marcás «Ya lo tomé», le avisa a quien vos digas."}, {"icono": "🌙", "titulo": "Cuentos, juegos y la tarea", "texto": "«Contame un cuento para Juli», trivia, adiviná el animal, mímica, y la tarea explicada paso a paso con una foto."}, {"icono": "🎙️", "titulo": "Oye Siri, Friday", "texto": "Hablale desde el auto, con los AirPods o el reloj. Está en Casa y familia → Siri."}, {"icono": "📺", "titulo": "FRIDAY en la tele", "texto": "La nueva app FRIDAY Tele para teles LG: se une con tu celu escribiendo un código."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -2196,6 +2327,7 @@ function showSheet(name){ if(name==='tablet') try{ renderTablet(); }catch(e){} c
   ({rems:renderRems, musica:spOpen, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc, compras:()=>cmVer(chango.items.length&&cmVista!=='hist'?'chango':cmVista)})[name]?.(); }
 function closeSheets(keep){ document.querySelectorAll('.sheet.on').forEach(s=>s.classList.remove('on')); if(!keep) $('shade').classList.remove('on'); if(openSheet==='menu') readMenu(); if(openSheet==='vinc') scanStop(); openSheet=null; clearInterval(spState.t); if(!keep){ marcarTab(); try{ renderHoy(); }catch(e){} } }
 $('shade').onclick=()=>closeSheets();
+{ const _hgShow=showSheet; showSheet=function(n){ _hgShow(n); try{ HOGAR.render(n); }catch(e){} }; }
 $('menuBtn').onclick=()=>showSheet('menu');
 $('musicBtn').onclick=()=>showSheet('musica');
 // pestañas de abajo
@@ -2284,7 +2416,7 @@ async function webSearch(q){
 function saveRems(){ LS.set('rems', reminders); clearTimeout(saveRems.t); saveRems.t=setTimeout(()=>wpSync(false).catch(()=>{}), 400); }
 function remWhen(r){ const d=new Date(r.at), hoy=new Date(); const man=new Date(); man.setDate(hoy.getDate()+1);
   const dia = d.toDateString()===hoy.toDateString()?'Hoy':d.toDateString()===man.toDateString()?'Mañana':d.toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short'});
-  return dia+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false})+(r.rep?' · '+({diario:'todos los días', semanal:'cada semana', habiles:'de lunes a viernes', finde:'los fines de semana'}[r.rep]||r.rep):''); }
+  return dia+' '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false})+(r.rep?' · '+(/^c\d+$/.test(r.rep)?'cada '+r.rep.slice(1)+' días':0||{diario:'todos los días', semanal:'cada semana', habiles:'de lunes a viernes', finde:'los fines de semana'}[r.rep]||r.rep):''); }
 function renderRems(){
   const box=$('remList'); box.innerHTML=''; remNoteTxt(); try{ renderEcoM(); }catch(e){} try{ renderAgBox(); }catch(e){} remFormIni();
   const list=reminders.filter(r=>!r.done).sort((a,b)=>a.at<b.at?-1:1);
@@ -2301,7 +2433,7 @@ function icsDownload(r){
   const d=new Date(r.at), z=x=>String(x).padStart(2,'0');
   const f=x=>`${x.getUTCFullYear()}${z(x.getUTCMonth()+1)}${z(x.getUTCDate())}T${z(x.getUTCHours())}${z(x.getUTCMinutes())}00Z`;
   const end=new Date(d.getTime()+10*60000);
-  const rr = r.rep==='diario'?'RRULE:FREQ=DAILY\r\n':r.rep==='semanal'?'RRULE:FREQ=WEEKLY\r\n':r.rep==='habiles'?'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR\r\n':'';
+  const rr = /^c\d+$/.test(r.rep||'')?'RRULE:FREQ=DAILY;INTERVAL='+r.rep.slice(1)+'\r\n':r.rep==='diario'?'RRULE:FREQ=DAILY\r\n':r.rep==='semanal'?'RRULE:FREQ=WEEKLY\r\n':r.rep==='habiles'?'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR\r\n':'';
   const ics=`BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//FRIDAY//ES\r\nBEGIN:VEVENT\r\nUID:${r.id}@friday\r\nDTSTAMP:${f(new Date())}\r\nDTSTART:${f(d)}\r\nDTEND:${f(end)}\r\n${rr}SUMMARY:${r.texto.replace(/[,;]/g,' ')}\r\nBEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:${r.texto.replace(/[,;]/g,' ')}\r\nTRIGGER:PT0M\r\nEND:VALARM\r\nEND:VEVENT\r\nEND:VCALENDAR\r\n`;
   const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([ics],{type:'text/calendar'})); a.download='recordatorio.ics'; document.body.appendChild(a); a.click(); setTimeout(()=>a.remove(),500);
   toast('Abrí el archivo y tocá "Agregar" en tu calendario 📅', 4000);
@@ -2317,7 +2449,7 @@ function chime(){ try{ if(!actx){ const C=window.AudioContext||window.webkitAudi
 async function notify(title, body){
   try{ if('Notification' in window && Notification.permission==='granted'){ const reg=await navigator.serviceWorker?.getRegistration(); if(reg) reg.showNotification(title,{body, icon:'icon-192.png', badge:'icon-192.png', vibrate:[200,100,200], tag:'friday-'+Date.now()}); else new Notification(title,{body}); } }catch(e){}
 }
-function nextRep(r, now){ const d=new Date(r.at); do{ d.setDate(d.getDate()+(r.rep==='semanal'?7:1)); }while(r.rep==='habiles' && (d.getDay()===0||d.getDay()===6) || d.getTime()<=now); return isoLocal(d); }
+function nextRep(r, now){ const d=new Date(r.at), cn=/^c(\d{1,2})$/.exec(r.rep||''); do{ d.setDate(d.getDate()+(cn?+cn[1]:r.rep==='semanal'?7:1)); }while(r.rep==='habiles' && (d.getDay()===0||d.getDay()===6) || d.getTime()<=now); return isoLocal(d); }
 function fireReminders(){
   const now=Date.now(); const due=reminders.filter(r=>!r.done && new Date(r.at).getTime()<=now);
   if(!due.length) return;
@@ -3999,6 +4131,462 @@ if(!PANEL){
     if(!libre){ if(n<60) setTimeout(()=>bienv(n+1), 1000); return; } CUENTA.bienvenida(); };
   window.addEventListener('load', ()=>setTimeout(()=>bienv(0), 3800));
 }
+// ================================================================ CASA, FAMILIA Y ESTUDIO (Móvil 5.3)
+// ¿Qué cocino?, plantas, remedios (con aviso a la familia), la familia entre cuentas, cuentos, juegos,
+// la tarea por foto, Siri (el atajo del iPhone: en el auto, con auriculares) y la tele (FRIDAY Tele para LG).
+var HOGAR=(()=>{
+  const H={};
+  const ALFA='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const TE=new TextEncoder(), TD=new TextDecoder();
+  const b64u=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+  const b64d=s=>{ s=String(s).replace(/-/g,'+').replace(/_/g,'/'); while(s.length%4) s+='='; const b=atob(s), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; };
+  const hex=b=>[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const sha=async s=>hex(await crypto.subtle.digest('SHA-256', TE.encode(s)));
+  const azar=n=>{ const a=crypto.getRandomValues(new Uint8Array(n)); let s=''; for(const x of a) s+=ALFA[x&31]; return s; };
+  const nid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  const lindo=c=>String(c).replace(/(.{4})(?=.)/g,'$1-');
+  const limpiarCod=c=>String(c||'').toUpperCase().replace(/O/g,'0').replace(/I/g,'1').replace(/[^A-Z0-9]/g,'');
+  async function llaveAES(raw){ return crypto.subtle.importKey('raw', raw, 'AES-GCM', false, ['encrypt','decrypt']); }
+  async function cerrar(o, key){ const iv=crypto.getRandomValues(new Uint8Array(12)); const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, TE.encode(JSON.stringify(o)))); const all=new Uint8Array(12+ct.length); all.set(iv); all.set(ct,12); return b64u(all); }
+  async function abrir(s, key){ try{ const u=b64d(s); return JSON.parse(TD.decode(await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(0,12)}, key, u.slice(12)))); }catch(e){ return null; } }
+  async function llaveCodigo(code){ const base=await crypto.subtle.importKey('raw', TE.encode(code), 'PBKDF2', false, ['deriveBits']);
+    const bits=await crypto.subtle.deriveBits({name:'PBKDF2', salt:TE.encode('bufalabs-sobre-v1'), iterations:100000, hash:'SHA-256'}, base, 256); return llaveAES(bits); }
+  const srv=(ruta, cuerpo)=>BUFIA.servidor(ruta, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(cuerpo||{})}).then(async r=>{ let j=null; try{ j=await r.json(); }catch(e){} return {st:r.status, j:j||{}}; }).catch(()=>({st:0, j:{}}));
+  // un sobre: algo cifrado con un código de 8 letras que el otro aparato escribe (la tele, la invitación a la familia)
+  H.sobreDejar=async(code, o)=>{ code=limpiarCod(code); const cid=await sha('bufalabs-sobre|'+code), k=await llaveCodigo(code); return srv('/sobre/dejar', {cid, sobre:await cerrar(o, k)}); };
+  H.sobreAbrir=async(code, romper)=>{ code=limpiarCod(code); const cid=await sha('bufalabs-sobre|'+code); const r=await srv('/sobre/abrir', {cid, romper:!!romper}); if(!r.j.sobre) return {r, o:null}; return {r, o:await abrir(r.j.sobre, await llaveCodigo(code))}; };
+
+  // ---------------------------------------------------------------- la IA (texto y fotos)
+  async function iaJSON(prompt, max){
+    const pedir=async(model, extra)=>{ const r=await fetch(API.groq+'/chat/completions', {method:'POST', headers:{'Content-Type':'application/json', Authorization:'Bearer '+S.groqKey},
+      body:JSON.stringify(Object.assign({model, temperature:0.8, max_completion_tokens:max||1800, response_format:{type:'json_object'}, messages:[{role:'user', content:prompt}]}, extra||{}))});
+      if(!r.ok) return null; const d=await r.json(); return jsonDe(d.choices?.[0]?.message?.content); };
+    for(const [m,x] of [['openai/gpt-oss-120b',{reasoning_effort:'low'}],['meta-llama/llama-4-maverick-17b-128e-instruct',null]]){ try{ const j=await pedir(m,x); if(j) return j; }catch(e){} }
+    if(S.gemKey){ for(const model of ['gemini-flash-latest','gemini-2.5-flash']){ try{ const r=await fetch(`${API.gem}/models/${model}:generateContent?key=${encodeURIComponent(S.gemKey)}`, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({contents:[{role:'user', parts:[{text:prompt}]}], generationConfig:{temperature:0.8, maxOutputTokens:(max||1800)+800, responseMimeType:'application/json'}})});
+      if(!r.ok) continue; const d=await r.json(); const j=jsonDe((d.candidates?.[0]?.content?.parts||[]).filter(p=>!p.thought).map(p=>p.text||'').join('')); if(j) return j; }catch(e){} } }
+    return null;
+  }
+  H.iaJSON=iaJSON;
+  function foto(cb, max){ const i=document.createElement('input'); i.type='file'; i.accept='image/*'; i.setAttribute('capture','environment'); i.style.display='none';
+    i.onchange=async()=>{ const f=i.files[0]; i.remove(); if(!f) return; let u; try{ u=await achicarFotoA(f, max||1400); }catch(e){ toast('No pude abrir la foto'); return; } cb(u); };
+    document.body.appendChild(i); i.click(); }
+  const cargando=(el, t)=>{ el.innerHTML=`<div class="hg-cargando"><i></i><span>${esc(t)}</span></div>`; };
+  const hablar=t=>{ try{ stopVoice(); }catch(e){} say(t); };
+  const tablet=()=>{ try{ return tabPeer(); }catch(e){ return null; } };
+  const teles=()=>{ try{ return FSync.on()?FSync.peersOf('tele'):[]; }catch(e){ return []; } };
+
+  // ================================================================ ¿QUÉ COCINO?
+  const P_HELADERA=`Sos una cocinera argentina, práctica y cariñosa. Te mando una foto de una heladera, alacena o mesada. Mirá qué ingredientes se ven y proponé 3 comidas caseras que se puedan hacer con eso (podés asumir que hay sal, aceite, agua, azúcar y harina). Devolvé SOLO JSON:
+{"ingredientes":["lo que ves, corto"],"recetas":[{"titulo":"nombre de la comida","tiempo":"ej: 30 min","porciones":2,"por_que":"en una frase: qué usa de lo que tenés","ingredientes":["cantidad + ingrediente"],"faltan":["lo que habría que comprar, si falta algo"],"pasos":["paso corto y claro"]}]}
+Si no se ve comida, devolvé {"ingredientes":[],"recetas":[]}.`;
+  const P_INGR=t=>`Sos una cocinera argentina, práctica y cariñosa. Alguien te dice qué tiene: «${t}». Proponé 3 comidas caseras con eso (podés asumir que hay sal, aceite, agua, azúcar y harina). Devolvé SOLO JSON:
+{"ingredientes":["lo que tiene"],"recetas":[{"titulo":"nombre de la comida","tiempo":"ej: 30 min","porciones":2,"por_que":"en una frase: qué usa de lo que tiene","ingredientes":["cantidad + ingrediente"],"faltan":["lo que habría que comprar"],"pasos":["paso corto y claro"]}]}`;
+  let recetas=[];
+  async function cocinaDe(fotoUrl, texto){
+    const el=$('hgCocRes'); cargando(el, fotoUrl?'Mirando qué hay…':'Pensando qué se puede hacer…');
+    const r=fotoUrl ? await cmIA(fotoUrl, P_HELADERA) : await iaJSON(P_INGR(texto), 2500);
+    if(!r || !Array.isArray(r.recetas) || !r.recetas.length){ el.innerHTML='<div class="hg-caja"><b>No me salió.</b><p>Probá con otra foto, con más luz, o escribime qué tenés.</p></div>'; return; }
+    recetas=r.recetas.slice(0,3);
+    const tb=tablet();
+    el.innerHTML=(r.ingredientes&&r.ingredientes.length?`<p class="note">Veo: ${esc(r.ingredientes.slice(0,14).join(', '))}.</p>`:'')+recetas.map((x,i)=>`<div class="hg-caja"><h5>${esc(x.titulo||'Receta')}</h5>
+      <p><span class="hg-tag">⏱ ${esc(x.tiempo||'—')}</span><span class="hg-tag">🍽 ${esc(String(x.porciones||2))}</span></p><p>${esc(x.por_que||'')}</p>
+      ${(x.faltan&&x.faltan.length)?`<p class="note">Falta: ${esc(x.faltan.join(', '))}</p>`:''}
+      <details><summary>Ingredientes y pasos</summary><ul>${(x.ingredientes||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ul><ol class="hg-pasos">${(x.pasos||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ol></details>
+      <div class="hg-fila2">${tb?`<button class="hg-mini si" data-coc-tab="${i}">🏠 Cocinarla con la tablet</button>`:''}<button class="hg-mini" data-coc-leer="${i}">🔊 Leémela</button>${(x.faltan&&x.faltan.length)?`<button class="hg-mini" data-coc-falta="${i}">🛒 Sumar lo que falta</button>`:''}</div></div>`).join('');
+    hablar(`Se me ocurren ${recetas.length} cosas: ${recetas.map(x=>x.titulo).join(', ')}. ¿Cuál te tienta?`);
+    pushHistory({role:'assistant', content:'Le propuse para cocinar: '+recetas.map(x=>x.titulo).join(', ')+'.'});
+  }
+  H.recetas=()=>recetas;
+  function recetaATablet(x){ const tb=tablet(); if(!tb){ toast('No hay ninguna tablet unida'); return; }
+    FSync.send({k:'cocina', to:tb.dev, receta:{titulo:x.titulo, porciones:x.porciones||2, ingredientes:(x.ingredientes||[]).slice(0,25), pasos:(x.pasos||[]).slice(0,25)}, de:S.name||''});
+    toast('🏠 La tablet ya tiene la receta: te va guiando paso a paso', 3500); buzz(12); }
+  document.addEventListener('click', e=>{
+    const a=e.target.closest('[data-coc-tab]'); if(a){ recetaATablet(recetas[+a.dataset.cocTab]); return; }
+    const b=e.target.closest('[data-coc-leer]'); if(b){ const x=recetas[+b.dataset.cocLeer]; hablar(`${x.titulo}. Necesitás: ${(x.ingredientes||[]).join(', ')}. ${(x.pasos||[]).map((p,i)=>'Paso '+(i+1)+': '+p).join(' ')}`); return; }
+    const c=e.target.closest('[data-coc-falta]'); if(c){ const x=recetas[+c.dataset.cocFalta]; const ad=shopAdd((x.faltan||[]).join(', ')); toast(ad.length?'🛒 Sumé: '+ad.join(', '):'Ya estaba en la lista'); return; }
+  });
+
+  // ================================================================ PLANTAS
+  const P_PLANTA=`Sos jardinero/a en Argentina. Te mando una foto de una planta. Devolvé SOLO JSON:
+{"es_planta":true,"nombre":"nombre común","cientifico":"nombre científico o vacío","estado":"sana|regular|mal","que_le_pasa":"en una o dos frases simples, o vacío si está sana","que_hacer":["consejo corto"],"riego_cada_dias":número,"luz":"sol directo|luz sin sol directo|sombra","mascotas":"si es tóxica para perros o gatos, decilo corto; si no, vacío"}
+Si no es una planta, {"es_planta":false}.`;
+  const plantas=()=>LS.get('plantas',[]);
+  async function plantaDe(u){
+    const el=$('hgPlRes'); cargando(el, 'Mirando la planta…');
+    const r=await cmIA(u, P_PLANTA);
+    if(!r || r.es_planta===false || !r.nombre){ el.innerHTML='<div class="hg-caja"><b>No veo bien la planta.</b><p>Probá con la planta entera, con luz y más cerca de las hojas.</p></div>'; return; }
+    const cls=r.estado==='sana'?'ok':r.estado==='mal'?'mal':'';
+    const cada=Math.min(Math.max(Math.round(+r.riego_cada_dias||3),1),30);
+    el.innerHTML=`<div class="hg-caja"><h5>${esc(r.nombre)}</h5>${r.cientifico?`<p class="note">${esc(r.cientifico)}</p>`:''}
+      <p><span class="hg-tag ${cls}">${r.estado==='sana'?'Sana':r.estado==='mal'?'Necesita ayuda':'Más o menos'}</span><span class="hg-tag">💧 cada ${cada} días</span><span class="hg-tag">☀️ ${esc(r.luz||'')}</span></p>
+      ${r.que_le_pasa?`<p>${esc(r.que_le_pasa)}</p>`:''}${(r.que_hacer||[]).length?`<ul>${r.que_hacer.map(t=>`<li>${esc(t)}</li>`).join('')}</ul>`:''}
+      ${r.mascotas?`<p class="note">🐾 ${esc(r.mascotas)}</p>`:''}
+      <div class="hg-fila2"><button class="hg-mini si" id="hgPlGuardar">💧 Recordame regarla</button></div></div>`;
+    hablar(`Es ${/^[aeiou]/i.test(r.nombre)?'un':'una'} ${r.nombre}. ${r.que_le_pasa||'Se ve sana.'} ${r.que_hacer&&r.que_hacer[0]?r.que_hacer[0]:''}`);
+    $('hgPlGuardar').onclick=async()=>{
+      const nom=(prompt('¿Cómo le decís a esta planta?', r.nombre)||'').trim(); if(!nom) return;
+      const mini=await new Promise(ok=>{ const im=new Image(); im.onload=()=>{ const c=document.createElement('canvas'); c.width=c.height=120; const l=Math.min(im.width,im.height); c.getContext('2d').drawImage(im,(im.width-l)/2,(im.height-l)/2,l,l,0,0,120,120); ok(c.toDataURL('image/jpeg',.7)); }; im.onerror=()=>ok(''); im.src=u; });
+      const id=nid(), d=new Date(); d.setDate(d.getDate()+cada); d.setHours(10,0,0,0);
+      addReminder(isoLocal(d), '🪴 Regar '+nom, 'c'+cada);
+      const l=plantas(); l.push({id, nombre:nom, especie:r.nombre, cada, foto:mini, at:Date.now()}); LS.set('plantas', l.slice(-20)); renderPlantas();
+      toast(`💧 Te aviso cada ${cada} días para regar ${nom}`, 3500); };
+  }
+  function renderPlantas(){ const el=$('hgPlLista'), l=plantas(); if(!el) return;
+    el.innerHTML=l.length?l.map(p=>`<div class="hg-item">${p.foto?`<img src="${p.foto}" alt="">`:'<span style="font-size:28px">🪴</span>'}<div class="t"><b>${esc(p.nombre)}</b><small>${esc(p.especie)} · regar cada ${p.cada} días</small></div><button data-pl-borrar="${p.id}" aria-label="Borrar">✕</button></div>`).join(''):'<div class="vacio">Todavía no guardaste ninguna.</div>'; }
+  document.addEventListener('click', e=>{ const b=e.target.closest('[data-pl-borrar]'); if(!b) return; const p=plantas().find(x=>x.id===b.dataset.plBorrar); LS.set('plantas', plantas().filter(x=>x.id!==b.dataset.plBorrar));
+    if(p){ reminders=reminders.filter(r=>{ const es=!r.done && r.texto==='🪴 Regar '+p.nombre; if(es) try{ remUnpush(r); }catch(e){} return !es; }); saveRems(); } renderPlantas(); });
+
+  // ================================================================ REMEDIOS
+  const meds=()=>LS.get('remedios',[]);
+  const tomas=()=>LS.get('remTomas',{});
+  const hhmm=d=>String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  // las tomas entre dos momentos: [{rid, cuando, med, hora}]
+  function tomasEntre(desde, hasta){ const out=[]; for(const m of meds()){ if(m.on===false) continue;
+    for(const h of m.horas||[]){ const [hh,mm]=h.split(':').map(Number); const d=new Date(desde); d.setHours(hh,mm,0,0); if(d.getTime()<desde) d.setDate(d.getDate()+1);
+      while(d.getTime()<=hasta){ out.push({rid:m.id+'-'+h.replace(':',''), cuando:d.getTime(), med:m, hora:h}); d.setDate(d.getDate()+1); } } }
+    return out.sort((a,b)=>a.cuando-b.cuando); }
+  const pendientes=()=>{ const t=tomas(), ahora=Date.now(); return tomasEntre(ahora-4*3600000, ahora).filter(x=>!t[x.rid+'|'+x.cuando]); };
+  H.pendientes=pendientes;
+  function medsAReminders(){
+    // los recordatorios de los remedios se arman de nuevo cada vez (se repiten todos los días)
+    reminders=reminders.filter(r=>{ const es=!!r.med && !r.done; if(es) try{ remUnpush(r); }catch(e){} return !es; });
+    for(const m of meds()){ if(m.on===false) continue; for(const h of m.horas||[]){ const [hh,mm]=h.split(':').map(Number); const d=new Date(); d.setHours(hh,mm,0,0); if(d.getTime()<=Date.now()+30000) d.setDate(d.getDate()+1);
+      reminders.push({id:Date.now()+''+Math.floor(Math.random()*1e6), at:isoLocal(d), texto:'💊 '+m.nombre+(m.dosis?' ('+m.dosis+')':''), rep:'diario', done:false, med:m.id}); } }
+    saveRems(); setTimeout(()=>{ try{ schedulePushes(); }catch(e){} }, 300); remPlanServidor(); }
+  async function remPlanServidor(){
+    const f=LS.get('familia',null); const ahora=Date.now();
+    const avisar=f&&f.datos ? (f.datos.miembros||[]).filter(m=>m.mid!==f.yo.mid && m.celu && m.avisos!==false).map(m=>({para:m.celu.para, tok:m.celu.tok, nombre:m.nombre})) : [];
+    if(!avisar.length && !LS.get('remPlanOn',false)) return;
+    const r=await srv('/remedio/plan', {quien:S.name||(f&&f.yo&&f.yo.nombre)||'', espera:30, avisar, tomas:tomasEntre(ahora, ahora+4*864e5).map(x=>({rid:x.rid, cuando:x.cuando, texto:x.med.nombre}))});
+    if(r.j.ok){ LS.set('remPlanOn', avisar.length>0); LS.set('remPlanAt', ahora); }
+  }
+  async function marcarToma(x){ const t=tomas(); t[x.rid+'|'+x.cuando]=Date.now(); for(const k of Object.keys(t)) if(Date.now()-t[k]>7*864e5) delete t[k]; LS.set('remTomas', t);
+    if(LS.get('remPlanOn',false)) srv('/remedio/ok', {rid:x.rid, cuando:x.cuando}); try{ const b=$('hgBanner'); if(b) b.remove(); }catch(e){} renderRemedios(); }
+  H.marcarToma=marcarToma;
+  function renderRemedios(){
+    const pe=pendientes(), pb=$('hgRmPend'); if(!pb) return;
+    pb.innerHTML=pe.map((x,i)=>`<div class="hg-pend"><b>💊 ${esc(x.med.nombre)} de las ${x.hora}</b><span class="note" style="margin:0">${x.med.dosis?esc(x.med.dosis)+' · ':''}¿Ya lo tomaste?</span><button class="big" data-rm-ok="${i}" style="margin:0">✅ Sí, ya lo tomé</button></div>`).join('');
+    pb.querySelectorAll('[data-rm-ok]').forEach(b=>b.onclick=()=>{ marcarToma(pe[+b.dataset.rmOk]); toast('✅ Anotado'); buzz(10); });
+    const l=meds(), el=$('hgRmLista');
+    el.innerHTML=l.length?l.map(m=>`<div class="hg-item"><span style="font-size:24px">💊</span><div class="t"><b>${esc(m.nombre)}</b><small>${esc((m.horas||[]).join(' · '))}${m.dosis?' · '+esc(m.dosis):''}</small></div><button data-rm-borrar="${m.id}" aria-label="Borrar">✕</button></div>`).join(''):'<div class="vacio">No anotaste remedios. Arriba elegís el nombre y las horas.</div>';
+    const f=LS.get('familia',null), fb=$('hgRmFam');
+    if(!f) fb.innerHTML='<h5>¿Querés que alguien se entere si te olvidás?</h5><p class="note">Armá tu familia en FRIDAY: si pasa media hora y no marcaste «Ya lo tomé», le suena el celu a quien vos digas.</p><button class="big sec" data-sheet="familia">👨‍👩‍👧 Armar mi familia</button>';
+    else { const otros=(f.datos&&f.datos.miembros||[]).filter(m=>m.mid!==f.yo.mid);
+      fb.innerHTML=`<h5>Si en media hora no marcás «Ya lo tomé», le aviso a:</h5>${otros.length?otros.map(m=>`<label class="hg-item"><div class="t"><b>${esc(m.nombre)}</b><small>${m.celu?'Le suena el celu':'Tiene que prender los avisos en FRIDAY'}</small></div><input type="checkbox" data-rm-fam="${m.mid}" ${m.avisos!==false?'checked':''} ${m.celu?'':'disabled'}></label>`).join(''):'<p class="note">Todavía nadie más se unió a tu familia.</p>'}
+        ${WP.on()?'':'<p class="note">⚠️ Para que el remedio te suene con FRIDAY cerrada, prendé los avisos.</p><button class="big sec" data-sheet="avisos">🔔 Prender avisos</button>'}`; }
+  }
+  document.addEventListener('click', e=>{ const b=e.target.closest('[data-rm-borrar]'); if(!b) return; LS.set('remedios', meds().filter(m=>m.id!==b.dataset.rmBorrar)); medsAReminders(); renderRemedios(); toast('Remedio borrado'); });
+  document.addEventListener('change', e=>{ const c=e.target.closest('[data-rm-fam]'); if(!c) return; famCambiar(d=>{ const m=(d.miembros||[]).find(x=>x.mid===c.dataset.rmFam); if(m) m.avisos=c.checked; }).then(()=>remPlanServidor()); });
+  // el cartelito de «¿ya lo tomaste?» al abrir FRIDAY
+  function bannerRemedio(){
+    if($('hgBanner') || document.querySelector('.sheet.on')) return; const pe=pendientes(); if(!pe.length) return; const x=pe[pe.length-1];
+    if(Date.now()-x.cuando<60000) return;
+    const d=document.createElement('div'); d.id='hgBanner'; d.innerHTML=`<div class="t">💊 ¿Ya tomaste <b>${esc(x.med.nombre)}</b> de las ${x.hora}?</div><button>Sí</button><button class="x" aria-label="Después">Después</button>`;
+    document.body.appendChild(d); const [si,no]=d.querySelectorAll('button'); si.onclick=()=>{ marcarToma(x); toast('✅ Anotado'); }; no.onclick=()=>d.remove();
+    if(!H.bannerDicho || Date.now()-H.bannerDicho>20*60000){ H.bannerDicho=Date.now(); setTimeout(()=>{ if(!isSpeaking() && !busy) say(`¿Ya tomaste ${x.med.nombre}?`); }, 1200); }
+  }
+
+  // ================================================================ LA FAMILIA (varias cuentas, una caja cifrada)
+  const fam=()=>LS.get('familia',null);
+  async function famLlaves(f){ const K=b64d(f.k); return {key:await llaveAES(K), fid:await sha('bufalabs-familia|'+f.k), tok:await sha('bufalabs-familia-tok|'+f.k)}; }
+  async function famBajar(){ const f=fam(); if(!f) return null; const L=await famLlaves(f);
+    const r=await srv('/familia/bajar', {fid:L.fid, tok:L.tok, v:f.v||0});
+    if(r.st===404){ toast('Esa familia ya no existe'); LS.set('familia', null); return null; }
+    if(r.j.ok && !r.j.igual && r.j.datos){ const d=await abrir(r.j.datos, L.key); if(d){ const antes=f.datos; f.datos=d; f.v=r.j.v; LS.set('familia', f); famNovedades(antes, d); } }
+    else if(r.j.ok && r.j.v===0) { f.v=0; }
+    return fam(); }
+  // cambiar algo: se baja lo último, se aplica el cambio y se sube (si otro subió antes, de nuevo)
+  async function famCambiar(fn){ for(let i=0;i<4;i++){ const f=await famBajar()||fam(); if(!f) return false; const L=await famLlaves(f);
+      const d=JSON.parse(JSON.stringify(f.datos||{miembros:[], lista:[], recados:[]})); fn(d); d.recados=(d.recados||[]).slice(-40); d.lista=(d.lista||[]).slice(-120);
+      const r=await srv('/familia/subir', {fid:L.fid, tok:L.tok, v:f.v||0, datos:await cerrar(d, L.key)});
+      if(r.j.ok){ f.datos=d; f.v=r.j.v; LS.set('familia', f); return true; }
+      if(r.st!==409){ toast('No pude guardar en la familia. Probá de nuevo.'); return false; } }
+    return false; }
+  H.famCambiar=famCambiar;
+  function yoMiembro(f, nombre){ return {mid:f.yo.mid, nombre:nombre||f.yo.nombre, celu:WP.on()?{para:BUFIA.quien(), tok:timbreTok()}:null, avisos:true, at:Date.now()}; }
+  async function famCrear(nombreFam, yo){
+    const K=crypto.getRandomValues(new Uint8Array(32)), f={k:b64u(K), nombre:nombreFam, yo:{mid:nid(), nombre:yo}, v:0, datos:null};
+    const L=await famLlaves(f); const r=await srv('/familia/crear', {fid:L.fid, tok:L.tok});
+    if(!r.j.ok){ toast(r.j.mensaje||'No pude crear la familia ahora. Probá en un rato.'); return false; }
+    LS.set('familia', f); await famCambiar(d=>{ d.nombre=nombreFam; d.miembros=[yoMiembro(f, yo)]; d.lista=[]; d.recados=[]; }); siriPerfil(); return true; }
+  async function famInvitar(){ const f=fam(); if(!f) return null; const code=azar(8);
+    const r=await H.sobreDejar(code, {tipo:'familia', k:f.k, nombre:f.nombre, de:f.yo.nombre}); return r.j.ok?code:null; }
+  async function famUnirme(code, yo){
+    const {r, o}=await H.sobreAbrir(code, false);
+    if(!o || o.tipo!=='familia'){ toast(r.st===0?'Sin conexión':'Ese código no anda o ya venció (dura 30 minutos)'); return false; }
+    const f={k:o.k, nombre:o.nombre, yo:{mid:nid(), nombre:yo}, v:0, datos:null}; LS.set('familia', f);
+    const ok=await famCambiar(d=>{ d.miembros=(d.miembros||[]).filter(m=>m.mid!==f.yo.mid).concat([yoMiembro(f, yo)]); }); siriPerfil();
+    return ok; }
+  // si cambió mi timbre (prendí los avisos), lo actualizo en la familia
+  async function famRevisarYo(){ const f=fam(); if(!f || !f.datos) return; const m=(f.datos.miembros||[]).find(x=>x.mid===f.yo.mid); const c=WP.on()?{para:BUFIA.quien(), tok:timbreTok()}:null;
+    if(!m || JSON.stringify(m.celu)!==JSON.stringify(c)) await famCambiar(d=>{ const x=(d.miembros||[]).find(y=>y.mid===f.yo.mid); if(x) x.celu=c; else (d.miembros=d.miembros||[]).push(yoMiembro(f)); }); }
+  function famNovedades(antes, d){ const f=fam(); if(!f) return; const visto=LS.get('famVisto',0);
+    const nuevos=(d.recados||[]).filter(x=>x.at>visto && x.mid!==f.yo.mid && (x.para==='todos' || x.para===f.yo.mid));
+    if(nuevos.length){ LS.set('famVisto', Math.max(...nuevos.map(x=>x.at))); const x=nuevos[nuevos.length-1]; toast('💬 '+x.de+': '+x.texto, 6000); if(!document.hidden) setTimeout(()=>{ if(!isSpeaking()&&!busy) frSay(`Mensaje de ${x.de}: ${x.texto}`); }, 900); }
+    if(openSheet==='familia') renderFamilia(); }
+  const famMiembro=nombre=>{ const f=fam(); if(!f||!f.datos) return null; const n=norm(nombre).replace(/^(a |la |el |mi )/,''); const l=(f.datos.miembros||[]).filter(m=>m.mid!==f.yo.mid);
+    return l.find(m=>norm(m.nombre)===n) || l.find(m=>norm(m.nombre).includes(n) || n.includes(norm(m.nombre))) || null; };
+  async function famRecado(para, texto){ const f=fam(); if(!f) return 'Primero armá tu familia en FRIDAY (Casa y familia → Familia).';
+    let m=null; if(para!=='todos'){ m=famMiembro(para); if(!m) return `No encuentro a ${para} en tu familia de FRIDAY.`; }
+    const de=f.yo.nombre||S.name||'Alguien';
+    const ok=await famCambiar(d=>{ (d.recados=d.recados||[]).push({id:nid(), mid:f.yo.mid, de, para:m?m.mid:'todos', texto:String(texto).slice(0,200), at:Date.now()}); });
+    const a=(m?[m]:(f.datos.miembros||[]).filter(x=>x.mid!==f.yo.mid)).filter(x=>x.celu); let sono=0;
+    for(const x of a){ const r=await srv('/push/timbre', {para:x.celu.para, tok:x.celu.tok, titulo:'💬 '+de, texto:String(texto).slice(0,160), url:'./#familia'}); if(r.j.ok) sono++; }
+    if(!ok) return 'No pude mandarlo ahora. Probá en un rato.';
+    return m ? (m.celu&&sono?`Listo, le avisé a ${m.nombre}.`:`Se lo dejé a ${m.nombre}: lo va a ver cuando abra FRIDAY.`) : `Listo, le avisé a toda la familia.`; }
+  H.famRecado=famRecado;
+  async function famLista(item){ const f=fam(); if(!f) return 'Primero armá tu familia en FRIDAY.'; const its=String(item).split(/,|\sy\s/).map(x=>x.trim()).filter(Boolean);
+    const ok=await famCambiar(d=>{ for(const t of its) (d.lista=d.lista||[]).push({id:nid(), t:t[0].toUpperCase()+t.slice(1), h:false, por:f.yo.nombre}); }); return ok?`Sumé a la lista de la familia: ${its.join(', ')}.`:'No pude guardarlo ahora.'; }
+  function renderFamilia(){
+    const el=$('hgFamBox'), f=fam(); if(!el) return;
+    if(!f){ el.innerHTML=`<p class="note">Uní a tu familia: cada uno con su FRIDAY y su cuenta. Comparten una lista, se mandan recados («avisale a mamá que llego tarde») y les avisa si alguien se olvida el remedio.</p>
+      <div class="hg-caja"><h5>Armar mi familia</h5><div class="hg-form"><input id="hgFamNom" placeholder="Nombre de la familia (ej: Los Bufager)" maxlength="40"><input id="hgFamYo" placeholder="¿Cómo te dicen en casa? (ej: Papá, Pedro)" maxlength="30" value="${esc(S.name||'')}"><button class="big" id="hgFamCrear">Crear la familia</button></div></div>
+      <div class="hg-caja"><h5>Me invitaron</h5><div class="hg-form"><input id="hgFamCod" placeholder="Código de 8 letras (ej: K7QM-2XHA)" maxlength="12" autocapitalize="characters" autocomplete="off"><input id="hgFamYo2" placeholder="¿Cómo te dicen en casa?" maxlength="30" value="${esc(S.name||'')}"><button class="big sec" id="hgFamUnir">Unirme</button></div></div>`;
+      $('hgFamCrear').onclick=async()=>{ const n=$('hgFamNom').value.trim()||'Mi familia', y=$('hgFamYo').value.trim(); if(!y){ toast('Poné cómo te dicen'); return; } $('hgFamCrear').disabled=true; if(await famCrear(n, y)){ toast('👨‍👩‍👧 Familia creada'); renderFamilia(); } else $('hgFamCrear').disabled=false; };
+      $('hgFamUnir').onclick=async()=>{ const c=limpiarCod($('hgFamCod').value), y=$('hgFamYo2').value.trim(); if(c.length!==8){ toast('El código tiene 8 letras'); return; } if(!y){ toast('Poné cómo te dicen'); return; } $('hgFamUnir').disabled=true; if(await famUnirme(c, y)){ toast('👨‍👩‍👧 ¡Ya estás en la familia!'); renderFamilia(); } else $('hgFamUnir').disabled=false; };
+      return; }
+    const d=f.datos||{miembros:[], lista:[], recados:[]}, yo=f.yo.mid;
+    const nom=mid=>{ const m=(d.miembros||[]).find(x=>x.mid===mid); return m?m.nombre:'alguien'; };
+    el.innerHTML=`<div class="hg-caja"><h5>${esc(d.nombre||f.nombre||'Mi familia')}</h5><p>${(d.miembros||[]).map(m=>`<span class="hg-tag ${m.celu?'ok':''}">${esc(m.nombre)}${m.mid===yo?' (vos)':''}</span>`).join(' ')}</p>
+        <div class="hg-fila2"><button class="hg-mini si" id="hgFamInv">➕ Invitar a alguien</button></div><div id="hgFamInvBox"></div>
+        ${WP.on()?'':'<p class="note">Prendé los avisos para que te suene el celu cuando te manden algo.</p><button class="big sec" data-sheet="avisos">🔔 Prender avisos</button>'}</div>
+      <h4>Recados</h4><div class="addrow"><input id="hgFamMsg" placeholder="Escribí un recado para todos" maxlength="200" enterkeyhint="send"><button id="hgFamMsgIr">Mandar</button></div>
+      <div>${(d.recados||[]).slice(-8).reverse().map(x=>`<div class="hg-item"><div class="t"><b>${esc(x.de)}${x.para==='todos'?'':' → '+esc(nom(x.para))}</b><small>${esc(x.texto)} · ${new Date(x.at).toLocaleString('es-AR',{weekday:'short',hour:'2-digit',minute:'2-digit'})}</small></div></div>`).join('')||'<div class="vacio">Sin recados. Probá decir «avisale a mamá que llego tarde».</div>'}</div>
+      <h4>Lista de la familia</h4><div class="addrow"><input id="hgFamLi" placeholder="Agregar (ej: yerba, pan)" maxlength="80" enterkeyhint="done"><button id="hgFamLiIr">+</button></div>
+      <div>${(d.lista||[]).map(x=>`<div class="hg-item"><input type="checkbox" data-fl="${x.id}" ${x.h?'checked':''} aria-label="Ya está"><div class="t"><b style="${x.h?'text-decoration:line-through;opacity:.6':''}">${esc(x.t)}</b><small>${esc(x.por||'')}</small></div><button data-fl-x="${x.id}" aria-label="Quitar">✕</button></div>`).join('')||'<div class="vacio">Vacía.</div>'}</div>
+      <button class="big sec" id="hgFamSalir" style="margin-top:16px">Salir de la familia</button>`;
+    $('hgFamInv').onclick=async()=>{ const b=$('hgFamInvBox'); cargando(b, 'Armando el código…'); const c=await famInvitar(); if(!c){ b.innerHTML='<p class="note">No pude armar el código. Probá de nuevo.</p>'; return; }
+      b.innerHTML=`<p class="note">Que la otra persona abra FRIDAY en su celu → Casa y familia → Familia → «Me invitaron», y escriba:</p><div class="hg-codigo">${lindo(c)}</div><p class="note">Dura 30 minutos.</p><div class="hg-fila2"><button class="hg-mini" id="hgFamInvComp">📤 Mandárselo</button></div>`;
+      $('hgFamInvComp').onclick=()=>{ const t=`Sumate a nuestra familia en FRIDAY: abrí FRIDAY → Casa y familia → Familia → «Me invitaron» y poné el código ${lindo(c)} (dura 30 minutos).`; if(navigator.share) navigator.share({text:t}).catch(()=>{}); else { navigator.clipboard?.writeText(t); toast('Copiado'); } }; };
+    const mandar=async()=>{ const t=$('hgFamMsg').value.trim(); if(!t) return; $('hgFamMsg').value=''; toast(await famRecado('todos', t)); renderFamilia(); };
+    $('hgFamMsgIr').onclick=mandar; $('hgFamMsg').onkeydown=e=>{ if(e.key==='Enter') mandar(); };
+    const sumar=async()=>{ const t=$('hgFamLi').value.trim(); if(!t) return; $('hgFamLi').value=''; await famLista(t); renderFamilia(); };
+    $('hgFamLiIr').onclick=sumar; $('hgFamLi').onkeydown=e=>{ if(e.key==='Enter') sumar(); };
+    el.querySelectorAll('[data-fl]').forEach(c=>c.onchange=async()=>{ await famCambiar(d=>{ const x=(d.lista||[]).find(y=>y.id===c.dataset.fl); if(x) x.h=c.checked; }); renderFamilia(); });
+    el.querySelectorAll('[data-fl-x]').forEach(b=>b.onclick=async()=>{ await famCambiar(d=>{ d.lista=(d.lista||[]).filter(y=>y.id!==b.dataset.flX); }); renderFamilia(); });
+    $('hgFamSalir').onclick=async()=>{ if(!confirm('¿Salir de la familia? Vas a dejar de ver los recados y la lista.')) return; await famCambiar(d=>{ d.miembros=(d.miembros||[]).filter(m=>m.mid!==yo); }); LS.set('familia', null); siriPerfil(); renderFamilia(); };
+  }
+
+  // ================================================================ CUENTOS
+  const cuentos=()=>LS.get('cuentos',[]);
+  let cuentoAct=null;
+  async function cuentoNuevo(para, gusta, largo){
+    const el=$('hgCuRes'); if(el) cargando(el, 'Inventando el cuento…');
+    const pal={corto:'unas 220 palabras', mediano:'unas 400 palabras', largo:'unas 650 palabras'}[largo||'corto'];
+    const r=await iaJSON(`Escribí un cuento original para dormir, en español rioplatense, para leer en voz alta a un nene o nena${para?' que se llama '+para:''}${gusta?'. Le gusta: '+gusta:''}. Largo: ${pal}.
+Que sea tierno, con un poco de aventura y humor suave, sin miedo ni violencia, con frases cortas que suenen lindo leídas en voz alta, y un final tranquilo que invite a dormir. Los personajes son inventados (no uses personajes de películas, series ni libros).
+Devolvé SOLO JSON: {"titulo":"título corto","texto":"el cuento, con párrafos separados por \\n\\n"}`, 2600);
+    if(!r || !r.texto){ if(el) el.innerHTML='<div class="hg-caja"><b>No me salió el cuento.</b><p>Probá de nuevo en un ratito.</p></div>'; return null; }
+    const c={id:nid(), titulo:String(r.titulo||'Un cuento').slice(0,80), texto:String(r.texto), para:para||'', at:Date.now()};
+    const l=cuentos(); l.push(c); LS.set('cuentos', l.slice(-12)); cuentoAct=c; mostrarCuento(c); renderCuentos(); return c; }
+  H.cuentoNuevo=cuentoNuevo;
+  function mostrarCuento(c){ const el=$('hgCuRes'); if(!el) return; const tb=tablet(), tv=teles()[0];
+    el.innerHTML=`<div class="hg-caja"><h5>🌙 ${esc(c.titulo)}</h5><div class="hg-fila2"><button class="hg-mini si" id="hgCuLeer">🔊 Leémelo</button><button class="hg-mini" id="hgCuParar">⏹ Parar</button>${tb?'<button class="hg-mini" id="hgCuTab">🏠 Que lo cuente la tablet</button>':''}${tv?'<button class="hg-mini" id="hgCuTv">📺 Que lo cuente la tele</button>':''}</div><p class="hg-cuento">${esc(c.texto)}</p></div>`;
+    $('hgCuLeer').onclick=()=>leerCuento(c); $('hgCuParar').onclick=()=>stopVoice();
+    if(tb) $('hgCuTab').onclick=()=>{ FSync.send({k:'cuento', to:tb.dev, titulo:c.titulo, texto:c.texto.slice(0,5000)}); toast('🏠 La tablet lo está contando'); };
+    if(tv) $('hgCuTv').onclick=()=>{ FSync.send({k:'cuento', to:tv.dev, titulo:c.titulo, texto:c.texto.slice(0,5000)}); toast('📺 La tele lo está contando'); }; }
+  function leerCuento(c){ hablar(c.titulo+'. '+c.texto.replace(/\n+/g,' ')); }
+  function renderCuentos(){ const el=$('hgCuLista'); if(!el) return; const l=cuentos().slice().reverse();
+    el.innerHTML=l.length?l.map(c=>`<div class="hg-item"><span style="font-size:22px">📖</span><div class="t"><b>${esc(c.titulo)}</b><small>${c.para?'Para '+esc(c.para)+' · ':''}${new Date(c.at).toLocaleDateString('es-AR',{day:'numeric',month:'short'})}</small></div><button data-cu="${c.id}">Abrir</button></div>`).join(''):'<div class="vacio">Acá van a quedar los cuentos que inventemos.</div>'; }
+  document.addEventListener('click', e=>{ const b=e.target.closest('[data-cu]'); if(!b) return; const c=cuentos().find(x=>x.id===b.dataset.cu); if(c){ cuentoAct=c; mostrarCuento(c); $('sh-cuentos').scrollTop=0; } });
+
+  // ================================================================ JUEGOS
+  const ANIMALES=['perro','gato','caballo','vaca','oveja','chancho','gallina','pato','conejo','tortuga','elefante','jirafa','león','tigre','cebra','mono','oso','pingüino','delfín','ballena','tiburón','pulpo','cocodrilo','serpiente','rana','mariposa','abeja','hormiga','araña','búho','loro','águila','carpincho','yaguareté','hornero','ñandú','guanaco','lobo marino','puma','zorro','ardilla','murciélago','camello','canguro','koala','hipopótamo','rinoceronte','foca','flamenco','caracol'];
+  const MIMICA={'Animales':['un perro que mueve la cola','un gato que se lava','un pingüino caminando','un mono comiendo una banana','un elefante','una gallina','un canguro','un pulpo','una víbora','un loro que habla'],
+    'Cosas de todos los días':['lavarse los dientes','cebar un mate','manejar un auto','atarse los cordones','planchar','barrer','sacar una selfie','abrir un paraguas','pintarse las uñas','comer fideos'],
+    'Oficios':['bombero','peluquero','cocinero','doctor','maestra','futbolista','panadero','mago','astronauta','pescador'],
+    'Deportes':['natación','tenis','boxeo','básquet','esquí','bicicleta','arquero de fútbol','karate','golf','surf']};
+  let jg=null;
+  function renderJuegos(){
+    const el=$('hgJgBox'); if(!el) return;
+    if(!jg){ el.innerHTML=`<p class="note">Para jugar en familia. También le podés decir «juguemos a la trivia» o «adiviná el animal».</p>
+      <div class="hg-caja"><h5>❓ Trivia</h5><div class="hg-form"><select id="hgTrCat" class="hg-mini" style="padding:11px"><option>De todo un poco</option><option>Animales</option><option>Argentina</option><option>Ciencia</option><option>Deportes</option><option>Música</option><option>Geografía del mundo</option><option>Comidas</option></select>
+        <select id="hgTrEdad" class="hg-mini" style="padding:11px"><option value="chicos">Para chicos (6 a 10)</option><option value="todos" selected>Para toda la familia</option><option value="grandes">Difícil</option></select><button class="big" id="hgTrIr">Empezar la trivia</button></div></div>
+      <div class="hg-caja"><h5>🐾 Adiviná el animal</h5><p>Pienso un animal y vos me hacés preguntas de sí o no. Tenés 15.</p><button class="big sec" id="hgAdIr">Jugar</button></div>
+      <div class="hg-caja"><h5>🎭 Mímica</h5><p>Te muestro algo para actuar sin hablar. Los demás adivinan en un minuto.</p><div class="hg-fila2">${Object.keys(MIMICA).map(k=>`<button class="hg-mini" data-mm="${esc(k)}">${esc(k)}</button>`).join('')}</div></div>`;
+      $('hgTrIr').onclick=()=>trivia($('hgTrCat').value, $('hgTrEdad').value); $('hgAdIr').onclick=adivina;
+      el.querySelectorAll('[data-mm]').forEach(b=>b.onclick=()=>mimica(b.dataset.mm)); return; }
+    if(jg.tipo==='trivia') pintarTrivia(); else if(jg.tipo==='adivina') pintarAdivina(); else if(jg.tipo==='mimica') pintarMimica();
+  }
+  async function trivia(cat, edad){
+    const el=$('hgJgBox'); cargando(el, 'Armando las preguntas…');
+    const r=await iaJSON(`Armá una trivia de 7 preguntas de «${cat}» ${edad==='chicos'?'para chicos de 6 a 10 años (fáciles y divertidas)':edad==='grandes'?'difícil, para adultos':'para jugar en familia (ni muy fáciles ni muy difíciles)'}, en español rioplatense. Que sean datos ciertos y comprobables; si dudás de un dato, no lo uses. Cuatro opciones cada una, una sola correcta, en distinto lugar cada vez.
+Devolvé SOLO JSON: {"preguntas":[{"p":"la pregunta","o":["opción","opción","opción","opción"],"ok":número de 0 a 3,"dato":"un dato cortito y curioso para después de contestar"}]}`, 2600);
+    const ps=(r&&r.preguntas||[]).filter(q=>q && q.p && Array.isArray(q.o) && q.o.length>=2 && q.ok>=0 && q.ok<q.o.length).slice(0,7);
+    if(!ps.length){ jg=null; renderJuegos(); toast('No pude armar la trivia. Probá de nuevo.'); return; }
+    jg={tipo:'trivia', ps, i:0, pts:0, resp:null}; pintarTrivia(); }
+  H.trivia=trivia;
+  function pintarTrivia(){ const el=$('hgJgBox'), q=jg.ps[jg.i];
+    if(!q){ const t=`¡Terminamos! Hiciste ${jg.pts} de ${jg.ps.length}.`; el.innerHTML=`<div class="hg-caja"><div class="hg-grande">${jg.pts} / ${jg.ps.length}</div><p style="text-align:center">${jg.pts===jg.ps.length?'¡Perfecto! 🏆':jg.pts>=jg.ps.length/2?'¡Muy bien! 🎉':'¡La próxima sale mejor! 💪'}</p><button class="big" id="hgJgOtra">Jugar otra</button></div>`; hablar(t); $('hgJgOtra').onclick=()=>{ jg=null; renderJuegos(); }; return; }
+    el.innerHTML=`<div class="hg-caja"><p class="note">Pregunta ${jg.i+1} de ${jg.ps.length} · ${jg.pts} puntos</p><h5>${esc(q.p)}</h5><div class="hg-ops">${q.o.map((o,k)=>`<button data-tr="${k}" class="${jg.resp===null?'':k===q.ok?'ok':k===jg.resp?'mal':''}">${'ABCD'[k]}. ${esc(o)}</button>`).join('')}</div>
+      ${jg.resp!==null?`<p>${jg.resp===q.ok?'✅ ¡Bien!':'❌ Era '+esc(q.o[q.ok])+'.'} ${esc(q.dato||'')}</p><button class="big" id="hgTrSig">Siguiente</button>`:''}<div class="hg-fila2" style="margin-top:10px">${jg.resp===null?'<button class="hg-mini si" data-hablar>🎙️ Contestar hablando</button>':''}<button class="hg-mini" id="hgJgSalir">Dejar de jugar</button></div></div>`;
+    if(jg.resp===null){ hablar(q.p+' '+q.o.map((o,k)=>'ABCD'[k]+': '+o).join('. ')); el.querySelectorAll('[data-tr]').forEach(b=>b.onclick=()=>responderTrivia(+b.dataset.tr)); }
+    else $('hgTrSig').onclick=()=>{ jg.i++; jg.resp=null; pintarTrivia(); };
+    $('hgJgSalir').onclick=()=>{ jg=null; stopVoice(); renderJuegos(); }; }
+  function responderTrivia(k){ const q=jg.ps[jg.i]; if(jg.resp!==null) return; jg.resp=k; if(k===q.ok) jg.pts++; buzz(k===q.ok?[20,40,20]:60); pintarTrivia(); hablar((k===q.ok?'¡Bien! ':'No, era '+q.o[q.ok]+'. ')+(q.dato||'')); }
+  H.responderTrivia=t=>{ if(!jg||jg.tipo!=='trivia'||jg.resp!==null) return false; const q=jg.ps[jg.i]; const n=norm(t);
+    let k=['a','b','c','d'].indexOf((n.match(/^(?:la )?([abcd])\b/)||[])[1]); if(k<0) k=q.o.findIndex(o=>norm(o)===n || (n.length>3 && norm(o).includes(n))); if(k<0) return false; responderTrivia(k); return true; };
+  function adivina(){ jg={tipo:'adivina', secreto:ANIMALES[Math.floor(Math.random()*ANIMALES.length)], qs:[], fin:false}; pintarAdivina(); hablar('Ya pensé un animal. Preguntame cosas que se contesten con sí o no.'); }
+  function pintarAdivina(){ const el=$('hgJgBox');
+    el.innerHTML=`<div class="hg-caja"><h5>🐾 Adiviná el animal</h5><p class="note">${jg.fin?'':'Preguntas: '+jg.qs.length+' de 15'}</p><div class="hg-chat" id="hgAdChat">${jg.qs.map(x=>`<div class="yo">${esc(x.q)}</div><div class="fr">${esc(x.a)}</div>`).join('')}</div>
+      ${jg.fin?`<button class="big" id="hgAdOtra">Otra vez</button>`:`<div class="addrow"><input id="hgAdQ" placeholder="¿Tiene plumas? ¿Es el pingüino?" enterkeyhint="send" autocomplete="off"><button id="hgAdIr2">Preguntar</button></div><div class="hg-fila2" style="margin-top:10px"><button class="hg-mini si" data-hablar>🎙️ Preguntar hablando</button><button class="hg-mini" id="hgAdRindo">Me rindo</button></div>`}</div>`;
+    const ch=$('hgAdChat'); ch.scrollTop=ch.scrollHeight;
+    if(jg.fin){ $('hgAdOtra').onclick=adivina; return; }
+    const ir=()=>{ const q=$('hgAdQ').value.trim(); if(q) preguntaAdivina(q); }; $('hgAdIr2').onclick=ir; $('hgAdQ').onkeydown=e=>{ if(e.key==='Enter') ir(); };
+    $('hgAdRindo').onclick=()=>{ jg.fin=true; const a=`Era ${/a$/.test(jg.secreto)&&!/^(puma)$/.test(jg.secreto)?'una':'un'} ${jg.secreto}.`; jg.qs.push({q:'Me rindo', a}); pintarAdivina(); hablar(a); }; }
+  async function preguntaAdivina(q){ if(!jg||jg.tipo!=='adivina'||jg.fin) return false; jg.qs.push({q, a:'…'}); pintarAdivina();
+    const r=await iaJSON(`Estamos jugando a «adiviná el animal». El animal secreto es: ${jg.secreto}. El jugador pregunta: «${q}».
+Contestá como en el juego, en español rioplatense, muy corto: si pregunta una característica, "Sí", "No" o "A veces" y como mucho media frase. Si nombra un animal, decí si adivinó. No digas el animal salvo que lo haya adivinado.
+Devolvé SOLO JSON: {"respuesta":"lo que decís","adivino":true o false}`, 300);
+    const a=(r&&r.respuesta)||'Mmm, no te entendí. Preguntame de otra forma.'; jg.qs[jg.qs.length-1].a=a;
+    if(r&&r.adivino){ jg.fin=true; jg.qs[jg.qs.length-1].a='¡Sí! Era '+jg.secreto+'. ¡Lo adivinaste en '+jg.qs.length+' preguntas! 🎉'; }
+    else if(jg.qs.length>=15){ jg.fin=true; jg.qs[jg.qs.length-1].a=a+' Se terminaron las preguntas: era '+jg.secreto+'.'; }
+    pintarAdivina(); hablar(jg.qs[jg.qs.length-1].a); return true; }
+  H.preguntaAdivina=preguntaAdivina; H.juego=()=>jg;
+  function mimica(cat){ const l=MIMICA[cat]||MIMICA['Animales']; jg={tipo:'mimica', cat, l:l.slice().sort(()=>Math.random()-.5), i:0, fin:Date.now()+60000, visto:false}; pintarMimica(); }
+  function pintarMimica(){ const el=$('hgJgBox'); clearInterval(H.mmT);
+    const resto=()=>Math.max(0, Math.ceil((jg.fin-Date.now())/1000));
+    el.innerHTML=`<div class="hg-caja"><p class="note">${esc(jg.cat)} · que no lo vean los demás</p>${jg.visto?`<div class="hg-grande">${esc(jg.l[jg.i%jg.l.length])}</div>`:'<button class="big" id="hgMmVer" style="margin:18px 0">👀 Ver qué actúo</button>'}<div class="hg-reloj" id="hgMmT">${resto()}</div>
+      <div class="hg-fila2"><button class="hg-mini si" id="hgMmSig">✅ ¡Adivinaron! Otra</button><button class="hg-mini" id="hgJgSalir">Terminar</button></div></div>`;
+    if(!jg.visto) $('hgMmVer').onclick=()=>{ jg.visto=true; jg.fin=Date.now()+60000; pintarMimica(); };
+    $('hgMmSig').onclick=()=>{ jg.i++; jg.visto=false; jg.fin=Date.now()+60000; buzz(15); pintarMimica(); };
+    $('hgJgSalir').onclick=()=>{ clearInterval(H.mmT); jg=null; renderJuegos(); };
+    if(jg.visto) H.mmT=setInterval(()=>{ const t=$('hgMmT'); if(!t||!jg){ clearInterval(H.mmT); return; } const r=resto(); t.textContent=r; if(r<=0){ clearInterval(H.mmT); buzz([200,100,200]); try{ chime(); }catch(e){} t.textContent='¡Tiempo!'; } }, 250); }
+
+  // ================================================================ LA TAREA
+  async function tareaDe(u){
+    const el=$('hgTaRes'), grado=($('hgTaGrado').value||'').trim(); LS.set('tareaGrado', grado); cargando(el, 'Leyendo el ejercicio…');
+    const r=await cmIA(u, `Sos una maestra argentina paciente y clara. Te mando la foto de un ejercicio de la escuela${grado?' de '+grado:''}. Explicalo para que el chico o la chica lo pueda resolver solo: NO des el resultado en la explicación.
+Devolvé SOLO JSON: {"materia":"matemática, lengua, etc.","enunciado":"qué pide el ejercicio, con tus palabras y corto","pasos":["cómo pensarlo, paso por paso, sin el resultado final"],"pista":"una pista para destrabarse","respuesta":"la respuesta correcta (se muestra solo si la pide)","practica":[{"p":"un ejercicio parecido para practicar","r":"su respuesta"}]}
+Si la foto no tiene un ejercicio, {"enunciado":""}.`);
+    if(!r || !r.enunciado){ el.innerHTML='<div class="hg-caja"><b>No veo bien el ejercicio.</b><p>Probá con la hoja derecha, con luz y que entre todo el ejercicio.</p></div>'; return; }
+    el.innerHTML=`<div class="hg-caja"><p><span class="hg-tag">${esc(r.materia||'Tarea')}</span></p><h5>${esc(r.enunciado)}</h5><ol class="hg-pasos">${(r.pasos||[]).map(t=>`<li>${esc(t)}</li>`).join('')}</ol>
+      <details><summary>💡 Una pista</summary><p>${esc(r.pista||'')}</p></details><details><summary>✅ Ver la respuesta</summary><p>${esc(r.respuesta||'')}</p></details>
+      ${(r.practica||[]).length?`<h5 style="margin-top:12px">Para practicar</h5>${r.practica.slice(0,3).map(x=>`<details><summary>${esc(x.p)}</summary><p>${esc(x.r)}</p></details>`).join('')}`:''}
+      <div class="hg-fila2"><button class="hg-mini" id="hgTaLeer">🔊 Explicámelo</button><button class="hg-mini" id="hgTaProfe">🧑‍🏫 Tomame preguntas</button></div></div>`;
+    $('hgTaLeer').onclick=()=>hablar(r.enunciado+'. '+(r.pasos||[]).join(' '));
+    $('hgTaProfe').onclick=()=>{ closeSheets(); ask(`Tomame 5 preguntas para practicar ${r.materia||''} parecidas a este ejercicio: ${r.enunciado}`); };
+    hablar('A ver: '+r.enunciado+'. Te lo explico paso a paso, y la respuesta queda escondida para cuando la quieras ver.');
+  }
+
+  // ================================================================ SIRI (el atajo del iPhone)
+  const URL_ATAJO=()=>BUFIA.SERVIDOR+'/atajo';
+  async function siriPerfil(){ const a=LS.get('atajo',null); if(!a||!a.tok) return;
+    const f=fam(); const familia=f&&f.datos?(f.datos.miembros||[]).filter(m=>m.mid!==f.yo.mid && m.celu).map(m=>({nombre:m.nombre, para:m.celu.para, tok:m.celu.tok})):[];
+    const r=await srv('/atajo/alta', {tok:a.tok, perfil:{nombre:S.name||'', ciudad:S.city||'', lat:S.lat, lon:S.lon, familia}}); if(r.j.ok){ a.at=Date.now(); LS.set('atajo', a); } return r.j.ok; }
+  async function siriTraer(){ const a=LS.get('atajo',null); if(!a||!a.tok) return;
+    const r=await srv('/atajo/traer', {tok:a.tok, avisaElCelu:WP.on()}); const c=(r.j&&r.j.cola)||[]; if(!c.length) return; const hechos=[];
+    for(const x of c){
+      if(x.tipo==='recordatorio' && x.cuando){ if(WP.on()) addReminder(isoLocal(new Date(x.cuando)), x.texto); else reminders.push({id:Date.now()+''+Math.floor(Math.random()*1e6), at:isoLocal(new Date(x.cuando)), texto:x.texto, rep:null, done:false, push:true}); hechos.push('⏰ '+x.texto); }
+      else if(x.tipo==='lista'){ shopAdd((x.cantidad?x.cantidad+' ':'')+x.item); hechos.push('🛒 '+x.item); }
+      else if(x.tipo==='gasto'){ const l=gastos(); l.push({monto:x.monto, en:x.que||'algo', at:x.at||Date.now()}); LS.set('gastos', l.slice(-500)); hechos.push('💸 '+pesos(x.monto)); }
+      else if(x.tipo==='nota'){ addMemory(x.texto); hechos.push('📝 '+x.texto); }
+      else if(x.tipo==='recado') hechos.push('💬 a '+x.para);
+    }
+    saveRems(); if(hechos.length) toast('🎙️ Desde Siri: '+hechos.slice(0,4).join(' · '), 6000); }
+  H.siriTraer=siriTraer;
+  function renderSiri(){ const el=$('hgSiriBox'); if(!el) return; const a=LS.get('atajo',null);
+    if(!IOS) el.innerHTML='<p class="note">Esto es para iPhone. En Android, usá el modo 🚗 Manejando de FRIDAY.</p>';
+    if(!a||!a.tok){ el.innerHTML=(IOS?'':el.innerHTML)+`<p>Decís <b>«Oye Siri, Friday»</b>, le hablás, y FRIDAY te contesta en voz alta. Anda en el <b>auto con CarPlay</b>, con los <b>AirPods</b> y en el <b>Apple Watch</b>, sin tocar el celu.</p>
+        <p class="note">Te recuerda cosas, anota en la lista, suma gastos, te dice el clima y le manda recados a tu familia. Lo que pidas por Siri aparece acá cuando abrís FRIDAY.</p><button class="big" id="hgSiriOn">Activar FRIDAY en Siri</button>`;
+      $('hgSiriOn').onclick=async()=>{ $('hgSiriOn').disabled=true; LS.set('atajo', {tok:b64u(crypto.getRandomValues(new Uint8Array(24))), at:0}); if(await siriPerfil()) renderSiri(); else { LS.set('atajo', null); toast('No pude activarlo ahora. Probá en un rato.'); $('hgSiriOn').disabled=false; } }; return; }
+    el.innerHTML=`<p>Armá el atajo una sola vez (2 minutos) en la app <b>Atajos</b> del iPhone:</p>
+      <ol class="hg-pasos"><li>Abrí <b>Atajos</b>, tocá <b>+</b> y ponele de nombre <b>Friday</b>.</li>
+        <li>Agregá la acción <b>Solicitar entrada</b> (Ask for Input). En la pregunta poné: <i>¿Qué necesitás?</i></li>
+        <li>Agregá <b>Obtener contenido de URL</b> y pegá esta dirección:<div class="hg-copiar"><code>${esc(URL_ATAJO())}</code><button data-copiar="${esc(URL_ATAJO())}">Copiar</button></div>Tocá la flechita: <b>Método</b> POST, <b>Cuerpo</b> JSON. Agregá dos campos de texto:<br>• <b>k</b> con tu código:<div class="hg-copiar"><code>${esc(a.tok)}</code><button data-copiar="${esc(a.tok)}">Copiar</button></div>• <b>t</b> con la variable <b>Entrada proporcionada</b>.</li>
+        <li>Agregá <b>Mostrar resultado</b> (Show Result) con <b>Contenido de URL</b>.</li>
+        <li>Listo. Decí <b>«Oye Siri, Friday»</b> y hablale: «recordame pagar la luz mañana a las 10».</li></ol>
+      <p class="note">Tu código es solo tuyo: no lo compartas. Si alguien lo tiene, tocá «Cambiar el código».</p>
+      <div class="hg-fila2"><button class="hg-mini" id="hgSiriProbar">Probar desde acá</button><button class="hg-mini" id="hgSiriNuevo">Cambiar el código</button><button class="hg-mini" id="hgSiriOff">Apagar</button></div><div id="hgSiriPrueba"></div>`;
+    $('hgSiriProbar').onclick=async()=>{ const t=prompt('¿Qué le decís a Siri?', '¿Cómo va a estar el día?'); if(!t) return; const b=$('hgSiriPrueba'); cargando(b, 'Preguntando…');
+      try{ const r=await fetch(URL_ATAJO(), {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({k:a.tok, t})}); const s=await r.text(); b.innerHTML=`<div class="hg-caja"><p>${esc(s)}</p></div>`; hablar(s); setTimeout(siriTraer, 800); }catch(e){ b.innerHTML='<p class="note">No pude conectarme.</p>'; } };
+    $('hgSiriNuevo').onclick=async()=>{ if(!confirm('El atajo viejo deja de andar y vas a tener que pegar el código nuevo. ¿Seguimos?')) return; await srv('/atajo/baja', {tok:a.tok}); LS.set('atajo', {tok:b64u(crypto.getRandomValues(new Uint8Array(24))), at:0}); await siriPerfil(); renderSiri(); };
+    $('hgSiriOff').onclick=async()=>{ if(!confirm('¿Apagar FRIDAY en Siri?')) return; await srv('/atajo/baja', {tok:a.tok}); LS.set('atajo', null); renderSiri(); }; }
+  document.addEventListener('click', e=>{ if(e.target.closest('[data-hablar]')){ try{ stopVoice(); recStart(); }catch(err){} } });
+  document.addEventListener('click', e=>{ const b=e.target.closest('[data-copiar]'); if(!b) return; navigator.clipboard?.writeText(b.dataset.copiar).then(()=>toast('Copiado ✅')).catch(()=>prompt('Copiá esto:', b.dataset.copiar)); });
+
+  // ================================================================ LA TELE (FRIDAY Tele, la app para teles LG)
+  function renderTele(){ const el=$('hgTeleBox'); if(!el) return; const tv=teles();
+    el.innerHTML=`${tv.length?`<div class="hg-caja"><h5>📺 ${esc(tv[0].n||'La tele')}</h5><p class="note">${Date.now()-tv[0].t<15*60000?'Prendida':'Apagada o sin conexión'}</p>
+        <div class="addrow"><input id="hgTvTxt" placeholder="Decile algo a la tele" enterkeyhint="send" autocomplete="off"><button id="hgTvIr">Mandar</button></div>
+        <div class="hg-fila2" style="margin-top:10px"><button class="hg-mini" data-tv="¿Cómo está el clima hoy?">🌤️ El clima</button><button class="hg-mini" data-tv="trivia">❓ Trivia en la tele</button><button class="hg-mini" data-tv="cuento">🌙 Un cuento</button></div></div>`:''}
+      <div class="hg-caja"><h5>${tv.length?'Unir otra tele':'Unir la tele'}</h5><p class="note">Abrí <b>FRIDAY Tele</b> en la tele LG: te muestra un código. Escribilo acá.</p>
+        <div class="hg-form"><input id="hgTvCod" placeholder="Código de la tele (ej: K7QM-2XHA)" maxlength="12" autocapitalize="characters" autocomplete="off"><button class="big" id="hgTvUnir">Unir la tele</button></div>
+        <p class="note">¿Todavía no la tenés? <a href="https://bufalabs-arg.github.io/tele/" target="_blank" rel="noopener">Cómo instalar FRIDAY Tele</a>.</p></div>`;
+    if(tv.length){ const ir=()=>{ const t=$('hgTvTxt').value.trim(); if(!t) return; $('hgTvTxt').value=''; FSync.send({k:'oir', to:tv[0].dev, t, de:S.name||''}); toast('📺 Se lo pasé a la tele'); }; $('hgTvIr').onclick=ir; $('hgTvTxt').onkeydown=e=>{ if(e.key==='Enter') ir(); };
+      el.querySelectorAll('[data-tv]').forEach(b=>b.onclick=()=>{ const v=b.dataset.tv; if(v==='trivia') FSync.send({k:'juego', to:tv[0].dev, j:'trivia'}); else if(v==='cuento') FSync.send({k:'oir', to:tv[0].dev, t:'Contame un cuento para dormir', de:S.name||''}); else FSync.send({k:'oir', to:tv[0].dev, t:v, de:S.name||''}); toast('📺 Listo'); }); }
+    $('hgTvUnir').onclick=async()=>{ const c=limpiarCod($('hgTvCod').value); if(c.length!==8){ toast('El código de la tele tiene 8 letras'); return; }
+      if(!FSync.on()){ toast('Primero entrá con tu cuenta de BufaLabs (Más → Tu cuenta)', 4500); return; }
+      $('hgTvUnir').disabled=true;
+      const r=await H.sobreDejar(c, {tipo:'tele', code:FSync.cfg.code, s:FSync.cfg.server, n:S.name||'', city:S.city||'', lat:S.lat, lon:S.lon, voz:S.voz!==false});
+      $('hgTvUnir').disabled=false;
+      if(r.j.ok){ toast('📺 ¡Listo! En unos segundos la tele dice hola', 5000); $('hgTvCod').value=''; } else toast('No pude unir la tele. Probá de nuevo.'); };
+  }
+  H.teleDecir=t=>{ const tv=teles()[0]; if(!tv) return false; FSync.send({k:'oir', to:tv.dev, t:String(t).slice(0,400), de:S.name||''}); return true; };
+
+  // ================================================================ las hojas
+  H.render=n=>{ try{ ({cocina:()=>{}, plantas:renderPlantas, remedios:renderRemedios, familia:()=>{ renderFamilia(); famBajar().then(()=>{ if(openSheet==='familia') renderFamilia(); }); }, cuentos:()=>{ renderCuentos(); if(cuentoAct) mostrarCuento(cuentoAct); }, juegos:renderJuegos, siri:renderSiri, tele:renderTele})[n]?.(); }catch(e){ console.warn(e); } };
+  function enlazar(){
+    $('hgCocFoto').onclick=()=>foto(u=>cocinaDe(u));
+    const cocTxt=()=>{ const t=$('hgCocTxt').value.trim(); if(t) cocinaDe(null, t); }; $('hgCocIr').onclick=cocTxt; $('hgCocTxt').onkeydown=e=>{ if(e.key==='Enter') cocTxt(); };
+    $('hgPlFoto').onclick=()=>foto(plantaDe, 1200);
+    $('hgTaFoto').onclick=()=>foto(tareaDe, 1700); $('hgTaGrado').value=LS.get('tareaGrado','');
+    $('hgRmMasHora').onclick=()=>{ const i=document.createElement('input'); i.type='time'; i.value='20:00'; i.setAttribute('aria-label','Hora'); $('hgRmHoras').appendChild(i); };
+    $('hgRmForm').onsubmit=e=>{ e.preventDefault(); const nombre=$('hgRmNom').value.trim(); if(!nombre) return; const horas=[...$('hgRmHoras').querySelectorAll('input')].map(i=>i.value).filter(Boolean).sort();
+      if(!horas.length){ toast('Poné al menos una hora'); return; }
+      const l=meds(); l.push({id:nid().slice(-10).replace(/[^a-z0-9]/g,'x'), nombre, dosis:$('hgRmDosis').value.trim(), horas:[...new Set(horas)], on:true}); LS.set('remedios', l);
+      $('hgRmNom').value=''; $('hgRmDosis').value=''; $('hgRmHoras').innerHTML='<input type="time" value="08:00" aria-label="Hora">';
+      medsAReminders(); renderRemedios(); toast(`💊 Te aviso ${horas.join(' y ')} para ${nombre}`, 3500); };
+    $('hgCuLargo').addEventListener('click', e=>{ const b=e.target.closest('[data-l]'); if(!b) return; $('hgCuLargo').querySelectorAll('button').forEach(x=>x.classList.toggle('on', x===b)); });
+    $('hgCuForm').onsubmit=e=>{ e.preventDefault(); const l=($('hgCuLargo').querySelector('.on')||{}).dataset?.l||'corto'; LS.set('cuentoPara', {n:$('hgCuNom').value.trim(), g:$('hgCuGusta').value.trim()});
+      cuentoNuevo($('hgCuNom').value.trim(), $('hgCuGusta').value.trim(), l).then(c=>{ if(c) leerCuento(c); }); };
+    const cp=LS.get('cuentoPara',null); if(cp){ $('hgCuNom').value=cp.n||''; $('hgCuGusta').value=cp.g||''; }
+  }
+
+  // ================================================================ por voz
+  H.voz=(text, n)=>{
+    const dec=r=>{ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); if(r) frSay(r); return true; };
+    let m;
+    if(jg && jg.tipo==='trivia' && H.responderTrivia(text)){ txt.value=''; if(openSheet!=='juegos') showSheet('juegos'); return true; }
+    if(jg && jg.tipo==='adivina' && !jg.fin && !/^(chau|basta|termina|salir)/.test(n) && (openSheet==='juegos' || /\?\s*$/.test(text) || /^(es|tiene|vive|come|puede|hace|sabe|nada|vuela|anda) /.test(n))){ txt.value=''; if(openSheet!=='juegos') showSheet('juegos'); preguntaAdivina(text); return true; }
+    if(/^(casa y familia|casa familia y estudio|abri casa y familia)$/.test(n)){ dec(''); showSheet('hogar'); return true; }
+    if((m=n.match(/^(?:que (?:cocino|hago de comer|hago de cenar|hago de almorzar|preparo|puedo cocinar)|que como hoy)(?: (?:con|si tengo) (.+))?$/))){ dec(''); showSheet('cocina'); if(m[1]) cocinaDe(null, m[1]); else frSay('Sacale una foto a la heladera, o decime qué tenés.'); return true; }
+    if(/^(ya )?(me )?(lo |la )?tome\b/.test(n) && n.length<60){ const pe=pendientes(), esMed=/\b(remedio|pastilla|medicamento|medicacion)s?\b/.test(n), x=pe.find(p=>n.includes(norm(p.med.nombre)));
+      if(x || (pe.length && (esMed || /^ya (me )?(lo |la )?tome$/.test(n)))){ const y=x||pe[pe.length-1]; marcarToma(y); return dec(`Anotado: ${y.med.nombre} de las ${y.hora}.`); }
+      if(esMed) return dec('No tenías ninguna toma pendiente. ¡Bien!'); }
+    if(/^(mis |los )?(remedios|pastillas|medicamentos)$|^(agrega|anota|agregame|anotame) (un |una )?(remedio|pastilla|medicamento)$/.test(n)){ dec(''); showSheet('remedios'); return true; }
+    if((m=n.match(/^(?:avisale|decile|mandale un mensaje|mandale|contale) a (?:la |el |mi )?([a-zñ]+(?: [a-zñ]+)?) que (.+)$/)) && fam()){ const para=m[1], t=m[2]; if(famMiembro(para) || /^(todos|la familia|toda la familia)$/.test(para)){ dec(''); famRecado(/todos|familia/.test(para)?'todos':para, t).then(r=>frSay(r)); return true; } }
+    if((m=n.match(/^(?:agrega|anota|suma|pone)(?:me)? (.+?) (?:a|en) la lista de (?:la )?familia$/))){ dec(''); famLista(m[1]).then(r=>frSay(r)); return true; }
+    if(/^(la )?familia$|^(mi |la )?familia (de friday)?$/.test(n)){ dec(''); showSheet('familia'); return true; }
+    if((m=n.match(/^(?:conta|contame|contanos|inventa|inventame|lee|leeme|leenos) un cuento(?: (?:para dormir|corto|largo))?(?: (?:para|a) ([a-zñ]+))?(?:,? (?:que|a quien) le gusta(?:n)? (?:los |las |el |la )?(.+))?$/))){
+      dec('Dale, ya te invento uno.'); showSheet('cuentos'); const cp=LS.get('cuentoPara',{}); cuentoNuevo(m[1]||cp.n||'', m[2]||(!m[1]&&cp.g)||'', /largo/.test(n)?'mediano':'corto').then(c=>{ if(c) leerCuento(c); }); return true; }
+    if(/^(juguemos|jugamos|vamos a jugar|quiero jugar)( a algo)?$|^(juegos|jugar)$/.test(n)){ dec('¡Dale! ¿Trivia, adiviná el animal o mímica?'); jg=null; showSheet('juegos'); return true; }
+    if(/^(juguemos|jugamos|vamos a jugar|quiero jugar)? ?(a )?(la )?trivia/.test(n)){ dec('¡Dale! Armo las preguntas.'); showSheet('juegos'); trivia('De todo un poco', 'todos'); return true; }
+    if(/^(juguemos|jugamos|vamos a jugar)? ?(a )?adivina(r)? (el|un) animal$/.test(n)){ dec(''); showSheet('juegos'); adivina(); return true; }
+    if(/^(juguemos|jugamos|vamos a jugar)? ?(a (la )?)?mimica$/.test(n)){ dec(''); showSheet('juegos'); mimica('Cosas de todos los días'); return true; }
+    if(/^(ayudame|ayudanos|me ayudas|ayuda) con (la |mi |una )?tarea$|^(la )?tarea$/.test(n)){ dec('Dale. Sacale una foto al ejercicio.'); showSheet('tarea'); return true; }
+    if(/^(que le pasa a )?(mi |la |esta )?planta|^mis plantas$/.test(n) && n.length<40){ dec('Sacale una foto a la planta.'); showSheet('plantas'); return true; }
+    if(/^(oye )?siri$|^(friday en siri|el atajo de siri|configurar siri|activa siri)$/.test(n)){ dec(''); showSheet('siri'); return true; }
+    if((m=n.match(/^(?:decile|deci|avisale|avisa) (?:a|en) la tele (?:que )?(.+)$/))){ if(H.teleDecir(m[1])) return dec('Se lo pasé a la tele.'); return dec('No tengo ninguna tele unida. Abrí FRIDAY Tele en la tele y unila desde Casa y familia.'); }
+    if(/^(unir|uni|conecta|conectar) (la )?tele$|^friday tele$/.test(n)){ dec(''); showSheet('tele'); return true; }
+    return false; };
+
+  // ================================================================ arranque
+  H.iniciar=()=>{
+    try{ enlazar(); }catch(e){ console.warn(e); }
+    const ciclo=async()=>{ if(document.hidden) return; try{ bannerRemedio(); }catch(e){} };
+    setInterval(ciclo, 60000); setTimeout(ciclo, 6000);
+    const alAbrir=async()=>{ try{ await siriTraer(); }catch(e){} try{ if(fam()){ await famBajar(); await famRevisarYo(); } }catch(e){}
+      try{ if(meds().length && Date.now()-LS.get('remPlanAt',0)>12*3600000) await remPlanServidor(); }catch(e){}
+      try{ const a=LS.get('atajo',null); if(a && Date.now()-(a.at||0)>24*3600000) await siriPerfil(); }catch(e){} };
+    window.addEventListener('load', ()=>setTimeout(alAbrir, 4000));
+    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) setTimeout(()=>{ alAbrir(); ciclo(); }, 1500); });
+    if(location.hash==='#familia'){ history.replaceState(null,'',location.pathname); setTimeout(()=>showSheet('familia'), 1200); }
+    if(location.hash==='#remedios'){ history.replaceState(null,'',location.pathname); setTimeout(()=>showSheet('remedios'), 1200); }
+  };
+  return H;
+})();
+
 const SYNC_DEV=(()=>{ const k=PANEL?'syncDevP':'syncDev'; let d=LS.get(k,null); if(!d){ d=(PANEL?'pan':'cel')+Math.random().toString(36).slice(2,6); LS.set(k,d); } return d; })();
 let pedidos=LS.get('pedidos',[]);
 function syncLocal(){
@@ -4758,6 +5346,7 @@ async function timbreCompartir(forzar){
 setTimeout(()=>timbreCompartir(), 15000); setInterval(()=>timbreCompartir(), 10*60000);
 function celuJarvis(text){
   const n=String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\b(friday|viernes)\b/g,' ').replace(/\s+/g,' ').trim();
+  try{ if(typeof HOGAR!=='undefined' && HOGAR.voz(text, n)) return true; }catch(e){ console.warn(e); }
   if(/^(abri |abrime |entra a |entrar a |quiero |mostrame )?(mi cuenta( de bufalabs)?|la cuenta de bufalabs|crear (una |mi )?cuenta|iniciar sesion|inicia sesion|cerrar sesion|me olvide la clave|cambiar (la |mi )?clave)$/.test(n)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); const c=CUENTA.yo(); frSay(c?'Estás en tu cuenta, '+c.mail+'. Te la abro.':'Te abro tu cuenta de BufaLabs: con la misma en la compu y la tablet se conecta todo solo.'); setTimeout(()=>CUENTA.abrir(/olvide/.test(n)?'rescate':/crear/.test(n)?'crear':c?null:'hola'), 600); return true; }
   const t=tabPeer(), dec=r=>{ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(r); return true; };
   let m;
@@ -5067,6 +5656,7 @@ document.addEventListener('click', e=>{ const b=e.target.closest('[data-auto]');
     else if(S.hf) setTimeout(()=>needTap('🙌','Tocá para seguir con manos libres', hfStart, ()=>{ S.hf=false; saveS(); }), 600);
   }
 })();
+try{ HOGAR.iniciar(); }catch(e){ console.warn(e); }
 </script>
 <button type="button" id="micTabChip" hidden>🎙 Micrófono de la tablet · tocá para volver</button>
 <script>document.getElementById('micTabChip').onclick=()=>{ micTabPoner(false); frSay('Listo, volví a ser tu celu.'); };</script>
