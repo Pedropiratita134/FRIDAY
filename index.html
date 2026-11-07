@@ -1765,7 +1765,8 @@ const SIESTA = (() => {
 <!-- VINCULAR CON LA COMPU -->
 <section class="sheet" id="sh-vinc"><div class="grab"></div><button class="volver" data-volver>Volver</button><h3>Tu compu</h3>
   <div id="vOff">
-    <p class="note" style="margin-top:0">Si tenés FRIDAY en la compu, vinculalas: lo que le contás a una lo sabe la otra. Comparten la <b>memoria</b> y los <b>recordatorios</b>, y desde acá ves tu <b>agenda de Google</b> y le pedís que anote cosas. Va <b>cifrado</b>.</p>
+    <button class="big" type="button" onclick="closeSheets();CUENTA.abrir()" style="margin-bottom:10px">🔐 Más fácil: entrá con tu cuenta de BufaLabs</button>
+    <p class="note" style="margin-top:0">Con la misma cuenta en la compu y en el celu, se unen solas. O, si preferís, vinculalas a mano: lo que le contás a una lo sabe la otra. Comparten la <b>memoria</b> y los <b>recordatorios</b>, y desde acá ves tu <b>agenda de Google</b> y le pedís que anote cosas. Va <b>cifrado</b>.</p>
     <ol class="steps"><li>En la compu: <b>Ajustes → Celular → Vincular FRIDAY Móvil</b>.</li><li>Escaneá el QR o escribí las 16 letras.</li></ol>
     <button class="big" id="vScan" hidden>📷 Escanear el QR</button>
     <div id="scanBox" hidden><video id="scanV" playsinline muted></video></div>
@@ -1816,6 +1817,7 @@ const SIESTA = (() => {
 
   <h4>Conexiones</h4>
   <div class="grupo">
+    <button class="fila" id="ctaFila" type="button"><span class="fi">🔐</span><span class="ft"><b>Tu cuenta de BufaLabs</b><small id="ctaMenuTxt">Entrá con tu mail y se conecta todo solo</small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="vinc"><span class="fi">💻</span><span class="ft"><b>Tu compu</b><small id="vMenuBtn">Sin vincular</small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="avisos"><span class="fi">🔔</span><span class="ft"><b>Avisos y buen día</b><small id="avMenuTxt"></small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="musica"><span class="fi">🎵</span><span class="ft"><b>Spotify</b><small id="spMenuTxt"></small></span><span class="chev" aria-hidden="true"></span></button>
@@ -1989,13 +1991,13 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='5.1';
+const VERSION='5.2';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version":"5.1","titulo":"El changuito","items":[
-  {"icono":"📸","titulo":"Sacale una foto al precio","texto":"En Compras → Changuito, sacale una foto a la etiqueta del precio o al descuento: FRIDAY lee el producto, el precio y la promo, le pone la imagen y te va sumando."},
-  {"icono":"🏷️","titulo":"Las promos, bien hechas","texto":"2x1, 3x2, «2da al 70%», «llevando 2, 25% menos»: lo calcula según cuántos lleves, te dice cuánto ahorrás y si te conviene llevar uno más."},
-  {"icono":"🧾","titulo":"Revisá el ticket","texto":"Al final, sacale una foto al ticket y FRIDAY te dice si te cobraron algo de más."},
-  {"icono":"🏠","titulo":"La tablet a la vista","texto":"Ahora está en el inicio, en «🏠 Tablet», y en Más."}]};
+const NOVEDADES_M={"version":"5.2","titulo":"Tu cuenta de BufaLabs","items":[
+  {"icono":"🔐","titulo":"Tu cuenta de BufaLabs","texto":"Entrás con tu mail y una clave. Lo tuyo se guarda cifrado: ni BufaLabs lo puede leer. Está en Más → Tu cuenta."},
+  {"icono":"🔄","titulo":"Todo se conecta solo","texto":"Con la misma cuenta en el celu, la compu y la tablet, se unen solos y comparten la memoria y los recordatorios. Sin QR ni códigos."},
+  {"icono":"📱","titulo":"Celu nuevo, FRIDAY de siempre","texto":"Si cambiás de celu, entrás con tu mail y vuelve todo: tu nombre, tus listas, tus recordatorios y tus ajustes."},
+  {"icono":"🛟","titulo":"Si te olvidás la clave","texto":"Al crear la cuenta te doy un código de rescate. Con él entrás y elegís otra clave, sin perder nada."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -3632,6 +3634,371 @@ const FSync={
 
 
 // ================================================================ celu y compu: lo de esta app
+// ================================================================ CUENTA DE BUFALABS (compu 104.05 · celu 5.2 · tablet 6.1)
+// Se entra con el mail y una clave. Al servidor no llega ninguno de los dos:
+//  · del mail viaja solo una huella (sha-256);
+//  · de la clave sale (PBKDF2, en el aparato) una «prueba» para entrar y una llave que envuelve la llave de la cuenta;
+//  · la llave de la cuenta es al azar y cifra todo lo que se guarda. También la envuelve el código de rescate,
+//    así quien se olvida la clave entra con el código y elige otra sin perder nada;
+//  · con esa misma llave, la compu, el celu y la tablet se unen solos (FSync), sin QR ni códigos.
+var CUENTA=(()=>{
+  const C={ cfg:null, t:null, subiendo:false, err:'' };
+  const TE=new TextEncoder();
+  const b64=u8=>{ let s=''; for(let i=0;i<u8.length;i+=0x8000) s+=String.fromCharCode.apply(null, u8.subarray(i,i+0x8000)); return btoa(s).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+  const deb64=t=>{ t=String(t).replace(/-/g,'+').replace(/_/g,'/'); t+='==='.slice((t.length+3)%4); const b=atob(t), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; };
+  const hex=u8=>[...new Uint8Array(u8)].map(x=>x.toString(16).padStart(2,'0')).join('');
+  const esc=t=>String(t==null?'':t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+  const ABC='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  const normMail=m=>String(m||'').trim().toLowerCase();
+  const mailOk=m=>/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(m);
+  const normCod=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'').replace(/O/g,'0').replace(/I/g,'1');
+  async function huellaMail(m){ return hex(await crypto.subtle.digest('SHA-256', TE.encode('bufalabs-mail|'+m))); }
+  async function kdf(secreto, sal, vueltas){
+    const base=await crypto.subtle.importKey('raw', TE.encode(String(secreto).normalize('NFC')), 'PBKDF2', false, ['deriveBits']);
+    const bits=await crypto.subtle.deriveBits({name:'PBKDF2', hash:'SHA-256', salt:TE.encode(sal), iterations:vueltas}, base, 256);
+    const hk=await crypto.subtle.importKey('raw', bits, {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+    const prueba=hex(await crypto.subtle.sign('HMAC', hk, TE.encode('prueba')));
+    const kek=await crypto.subtle.importKey('raw', await crypto.subtle.sign('HMAC', hk, TE.encode('envoltorio')), 'AES-GCM', false, ['encrypt','decrypt']);
+    return {prueba, kek};
+  }
+  const deClave=(mail, clave)=>kdf(clave, 'bufalabs-cuenta|'+mail, 310000);
+  const deCodigo=(mail, cod)=>kdf(normCod(cod), 'bufalabs-rescate|'+mail, 100000);
+  async function envolver(kek, llave){ const iv=crypto.getRandomValues(new Uint8Array(12)); const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, kek, deb64(llave))); const o=new Uint8Array(12+ct.length); o.set(iv); o.set(ct,12); return b64(o); }
+  async function desenvolver(kek, env){ const u=deb64(env); return b64(new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(0,12)}, kek, u.slice(12)))); }
+  function codigoNuevo(){ const r=crypto.getRandomValues(new Uint8Array(20)); let s=''; for(let i=0;i<20;i++){ if(i && i%4===0) s+='-'; s+=ABC[r[i]&31]; } return s; }
+  async function codigoSync(llave){
+    const hk=await crypto.subtle.importKey('raw', deb64(llave), {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+    const b=new Uint8Array(await crypto.subtle.sign('HMAC', hk, TE.encode('friday-sync-cuenta'))); let c=''; for(let i=0;i<16;i++) c+=ABC[b[i]&31]; return c;
+  }
+  async function cifrar(llave, obj){
+    const key=await crypto.subtle.importKey('raw', deb64(llave), 'AES-GCM', false, ['encrypt']);
+    let data=TE.encode(JSON.stringify(obj)), gz=0;
+    if(window.CompressionStream){ try{ data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new CompressionStream('gzip'))).arrayBuffer()); gz=1; }catch(e){} }
+    const iv=crypto.getRandomValues(new Uint8Array(12)), ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM', iv}, key, data));
+    const out=new Uint8Array(14+ct.length); out[0]=1; out[1]=gz; out.set(iv,2); out.set(ct,14); return b64(out);
+  }
+  async function descifrar(llave, txt){
+    const u=deb64(txt); if(u[0]!==1) throw new Error('formato');
+    const key=await crypto.subtle.importKey('raw', deb64(llave), 'AES-GCM', false, ['decrypt']);
+    let data=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM', iv:u.slice(2,14)}, key, u.slice(14)));
+    if(u[1]) data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer());
+    return JSON.parse(new TextDecoder().decode(data));
+  }
+  async function pedir(que, cuerpo, token){
+    cuerpo=Object.assign({slot:C.cfg.slot}, cuerpo||{});
+    const h={'Content-Type':'application/json'}; if(token) h.Authorization='Bearer '+token;
+    let r; try{ r=await C.cfg.servidor('/cuenta/'+que, {method:'POST', headers:h, body:JSON.stringify(cuerpo)}); }
+    catch(e){ throw Object.assign(new Error('No pude llegar al servidor de BufaLabs. ¿Hay internet?'), {code:'red'}); }
+    let j=null; try{ j=await r.json(); }catch(e){}
+    if(!j) throw Object.assign(new Error(r.status===404?'El servidor de BufaLabs todavía se está actualizando. Probá en un rato.':'El servidor contestó raro ('+r.status+').'), {code:'servidor'});
+    if(!j.ok) throw Object.assign(new Error(j.mensaje||'No se pudo ('+(j.error||r.status)+').'), {code:j.error, v:j.v});
+    return j;
+  }
+  // ---------------------------------------------------------------- lo que se guarda de este aparato
+  const pre=()=>C.cfg.prefijo;
+  const leer=k=>{ try{ return JSON.parse(localStorage.getItem(pre()+k)||'null'); }catch(e){ return null; } };
+  const escribir=(k,v)=>{ try{ if(v==null) localStorage.removeItem(pre()+k); else localStorage.setItem(pre()+k, JSON.stringify(v)); }catch(e){} };
+  function fotoBase(){ const d={}; for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(!k||!k.startsWith(pre())) continue; const kk=k.slice(pre().length); if(C.cfg.fuera.includes(kk)) continue; d[kk]=localStorage.getItem(k); } return d; }
+  const foto=()=>{ const d=C.cfg.foto?C.cfg.foto():fotoBase(); for(const k of C.cfg.fuera) delete d[k]; return d; };
+  function huella(d){ const s=JSON.stringify(d, Object.keys(d).sort()); let h=0; for(let i=0;i<s.length;i+=3) h=(h*31+s.charCodeAt(i))|0; return s.length+':'+h; }
+  function aplicarBase(d){
+    const borrar=[]; for(let i=0;i<localStorage.length;i++){ const k=localStorage.key(i); if(k&&k.startsWith(pre()) && !C.cfg.fuera.includes(k.slice(pre().length))) borrar.push(k); }
+    borrar.forEach(k=>localStorage.removeItem(k));
+    for(const [k,v] of Object.entries(d||{})) if(!C.cfg.fuera.includes(k)) try{ localStorage.setItem(pre()+k, v); }catch(e){}
+  }
+  const yo=()=>leer('cuenta');
+  const guardarYo=c=>escribir('cuenta', c);
+  async function unirSync(n){
+    const c=yo(); if(!c || typeof FSync==='undefined') return;
+    if(!FSync.hooks){ if((n||0)<12) setTimeout(()=>unirSync((n||0)+1), 2500); return; }
+    try{ const code=await codigoSync(c.llave); if(FSync.on && FSync.on() && FSync.cfg && FSync.cfg.code===code) return; await FSync.pair(code, 'https://ntfy.sh'); C.cfg.alUnir && C.cfg.alUnir(); }catch(e){}
+  }
+  C.programar=ya=>{ if(!yo()) return; clearTimeout(C.t); C.t=setTimeout(()=>C.subir(), ya?600:20000); };
+  C.subir=async forzar=>{
+    const c=yo(); if(!c || C.subiendo) return false;
+    const d=foto(), h=huella(d); if(!forzar && h===c.hash) return true;
+    C.subiendo=true;
+    try{ const r=await pedir('subir', {datos:await cifrar(c.llave, d), v:c.v||0}, c.token); const c2=yo()||c; Object.assign(c2, {v:r.v, at:r.at, hash:h}); guardarYo(c2); C.err=''; return true; }
+    catch(e){ if(e.code==='version'){ C.subiendo=false; return C.traer(true); } C.err=e.code==='sesion'?'La sesión venció: entrá de nuevo.':e.message; return false; }
+    finally{ C.subiendo=false; C.pintar(); }
+  };
+  async function recibir(c, b, avisar, demora){
+    const d=await descifrar(c.llave, b.datos);
+    c.v=b.v; c.at=b.at;
+    if(avisar) C.cfg.aviso && C.cfg.aviso(avisar);
+    if(C.cfg.traer){ await C.cfg.traer(d, c, demora||1100); return; }
+    aplicarBase(d); c.hash=huella(foto()); guardarYo(c);
+    setTimeout(()=>location.reload(), demora||1100);
+  }
+  C.traer=async porChoque=>{
+    const c=yo(); if(!c) return false;
+    try{ const r=await pedir('bajar', {}, c.token); if(!r.datos) return false; await recibir(c, r, porChoque?'☁ En otro aparato cambiaste cosas: traigo lo más nuevo':'☁ Traigo lo último de tu cuenta'); return true; }
+    catch(e){ C.err='No pude traer tu cuenta: '+e.message; C.pintar(); return false; }
+  };
+  C.revisar=async()=>{ const c=yo(); if(!c) return; unirSync(); try{ const y=await pedir('yo', {}, c.token); if((y.v||0)>(c.v||0)) await C.traer(false); else if(huella(foto())!==c.hash) C.subir(); }catch(e){ if(e.code==='sesion'){ C.err='La sesión de tu cuenta venció: entrá de nuevo.'; C.pintar(); } } };
+  // ---------------------------------------------------------------- crear, entrar, rescatar, cambiar la clave
+  function validar(mail, clave, clave2){
+    if(!mailOk(mail)) throw new Error('Ese mail no parece completo. Revisalo.');
+    if(String(clave||'').length<8) throw new Error('La clave tiene que tener 8 letras o más.');
+    if(clave2!==undefined && clave!==clave2) throw new Error('Las dos claves no son iguales.');
+  }
+  C.crear=async(mail, clave, clave2, paso)=>{
+    mail=normMail(mail); validar(mail, clave, clave2);
+    paso&&paso(0); const id=await huellaMail(mail), cl=await deClave(mail, clave);
+    paso&&paso(1); const llave=b64(crypto.getRandomValues(new Uint8Array(32))), codigo=codigoNuevo(), cr=await deCodigo(mail, codigo);
+    const r=await pedir('registro', {id, prueba:cl.prueba, pruebaR:cr.prueba, envp:await envolver(cl.kek, llave), envr:await envolver(cr.kek, llave)});
+    paso&&paso(2); guardarYo({mail, id, token:r.token, llave, v:0, at:0, hash:''});
+    if(C.cfg.alCrear) await C.cfg.alCrear();
+    await C.subir(true);
+    paso&&paso(3); await unirSync();
+    return {codigo};
+  };
+  async function despues(mail, id, r, llave, paso){
+    const c={mail, id, token:r.token, llave, v:0, at:0, hash:''};
+    paso&&paso(2);
+    let traer=r.hayDatos;
+    if(traer && C.cfg.tieneDatos && C.cfg.tieneDatos()) traer=confirm('Tu cuenta ya tiene guardado '+nombreDe()+' de antes.\n\nAceptar: traigo lo de la cuenta (lo que hay ahora acá se reemplaza).\nCancelar: me quedo con lo de acá y lo guardo en tu cuenta.');
+    if(traer){ const b=await pedir('bajar', {}, r.token); paso&&paso(3); await recibir(c, b, null, 3200); unirSync(); return {trajo:true}; }
+    c.v=r.v||0;
+    guardarYo(c); if(C.cfg.alCrear) await C.cfg.alCrear(); await C.subir(true); paso&&paso(3); await unirSync(); return {trajo:false};
+  }
+  C.entrar=async(mail, clave, paso)=>{
+    mail=normMail(mail); validar(mail, clave);
+    paso&&paso(0); const id=await huellaMail(mail), cl=await deClave(mail, clave);
+    const r=await pedir('entrar', {id, prueba:cl.prueba});
+    paso&&paso(1); let llave; try{ llave=await desenvolver(cl.kek, r.envp); }catch(e){ throw new Error('No pude abrir tu llave. Probá de nuevo.'); }
+    return despues(mail, id, r, llave, paso);
+  };
+  C.rescatar=async(mail, codigo, clave, clave2, paso)=>{
+    mail=normMail(mail); validar(mail, clave, clave2);
+    if(normCod(codigo).length!==20) throw new Error('El código de rescate tiene 20 letras y números.');
+    paso&&paso(0); const id=await huellaMail(mail), cr=await deCodigo(mail, codigo);
+    const r=await pedir('rescatar', {id, pruebaR:cr.prueba});
+    paso&&paso(1); const llave=await desenvolver(cr.kek, r.envr), cl=await deClave(mail, clave);
+    await pedir('clave', {nuevaPrueba:cl.prueba, envp:await envolver(cl.kek, llave)}, r.token);
+    return despues(mail, id, r, llave, paso);
+  };
+  C.cambiarClave=async(vieja, nueva, nueva2)=>{
+    const c=yo(); if(!c) throw new Error('No entraste a ninguna cuenta.');
+    validar(c.mail, nueva, nueva2);
+    const v=await deClave(c.mail, vieja), n=await deClave(c.mail, nueva);
+    await pedir('clave', {prueba:v.prueba, nuevaPrueba:n.prueba, envp:await envolver(n.kek, c.llave)}, c.token);
+  };
+  C.salir=async()=>{ const c=yo(); if(!c) return; await C.subir(); try{ await pedir('salir', {}, c.token); }catch(e){} guardarYo(null); try{ if(FSync.on() && FSync.cfg.code===await codigoSync(c.llave)) FSync.unpair(); }catch(e){} C.err=''; C.pintar(); C.cfg.alSalir && C.cfg.alSalir(c); };
+  C.borrar=async clave=>{ const c=yo(); if(!c) return; const v=await deClave(c.mail, clave); await pedir('borrar', {prueba:v.prueba}, c.token); guardarYo(null); try{ FSync.unpair(); }catch(e){} C.err=''; C.pintar(); C.cfg.alSalir && C.cfg.alSalir(c); };
+  C.yo=yo;
+  // ---------------------------------------------------------------- la pantalla (animada)
+  const CSS=`#ctaOv{position:fixed;inset:0;z-index:99990;display:grid;place-items:center;padding:16px;overflow:auto;color:#eef4ff;font-family:inherit;background:radial-gradient(120% 90% at 50% 0%,#132a4a 0%,#081322 55%,#040a14 100%);opacity:0;transition:opacity .45s ease}
+#ctaOv.k-on{opacity:1}#ctaOv[hidden]{display:none}
+#ctaOv .k-orb{position:absolute;border-radius:50%;filter:blur(60px);opacity:.55;pointer-events:none;animation:ctaFlota 14s ease-in-out infinite alternate}
+#ctaOv .k-o1{width:46vmax;height:46vmax;left:-14vmax;top:-12vmax;background:#1e6fd9}
+#ctaOv .k-o2{width:38vmax;height:38vmax;right:-12vmax;bottom:-14vmax;background:#2bd4c4;animation-duration:18s;opacity:.35}
+#ctaOv .k-o3{width:24vmax;height:24vmax;left:55%;top:8%;background:#8a5cff;animation-duration:22s;opacity:.28}
+@keyframes ctaFlota{from{transform:translate(0,0) scale(1)}to{transform:translate(6vmax,4vmax) scale(1.15)}}
+#ctaOv .k-cc{position:relative;width:min(460px,100%);padding:26px 22px 20px;border-radius:26px;background:rgba(10,22,40,.62);border:1px solid rgba(150,200,255,.16);box-shadow:0 40px 90px -30px rgba(0,0,0,.9);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+#ctaOv .k-paso{animation:ctaEntra .5s cubic-bezier(.2,.8,.2,1) both}
+#ctaOv .k-paso>*{animation:ctaSube .55s cubic-bezier(.2,.8,.2,1) both}
+${[1,2,3,4,5,6,7,8,9,10].map(i=>`#ctaOv .k-paso>*:nth-child(${i}){animation-delay:${.05+i*.06}s}`).join('')}
+@keyframes ctaEntra{from{opacity:0;transform:translateX(26px)}to{opacity:1;transform:none}}
+@keyframes ctaSube{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+#ctaOv .k-logo{display:block;margin:0 auto 6px;width:118px;height:118px}
+#ctaOv .k-logo .k-r1{transform-origin:60px 60px;animation:ctaGira 9s linear infinite}
+#ctaOv .k-logo .k-r2{transform-origin:60px 60px;animation:ctaGira 6s linear infinite reverse}
+#ctaOv .k-logo .k-nu{transform-origin:60px 60px;animation:ctaLate 2.6s ease-in-out infinite}
+#ctaOv.k-trab .k-logo .k-r1{animation-duration:1.4s}#ctaOv.k-trab .k-logo .k-r2{animation-duration:1s}
+@keyframes ctaGira{to{transform:rotate(360deg)}}
+@keyframes ctaLate{50%{transform:scale(1.12);opacity:.75}}
+#ctaOv h1{margin:2px 0 8px;font-size:clamp(26px,6vw,32px);line-height:1.12;text-align:center;letter-spacing:-.01em}
+#ctaOv h2{margin:0 0 6px;font-size:23px}
+#ctaOv p{margin:6px 0;color:#a9bdd6;line-height:1.5;font-size:15.5px}#ctaOv p b{color:#eef4ff}
+#ctaOv .k-cen{text-align:center}
+#ctaOv .k-chips{display:grid;gap:8px;margin:16px 0 18px}
+#ctaOv .k-chips div{display:flex;gap:11px;align-items:center;padding:11px 13px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(150,200,255,.1);font-size:14.5px;color:#d7e5f7}
+#ctaOv .k-chips span{font-size:20px}
+#ctaOv label{display:block;font-size:13px;color:#9db0c9;margin:10px 2px 4px}
+#ctaOv .k-campo{position:relative}
+#ctaOv input{width:100%;box-sizing:border-box;border-radius:14px;background:rgba(255,255,255,.06);border:1px solid rgba(150,200,255,.22);color:#fff;padding:14px 15px;font-size:16px;font-family:inherit;line-height:1.3;transition:border-color .2s,background .2s}
+#ctaOv input:focus{outline:none;border-color:#62b6ff;background:rgba(98,182,255,.08);box-shadow:0 0 0 4px rgba(98,182,255,.16)}
+#ctaOv .k-ojo{position:absolute;right:6px;top:50%;transform:translateY(-50%);border:0;background:transparent;color:#9db0c9;font-size:13px;padding:8px;cursor:pointer;font-family:inherit}
+#ctaOv .k-fuerza{height:5px;border-radius:9px;background:rgba(255,255,255,.08);margin:7px 2px 0;overflow:hidden}#ctaOv .k-fuerza i{display:block;height:100%;width:0;border-radius:9px;transition:width .3s,background .3s}
+#ctaOv .k-pista{font-size:13px;color:#ffd27a;margin:4px 2px 0;cursor:pointer}#ctaOv .k-pista:empty{display:none}
+#ctaOv .k-go{width:100%;margin-top:16px;border:0;border-radius:16px;padding:15px;background:linear-gradient(135deg,#62b6ff,#3be0c8);color:#05111f;font-weight:700;font-size:16.5px;font-family:inherit;cursor:pointer;box-shadow:0 12px 30px -10px rgba(98,182,255,.7);transition:transform .12s,filter .2s}
+#ctaOv .k-go:hover{filter:brightness(1.06)}#ctaOv .k-go:active{transform:scale(.985)}#ctaOv .k-go:disabled{opacity:.55;cursor:default}
+#ctaOv .k-sec{width:100%;margin-top:9px;border:1px solid rgba(150,200,255,.25);border-radius:16px;padding:13px;background:rgba(255,255,255,.03);color:#eef4ff;font-weight:600;font-size:15.5px;font-family:inherit;cursor:pointer}
+#ctaOv .k-lnk{display:block;margin:14px auto 0;border:0;background:transparent;color:#8fc6ff;font-size:15px;font-family:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+#ctaOv .k-fila2{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}#ctaOv .k-fila2 .k-lnk{margin:12px 0 0}
+#ctaOv .k-mal{color:#ff9d8f;font-size:14.5px;margin:10px 2px 0}#ctaOv .k-mal:empty{display:none}
+#ctaOv .k-x{position:absolute;right:12px;top:12px;border:0;background:rgba(255,255,255,.07);color:#fff;width:38px;height:38px;border-radius:50%;font-size:17px;cursor:pointer}
+#ctaOv .k-atras{border:0;background:transparent;color:#9db0c9;font-size:14.5px;font-family:inherit;cursor:pointer;padding:4px 0;margin-bottom:6px}
+#ctaOv .k-pasos{list-style:none;padding:0;margin:18px 0 6px;display:grid;gap:12px}
+#ctaOv .k-pasos li{display:flex;gap:12px;align-items:center;color:#7f93ad;transition:color .3s}
+#ctaOv .k-pasos li i{width:24px;height:24px;border-radius:50%;border:2px solid rgba(150,200,255,.3);display:grid;place-items:center;font-style:normal;font-size:13px;flex:none;transition:all .3s}
+#ctaOv .k-pasos li.k-va{color:#eef4ff}#ctaOv .k-pasos li.k-va i{border-color:#62b6ff;border-top-color:transparent;animation:ctaGira .8s linear infinite}
+#ctaOv .k-pasos li.k-ok{color:#cfe3f8}#ctaOv .k-pasos li.k-ok i{border-color:#3be0c8;background:#3be0c8;color:#05111f;animation:none}
+#ctaOv .k-codigo{margin:16px 0 8px;padding:18px 10px;border-radius:16px;background:rgba(59,224,200,.08);border:1px dashed rgba(59,224,200,.5);text-align:center;font:700 clamp(19px,5.4vw,24px)/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;letter-spacing:.06em;color:#bff7ee;word-break:break-all;user-select:all}
+#ctaOv .k-chk{display:flex;gap:10px;align-items:center;margin:14px 2px 0;color:#d7e5f7;font-size:15px;cursor:pointer}#ctaOv .k-chk input{width:20px;height:20px;accent-color:#3be0c8;padding:0}
+#ctaOv .k-tilde{display:block;margin:4px auto 8px;width:96px;height:96px}
+#ctaOv .k-tilde circle{stroke-dasharray:283;stroke-dashoffset:283;animation:ctaTraza .7s ease-out forwards}
+#ctaOv .k-tilde path{stroke-dasharray:60;stroke-dashoffset:60;animation:ctaTraza .4s .55s ease-out forwards}
+@keyframes ctaTraza{to{stroke-dashoffset:0}}
+#ctaOv .k-papel{position:absolute;top:-10px;width:9px;height:14px;border-radius:2px;animation:ctaCae 2.6s cubic-bezier(.25,.6,.4,1) forwards;pointer-events:none}
+@keyframes ctaCae{to{transform:translateY(110vh) rotate(720deg);opacity:.2}}
+#ctaOv .k-ok5{display:flex;gap:13px;align-items:center;margin:14px 0;padding:14px;border-radius:16px;background:rgba(59,224,200,.07);border:1px solid rgba(59,224,200,.22)}#ctaOv .k-ok5 span{font-size:28px}#ctaOv .k-ok5 p{margin:2px 0 0;font-size:14px}
+#ctaOv .k-peq{font-size:13.5px;color:#8ea3bd}
+@media (prefers-reduced-motion:reduce){#ctaOv *,#ctaOv{animation:none!important;transition:none!important}}`;
+  const LOGO=`<svg class="k-logo" viewBox="0 0 120 120" aria-hidden="true"><defs><radialGradient id="ctaG" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#9fe3ff"/><stop offset=".55" stop-color="#3a9dff"/><stop offset="1" stop-color="#3a9dff" stop-opacity="0"/></radialGradient></defs>
+    <circle cx="60" cy="60" r="58" fill="url(#ctaG)" opacity=".18"/><g class="k-r1"><circle cx="60" cy="60" r="50" fill="none" stroke="#62b6ff" stroke-width="2" stroke-dasharray="40 14 6 14" opacity=".9"/></g>
+    <g class="k-r2"><circle cx="60" cy="60" r="39" fill="none" stroke="#3be0c8" stroke-width="2.5" stroke-dasharray="70 30" opacity=".85"/></g><g class="k-nu"><circle cx="60" cy="60" r="19" fill="url(#ctaG)"/><circle cx="60" cy="60" r="9" fill="#e9f8ff"/></g></svg>`;
+  const TILDE=`<svg class="k-tilde" viewBox="0 0 100 100" aria-hidden="true"><circle cx="50" cy="50" r="45" fill="none" stroke="#3be0c8" stroke-width="5"/><path d="M30 52 l14 14 l27 -30" fill="none" stroke="#3be0c8" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const CLAVE=(id, ph, auto)=>`<div class="k-campo"><input id="${id}" type="password" placeholder="${ph}" autocomplete="${auto}"><button class="k-ojo" type="button" data-ojo="${id}">ver</button></div>`;
+  const MAIL=v=>`<label for="ctaM">Tu mail</label><input id="ctaM" type="email" inputmode="email" placeholder="nombre@gmail.com" autocomplete="email" autocapitalize="off" spellcheck="false" value="${esc(v||'')}"><div class="k-pista" id="ctaPista"></div>`;
+  let ov=null, estado={paso:'hola', mail:''};
+  function armar(){
+    if(ov) return ov;
+    const st=document.createElement('style'); st.textContent=CSS; document.head.appendChild(st);
+    ov=document.createElement('div'); ov.id='ctaOv'; ov.hidden=true; ov.setAttribute('role','dialog'); ov.setAttribute('aria-modal','true'); ov.setAttribute('aria-label','Tu cuenta de BufaLabs');
+    ov.innerHTML='<i class="k-orb k-o1"></i><i class="k-orb k-o2"></i><i class="k-orb k-o3"></i><div class="k-cc" id="ctaCc"></div>'; document.body.appendChild(ov);
+    ov.addEventListener('click', clic); ov.addEventListener('input', escribe); ov.addEventListener('keydown', e=>{ if(e.key==='Enter' && e.target.tagName==='INPUT' && e.target.type!=='checkbox'){ const g=ov.querySelector('.k-go:not([disabled])'); g && g.click(); } if(e.key==='Escape' && estado.paso!=='trabajando' && estado.paso!=='codigo') cerrar(); });
+    return ov;
+  }
+  const nombreDe=()=>C.cfg.nombre||'este aparato';
+  const PANTALLAS={
+    hola:()=>`<div class="k-paso">${LOGO}<h1>Hola, soy FRIDAY</h1>
+      <p class="k-cen">Creá tu <b>cuenta de BufaLabs</b> y tené tu FRIDAY en la compu, el celu y la tablet, todo junto.</p>
+      <div class="k-chips"><div><span>🔄</span>Se conectan solos, sin códigos ni QR</div><div><span>🔐</span>Todo va cifrado: ni BufaLabs lo puede leer</div><div><span>💾</span>Si cambiás de compu o de celu, vuelve todo</div></div>
+      <button class="k-go" type="button" data-ir="crear">Crear mi cuenta</button><button class="k-sec" type="button" data-ir="entrar">Ya tengo cuenta</button>
+      <button class="k-lnk" type="button" data-cerrar>Ahora no</button></div>`,
+    crear:()=>`<div class="k-paso"><button class="k-atras" type="button" data-ir="hola">← Volver</button><h2>Creá tu cuenta</h2>
+      <p>Con tu mail y una clave nueva (no la de tu mail).</p>${MAIL(estado.mail)}
+      <label for="ctaC">Elegí una clave</label>${CLAVE('ctaC','8 letras o más','new-password')}<div class="k-fuerza"><i id="ctaF"></i></div>
+      <label for="ctaC2">Repetila</label>${CLAVE('ctaC2','La misma clave','new-password')}
+      <div class="k-mal" id="ctaE" role="alert"></div><button class="k-go" type="button" data-hacer="crear">Crear mi cuenta</button>
+      <p class="k-peq k-cen" style="margin-top:12px">Tu mail no se guarda en BufaLabs: solo una huella para reconocerte.</p></div>`,
+    entrar:()=>`<div class="k-paso"><button class="k-atras" type="button" data-ir="hola">← Volver</button><h2>Entrá a tu cuenta</h2>
+      <p>Lo tuyo vuelve a ${esc(nombreDe())} y se conecta con tus otros aparatos.</p>${MAIL(estado.mail)}
+      <label for="ctaC">Tu clave</label>${CLAVE('ctaC','Tu clave de BufaLabs','current-password')}
+      <div class="k-mal" id="ctaE" role="alert"></div><button class="k-go" type="button" data-hacer="entrar">Entrar</button>
+      <div class="k-fila2"><button class="k-lnk" type="button" data-ir="rescate">Me olvidé la clave</button><button class="k-lnk" type="button" data-ir="crear">Crear una cuenta</button></div></div>`,
+    rescate:()=>`<div class="k-paso"><button class="k-atras" type="button" data-ir="entrar">← Volver</button><h2>Me olvidé la clave</h2>
+      <p>Usá el <b>código de rescate</b> que te dio FRIDAY cuando creaste la cuenta y elegí una clave nueva. No perdés nada.</p>${MAIL(estado.mail)}
+      <label for="ctaR">Código de rescate</label><input id="ctaR" placeholder="XXXX-XXXX-XXXX-XXXX-XXXX" autocapitalize="characters" spellcheck="false" autocomplete="off" style="font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.05em">
+      <label for="ctaC">Clave nueva</label>${CLAVE('ctaC','8 letras o más','new-password')}<label for="ctaC2">Repetila</label>${CLAVE('ctaC2','La misma clave','new-password')}
+      <div class="k-mal" id="ctaE" role="alert"></div><button class="k-go" type="button" data-hacer="rescate">Entrar y cambiar la clave</button></div>`,
+    trabajando:()=>`<div class="k-paso">${LOGO}<h2 class="k-cen" id="ctaTit">${esc(estado.tit||'Un segundo…')}</h2><ul class="k-pasos" id="ctaPasos">${(estado.lista||[]).map((t,i)=>`<li data-p="${i}"><i></i>${esc(t)}</li>`).join('')}</ul></div>`,
+    codigo:()=>`<div class="k-paso"><h2>Tu código de rescate</h2>
+      <p>Si algún día te olvidás la clave, con este código entrás y elegís otra. <b>Es la única forma</b>: guardalo en un lugar seguro (anotalo o sacale una foto).</p>
+      <div class="k-codigo" id="ctaCod">${esc(estado.codigo)}</div>
+      <button class="k-sec" type="button" data-copiar>Copiar el código</button>
+      <label class="k-chk"><input type="checkbox" id="ctaYa"> Ya lo guardé</label>
+      <button class="k-go" type="button" data-ir="listo" id="ctaSigue" disabled>Seguir</button></div>`,
+    listo:()=>`<div class="k-paso">${TILDE}<h1>¡Listo!</h1>
+      <p class="k-cen">${estado.trajo?'Volvió todo lo tuyo.':'Tu FRIDAY ya está en tu cuenta.'} Entrá con <b>${esc(estado.mail)}</b> en tus otros aparatos y se conectan solos.</p>
+      <button class="k-go" type="button" data-fin>Empezar</button></div>`,
+    cuenta:()=>{ const c=yo(); if(!c) return PANTALLAS.hola();
+      return `<div class="k-paso"><button class="k-x" type="button" data-cerrar aria-label="Cerrar">✕</button><h2>Tu cuenta de BufaLabs</h2>
+      <div class="k-ok5"><span>🔐</span><div><b>${esc(c.mail)}</b><p>${C.err?'⚠ '+esc(C.err):c.at?'Guardado '+new Date(c.at).toLocaleString('es-AR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):'Guardando…'}</p></div></div>
+      <p>Lo de ${esc(nombreDe())} se guarda solo, <b>cifrado</b>. En la compu, el celu y la tablet, entrá con este mismo mail y se conectan solos.</p>
+      <button class="k-sec" type="button" data-ir="cambiar">Cambiar la clave</button><button class="k-sec" type="button" data-salir>Cerrar sesión en ${esc(nombreDe())}</button>
+      <button class="k-lnk" type="button" data-ir="borrar">Borrar mi cuenta</button></div>`; },
+    cambiar:()=>`<div class="k-paso"><button class="k-atras" type="button" data-ir="cuenta">← Volver</button><h2>Cambiar la clave</h2>
+      <label for="ctaV">Clave de ahora</label>${CLAVE('ctaV','Tu clave de ahora','current-password')}
+      <label for="ctaC">Clave nueva</label>${CLAVE('ctaC','8 letras o más','new-password')}<div class="k-fuerza"><i id="ctaF"></i></div><label for="ctaC2">Repetila</label>${CLAVE('ctaC2','La misma clave','new-password')}
+      <div class="k-mal" id="ctaE" role="alert"></div><button class="k-go" type="button" data-hacer="cambiar">Cambiar la clave</button>
+      <p class="k-peq">Tu código de rescate sigue sirviendo. En los otros aparatos vas a tener que entrar con la clave nueva.</p></div>`,
+    borrar:()=>`<div class="k-paso"><button class="k-atras" type="button" data-ir="cuenta">← Volver</button><h2>Borrar mi cuenta</h2>
+      <p>Se borra tu cuenta y todo lo guardado en BufaLabs. Lo que está en ${esc(nombreDe())} queda acá, sin cuenta. <b>No se puede deshacer.</b></p>
+      <label for="ctaC">Para confirmar, tu clave</label>${CLAVE('ctaC','Tu clave','current-password')}
+      <div class="k-mal" id="ctaE" role="alert"></div><button class="k-go" type="button" data-hacer="borrar" style="background:linear-gradient(135deg,#ff8f80,#ff5d73)">Borrar mi cuenta para siempre</button></div>`,
+  };
+  function ir(p){
+    estado.paso=p; armar(); ov.classList.toggle('k-trab', p==='trabajando');
+    const cc=document.getElementById('ctaCc'); cc.innerHTML=PANTALLAS[p]();
+    if(p==='listo') papelitos();
+    setTimeout(()=>{ const i=cc.querySelector('input:not([type=checkbox])'); if(i && !i.value) i.focus(); else if(i){ const j=[...cc.querySelectorAll('input:not([type=checkbox])')].find(x=>!x.value); j && j.focus(); } }, 380);
+  }
+  function papelitos(){ const cols=['#62b6ff','#3be0c8','#ffd27a','#ff8fb1','#b58cff']; for(let i=0;i<46;i++){ const s=document.createElement('i'); s.className='k-papel'; s.style.left=(Math.random()*100)+'%'; s.style.background=cols[i%cols.length]; s.style.animationDelay=(Math.random()*.6)+'s'; s.style.animationDuration=(1.8+Math.random()*1.6)+'s'; ov.appendChild(s); setTimeout(()=>s.remove(), 4200); } }
+  function escribe(e){
+    if(e.target.id==='ctaM'){ estado.mail=e.target.value; const m=normMail(e.target.value), d=m.split('@')[1]||'';
+      const malos={'gmial.com':'gmail.com','gmai.com':'gmail.com','gmail.con':'gmail.com','gamil.com':'gmail.com','gmail.co':'gmail.com','hotmial.com':'hotmail.com','hotmail.con':'hotmail.com','outlook.con':'outlook.com','yahoo.com.ar.':'yahoo.com.ar'};
+      const pi=document.getElementById('ctaPista'); if(pi){ pi.textContent=malos[d]?'¿Quisiste decir '+m.split('@')[0]+'@'+malos[d]+'? Tocá para corregir':''; pi.dataset.fix=malos[d]?m.split('@')[0]+'@'+malos[d]:''; } }
+    if(e.target.id==='ctaC'){ const f=document.getElementById('ctaF'); if(f){ const v=e.target.value; let p=Math.min(1, v.length/14); if(/[0-9]/.test(v)&&/[a-zA-Z]/.test(v)) p+=.15; if(/[^a-zA-Z0-9]/.test(v)) p+=.15; p=Math.min(1,p); f.style.width=(p*100)+'%'; f.style.background=v.length<8?'#ff8f80':p<.7?'#ffd27a':'#3be0c8'; } }
+    if(e.target.id==='ctaYa'){ document.getElementById('ctaSigue').disabled=!e.target.checked; }
+  }
+  const val=id=>{ const x=document.getElementById(id); return x?x.value:''; };
+  async function hacer(que){
+    const err=document.getElementById('ctaE'); err.textContent='';
+    const mail=normMail(val('ctaM')||estado.mail); estado.mail=mail;
+    try{
+      if(que==='crear'||que==='entrar'||que==='rescate'){ validar(mail, val('ctaC'), (que==='entrar')?undefined:val('ctaC2')); }
+      if(que==='rescate' && normCod(val('ctaR')).length!==20) throw new Error('El código de rescate tiene 20 letras y números (podés escribirlo con o sin guiones).');
+    }catch(x){ err.textContent=x.message; return; }
+    const datos={c:val('ctaC'), c2:val('ctaC2'), r:val('ctaR'), v:val('ctaV')};
+    if(que==='cambiar'||que==='borrar'){
+      const b=ov.querySelector('[data-hacer]'); b.disabled=true; b.textContent=que==='borrar'?'Borrando…':'Cambiando…';
+      try{ if(que==='cambiar'){ await C.cambiarClave(datos.v, datos.c, datos.c2); C.cfg.aviso&&C.cfg.aviso('✔ Listo: cambiaste la clave'); ir('cuenta'); }
+        else { await C.borrar(datos.c); C.cfg.aviso&&C.cfg.aviso('Listo: borré tu cuenta de BufaLabs'); cerrar(); } }
+      catch(x){ err.textContent=x.message; b.disabled=false; b.textContent=que==='borrar'?'Borrar mi cuenta para siempre':'Cambiar la clave'; }
+      return;
+    }
+    const volver=estado.paso;
+    estado.tit=que==='crear'?'Creando tu cuenta…':que==='entrar'?'Entrando…':'Recuperando tu cuenta…';
+    estado.lista=que==='crear'?['Protegiendo tu clave','Creando tu llave secreta','Guardando lo tuyo, cifrado','Conectando tus aparatos']:['Protegiendo tu clave','Abriendo tu llave','Trayendo lo tuyo','Conectando tus aparatos'];
+    ir('trabajando');
+    const paso=i=>{ document.querySelectorAll('#ctaPasos li').forEach((li,k)=>{ li.className=k<i?'k-ok':k===i?'k-va':''; }); };
+    paso(0);
+    try{
+      let r;
+      if(que==='crear') r=await C.crear(mail, datos.c, datos.c2, paso);
+      else if(que==='entrar') r=await C.entrar(mail, datos.c, paso);
+      else r=await C.rescatar(mail, datos.r, datos.c, datos.c2, paso);
+      paso(4); await new Promise(k=>setTimeout(k, 450));
+      escribir('cuentaVista', 1);
+      if(r.codigo){ estado.codigo=r.codigo; ir('codigo'); return; }
+      estado.trajo=!!r.trajo; ir('listo');
+    }catch(x){ ir(volver); const e2=document.getElementById('ctaE'); if(e2) e2.textContent=x.message||'No se pudo.'; }
+  }
+  async function clic(e){
+    const t=e.target;
+    if(t===ov && estado.paso!=='trabajando' && estado.paso!=='codigo'){ if(estado.paso==='cuenta') cerrar(); return; }
+    const pi=t.closest('#ctaPista'); if(pi && pi.dataset.fix){ const m=document.getElementById('ctaM'); m.value=pi.dataset.fix; estado.mail=pi.dataset.fix; pi.textContent=''; return; }
+    const ojo=t.closest('[data-ojo]'); if(ojo){ const i=document.getElementById(ojo.dataset.ojo); i.type=i.type==='password'?'text':'password'; ojo.textContent=i.type==='password'?'ver':'ocultar'; return; }
+    const a=t.closest('[data-ir]'); if(a){ const m=document.getElementById('ctaM'); if(m) estado.mail=m.value; ir(a.dataset.ir); return; }
+    if(t.closest('[data-cerrar]')){ escribir('cuentaVista', 1); cerrar(); return; }
+    const h=t.closest('[data-hacer]'); if(h){ hacer(h.dataset.hacer); return; }
+    if(t.closest('[data-copiar]')){ try{ await navigator.clipboard.writeText(estado.codigo); t.textContent='✔ Copiado'; }catch(x){ const r=document.createRange(); r.selectNodeContents(document.getElementById('ctaCod')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); t.textContent='Seleccionado: copialo'; } return; }
+    if(t.closest('[data-salir]')){ t.disabled=true; await C.salir(); C.cfg.aviso&&C.cfg.aviso('Cerraste sesión en '+nombreDe()+'. Lo tuyo sigue acá.'); cerrar(); return; }
+    if(t.closest('[data-fin]')){ cerrar(); if(estado.trajo) setTimeout(()=>location.reload(), 300); C.cfg.alListo && C.cfg.alListo(); return; }
+  }
+  function cerrar(){ if(!ov) return; ov.classList.remove('k-on'); setTimeout(()=>{ ov.hidden=true; }, 420); C.pintar(); }
+  C.abrir=modo=>{ armar(); ov.hidden=false; requestAnimationFrame(()=>ov.classList.add('k-on')); ir(yo()?'cuenta':(modo||'hola')); };
+  C.bienvenida=()=>{ if(yo() || leer('cuentaVista')) return false; C.abrir('hola'); return true; };
+  C.abierta=()=>!!(ov && !ov.hidden);
+  C.pintar=()=>{ try{ C.cfg.alCambiar && C.cfg.alCambiar(yo()); }catch(e){} };
+  C.iniciar=cfg=>{
+    C.cfg=Object.assign({prefijo:'fm.', slot:'celu', nombre:'el celu', fuera:[], servidor:(r,o)=>BUFIA.servidor(r,o)}, cfg);
+    C.cfg.fuera=C.cfg.fuera.concat(['cuenta','cuentaVista','sync','syncDev','syncDevP']);
+    addEventListener('pagehide', ()=>{ if(yo()) C.subir(); });
+    document.addEventListener('visibilitychange', ()=>{ if(document.hidden && yo()) C.subir(); else if(!document.hidden) C.revisar(); });
+    setTimeout(()=>C.revisar(), 2500);
+    C.pintar();
+  };
+  return C;
+})();
+
+if(!PANEL){
+  CUENTA.iniciar({ prefijo:'fm.', slot:'celu', nombre:'el celu', aviso:t=>toast(t, 4200),
+    fuera:['verVista','actDe','actDespues','splashVisto','wpush','wpPrueba','wpHoras','timbre','timbreK','pcNtfy','instNo','wx','dev'],
+    alUnir:()=>{ try{ renderVinc(); }catch(e){} },
+    tieneDatos:()=>{ const m=LS.get('memory',[])||[], r=LS.get('rems',[])||[], c=LS.get('compras',[])||[]; return m.length+r.length+c.length>2; },
+    alCambiar:c=>{ const el=document.getElementById('ctaMenuTxt'); if(el) el.textContent=c?'Entraste como '+c.mail:'Entrá con tu mail y se conecta todo solo'; } });
+  { const _s=LS.set; LS.set=function(k,v){ const r=_s.apply(this, arguments); if(!CUENTA.cfg.fuera.includes(k)) CUENTA.programar(false); return r; }; }
+  document.getElementById('ctaFila').onclick=()=>{ closeSheets(); CUENTA.abrir(); };
+  if(location.hash==='#cuenta'){ history.replaceState(null,'',location.pathname); setTimeout(()=>CUENTA.abrir(), 900); }
+  // la primera vez (y una vez a los que ya la usaban): la bienvenida animada para crear la cuenta
+  const bienv=n=>{ if(CUENTA.yo()) return; const libre=!document.getElementById('splash') && !(typeof ACT!=='undefined' && ACT.mostrando) && !document.querySelector('.sheet.on') && !(typeof busy!=='undefined' && busy);
+    if(!libre){ if(n<60) setTimeout(()=>bienv(n+1), 1000); return; } CUENTA.bienvenida(); };
+  window.addEventListener('load', ()=>setTimeout(()=>bienv(0), 3800));
+}
 const SYNC_DEV=(()=>{ const k=PANEL?'syncDevP':'syncDev'; let d=LS.get(k,null); if(!d){ d=(PANEL?'pan':'cel')+Math.random().toString(36).slice(2,6); LS.set(k,d); } return d; })();
 let pedidos=LS.get('pedidos',[]);
 function syncLocal(){
@@ -4391,6 +4758,7 @@ async function timbreCompartir(forzar){
 setTimeout(()=>timbreCompartir(), 15000); setInterval(()=>timbreCompartir(), 10*60000);
 function celuJarvis(text){
   const n=String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\b(friday|viernes)\b/g,' ').replace(/\s+/g,' ').trim();
+  if(/^(abri |abrime |entra a |entrar a |quiero |mostrame )?(mi cuenta( de bufalabs)?|la cuenta de bufalabs|crear (una |mi )?cuenta|iniciar sesion|inicia sesion|cerrar sesion|me olvide la clave|cambiar (la |mi )?clave)$/.test(n)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); const c=CUENTA.yo(); frSay(c?'Estás en tu cuenta, '+c.mail+'. Te la abro.':'Te abro tu cuenta de BufaLabs: con la misma en la compu y la tablet se conecta todo solo.'); setTimeout(()=>CUENTA.abrir(/olvide/.test(n)?'rescate':/crear/.test(n)?'crear':c?null:'hola'), 600); return true; }
   const t=tabPeer(), dec=r=>{ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(r); return true; };
   let m;
   if(/^(activa|prende|pone|arma)(me)?( la| el)? (guardia|vigilancia|alarma)( de la casa)?$|^(vigila|cuida) la casa$/.test(n)){ if(!t) return dec('La guardia es con la cámara de la tablet, y no hay ninguna unida.'); FSync.send({k:'guardia', on:true, est:1, to:t.dev}); return dec('Listo: la tablet activa la guardia en 30 segundos. Si ve a alguien, te llega la foto acá.'); }

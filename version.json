@@ -1,26 +1,26 @@
 {
- "version": "5.1",
- "titulo": "El changuito",
+ "version": "5.2",
+ "titulo": "Tu cuenta de BufaLabs",
  "items": [
   {
-   "icono": "📸",
-   "titulo": "Sacale una foto al precio",
-   "texto": "En Compras → Changuito, sacale una foto a la etiqueta del precio o al descuento: FRIDAY lee el producto, el precio y la promo, le pone la imagen y te va sumando."
+   "icono": "🔐",
+   "titulo": "Tu cuenta de BufaLabs",
+   "texto": "Entrás con tu mail y una clave. Lo tuyo se guarda cifrado: ni BufaLabs lo puede leer. Está en Más → Tu cuenta."
   },
   {
-   "icono": "🏷️",
-   "titulo": "Las promos, bien hechas",
-   "texto": "2x1, 3x2, «2da al 70%», «llevando 2, 25% menos»: lo calcula según cuántos lleves, te dice cuánto ahorrás y si te conviene llevar uno más."
+   "icono": "🔄",
+   "titulo": "Todo se conecta solo",
+   "texto": "Con la misma cuenta en el celu, la compu y la tablet, se unen solos y comparten la memoria y los recordatorios. Sin QR ni códigos."
   },
   {
-   "icono": "🧾",
-   "titulo": "Revisá el ticket",
-   "texto": "Al final, sacale una foto al ticket y FRIDAY te dice si te cobraron algo de más."
+   "icono": "📱",
+   "titulo": "Celu nuevo, FRIDAY de siempre",
+   "texto": "Si cambiás de celu, entrás con tu mail y vuelve todo: tu nombre, tus listas, tus recordatorios y tus ajustes."
   },
   {
-   "icono": "🏠",
-   "titulo": "La tablet a la vista",
-   "texto": "Ahora está en el inicio, en «🏠 Tablet», y en Más."
+   "icono": "🛟",
+   "titulo": "Si te olvidás la clave",
+   "texto": "Al crear la cuenta te doy un código de rescate. Con él entrás y elegís otra clave, sin perder nada."
   }
  ]
 }

@@ -19,7 +19,7 @@ for m in ('manifest.json', 'manifest-panel.json'):
 sw = open(os.path.join(RAIZ, 'sw.js'), encoding='utf-8').read()
 ok('sw.js tiene nombre de caché', re.search(r"const CACHE='friday-movil-\d+'", sw))
 PROHIBIDO = [r'gsk_[A-Za-z0-9]{40,}', r'AIza[0-9A-Za-z_\-]{35}', r'-----BEGIN [A-Z ]*PRIVATE KEY-----']
-PUBLICOS = {'bufalabs.ar@gmail.com'}   # el contacto público de BufaLabs
+PUBLICOS = {'nombre@gmail.com', 'bufalabs.ar@gmail.com'}   # el contacto público de BufaLabs
 for f in os.listdir(RAIZ):
     if f.endswith(('.html', '.js', '.json', '.txt', '.md')):
         s = open(os.path.join(RAIZ, f), encoding='utf-8', errors='replace').read()
