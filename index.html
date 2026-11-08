@@ -736,6 +736,39 @@ body{font-family:var(--font);background:radial-gradient(90% 50% at 50% -8%,rgba(
 .hg-chat{display:flex;flex-direction:column;gap:8px;margin:10px 0;max-height:46vh;overflow-y:auto}
 .hg-chat div{padding:9px 12px;border-radius:14px;max-width:85%;line-height:1.4}.hg-chat .yo{align-self:flex-end;background:rgba(var(--accent-rgb),.18)}.hg-chat .fr{align-self:flex-start;background:var(--card);border:1px solid var(--line)}
 </style>
+<style>
+/* ===== 5.5: hablarle a la tablet (walkie) ===== */
+#wk{position:fixed;inset:0;z-index:70;display:flex;flex-direction:column;background:var(--bg,#0b1220);padding:calc(env(safe-area-inset-top,0px) + 12px) 16px calc(env(safe-area-inset-bottom,0px) + 14px);animation:pop .25s ease-out}
+#wk[hidden]{display:none}
+body.wkOn #micTabChip{display:none!important}
+.wk-top{display:flex;align-items:center;gap:12px}.wk-tit{flex:1;min-width:0}.wk-tit b{display:block;font-size:20px}
+.wk-tit span{display:flex;align-items:center;gap:7px;font-size:13.5px;color:var(--muted)}.wk-tit i{width:9px;height:9px;border-radius:50%;background:#8a96a3;flex:none}.wk-tit i.ok{background:#5be39b;box-shadow:0 0 8px #5be39b}
+.wk-x{width:44px;height:44px;border-radius:50%;border:1px solid var(--line2);background:rgba(255,255,255,.05);font-size:18px}
+.wk-log{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:8px;padding:16px 0}
+.wk-vacio{margin:auto 8px;text-align:center;color:var(--muted);line-height:1.5}
+.wk-m{max-width:86%;padding:10px 13px;border-radius:16px;line-height:1.4;font-size:16px}
+.wk-m.yo{align-self:flex-end;background:rgba(var(--accent-rgb),.2);border-bottom-right-radius:5px}
+.wk-m.tab{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:5px}.wk-m b{display:block;font-size:12px;color:var(--accent);margin-bottom:2px}
+.wk-m small{display:block;font-size:12px;color:#ff9d9d;margin-top:3px}
+.wk-frases{display:flex;gap:8px;overflow-x:auto;padding:4px 0 12px;scrollbar-width:none}.wk-frases::-webkit-scrollbar{display:none}
+.wk-frases button{flex:none;padding:9px 13px;border-radius:999px;border:1px solid var(--line2);background:rgba(255,255,255,.04);font-size:14px;white-space:nowrap}
+.wk-mic{display:flex;flex-direction:column;align-items:center;gap:8px;margin:4px 0 12px}
+#wkMic{position:relative;width:118px;height:118px;border-radius:50%;border:0;background:var(--accent);color:#04121f;box-shadow:0 12px 34px rgba(var(--accent-rgb),.45);display:grid;place-items:center}
+#wkMic:active{transform:scale(.96)}
+.wk-ic{font-size:46px;position:relative}
+.wk-ond{position:absolute;inset:-10px;border-radius:50%;border:3px solid rgba(var(--accent-rgb),.6);opacity:0}
+#wkMic.oye{background:#ff5d6c;box-shadow:0 12px 34px rgba(255,93,108,.5)}#wkMic.oye .wk-ond{border-color:rgba(255,93,108,.7);animation:wkOnda 1.2s ease-out infinite}
+#wkMic.piensa{opacity:.7}#wkMic.piensa .wk-ic{animation:wkLate 1s ease-in-out infinite}
+@keyframes wkOnda{from{opacity:.9;transform:scale(.9)}to{opacity:0;transform:scale(1.35)}}
+@keyframes wkLate{50%{transform:scale(.85)}}
+#wkMicTxt{font-size:15px;color:var(--muted)}
+.wk-esc{display:flex;gap:8px}.wk-esc input{flex:1;min-width:0;padding:12px 13px;border:1px solid var(--line2);border-radius:13px;background:rgba(255,255,255,.04);color:var(--text);font-size:16px;outline:none}
+.wk-esc button{padding:0 16px;border-radius:13px;border:0;background:rgba(var(--accent-rgb),.2);font-weight:700}
+.wk-pie{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-top:12px;font-size:13.5px;color:var(--muted)}
+.wk-pie label{display:flex;align-items:center;gap:7px}.wk-pie button{padding:8px 12px;border-radius:999px;border:1px solid var(--line2);background:none;font-size:13.5px}
+@media (prefers-reduced-motion:reduce){#wk,#wkMic .wk-ond,#wkMic .wk-ic{animation:none!important}}
+.tab-unir ol{margin:8px 0;padding-left:22px;line-height:1.55}.tab-unir li{margin:5px 0}.tab-unir .mail{font-weight:800;overflow-wrap:anywhere}
+</style>
 </head>
 <body>
 <script>
@@ -2126,9 +2159,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='5.4';
+const VERSION='5.5';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "5.4", "titulo": "Casa, familia, estudio y la tele", "items": [{"icono": "📺", "titulo": "La tele, de toda la familia", "texto": "FRIDAY Tele ahora saluda a la familia y trae el resumen del día, noticias, música y videos, temporizador y modo ambiente. Pedíselo desde acá: «poné Soda Stereo en la tele»."}, {"icono": "🍳", "titulo": "¿Qué cocino?", "texto": "Sacale una foto a la heladera y te digo tres cosas ricas con lo que hay. La que elijas, la tablet te la guía paso a paso."}, {"icono": "👨‍👩‍👧", "titulo": "Tu familia en FRIDAY", "texto": "Uní a tu familia: «avisale a mamá que llego tarde» le suena en el celu. Y comparten una lista."}, {"icono": "💊", "titulo": "Remedios con aviso", "texto": "Te recuerda el remedio. Si en media hora no marcás «Ya lo tomé», le avisa a quien vos digas."}, {"icono": "🌙", "titulo": "Cuentos, juegos y la tarea", "texto": "«Contame un cuento para Juli», trivia, adiviná el animal, mímica, y la tarea explicada paso a paso con una foto."}, {"icono": "🎙️", "titulo": "Oye Siri, Friday", "texto": "Hablale desde el auto, con los AirPods o el reloj. Está en Casa y familia → Siri."}, {"icono": "📺", "titulo": "FRIDAY en la tele", "texto": "La nueva app FRIDAY Tele para teles LG: se une con tu celu escribiendo un código."}]};
+const NOVEDADES_M={"version": "5.5", "titulo": "Hablarle a la tablet, fácil", "items": [{"icono": "🗣️", "titulo": "Como un walkie-talkie", "texto": "Tocá «Hablarle a la tablet» en el inicio, hablá, y la tablet te contesta en voz alta. Lo que te dijo aparece acá. Cerrás y listo: ya no hay que decir «volvé»."}, {"icono": "🔐", "titulo": "Con la misma cuenta, ya está", "texto": "Si la tablet entró con tu misma cuenta de BufaLabs, se conectan solas. Sin códigos ni QR."}, {"icono": "💬", "titulo": "O de una", "texto": "«Decile a la tablet que ponga música» o «apagá las luces en la tablet», sin abrir nada."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -3151,12 +3184,14 @@ async function ask(text){
   if(!PANEL){
     const nm=norm(text).replace(/[¿?¡!.,]/g,' ').replace(/\b(friday|viernes)\b/g,' ').replace(/\s+/g,' ').trim(), mt=micTabDeVoz(nm);
     if(mt==='on'){ const t=tabPeer(); txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text});
-      if(!t){ frSay('Para eso el celu tiene que estar unido a la tablet. Se une desde la tablet, en su configuración.'); return; }
-      micTabPoner(true); frSay('Listo: lo que me digas lo escucha la tablet y te contesta ella. Para volver, decí «volvé».'); return; }
+      if(!t){ frSay('No veo ninguna tablet. En la tablet entrá con tu misma cuenta de BufaLabs y se conectan solas. Te muestro cómo.'); showSheet('tablet'); return; }
+      WK.abrir(); return; }
     if(mt==='off'){ micTabPoner(false); txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay('Listo, volví a ser tu celu.'); return; }
-    if(micTab){ const t=tabPeer(); txt.value=''; autoGrow(); bubble('yo', text);
-      if(!t){ micTabPoner(false); frSay('La tablet no está conectada. Vuelvo a contestarte yo.'); return; }
-      const ok=await FSync.send({k:'oir', to:t.dev, t:text.slice(0,400), de:S.name||''}); const b=document.createElement('div'); b.className='msg sis'; b.textContent=ok?'🎙 Se lo pasé a la tablet':'No pude llegar a la tablet: ¿hay internet?'; chat.appendChild(b); scrollDown(); return; }
+    if(micTab){ const t=tabPeer(); txt.value=''; autoGrow();
+      if(!t){ WK.cerrar(); micTabPoner(false); bubble('yo', text); frSay('La tablet no está conectada. Vuelvo a contestarte yo.'); return; }
+      const ok=await FSync.send({k:'oir', to:t.dev, t:text.slice(0,400), de:S.name||''});
+      if(WK.estaAbierto()){ WK.enviado(text, ok); return; }
+      bubble('yo', text); const b=document.createElement('div'); b.className='msg sis'; b.textContent=ok?'🎙 Se lo pasé a la tablet':'No pude llegar a la tablet: ¿hay internet?'; chat.appendChild(b); scrollDown(); return; }
   }
   if(!PANEL && habitoPend){ const hp=habitoPend; habitoPend=null; const hn=norm(text);
     if(Date.now()<hp.hasta){
@@ -5309,19 +5344,80 @@ async function aCompu(text){
 }
 // el intercom en el celu (mientras la app está abierta): lo dice y lo muestra
 // la guardia y los protocolos viven en la tablet: desde acá se activan, y llegan las fotos si ve a alguien
+// ================================================================ 5.5: hablarle a la tablet, fácil (como un walkie-talkie)
+// Con la misma cuenta de BufaLabs, el celu y la tablet ya están unidos. Tocás «Hablarle a la tablet», hablás,
+// la tablet lo escucha y contesta en voz alta, y lo que dijo aparece acá. Cerrás y listo: no queda ningún «modo».
+var WK=(()=>{
+  const W={log:[], voz:LS.get('wkVoz', false), t:0}; let ab=false;
+  function armar(){
+    if($('wk')) return;
+    const d=document.createElement('div'); d.id='wk'; d.setAttribute('role','dialog'); d.setAttribute('aria-label','Hablarle a la tablet'); d.hidden=true;
+    d.innerHTML=`<div class="wk-top"><div class="wk-tit"><b>🏠 La tablet</b><span id="wkEst"></span></div><button type="button" class="wk-x" id="wkX" aria-label="Cerrar">✕</button></div>
+      <div class="wk-log" id="wkLog" aria-live="polite"></div>
+      <div class="wk-frases" id="wkFrases">${['¿Qué hora es?','Llegué','Me voy','Apagá todas las luces','Poné música tranqui','Buenas noches'].map(f=>`<button type="button" data-wkf="${esc(f)}">${esc(f)}</button>`).join('')}</div>
+      <div class="wk-mic"><button type="button" id="wkMic" aria-label="Hablarle a la tablet"><span class="wk-ond"></span><span class="wk-ic">🎙</span></button><div id="wkMicTxt">Tocá y hablá</div></div>
+      <form class="wk-esc" id="wkForm" autocomplete="off"><input id="wkTxt" placeholder="O escribile a la tablet" enterkeyhint="send"><button>Mandar</button></form>
+      <div class="wk-pie"><label><input type="checkbox" id="wkVoz"> Que la respuesta también suene en el celu</label><button type="button" id="wkMas">Guardia, la tele y más</button></div>`;
+    document.body.appendChild(d);
+    $('wkX').onclick=cerrar;
+    $('wkMic').onclick=()=>{ unlockAudio(); recStart(); };
+    $('wkForm').onsubmit=e=>{ e.preventDefault(); const t=$('wkTxt').value.trim(); if(!t) return; $('wkTxt').value=''; mandar(t); };
+    $('wkFrases').addEventListener('click', e=>{ const b=e.target.closest('[data-wkf]'); if(b) mandar(b.dataset.wkf); });
+    $('wkVoz').checked=W.voz; $('wkVoz').onchange=()=>{ W.voz=$('wkVoz').checked; LS.set('wkVoz', W.voz); };
+    $('wkMas').onclick=()=>{ cerrar(); showSheet('tablet'); };
+  }
+  function estado(){
+    const tb=tabPeer(), el=$('wkEst'); if(!el) return;
+    const vivo=tb && tb.t && Date.now()-tb.t<10*60000;
+    el.innerHTML=tb?`<i class="${vivo?'ok':''}"></i>${vivo?'Conectada':'No responde hace rato: ¿está prendida y con internet?'}`:'<i></i>Sin tablet';
+    // el micrófono: escuchando, entendiendo o esperando
+    const b=$('wkMic'), tx=$('wkMicTxt'), oye=rec.on, piensa=!oye && $('mic').classList.contains('busy');
+    b.classList.toggle('oye', oye); b.classList.toggle('piensa', piensa);
+    tx.textContent=oye?'Te escucho… (tocá para terminar)':piensa?'Entendiendo…':'Tocá y hablá';
+  }
+  function pintar(){ const el=$('wkLog'); if(!el) return;
+    el.innerHTML=W.log.length?W.log.map(x=>`<div class="wk-m ${x.q}">${x.q==='tab'?'<b>Tablet</b>':''}${esc(x.t)}${x.q==='yo'&&x.ok===false?'<small>No llegó: ¿hay internet?</small>':''}</div>`).join('')
+      :'<div class="wk-vacio">Lo que le digas lo escucha la tablet y te contesta en voz alta allá. Acá ves lo que te dijo.</div>';
+    el.scrollTop=el.scrollHeight; }
+  function abrir(){
+    const tb=tabPeer(); if(!tb){ showSheet('tablet'); return; }
+    armar(); closeSheets(); ab=true; micTabPoner(true); $('wk').hidden=false; document.body.classList.add('wkOn'); pintar(); estado();
+    clearInterval(W.t); W.t=setInterval(estado, 200); buzz(10);
+    if(!W.log.length) setTimeout(()=>{ if(ab && !rec.on) recStart(); }, 350);
+  }
+  function cerrar(){ if(!ab) return; ab=false; clearInterval(W.t); if(rec.on) recStop(true); $('wk').hidden=true; document.body.classList.remove('wkOn'); micTabPoner(false); }
+  async function mandar(t){ const tb=tabPeer(); if(!tb){ toast('No hay ninguna tablet conectada'); return; }
+    const x={q:'yo', t:String(t).slice(0,400)}; W.log.push(x); pintar();
+    x.ok=await FSync.send({k:'oir', to:tb.dev, t:x.t, de:S.name||''}); buzz(10); pintar(); }
+  // lo que llega desde ask() cuando el walkie está abierto
+  W.enviado=(t, ok)=>{ W.log.push({q:'yo', t:String(t).slice(0,400), ok}); W.log=W.log.slice(-30); pintar(); };
+  // lo que contestó la tablet
+  W.dijo=(t, n)=>{ t=String(t||'').trim(); if(!t) return; W.log.push({q:'tab', t:t.slice(0,600)}); W.log=W.log.slice(-30);
+    if(ab){ pintar(); if(W.voz) setTimeout(()=>{ if(!rec.on) say(t); }, 200); }
+    else toast('🏠 La tablet: '+t.slice(0,140), 6000); };
+  W.abrir=abrir; W.cerrar=cerrar; W.estaAbierto=()=>ab;
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape' && ab) cerrar(); });
+  // el chip del inicio: si hay tablet, abre directo el walkie; si no, cómo conectarla
+  window.addEventListener('click', e=>{ const c=e.target.closest && e.target.closest('#tabChip'); if(!c || !tabPeer()) return; e.preventDefault(); e.stopPropagation(); abrir(); }, true);
+  return W;
+})();
+
 function tabPeer(){ try{ return FSync.peersOf('tablet')[0]||null; }catch(e){ return null; } }
 // 5.0: la tablet a un toque. Lo que tocás acá viaja cifrado a la tablet (como si se lo dijeras)
-function tabChipPintar(){ const c=$('tabChip'); if(!c) return; const tb=tabPeer(); c.textContent=tb?(micTab?'🎙 Hablándole a la tablet':(tabGuardia().on?'🏠 Tablet · 🛡️':'🏠 Hablarle a la tablet')):'🏠 Tablet'; c.classList.toggle('on', !!micTab); }
+function tabChipPintar(){ const c=$('tabChip'); if(!c) return; const tb=tabPeer(); c.textContent=tb?('🗣️ Hablarle a la tablet'+(tabGuardia().on?' · 🛡️':'')):'🏠 Tablet'; c.classList.toggle('on', !!tb); }
 setInterval(tabChipPintar, 4000); setTimeout(tabChipPintar, 1500);
 function tabDecir(t, aviso){ const tb=tabPeer(); if(!tb){ toast('No hay ninguna tablet unida'); return false; } FSync.send({k:'oir', to:tb.dev, t:String(t).slice(0,400), de:S.name||''}); buzz(12); if(aviso!==false) toast('🏠 Se lo pasé a la tablet: «'+t+'»', 2600); return true; }
 function tabGuardia(){ return LS.get('tabGuardia', {on:false, at:0}); }
 function renderTablet(){
   const el=$('tabBox'); if(!el) return; const tb=tabPeer();
-  if(!tb){ el.innerHTML=`<div class="tab5"><p>FRIDAY Casa es FRIDAY en una tablet: el reloj, la música, la tele, las luces y la guardia de la casa. La tablet no tiene micrófono: <b>el micrófono es tu celu</b>.</p>
-    <p>Para unirlas: en la tablet tocá ⚙️ → <b>Compartir con la compu y el celu</b>, y acá en <b>Más → Tu compu → «Escanear el QR»</b> apuntale al código.</p></div>`; return; }
+  if(!tb){ const c=CUENTA.yo();
+    el.innerHTML=`<div class="tab5 tab-unir"><p>FRIDAY Casa es FRIDAY en una tablet: el reloj, la música, la tele, las luces y la guardia de la casa. Le hablás desde acá: <b>el micrófono es tu celu</b>.</p>
+    ${c?`<p><b>Para conectarla, en la tablet:</b></p><ol><li>Tocá ⚙️ (arriba a la derecha) → <b>Tu cuenta de BufaLabs</b>.</li><li>Entrá con <span class="mail">${esc(c.mail)}</span> y tu clave.</li></ol><p class="note">En unos segundos aparece acá el botón «Hablarle a la tablet».</p><button type="button" class="big" id="t5Buscar">Ya entré: buscar la tablet</button>`
+      :`<p>Para conectarla, el celu y la tablet tienen que usar <b>la misma cuenta de BufaLabs</b>. Primero entrá acá:</p><button type="button" class="big" id="t5Cuenta">🔐 Entrar con mi cuenta</button><p class="note">Después, en la tablet: ⚙️ → Tu cuenta de BufaLabs → Entrar, con el mismo mail.</p>`}
+    <details class="note" style="margin-top:12px"><summary>Otra forma (con un código)</summary><p>En la tablet tocá ⚙️ → <b>Compartir con la compu y el celu</b>, y acá en <b>Más → Tu compu → «Escanear el QR»</b> apuntale al código.</p></details></div>`; return; }
   const g=tabGuardia(), vist=tb.t && Date.now()-tb.t<30*60000;
   el.innerHTML=`<div class="tab5">
-    <button type="button" class="hablar${micTab?' on':''}" id="t5Hablar"><span>${micTab?'🎙':'🗣️'}</span><div>${micTab?'Hablándole a la tablet':'Hablarle a la tablet'}<small>${micTab?'Lo que digas lo escucha y lo contesta ella. Tocá para volver.':'Tocá, y lo que me digas lo contesta la tablet en voz alta.'}</small></div></button>
+    <button type="button" class="hablar" id="t5Hablar"><span>🗣️</span><div>Hablarle a la tablet<small>Hablás, la tablet te contesta en voz alta, y acá ves lo que te dijo.</small></div></button>
     <div class="fila5"><span class="e">🛡️</span><div><b>Guardia</b><small>${g.on?'Activa: si ve a alguien, te avisa con una foto':'Apagada'}${WP.on()?'':' · para que te suene con FRIDAY cerrada, prendé los avisos'}</small></div><button type="button" class="sw5${g.on?' on':''}" id="t5Guardia">${g.on?'Desactivar':'Activar'}</button></div>
     ${WP.on()?'':'<button type="button" class="big sec" data-sheet="avisos" style="margin:0">🔔 Que la guardia me suene aunque cierre FRIDAY</button>'}
     <div class="fila5" style="display:block"><b style="margin-bottom:10px">📺 La tele</b>
@@ -5332,7 +5428,9 @@ function renderTablet(){
 }
 let t5Pausa=false;
 document.addEventListener('click', e=>{
-  if(e.target.closest('#t5Hablar')){ const on=!micTab; micTabPoner(on); renderTablet(); if(on){ closeSheets(); toast('🎙 Ahora le hablás a la tablet: tocá el micrófono', 3500); } return; }
+  if(e.target.closest('#t5Hablar')){ WK.abrir(); return; }
+  if(e.target.closest('#t5Buscar')){ const b=e.target.closest('#t5Buscar'); b.disabled=true; b.textContent='Buscando la tablet…'; try{ FSync.kick(); }catch(x){} setTimeout(()=>{ renderTablet(); if(tabPeer()) toast('🏠 ¡Ahí está la tablet!'); else toast('Todavía no aparece. Fijate que la tablet esté prendida y con internet.', 4500); }, 7000); return; }
+  if(e.target.closest('#t5Cuenta')){ closeSheets(); CUENTA.abrir(); return; }
   if(e.target.closest('#t5Guardia')){ const g=tabGuardia(), on=!g.on, tb=tabPeer(); if(!tb) return; FSync.send({k:'guardia', on, est:1, to:tb.dev}); LS.set('tabGuardia', {on, at:Date.now()}); renderTablet(); try{ renderHoy(); }catch(x){} toast(on?'🛡️ La tablet activa la guardia en 30 segundos':'Guardia desactivada', 3500); return; }
   const b=e.target.closest('[data-t5]'); if(b){ tabDecir(b.dataset.t5); return; }
   if(e.target.closest('[data-t5p]')){ t5Pausa=!t5Pausa; tabDecir(t5Pausa?'pausá la tele':'seguí la tele'); }
@@ -5353,6 +5451,11 @@ setTimeout(()=>timbreCompartir(), 15000); setInterval(()=>timbreCompartir(), 10*
 function celuJarvis(text){
   const n=String(text).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9ñ ]/g,' ').replace(/\b(friday|viernes)\b/g,' ').replace(/\s+/g,' ').trim();
   try{ if(typeof HOGAR!=='undefined' && HOGAR.voz(text, n)) return true; }catch(e){ console.warn(e); }
+  // 5.5: de una, sin abrir nada: «decile a la tablet que…», «… en la tablet»
+  { let m1=String(text).trim().match(/^(?:decile|dec[ií]|pedile|preguntale|avisale|contale)\s+a\s+la\s+tablet\s+(?:que\s+)?(.+?)[.!]*$/i), m2=!m1 && !/\b(unir|uni|conectar|guardia)\b/.test(n) && String(text).trim().match(/^(.{3,}?)\s+(?:en|a)\s+la\s+tablet[.!?]*$/i);
+    const q=m1?m1[1]:m2?m2[1]:''; if(q){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text});
+      if(!tabPeer()){ frSay('No veo ninguna tablet. En la tablet entrá con tu misma cuenta de BufaLabs y se conectan solas.'); showSheet('tablet'); return true; }
+      tabDecir(q, false); frSay('Listo, se lo pasé a la tablet.'); return true; } }
   if(/^(abri |abrime |entra a |entrar a |quiero |mostrame )?(mi cuenta( de bufalabs)?|la cuenta de bufalabs|crear (una |mi )?cuenta|iniciar sesion|inicia sesion|cerrar sesion|me olvide la clave|cambiar (la |mi )?clave)$/.test(n)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); const c=CUENTA.yo(); frSay(c?'Estás en tu cuenta, '+c.mail+'. Te la abro.':'Te abro tu cuenta de BufaLabs: con la misma en la compu y la tablet se conecta todo solo.'); setTimeout(()=>CUENTA.abrir(/olvide/.test(n)?'rescate':/crear/.test(n)?'crear':c?null:'hola'), 600); return true; }
   const t=tabPeer(), dec=r=>{ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(r); return true; };
   let m;
@@ -5371,6 +5474,7 @@ async function guardiaFoto(o){
   if(o._att){ try{ const b=await FSync.openFile(o._att); const u=URL.createObjectURL(new Blob([b], {type:'image/jpeg'})); $('gImg').innerHTML=`<img src="${u}" alt="Foto de la guardia" style="width:100%;border-radius:14px">`; }catch(e){ $('gImg').textContent='No pude abrir la foto ('+(e.message||e)+').'; } }
 }
 function celuMsg(o){
+  if(o.k==='dijo' && o.t){ WK.dijo(o.t, o.n); return; }
   if(o.k==='guardia' && o.est){ LS.set('tabGuardia', {on:!!o.on, at:Date.now()}); if(openSheet==='tablet') renderTablet(); try{ renderHoy(); }catch(e){} return; }
   if(o.k==='guardia' && !o.est){ LS.set('tabGuardia', {on:true, at:Date.now()}); guardiaFoto(o); return; }
   if(o.k==='aviso' && o.icom){ try{ buzz([80,60,80]); }catch(e){} toast('📢 '+(o.de||'Mensaje')+': '+(o.s||''), 7000); frSay(o.v||((o.de||'Mensaje')+': '+(o.s||''))); }

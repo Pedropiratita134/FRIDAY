@@ -2380,7 +2380,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='6.2';
+const VERSION='6.3';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3755,7 +3755,7 @@ function onMsg(o){
   if(o.k==='oi'){ Turno.onMsg(o); return; }
   // el celu hace de micrófono (beta): lo que dijiste cerca del celu, la tablet lo escucha y te contesta
   if(o.k==='timbre' && o.id && o.tok){ const ts=LS.get('timbres',{}); if(o.off) delete ts[o.f]; else ts[o.f]={f:o.f, id:String(o.id).slice(0,50), tok:String(o.tok).slice(0,64)}; LS.set('timbres', ts); if(os.cur==='guardia') renderGuardia(); return; }
-  if(o.k==='oir' && o.t){ if(o.to && FSync.cfg && o.to!==FSync.cfg.dev) return; toast('📱 '+(o.de?'Desde el celu de '+o.de:'Desde el celu')+': «'+String(o.t).slice(0,60)+'»', 3500); userSaid(String(o.t).slice(0,400), {celu:true}); return; }
+  if(o.k==='oir' && o.t){ if(o.to && FSync.cfg && o.to!==FSync.cfg.dev) return; if(o.f) celuResp={dev:o.f, at:Date.now(), n:0}; toast('📱 '+(o.de?'Desde el celu de '+o.de:'Desde el celu')+': «'+String(o.t).slice(0,60)+'»', 3500); userSaid(String(o.t).slice(0,400), {celu:true}); return; }
   const q=o.id && pcq[o.id];
   if(o.k==='ack' && q){ clearTimeout(q.t); q.t=setTimeout(()=>{ delete pcq[o.id]; q.res(null); }, 60000); }
   else if(o.k==='res' && q && o.fin){ clearTimeout(q.t); delete pcq[o.id]; q.res(o.r||(o.notes?{ok:true, notes:o.notes}:null)); if(o.r && o.r.ok) setTimeout(()=>casaLoad(true), 800); }
@@ -4588,16 +4588,16 @@ function setsInit(){
 const pad={d:''};
 // «hablame desde el celu»: cómo se hace, paso a paso (y el QR para unir el celu si todavía no está)
 function celuAyuda(){
-  const celus=(()=>{ try{ return FSync.peersOf('celu'); }catch(e){ return []; } })();
+  const celus=(()=>{ try{ return FSync.peersOf('celu'); }catch(e){ return []; } })(), c=(typeof CUENTA!=='undefined' && CUENTA.yo)?CUENTA.yo():null;
   let el=$('celuAy'); if(!el){ el=document.createElement('div'); el.id='celuAy'; el.className='pad'; document.body.appendChild(el);
-    el.addEventListener('click', e=>{ if(e.target===el || e.target.closest('#cayNo')) el.hidden=true; if(e.target.closest('#cayUnir')){ el.hidden=true; setupShow(true, 'link'); } }); }
+    el.addEventListener('click', e=>{ if(e.target===el || e.target.closest('#cayNo')) el.hidden=true; if(e.target.closest('#cayUnir')){ el.hidden=true; setupShow(true, 'link'); } if(e.target.closest('#cayCta')){ el.hidden=true; CUENTA.abrir(); } }); }
   el.innerHTML=`<div class="box cay"><h3>Hablame desde el celu</h3>
-    ${celus.length?`<p>Ya ${celus.length===1?'hay un celu unido':'hay '+celus.length+' celus unidos'} (${celus.map(c=>esc(c.name||'celu')).join(', ')}). En el celu:</p>
-      <ol><li>Abrí <b>FRIDAY Móvil</b>.</li><li>En el inicio tocá <b>«🏠 La tablet de la casa»</b>.</li><li>Tocá <b>«🎙 Hablarle a la tablet»</b> y hablá: yo te escucho y te contesto acá.</li></ol>
-      <p class="note">También podés decirle al celu «hablale a la tablet». Para que vuelva a contestarte el celu, decí «volvé».</p>`
-    :`<p>Esta tablet no tiene micrófono propio: el micrófono es tu celu. Primero hay que unirlos (una sola vez):</p>
-      <ol><li>Tocá <b>«Unir el celu»</b> acá abajo: aparece un código.</li><li>En el celu abrí <b>FRIDAY Móvil → Más → Tu compu → «Escanear el QR»</b> y apuntale a este código.</li><li>Listo: en el inicio del celu vas a ver <b>«🏠 La tablet de la casa»</b>, con el botón para hablarme.</li></ol>
-      <button type="button" class="gbtn big" id="cayUnir">Unir el celu</button>`}
+    ${celus.length?`<p>En tu celu abrí <b>FRIDAY</b> y tocá <b>«🗣️ Hablarle a la tablet»</b>. Hablás, yo te escucho y te contesto acá en voz alta.</p>
+      <p class="note">${celus.length===1?'Celu conectado: ':'Celus conectados: '}${celus.map(x=>esc(x.name||'celu')).join(', ')}.</p>`
+    : c?`<p>Esta tablet está en la cuenta <b>${esc(c.mail)}</b>. En el celu, entrá en FRIDAY con <b>esa misma cuenta</b> (Más → Tu cuenta) y se conectan solos.</p><p>Después tocá <b>«🗣️ Hablarle a la tablet»</b> en el inicio del celu.</p>`
+    :`<p>Esta tablet no tiene micrófono: el micrófono es tu celu. Para conectarlos, entrá acá con <b>la misma cuenta de BufaLabs</b> que tenés en el celu:</p>
+      <button type="button" class="gbtn big" id="cayCta">🔐 Entrar con mi cuenta</button>
+      <p class="note">Después, en el celu tocá «🗣️ Hablarle a la tablet». <a href="#" id="cayUnir" style="color:inherit">Otra forma: unir con un código</a></p>`}
     <button type="button" class="ghost" id="cayNo">Cerrar</button></div>`;
   el.hidden=false; }
 function padShow(){ pad.d=''; $('padSt').textContent=''; padPaint(); $('tvPad').hidden=false; }
@@ -6142,6 +6142,9 @@ function cuentoDelCelu(o){
     document.body.appendChild(ov); ov.querySelector('#cuOvX').onclick=()=>{ try{ stopTalk(); }catch(e){} ov.remove(); }; }
   ov.querySelector('#cuOvT').textContent='🌙 '+String(o.titulo||'Un cuento'); ov.querySelector('#cuOvP').textContent=String(o.texto||'');
   say(String(o.titulo||'')+'. '+String(o.texto||'').replace(/\n+/g,' '), 'happy'); }
+// 6.3: lo que la tablet contesta en voz alta le llega escrito al celu que le habló (el walkie del celu)
+let celuResp=null;
+{ const _sayCasa=say; say=function(text, emo){ try{ if(celuResp && text && Date.now()-celuResp.at<60000 && celuResp.n<3){ celuResp.n++; FSync.send({k:'dijo', to:celuResp.dev, t:String(text).slice(0,600)}); } }catch(e){} return _sayCasa.apply(this, arguments); }; }
 function jarvisMsg(o){
   if(o.k==='cocina' && o.receta){ recetaDelCelu(o); return true; }
   if(o.k==='cuento' && o.texto){ cuentoDelCelu(o); return true; }

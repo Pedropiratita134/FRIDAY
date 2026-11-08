@@ -1,41 +1,21 @@
 {
- "version": "5.4",
- "titulo": "Casa, familia, estudio y la tele",
+ "version": "5.5",
+ "titulo": "Hablarle a la tablet, fácil",
  "items": [
   {
-   "icono": "📺",
-   "titulo": "La tele, de toda la familia",
-   "texto": "FRIDAY Tele ahora saluda a la familia y trae el resumen del día, noticias, música y videos, temporizador y modo ambiente. Pedíselo desde acá: «poné Soda Stereo en la tele»."
+   "icono": "🗣️",
+   "titulo": "Como un walkie-talkie",
+   "texto": "Tocá «Hablarle a la tablet» en el inicio, hablá, y la tablet te contesta en voz alta. Lo que te dijo aparece acá. Cerrás y listo: ya no hay que decir «volvé»."
   },
   {
-   "icono": "🍳",
-   "titulo": "¿Qué cocino?",
-   "texto": "Sacale una foto a la heladera y te digo tres cosas ricas con lo que hay. La que elijas, la tablet te la guía paso a paso."
+   "icono": "🔐",
+   "titulo": "Con la misma cuenta, ya está",
+   "texto": "Si la tablet entró con tu misma cuenta de BufaLabs, se conectan solas. Sin códigos ni QR."
   },
   {
-   "icono": "👨‍👩‍👧",
-   "titulo": "Tu familia en FRIDAY",
-   "texto": "Uní a tu familia: «avisale a mamá que llego tarde» le suena en el celu. Y comparten una lista."
-  },
-  {
-   "icono": "💊",
-   "titulo": "Remedios con aviso",
-   "texto": "Te recuerda el remedio. Si en media hora no marcás «Ya lo tomé», le avisa a quien vos digas."
-  },
-  {
-   "icono": "🌙",
-   "titulo": "Cuentos, juegos y la tarea",
-   "texto": "«Contame un cuento para Juli», trivia, adiviná el animal, mímica, y la tarea explicada paso a paso con una foto."
-  },
-  {
-   "icono": "🎙️",
-   "titulo": "Oye Siri, Friday",
-   "texto": "Hablale desde el auto, con los AirPods o el reloj. Está en Casa y familia → Siri."
-  },
-  {
-   "icono": "📺",
-   "titulo": "FRIDAY en la tele",
-   "texto": "La nueva app FRIDAY Tele para teles LG: se une con tu celu escribiendo un código."
+   "icono": "💬",
+   "titulo": "O de una",
+   "texto": "«Decile a la tablet que ponga música» o «apagá las luces en la tablet», sin abrir nada."
   }
  ]
 }
