@@ -3405,7 +3405,7 @@ const PER_NUM={un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,och
 // (un Apps Script de esa cuenta que se manda el mail a sí misma: el mail de BufaLabs no está en el código).
 // Sin nombre ni nada de la persona: solo lo que pidió mandar, la app, la versión y un número al azar del aparato.
 var BLMSJ=(()=>{
-  const CORREO='';
+  const CORREO='https://script.google.com/macros/s/AKfycbz5AGAGJ3BZ1jaqJUs36kpAqSrfCLSiPTqLTjxQWxQcD3zZA4eeqIgV0S9yvTiVJ2Scbw/exec';
   const TIPOS={idea:'💡 Idea', problema:'🐞 Problema', felicitacion:'🎉 Felicitación', mensaje:'💬 Mensaje'};
   let A={get:(k,d)=>d, set:()=>{}, servidor:null, app:'FRIDAY', version:()=>'', id:()=>''};
   const sinTilde=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
