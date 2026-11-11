@@ -3513,8 +3513,8 @@ $('ytQ').addEventListener('input', ()=>{ clearTimeout(ytQT); const q=$('ytQ').va
   try{ ytLista(ytOrden(await ytBuscarM(q), q, ytAppDe('')==='ytmusic')); }catch(e){ $('ytRes').innerHTML=`<p class="note">${e.message}</p>`; } }, 600); });
 
 // ---------------------------------------------------------------- GIFs
-const GIF_LLAVE_BUFALABS='';   // llave pública de KLIPY para todos (las llaves de KLIPY son para usar desde la app)
-const gifLlave=()=>(S.klipyKey||GIF_LLAVE_BUFALABS||'').trim();
+const GIF_LLAVE_BUFALABS='XtGToocfxF5JdSMwEviHHWSRKUqG4n3q2hMd5XOPgC87nq6vGKyg4cu0ltLFqJ1p';   // llave pública de KLIPY para todos (las llaves de KLIPY son para usar desde la app)
+function gifLlave(){ return (S.klipyKey||GIF_LLAVE_BUFALABS||'').trim(); }
 function gifParse(d){
   const arr=(d && (d.results || (d.data && (d.data.data || d.data)))) || [];
   return (Array.isArray(arr)?arr:[]).map(x=>{ const mf=x.media_formats||{}, f=x.file||{};
@@ -3522,8 +3522,13 @@ function gifParse(d){
     const chico=(mf.tinygif&&mf.tinygif.url) || (mf.nanogif&&mf.nanogif.url) || (f.sm&&f.sm.gif&&f.sm.gif.url) || (f.xs&&f.xs.gif&&f.xs.gif.url) || url;
     return url ? {url, chico, desc:String(x.content_description||x.title||x.slug||'').replace(/-/g,' ').trim()} : null; }).filter(Boolean);
 }
+const gifCache=new Map();
 async function gifBuscar(q, n){
   const k=gifLlave(); if(!k) throw new Error('sin_llave');
+  const ck=k.slice(-6)+'|'+(q||'')+'|'+(n||24), c=gifCache.get(ck); if(c && Date.now()-c.at<30*60000) return c.gs;
+  const gs=await gifBuscarYa(q, n, k); gifCache.set(ck, {at:Date.now(), gs}); return gs;
+}
+async function gifBuscarYa(q, n, k){
   const base='https://api.klipy.com/v2/', p=`key=${encodeURIComponent(k)}&client_key=friday&limit=${n||24}&locale=es_AR&contentfilter=medium&media_filter=gif,tinygif&customer_id=${BUFIA.id()}`;
   const r=await fetch(q ? `${base}search?q=${encodeURIComponent(q)}&${p}` : `${base}featured?${p}`);
   if(r.status===401 || r.status===403) throw new Error('llave_mala');

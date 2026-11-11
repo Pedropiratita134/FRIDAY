@@ -995,7 +995,7 @@ body.chica .celuChip{display:none}
       <p class="lbl">Dónde suena</p>
       <div class="seg" data-k="musicOut"><button type="button" data-v="tablet">En la tablet</button><button type="button" data-v="tele">En la tele</button></div>
       <div class="tvrow" id="tvRow"></div>
-      <p class="lbl">GIFs (para «mostrame un GIF de…»): API key de KLIPY, gratis en partner.klipy.com. Si la cargás en el celu, llega sola.</p>
+      <p class="lbl">GIFs (para «mostrame un GIF de…»): API key de KLIPY, gratis en partner.klipy.com. Ya viene una puesta: cargá la tuya solo si querés usar la propia.</p>
       <input id="klipyIn" autocomplete="off" spellcheck="false" placeholder="API key de KLIPY" style="width:100%;min-height:52px;padding:10px 16px;border-radius:16px;border:1px solid var(--edge);background:var(--card-2);color:var(--ink);font:500 17px var(--text)"></section>
     <section><h3>Pantalla</h3>
       <p class="lbl">FRIDAY se mueve por la pantalla (pasea, salta, se asoma, baila con la música)</p>
@@ -3590,7 +3590,7 @@ function fast(text, nf){
   const cf=casaFast(nf);
   if(cf){ pushHist('user', text); setMode('thinking'); casaDo(cf.quien, cf.q).then(r=>{ setMode('idle'); say(r.txt, r.ok?'happy':'worried'); focusCard('casa'); }); return true; }
   { const gm=n0.match(/^(?:mostrame|poneme|pone|mandame|tirame|buscame|quiero)? ?(?:un )?gif (?:de |del |con |sobre )?(.{2,40})$/);
-    if(gm){ pushHist('user', text); if(!gifLlave()){ say('Para los GIFs me falta la llave de KLIPY. Se carga en el celu, en GIFs, y me llega sola.', 'confused'); return true; }
+    if(gm){ pushHist('user', text); if(!gifLlave()){ say('Para los GIFs me falta la llave de KLIPY.', 'confused'); return true; }
       gifDe(gm[1]).then(ok=>{ if(!ok) say('No encontré GIFs de eso.'); pushHist('assistant', ok?'[Mostré un GIF de '+gm[1]+']':'No encontré GIFs de eso.'); }).catch(e=>say('No pude: '+e.message, 'worried')); return true; } }
   // la música (botones)
   if(music.cur && /^(pausa|pausá|paus[aá] la musica|par[aá] la musica|cortala|apaga la musica|saca la musica)$/.test(n0)){ musicCtrl('pausa'); return true; }
@@ -4013,7 +4013,8 @@ function ytLoad(){
 }
 
 // ---------------------------------------------------------------- 6.5: GIFs (de KLIPY) en la pantalla
-const gifLlave=()=>String(S.klipyKey||'').trim();
+const GIF_LLAVE_BUFALABS='XtGToocfxF5JdSMwEviHHWSRKUqG4n3q2hMd5XOPgC87nq6vGKyg4cu0ltLFqJ1p';   // llave de KLIPY de BufaLabs (las llaves de KLIPY son para usar desde la app)
+function gifLlave(){ return String(S.klipyKey||GIF_LLAVE_BUFALABS||'').trim(); }
 function gifParse(d){
   const arr=(d && (d.results || (d.data && (d.data.data || d.data)))) || [];
   return (Array.isArray(arr)?arr:[]).map(x=>{ const mf=x.media_formats||{}, f=x.file||{};
