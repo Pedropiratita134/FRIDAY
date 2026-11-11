@@ -7,7 +7,7 @@ permissions:
   contents: read
 jobs:
   humo:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
@@ -15,5 +15,5 @@ jobs:
         with:
           python-version: '3.12'
       - run: pip install playwright==1.48.0
-      - run: python -m playwright install --with-deps chromium
+      - run: python -m playwright install --with-deps chromium || python -m playwright install chromium
       - run: python -u pruebas/humo.py
