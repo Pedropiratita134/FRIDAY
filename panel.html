@@ -2380,7 +2380,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='6.3';
+const VERSION='6.4';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3326,11 +3326,190 @@ SIESTA.iniciar({ servidor: SERVIDOR_BUFALABS,
   alDormir: ()=>{ try{ stopTalk(); }catch(e){} },
   alDespertar: ()=>{ try{ say('¡Ya me desperté! Todos los sistemas en línea.'); }catch(e){} },
   alMensaje: m=>{ if(m.app && m.app!=='todas' && m.app!=='casa') return; if(LS.get('blMsj','')===m.id) return; LS.set('blMsj', m.id); try{ say('Mensaje de BufaLabs: '+m.texto); }catch(e){} } });
+// ================================================================ Más persona (celu 5.6 y tablet 6.4): lo mismo que FRIDAY 106 de la compu, adaptado
+// Si el cerebro se cae se anota lo que pediste y lo hace cuando vuelve (lo delicado lo pregunta) · «deshacé eso» ·
+// atajos que aprende («no, Spotify») · «¿qué hiciste hoy?» · sin internet sigue · si estás apurado, corto ·
+// Te aviso yo (lluvia, batería, mañana temprano). Cada app le pasa a PER.init() cómo hablar, cómo pensar, etc.
+const PER=(()=>{
+  const A={};
+  const P={ pend:[], retomando:false, noAntes:0, pila:[], deshaciendo:false, prev:null, apuroHasta:0, cortos:[], diario:{fecha:'', items:[]}, ofrece:null, visto:{}, fallo:false, bat:[] };
+  const azar=a=>a[Math.floor(Math.random()*a.length)];
+  const hoyISO=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const isoLocal=d=>`${hoyISO(d)}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  const n=t=>A.norm(String(t||''));
+  const FRASE_CAIDA=['Uy, se me trabó la cabeza. Me lo anoto y apenas vuelvo lo hago.','Se me colgó el cerebro un segundo. No me olvido: cuando vuelva, lo hago.','Perdón, me quedé en blanco. Lo dejo anotado y lo hago apenas pueda.'];
+  const DELICADO=/\b(manda\w*|envia\w*|mensaje|whatsapp|wasap|mail|correo|borra\w*|elimina\w*|apaga\w*|reinicia\w*|compra\w*|paga\w*|publica\w*|postea\w*|transferi\w*)\b/;
+  const LLUEVE=[51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99];
+  const sleep=ms=>new Promise(r=>setTimeout(r, ms));
+  async function libre(max=60000){ const t0=Date.now(); while(!A.libre() && Date.now()-t0<max) await sleep(500); }
+  function init(a){
+    Object.assign(A, a);
+    P.pend=A.get('perPend',[]); P.diario=A.get('perDiario',{fecha:'', items:[]}); P.visto=A.get('perVisto',{});
+    setInterval(()=>{ try{ if(P.pend.length && Date.now()>=P.noAntes && A.libre()) retomar(); }catch(e){} try{ avisos(); }catch(e){} }, 60000);
+    setTimeout(()=>{ try{ if(P.pend.length) retomar(); }catch(e){} }, 20000);
+    let aviso=0;
+    addEventListener('offline', ()=>{ if(Date.now()-aviso<10*60000) return; aviso=Date.now(); A.decir(A.sinInternet || 'Se cortó internet. Lo que me pidas que necesite pensar lo anoto y lo hago cuando vuelva.'); });
+    addEventListener('online', ()=>{ P.noAntes=0; setTimeout(()=>{ if(P.pend.length) retomar(); else if(Date.now()-aviso<30*60000) A.decir('Volvió internet.'); }, 3000); });
+  }
+  // ---- lo que quedó colgado
+  function guardar(texto, motivo){
+    texto=String(texto||'').trim(); if(!texto) return;
+    P.pend=P.pend.filter(p=>n(p.texto)!==n(texto)); P.pend.push({texto, at:Date.now(), motivo:motivo||''}); P.pend=P.pend.slice(-5); A.set('perPend', P.pend);
+  }
+  const fraseCaida=()=>azar(FRASE_CAIDA);
+  const hace=at=>{ const m=Math.round((Date.now()-at)/60000); return m<2?'recién':m<60?`hace ${m} minutos`:(Math.round(m/60)===1?'hace una hora':`hace ${Math.round(m/60)} horas`); };
+  async function hacer(p){
+    await libre(); P.fallo=false;
+    await A.hacer(p.texto, `(Aviso del sistema, no lo dijo el usuario ahora) Esto te lo pidió ${hace(p.at)} y no lo pudiste hacer porque se te cayó el cerebro o internet. Hacelo ahora. Si era una pregunta, empezá con algo como «Lo que me preguntaste:». Corto y natural, sin pedir perdón de nuevo.`);
+    await sleep(600); await libre();
+    return !P.fallo;
+  }
+  async function retomar(){
+    if(P.retomando || !P.pend.length || Date.now()<P.noAntes || !navigator.onLine) return;
+    if(!A.libre()){ setTimeout(retomar, 4000); return; }
+    P.retomando=true;
+    try{
+      const lista=P.pend.splice(0).filter(p=>Date.now()-p.at<3*3600000); A.set('perPend', P.pend);
+      if(!lista.length) return;
+      const viejo=p=>Date.now()-p.at>30*60000;
+      const dale=lista.filter(p=>!DELICADO.test(n(p.texto)) && !viejo(p)), preg=lista.filter(p=>!dale.includes(p));
+      const nom=A.nombre ? A.nombre() : '';
+      A.decir(lista.length===1 ? `¡Volví${nom?', '+nom:''}!` : `¡Volví${nom?', '+nom:''}! Tenía ${['','una','dos','tres','cuatro','cinco'][lista.length]} cosas pendientes.`);
+      await sleep(400); await libre();
+      for(let i=0;i<dale.length;i++){ if(!(await hacer(dale[i]))){ P.pend.push(...dale.slice(i+1), ...preg); A.set('perPend', P.pend); P.noAntes=Date.now()+3*60000; return; } }
+      for(const p of preg){
+        await libre();
+        const si=await new Promise(res=>{ let listo=false; const fin=v=>{ if(!listo){ listo=true; P.ofrece=null; res(v); } };
+          P.ofrece={si:()=>fin(true), no:()=>fin(false), until:Date.now()+60000};
+          A.decir(`${hace(p.at)==='recién'?'Recién':'Antes, '+hace(p.at)+','} me pediste: «${p.texto}». ¿Todavía querés que lo haga?`, true);
+          setTimeout(()=>fin(false), 62000); });
+        if(si && !(await hacer(p))) return;
+      }
+    } finally { P.retomando=false; }
+  }
+  // ---- deshacer
+  function push(desc, fn){ if(P.deshaciendo) return; P.pila.push({desc, fn, at:Date.now()}); P.pila=P.pila.slice(-10); }
+  async function deshacer(){
+    const u=P.pila.pop(); if(!u) return 'No tengo nada para deshacer.';
+    P.deshaciendo=true;
+    try{ await u.fn(); anotar('↩️ Deshice '+u.desc); return azar([`Listo, deshice ${u.desc}.`,`Hecho: volví atrás ${u.desc}.`]); }
+    catch(e){ return `No pude deshacer ${u.desc}.`; }
+    finally{ P.deshaciendo=false; }
+  }
+  // ---- el diario de hoy
+  function anotar(t){
+    t=String(t||'').replace(/\s+/g,' ').trim(); if(t.length<4) return;
+    const hoy=hoyISO(); if(P.diario.fecha!==hoy) P.diario={fecha:hoy, items:[]};
+    const ult=P.diario.items[P.diario.items.length-1]; if(ult && ult.t===t && Date.now()-ult.at<60000) return;
+    P.diario.items.push({t:t.slice(0,140), at:Date.now()}); P.diario.items=P.diario.items.slice(-150); A.set('perDiario', P.diario);
+  }
+  async function contar(){
+    const it=P.diario.fecha===hoyISO() ? P.diario.items : [];
+    if(!it.length) return 'Hoy todavía no hice nada por vos. ¿Arrancamos?';
+    const lista=it.map(x=>`${new Date(x.at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})} ${x.t}`).join('\n');
+    if(A.pedir){ try{ const r=await Promise.race([A.pedir(`Sos FRIDAY, una asistente. Esto es lo que hiciste hoy por el usuario:\n${lista}\n\nContáselo hablado, en español rioplatense, en 2 a 4 frases: agrupá lo parecido, nombrá lo importante y no inventes nada que no esté en la lista.`), sleep(9000).then(()=>'')]); if(r && r.trim().length>10) return r.trim(); }catch(e){} }
+    return `Hoy hice ${it.length} cosas por vos. Las últimas: ${it.slice(-4).map(x=>x.t.replace(/^\W+\s*/,'')).join('; ')}.`;
+  }
+  // ---- el cerebro: reglas de asistente y el apuro
+  const REGLAS=`\n\nCómo ser su asistente:
+- Si te cuenta algo que tiene que hacer (llamar, pagar, comprar, mandar, un turno) y no pidió que se lo recuerdes, ofrecé UNA vez, en una frase, recordárselo.
+- Si te pide organizar el día ("armame el día", "¿qué hago hoy?"), proponé un plan corto por horarios con lo que sabés (agenda, recordatorios) y ofrecé anotarlo.
+- Si el pedido se puede entender de dos formas y eso cambia lo que harías (dónde, qué app, a quién, cuándo), hacé UNA pregunta corta con las opciones en vez de adivinar.
+- Si te corrige ("no, en Spotify"), hacé lo corregido sin vueltas.`;
+  function nota(){
+    const now=Date.now(); let t=REGLAS;
+    if(now<P.apuroHasta) t+='\n\nEl usuario está APURADO: contestá en UNA frase corta y directa.';
+    else if(P.cortos.filter(x=>now-x<150000).length>=3) t+='\n\nEl usuario viene pidiendo cosas cortas y seguidas: contestá breve.';
+    return t;
+  }
+  // ---- antes de todo: devuelve true si ya lo resolvió, un texto si un atajo lo cambia, o false
+  function antes(text){
+    const k=n(text).replace(/\b(friday|viernes|che|dale|porfa|por favor)\b/g,' ').replace(/\s+/g,' ').trim(), now=Date.now(), prev=P.prev;
+    P.prev={texto:text, clave:k, at:now};
+    if(k.split(' ').length<=5){ P.cortos.push(now); P.cortos=P.cortos.slice(-6); }
+    const di=t=>{ A.oyo(text); A.decir(t); return true; };
+    if(P.ofrece && now<P.ofrece.until){
+      if(/^(si|dale|bueno|ok|obvio|de una|hacelo|claro|si dale|si por favor)$/.test(k)){ const o=P.ofrece; P.ofrece=null; A.oyo(text); o.si(); return true; }
+      if(/^(no|no gracias|nah|deja|dejalo|ahora no|ya no|no hace falta)$/.test(k)){ const o=P.ofrece; P.ofrece=null; A.oyo(text); if(o.no) o.no(); A.decir('Dale.'); return true; }
+    }
+    if(/\b(estoy apurad[oa]|tengo apuro|estoy a las corridas)\b/.test(k)) P.apuroHasta=now+20*60000;
+    if(/\b(ya no estoy apurad[oa]|ya estoy tranqui|explayate|contame bien)\b/.test(k)){ P.apuroHasta=0; P.cortos=[]; }
+    if(/^(deshace(lo)?|deshaz|deshace eso|deshace lo (ultimo|que hiciste)|volve (para )?atras|anula (eso|lo ultimo)|cancela (eso|lo ultimo|lo que hiciste))$/.test(k) || (/^(no,? eso no|ups,? no)$/.test(k) && P.pila.length && now-P.pila[P.pila.length-1].at<60000)){
+      A.oyo(text); deshacer().then(t=>A.decir(t)); return true; }
+    if(/\b(que hiciste (hoy|por mi)|que hicimos hoy|que me hiciste hoy|que cosas hiciste|contame lo que hiciste)\b/.test(k)){ A.oyo(text); contar().then(t=>A.decir(t)); return true; }
+    if(/^(no me avises mas (cosas|nada)|deja de avisarme (cosas|nada))$/.test(k)){ A.set('tayOff', true); return di('Listo, no te aviso más nada por mi cuenta. Si querés que vuelva, decime «avisame cosas».'); }
+    if(/^(avisame cosas|volve a avisarme( cosas)?)$/.test(k)){ A.set('tayOff', false); return di('Dale, vuelvo a avisarte si llueve, si queda poca batería o si mañana arrancás temprano.'); }
+    if(/^(olvida(te)?( de)? los atajos|borra los atajos)$/.test(k)){ A.set('atajos',{}); return di('Listo, me olvidé de los atajos.'); }
+    const m=k.match(/^no,? (?:no,? )?(?:(?:quise decir|digo|te dije|era|en|con|el|la|los|las|a) )*(.{2,30})$/);
+    if(m && prev && now-prev.at<45000 && !/^(eso|nada|gracias|importa|esta bien|era eso|todo bien)$|^(ahora|despues|nada|deja|ya|tranqui|hace falta|para|basta|perdon)\b/.test(m[1])){
+      const v=prev.clave.match(/^(abri|abrime|pone|poneme|busca|buscame|anota|agrega|manda|mandale|llama)\b/);
+      if(v && m[1].split(' ').length<=4){
+        const nuevo=v[1]+' '+m[1], at=A.get('atajos',{}); at[prev.clave]=nuevo; A.set('atajos', at);
+        A.oyo(text); A.decir(azar(['Ah, perdón. Anotado para la próxima.','Uh, entendí mal. Ya lo aprendí.','Ok, la próxima ya sé.']));
+        setTimeout(()=>A.pedido(nuevo), 1200); return true;
+      }
+    }
+    const at=A.get('atajos',{}); if(at[k]) return at[k];
+    return false;
+  }
+  // ---- Te aviso yo
+  function visto(id){ if(P.visto[id]) return true; P.visto[id]=Date.now(); for(const [k,v] of Object.entries(P.visto)) if(Date.now()-v>3*86400000) delete P.visto[k]; A.set('perVisto', P.visto); return false; }
+  async function avisos(){
+    if(A.get('tayOff', false) || (A.durmiendo && A.durmiendo())) return;
+    const h=new Date().getHours(); if(h<8 || h>=23) return;
+    // lluvia en las próximas horas
+    const w=A.clima && A.clima();
+    if(w && w.horas && !LLUEVE.includes(w.code)){
+      const p=w.horas.find(x=>x.p>=60 && x.en>0 && x.en<=5);
+      if(p && !visto(`lluvia-${hoyISO()}-${h<14?'m':'t'}`)) A.avisar(`Te aviso: a eso de las ${p.hora} va a llover, ${p.p} por ciento. Si salís, llevá paraguas.`, `☔ Llueve a eso de las ${p.hora} h`);
+    }
+    // batería (del celu)
+    if(A.bateria){ try{ const b=await A.bateria(); if(b && !b.cargando){ const pc=Math.round(b.nivel*100);
+      if(pc<=8 && !visto('bat8-'+Math.floor(Date.now()/3600000))) A.avisar(`Ojo: te queda ${pc} por ciento de batería. Enchufalo.`, `🪫 Batería al ${pc}%`);
+      else if(pc<=15 && !visto('bat15-'+Math.floor(Date.now()/(3*3600000)))) A.avisar(`Te queda ${pc} por ciento de batería. ¿Lo enchufás?`, `🔋 Batería al ${pc}%`); } }catch(e){} }
+    // mañana arrancás temprano
+    if(h>=20 && A.manana){
+      const e=(A.manana()||[]).filter(x=>x.hora<11).sort((a,b)=>a.inicio-b.inicio)[0];
+      if(e && !visto('temprano-'+hoyISO(new Date(e.inicio)))){
+        const t=new Date(e.inicio), hh=t.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+        A.avisar(`Te adelanto: mañana a las ${hh} tenés ${e.titulo}. ¿Querés que te avise un rato antes?`, `⏰ Mañana ${hh}: ${e.titulo}`);
+        P.ofrece={si:()=>{ const a=new Date(t); a.setMinutes(a.getMinutes()-45); A.recordar(isoLocal(a), 'Prepararte para '+e.titulo); A.decir(`Listo, te aviso mañana a las ${a.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}.`); }, until:Date.now()+2*60000};
+      }
+    }
+  }
+  return { init, guardar, fraseCaida, retomar, push, deshacer, anotar, contar, nota, antes, avisos, P };
+})();
+
+PER.init({
+  get:(k,d)=>LS.get(k,d), set:(k,v)=>LS.set(k,v), norm:t=>norm(t),
+  decir:(t)=>{ say(t); pushHist('assistant', t); }, oyo:(text)=>pushHist('user', text),
+  libre:()=>state.mode==='idle' && !tts.on && !(tts.q && tts.q.length), nombre:()=>'',
+  hacer:async(texto, nota)=>{ pushHist('user', texto); await brain(texto, nota); },
+  pedido:(t)=>userSaid(t),
+  clima:()=>{ const w=weather.data; if(!w || !w.hours || !w.hours.length) return null; const h=new Date().getHours();
+    return {code:w.code, horas:w.hours.slice(h, h+7).map((x,i)=>({hora:+String(x.h).slice(0,2), p:x.p||0, en:i}))}; },
+  avisar:(texto, titulo)=>{ PER.anotar(titulo); if(state.mode==='idle' && !durmiendo()) say(texto); },
+  recordar:(at, texto)=>addReminder(at, texto),
+  durmiendo:()=>durmiendo(),
+  sinInternet:'Se cortó internet. Los timers, las notas y la lista siguen andando; lo que necesite pensar lo anoto y lo hago cuando vuelva.',
+});
+{ const _p=prompt; prompt=function(){ return _p.apply(this, arguments)+PER.nota(); }; }
+// deshacer y el diario
+{ const _ar=addReminder; addReminder=function(at, texto){ const n0=reminders.length; const r=_ar.apply(this, arguments);
+    if(reminders.length>n0){ const it=reminders[reminders.length-1]; PER.anotar('⏰ Recordatorio: '+texto); PER.push('el recordatorio «'+texto+'»', ()=>{ reminders=reminders.filter(x=>x!==it); LS.set('rems',reminders); try{ FSync.scan(); }catch(e){} render(); }); }
+    return r; }; }
+{ const _at=addTimer; addTimer=function(secs, label){ const r=_at.apply(this, arguments); const it=timers[timers.length-1]; PER.anotar('⏱️ Timer de '+durTxt(secs)+(label?' para '+label:''));
+    PER.push('el timer de '+durTxt(secs), ()=>{ timers=timers.filter(x=>x!==it); saveTimers(); }); return r; }; }
+{ const _sa=shopAdd; shopAdd=function(items){ const r=_sa.apply(this, arguments); PER.anotar('🛒 A la lista: '+items.join(', ')); PER.push('lo que agregué a la lista', ()=>shopDel(items)); return r; }; }
+{ const _an=addNota; addNota=function(t){ const n0=notas.length; const r=_an.apply(this, arguments); if(notas.length>=n0 && notas.length){ const it=notas[notas.length-1]; PER.anotar('📝 Nota: '+t); PER.push('la nota', ()=>{ notas=notas.filter(x=>x!==it); saveNotas(); }); } return r; }; }
+
 function userSaid(text, how){
   text=String(text).trim(); if(!text) return;
   if(SIESTA.on){ SIESTA.ronquido(); return; }
   state.lastUser=Date.now(); ambOff(); bannerOff(); if(durmiendo()){ state.sleepUntil=0; LS.set('sleepUntil',0); }
   if(timerRinging()){ timerHush(); if(/^(ok|listo|ya|gracias|dale|para|basta|callate)\b/.test(norm(text))) { say('Listo.'); return; } }
+  { const a=PER.antes(text); if(a===true){ $('you').innerHTML='<q>'+esc(text)+'</q>'; return; } if(typeof a==='string') text=a; }
+  if(/^(que dia es( hoy)?|que fecha es( hoy)?|a que (dia|fecha) estamos)$/.test(norm(text).replace(/[¿?¡!.,]/g,' ').trim())){ $('you').innerHTML='<q>'+esc(text)+'</q>'; sayFast(text, 'Hoy es '+new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})+'.'); return; }
   $('you').innerHTML='<q>'+esc(text)+'</q>';
   const nf=norm(text);
   if(quien.enroll) return;
@@ -4133,8 +4312,15 @@ async function brain(text, extra, depth=0){
     const upto=vis.slice(spokenUpTo); const m=upto.match(/^[\s\S]*?[.!?](\s|$)/);
     if(m){ const chunk=m[0]; spokenUpTo+=chunk.length; if(state.mode==='thinking') setMode('speaking'); speakChunk(chunk); }
   };
+  const tarda=setTimeout(()=>{ if(!full && state.mode==='thinking' && !depth) speakChunk('Estoy tardando, dame un toque. '); }, 8000);
   try{ full=await llm(msgs, onDelta); }
-  catch(e){ if(e.name==='AbortError') return; setMode('idle'); say(e.message, 'worried'); return; }
+  catch(e){ clearTimeout(tarda); if(e.name==='AbortError') return; setMode('idle');
+    const llave=/llave/i.test(e.message);
+    if(PER.P.retomando && !llave){ PER.P.fallo=true; PER.guardar(text,'otra vez'); PER.P.noAntes=Date.now()+3*60000; return; }
+    if(depth>0 && !llave){ say('Ya lo hice, pero se me trabó la cabeza para contarte cómo salió.', 'worried'); return; }
+    if(!llave && text){ PER.guardar(text, 'cerebro'); say(/cupo/.test(e.message) ? e.message+' Me lo anoto y lo hago apenas pueda.' : !navigator.onLine ? 'Estoy sin internet: me lo anoto y lo hago apenas vuelva.' : PER.fraseCaida(), 'worried'); return; }
+    say(e.message, 'worried'); return; }
+  clearTimeout(tarda);
   const vis=full.replace(TAG_RE,'').trim(); const rest=vis.slice(spokenUpTo); if(rest.trim()) speakChunk(rest);
   tts.shown=spokenForm(vis); capText(tts.shown);
   if(vis) pushHist('assistant', full);

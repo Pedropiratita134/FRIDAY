@@ -1,21 +1,26 @@
 {
- "version": "5.5",
- "titulo": "Hablarle a la tablet, fácil",
+ "version": "5.6",
+ "titulo": "Más asistente, más persona",
  "items": [
   {
-   "icono": "🗣️",
-   "titulo": "Como un walkie-talkie",
-   "texto": "Tocá «Hablarle a la tablet» en el inicio, hablá, y la tablet te contesta en voz alta. Lo que te dijo aparece acá. Cerrás y listo: ya no hay que decir «volvé»."
+   "icono": "🧠",
+   "titulo": "Si se le traba la cabeza, no se olvida",
+   "texto": "Si se cae el cerebro o internet, se anota lo que le pediste y cuando vuelve lo hace sola. Lo delicado te lo pregunta antes."
   },
   {
-   "icono": "🔐",
-   "titulo": "Con la misma cuenta, ya está",
-   "texto": "Si la tablet entró con tu misma cuenta de BufaLabs, se conectan solas. Sin códigos ni QR."
+   "icono": "↩️",
+   "titulo": "«Deshacé eso»",
+   "texto": "Borra el recordatorio o el temporizador que acaba de poner."
   },
   {
-   "icono": "💬",
-   "titulo": "O de una",
-   "texto": "«Decile a la tablet que ponga música» o «apagá las luces en la tablet», sin abrir nada."
+   "icono": "🔔",
+   "titulo": "Te aviso yo",
+   "texto": "Si va a llover en las próximas horas, si al celu le queda poca batería o si mañana arrancás temprano."
+  },
+  {
+   "icono": "⚡",
+   "titulo": "Lo simple, al instante",
+   "texto": "La hora, el día, un temporizador, abrir Spotify o YouTube: sin pensar. Y «¿qué hiciste hoy?» te cuenta todo lo que hizo por vos."
   }
  ]
 }

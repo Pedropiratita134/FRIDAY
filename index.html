@@ -2159,9 +2159,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='5.5';
+const VERSION='5.6';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "5.5", "titulo": "Hablarle a la tablet, fácil", "items": [{"icono": "🗣️", "titulo": "Como un walkie-talkie", "texto": "Tocá «Hablarle a la tablet» en el inicio, hablá, y la tablet te contesta en voz alta. Lo que te dijo aparece acá. Cerrás y listo: ya no hay que decir «volvé»."}, {"icono": "🔐", "titulo": "Con la misma cuenta, ya está", "texto": "Si la tablet entró con tu misma cuenta de BufaLabs, se conectan solas. Sin códigos ni QR."}, {"icono": "💬", "titulo": "O de una", "texto": "«Decile a la tablet que ponga música» o «apagá las luces en la tablet», sin abrir nada."}]};
+const NOVEDADES_M={"version": "5.6", "titulo": "Más asistente, más persona", "items": [{"icono": "🧠", "titulo": "Si se le traba la cabeza, no se olvida", "texto": "Si se cae el cerebro o internet, se anota lo que le pediste y cuando vuelve lo hace sola. Lo delicado te lo pregunta antes."}, {"icono": "↩️", "titulo": "«Deshacé eso»", "texto": "Borra el recordatorio o el temporizador que acaba de poner."}, {"icono": "🔔", "titulo": "Te aviso yo", "texto": "Si va a llover en las próximas horas, si al celu le queda poca batería o si mañana arrancás temprano."}, {"icono": "⚡", "titulo": "Lo simple, al instante", "texto": "La hora, el día, un temporizador, abrir Spotify o YouTube: sin pensar. Y «¿qué hiciste hoy?» te cuenta todo lo que hizo por vos."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -2335,7 +2335,7 @@ async function recDone(){
     if(!r.ok) throw new Error(r.status===401?'llave':'whisper '+r.status);
     let t=String((await r.json()).text||'').trim();
     if(!t || /^(gracias\.?|subtítulos.*|amara.*|\W*)$/i.test(t)){ $('heard').textContent='No te entendí, ¿me lo repetís?'; orbState='idle'; return; }
-    $('heard').textContent=''; ask(t);
+    $('heard').textContent=''; PER.P.voz=Date.now(); ask(t);
   }catch(e){ orbState='idle'; $('heard').textContent=''; bubble('sys', e.message==='llave'?'Tu llave de Groq no anda: revisala en Ajustes.':'No pude escucharte (¿hay internet?).'); }
   finally{ $('mic').classList.remove('busy'); }
 }
@@ -3089,7 +3089,7 @@ let bufiaMal=null, bufiaNota='', invUlt=null, habitoPend=null;
 function habitoRevisar(){ try{
   if(PANEL || habitoPend || busy || isSpeaking() || document.getElementById('splash') || document.querySelector('.upn,.upd:not([hidden])') || document.querySelector('.sheet.on')) return;
   const s=BUFIA.habitoSugerir(); if(!s) return;
-  BUFIA.habitoOfrecido(s.clave); habitoPend={texto:s.texto, hasta:Date.now()+60000}; frSay(BUFIA.habitoPregunta(s));
+  if(perHabitoAuto(s)) return; BUFIA.habitoOfrecido(s.clave); habitoPend={texto:s.texto, clave:s.clave, hasta:Date.now()+60000}; frSay(BUFIA.habitoPregunta(s));
 }catch(e){} }
 window.addEventListener('load', ()=>{ setTimeout(habitoRevisar, 9000); setTimeout(()=>{ try{ BUFIA.prepararDia({gem:S.gemKey, groq:S.groqKey}); }catch(e){} }, 6000); });
 document.addEventListener('visibilitychange', ()=>{ if(document.visibilityState==='visible') setTimeout(habitoRevisar, 2500); });
@@ -3177,10 +3177,215 @@ function micTabDeVoz(n){
   if(micTab && /\b(deja de ser|salir del|sali del|apaga(r)? el|chau) microfono\b|^(volve|volve al celu|volve conmigo|basta de tablet|ya esta tablet|listo tablet)$/.test(n)) return 'off';
   return '';
 }
+// ================================================================ Más persona (celu 5.6 y tablet 6.4): lo mismo que FRIDAY 106 de la compu, adaptado
+// Si el cerebro se cae se anota lo que pediste y lo hace cuando vuelve (lo delicado lo pregunta) · «deshacé eso» ·
+// atajos que aprende («no, Spotify») · «¿qué hiciste hoy?» · sin internet sigue · si estás apurado, corto ·
+// Te aviso yo (lluvia, batería, mañana temprano). Cada app le pasa a PER.init() cómo hablar, cómo pensar, etc.
+const PER=(()=>{
+  const A={};
+  const P={ pend:[], retomando:false, noAntes:0, pila:[], deshaciendo:false, prev:null, apuroHasta:0, cortos:[], diario:{fecha:'', items:[]}, ofrece:null, visto:{}, fallo:false, bat:[] };
+  const azar=a=>a[Math.floor(Math.random()*a.length)];
+  const hoyISO=(d=new Date())=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const isoLocal=d=>`${hoyISO(d)}T${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`;
+  const n=t=>A.norm(String(t||''));
+  const FRASE_CAIDA=['Uy, se me trabó la cabeza. Me lo anoto y apenas vuelvo lo hago.','Se me colgó el cerebro un segundo. No me olvido: cuando vuelva, lo hago.','Perdón, me quedé en blanco. Lo dejo anotado y lo hago apenas pueda.'];
+  const DELICADO=/\b(manda\w*|envia\w*|mensaje|whatsapp|wasap|mail|correo|borra\w*|elimina\w*|apaga\w*|reinicia\w*|compra\w*|paga\w*|publica\w*|postea\w*|transferi\w*)\b/;
+  const LLUEVE=[51,53,55,56,57,61,63,65,66,67,80,81,82,95,96,99];
+  const sleep=ms=>new Promise(r=>setTimeout(r, ms));
+  async function libre(max=60000){ const t0=Date.now(); while(!A.libre() && Date.now()-t0<max) await sleep(500); }
+  function init(a){
+    Object.assign(A, a);
+    P.pend=A.get('perPend',[]); P.diario=A.get('perDiario',{fecha:'', items:[]}); P.visto=A.get('perVisto',{});
+    setInterval(()=>{ try{ if(P.pend.length && Date.now()>=P.noAntes && A.libre()) retomar(); }catch(e){} try{ avisos(); }catch(e){} }, 60000);
+    setTimeout(()=>{ try{ if(P.pend.length) retomar(); }catch(e){} }, 20000);
+    let aviso=0;
+    addEventListener('offline', ()=>{ if(Date.now()-aviso<10*60000) return; aviso=Date.now(); A.decir(A.sinInternet || 'Se cortó internet. Lo que me pidas que necesite pensar lo anoto y lo hago cuando vuelva.'); });
+    addEventListener('online', ()=>{ P.noAntes=0; setTimeout(()=>{ if(P.pend.length) retomar(); else if(Date.now()-aviso<30*60000) A.decir('Volvió internet.'); }, 3000); });
+  }
+  // ---- lo que quedó colgado
+  function guardar(texto, motivo){
+    texto=String(texto||'').trim(); if(!texto) return;
+    P.pend=P.pend.filter(p=>n(p.texto)!==n(texto)); P.pend.push({texto, at:Date.now(), motivo:motivo||''}); P.pend=P.pend.slice(-5); A.set('perPend', P.pend);
+  }
+  const fraseCaida=()=>azar(FRASE_CAIDA);
+  const hace=at=>{ const m=Math.round((Date.now()-at)/60000); return m<2?'recién':m<60?`hace ${m} minutos`:(Math.round(m/60)===1?'hace una hora':`hace ${Math.round(m/60)} horas`); };
+  async function hacer(p){
+    await libre(); P.fallo=false;
+    await A.hacer(p.texto, `(Aviso del sistema, no lo dijo el usuario ahora) Esto te lo pidió ${hace(p.at)} y no lo pudiste hacer porque se te cayó el cerebro o internet. Hacelo ahora. Si era una pregunta, empezá con algo como «Lo que me preguntaste:». Corto y natural, sin pedir perdón de nuevo.`);
+    await sleep(600); await libre();
+    return !P.fallo;
+  }
+  async function retomar(){
+    if(P.retomando || !P.pend.length || Date.now()<P.noAntes || !navigator.onLine) return;
+    if(!A.libre()){ setTimeout(retomar, 4000); return; }
+    P.retomando=true;
+    try{
+      const lista=P.pend.splice(0).filter(p=>Date.now()-p.at<3*3600000); A.set('perPend', P.pend);
+      if(!lista.length) return;
+      const viejo=p=>Date.now()-p.at>30*60000;
+      const dale=lista.filter(p=>!DELICADO.test(n(p.texto)) && !viejo(p)), preg=lista.filter(p=>!dale.includes(p));
+      const nom=A.nombre ? A.nombre() : '';
+      A.decir(lista.length===1 ? `¡Volví${nom?', '+nom:''}!` : `¡Volví${nom?', '+nom:''}! Tenía ${['','una','dos','tres','cuatro','cinco'][lista.length]} cosas pendientes.`);
+      await sleep(400); await libre();
+      for(let i=0;i<dale.length;i++){ if(!(await hacer(dale[i]))){ P.pend.push(...dale.slice(i+1), ...preg); A.set('perPend', P.pend); P.noAntes=Date.now()+3*60000; return; } }
+      for(const p of preg){
+        await libre();
+        const si=await new Promise(res=>{ let listo=false; const fin=v=>{ if(!listo){ listo=true; P.ofrece=null; res(v); } };
+          P.ofrece={si:()=>fin(true), no:()=>fin(false), until:Date.now()+60000};
+          A.decir(`${hace(p.at)==='recién'?'Recién':'Antes, '+hace(p.at)+','} me pediste: «${p.texto}». ¿Todavía querés que lo haga?`, true);
+          setTimeout(()=>fin(false), 62000); });
+        if(si && !(await hacer(p))) return;
+      }
+    } finally { P.retomando=false; }
+  }
+  // ---- deshacer
+  function push(desc, fn){ if(P.deshaciendo) return; P.pila.push({desc, fn, at:Date.now()}); P.pila=P.pila.slice(-10); }
+  async function deshacer(){
+    const u=P.pila.pop(); if(!u) return 'No tengo nada para deshacer.';
+    P.deshaciendo=true;
+    try{ await u.fn(); anotar('↩️ Deshice '+u.desc); return azar([`Listo, deshice ${u.desc}.`,`Hecho: volví atrás ${u.desc}.`]); }
+    catch(e){ return `No pude deshacer ${u.desc}.`; }
+    finally{ P.deshaciendo=false; }
+  }
+  // ---- el diario de hoy
+  function anotar(t){
+    t=String(t||'').replace(/\s+/g,' ').trim(); if(t.length<4) return;
+    const hoy=hoyISO(); if(P.diario.fecha!==hoy) P.diario={fecha:hoy, items:[]};
+    const ult=P.diario.items[P.diario.items.length-1]; if(ult && ult.t===t && Date.now()-ult.at<60000) return;
+    P.diario.items.push({t:t.slice(0,140), at:Date.now()}); P.diario.items=P.diario.items.slice(-150); A.set('perDiario', P.diario);
+  }
+  async function contar(){
+    const it=P.diario.fecha===hoyISO() ? P.diario.items : [];
+    if(!it.length) return 'Hoy todavía no hice nada por vos. ¿Arrancamos?';
+    const lista=it.map(x=>`${new Date(x.at).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})} ${x.t}`).join('\n');
+    if(A.pedir){ try{ const r=await Promise.race([A.pedir(`Sos FRIDAY, una asistente. Esto es lo que hiciste hoy por el usuario:\n${lista}\n\nContáselo hablado, en español rioplatense, en 2 a 4 frases: agrupá lo parecido, nombrá lo importante y no inventes nada que no esté en la lista.`), sleep(9000).then(()=>'')]); if(r && r.trim().length>10) return r.trim(); }catch(e){} }
+    return `Hoy hice ${it.length} cosas por vos. Las últimas: ${it.slice(-4).map(x=>x.t.replace(/^\W+\s*/,'')).join('; ')}.`;
+  }
+  // ---- el cerebro: reglas de asistente y el apuro
+  const REGLAS=`\n\nCómo ser su asistente:
+- Si te cuenta algo que tiene que hacer (llamar, pagar, comprar, mandar, un turno) y no pidió que se lo recuerdes, ofrecé UNA vez, en una frase, recordárselo.
+- Si te pide organizar el día ("armame el día", "¿qué hago hoy?"), proponé un plan corto por horarios con lo que sabés (agenda, recordatorios) y ofrecé anotarlo.
+- Si el pedido se puede entender de dos formas y eso cambia lo que harías (dónde, qué app, a quién, cuándo), hacé UNA pregunta corta con las opciones en vez de adivinar.
+- Si te corrige ("no, en Spotify"), hacé lo corregido sin vueltas.`;
+  function nota(){
+    const now=Date.now(); let t=REGLAS;
+    if(now<P.apuroHasta) t+='\n\nEl usuario está APURADO: contestá en UNA frase corta y directa.';
+    else if(P.cortos.filter(x=>now-x<150000).length>=3) t+='\n\nEl usuario viene pidiendo cosas cortas y seguidas: contestá breve.';
+    return t;
+  }
+  // ---- antes de todo: devuelve true si ya lo resolvió, un texto si un atajo lo cambia, o false
+  function antes(text){
+    const k=n(text).replace(/\b(friday|viernes|che|dale|porfa|por favor)\b/g,' ').replace(/\s+/g,' ').trim(), now=Date.now(), prev=P.prev;
+    P.prev={texto:text, clave:k, at:now};
+    if(k.split(' ').length<=5){ P.cortos.push(now); P.cortos=P.cortos.slice(-6); }
+    const di=t=>{ A.oyo(text); A.decir(t); return true; };
+    if(P.ofrece && now<P.ofrece.until){
+      if(/^(si|dale|bueno|ok|obvio|de una|hacelo|claro|si dale|si por favor)$/.test(k)){ const o=P.ofrece; P.ofrece=null; A.oyo(text); o.si(); return true; }
+      if(/^(no|no gracias|nah|deja|dejalo|ahora no|ya no|no hace falta)$/.test(k)){ const o=P.ofrece; P.ofrece=null; A.oyo(text); if(o.no) o.no(); A.decir('Dale.'); return true; }
+    }
+    if(/\b(estoy apurad[oa]|tengo apuro|estoy a las corridas)\b/.test(k)) P.apuroHasta=now+20*60000;
+    if(/\b(ya no estoy apurad[oa]|ya estoy tranqui|explayate|contame bien)\b/.test(k)){ P.apuroHasta=0; P.cortos=[]; }
+    if(/^(deshace(lo)?|deshaz|deshace eso|deshace lo (ultimo|que hiciste)|volve (para )?atras|anula (eso|lo ultimo)|cancela (eso|lo ultimo|lo que hiciste))$/.test(k) || (/^(no,? eso no|ups,? no)$/.test(k) && P.pila.length && now-P.pila[P.pila.length-1].at<60000)){
+      A.oyo(text); deshacer().then(t=>A.decir(t)); return true; }
+    if(/\b(que hiciste (hoy|por mi)|que hicimos hoy|que me hiciste hoy|que cosas hiciste|contame lo que hiciste)\b/.test(k)){ A.oyo(text); contar().then(t=>A.decir(t)); return true; }
+    if(/^(no me avises mas (cosas|nada)|deja de avisarme (cosas|nada))$/.test(k)){ A.set('tayOff', true); return di('Listo, no te aviso más nada por mi cuenta. Si querés que vuelva, decime «avisame cosas».'); }
+    if(/^(avisame cosas|volve a avisarme( cosas)?)$/.test(k)){ A.set('tayOff', false); return di('Dale, vuelvo a avisarte si llueve, si queda poca batería o si mañana arrancás temprano.'); }
+    if(/^(olvida(te)?( de)? los atajos|borra los atajos)$/.test(k)){ A.set('atajos',{}); return di('Listo, me olvidé de los atajos.'); }
+    const m=k.match(/^no,? (?:no,? )?(?:(?:quise decir|digo|te dije|era|en|con|el|la|los|las|a) )*(.{2,30})$/);
+    if(m && prev && now-prev.at<45000 && !/^(eso|nada|gracias|importa|esta bien|era eso|todo bien)$|^(ahora|despues|nada|deja|ya|tranqui|hace falta|para|basta|perdon)\b/.test(m[1])){
+      const v=prev.clave.match(/^(abri|abrime|pone|poneme|busca|buscame|anota|agrega|manda|mandale|llama)\b/);
+      if(v && m[1].split(' ').length<=4){
+        const nuevo=v[1]+' '+m[1], at=A.get('atajos',{}); at[prev.clave]=nuevo; A.set('atajos', at);
+        A.oyo(text); A.decir(azar(['Ah, perdón. Anotado para la próxima.','Uh, entendí mal. Ya lo aprendí.','Ok, la próxima ya sé.']));
+        setTimeout(()=>A.pedido(nuevo), 1200); return true;
+      }
+    }
+    const at=A.get('atajos',{}); if(at[k]) return at[k];
+    return false;
+  }
+  // ---- Te aviso yo
+  function visto(id){ if(P.visto[id]) return true; P.visto[id]=Date.now(); for(const [k,v] of Object.entries(P.visto)) if(Date.now()-v>3*86400000) delete P.visto[k]; A.set('perVisto', P.visto); return false; }
+  async function avisos(){
+    if(A.get('tayOff', false) || (A.durmiendo && A.durmiendo())) return;
+    const h=new Date().getHours(); if(h<8 || h>=23) return;
+    // lluvia en las próximas horas
+    const w=A.clima && A.clima();
+    if(w && w.horas && !LLUEVE.includes(w.code)){
+      const p=w.horas.find(x=>x.p>=60 && x.en>0 && x.en<=5);
+      if(p && !visto(`lluvia-${hoyISO()}-${h<14?'m':'t'}`)) A.avisar(`Te aviso: a eso de las ${p.hora} va a llover, ${p.p} por ciento. Si salís, llevá paraguas.`, `☔ Llueve a eso de las ${p.hora} h`);
+    }
+    // batería (del celu)
+    if(A.bateria){ try{ const b=await A.bateria(); if(b && !b.cargando){ const pc=Math.round(b.nivel*100);
+      if(pc<=8 && !visto('bat8-'+Math.floor(Date.now()/3600000))) A.avisar(`Ojo: te queda ${pc} por ciento de batería. Enchufalo.`, `🪫 Batería al ${pc}%`);
+      else if(pc<=15 && !visto('bat15-'+Math.floor(Date.now()/(3*3600000)))) A.avisar(`Te queda ${pc} por ciento de batería. ¿Lo enchufás?`, `🔋 Batería al ${pc}%`); } }catch(e){} }
+    // mañana arrancás temprano
+    if(h>=20 && A.manana){
+      const e=(A.manana()||[]).filter(x=>x.hora<11).sort((a,b)=>a.inicio-b.inicio)[0];
+      if(e && !visto('temprano-'+hoyISO(new Date(e.inicio)))){
+        const t=new Date(e.inicio), hh=t.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'});
+        A.avisar(`Te adelanto: mañana a las ${hh} tenés ${e.titulo}. ¿Querés que te avise un rato antes?`, `⏰ Mañana ${hh}: ${e.titulo}`);
+        P.ofrece={si:()=>{ const a=new Date(t); a.setMinutes(a.getMinutes()-45); A.recordar(isoLocal(a), 'Prepararte para '+e.titulo); A.decir(`Listo, te aviso mañana a las ${a.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}.`); }, until:Date.now()+2*60000};
+      }
+    }
+  }
+  return { init, guardar, fraseCaida, retomar, push, deshacer, anotar, contar, nota, antes, avisos, P };
+})();
+
+// lo simple, sin cerebro, en el celu
+const PER_WEB={spotify:'https://open.spotify.com', youtube:'https://www.youtube.com', whatsapp:'https://wa.me/', 'mercado libre':'https://www.mercadolibre.com.ar', instagram:'https://www.instagram.com', gmail:'https://mail.google.com', netflix:'https://www.netflix.com', 'google maps':'https://maps.google.com', mapas:'https://maps.google.com', tiktok:'https://www.tiktok.com', x:'https://x.com', twitter:'https://x.com', google:'https://www.google.com'};
+const PER_NUM={un:1,uno:1,una:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,quince:15,veinte:20,veinticinco:25,treinta:30,cuarenta:40,media:0.5};
+function perYa(text){
+  const k=norm(text).replace(/[¿?¡!.,]/g,' ').replace(/\b(friday|viernes|che|dale|porfa|por favor)\b/g,' ').replace(/\s+/g,' ').trim();
+  const di=t=>{ txt.value=''; autoGrow(); bubble('yo', text); pushHistory({role:'user', content:text}); frSay(t); PER.anotar(t); return true; };
+  if(/^(que hora es|que horas son|me decis la hora|decime la hora|la hora)$/.test(k)){ const d=new Date(), m=d.getMinutes(); return di(`Son las ${d.getHours()}${m?' y '+m:' en punto'}.`); }
+  if(/^(que dia es( hoy)?|que fecha es( hoy)?|a que (dia|fecha) estamos)$/.test(k)) return di('Hoy es '+new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})+'.');
+  let m=k.match(/^(?:pone(?:me)?|programa(?:me)?|arma(?:me)?)?\s*(?:un |una )?(?:temporizador|timer|alarma|cuenta regresiva)(?: de| por| en)? (\d+|un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|quince|veinte|veinticinco|treinta|cuarenta|media) (minutos?|min|horas?)(?: (?:para|que|de) (.+))?$/)
+    || k.match(/^avisame en (\d+|un|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|quince|veinte|veinticinco|treinta|cuarenta|media) (minutos?|min|horas?)(?: (?:para|que|de) (.+))?$/);
+  if(m){ const v=/^\d+$/.test(m[1])?+m[1]:PER_NUM[m[1]], min=v*(/^h/.test(m[2])?60:1);
+    if(min>0 && min<=720){ const para=(m[3]||'').trim()||'se cumplió el tiempo';
+      addReminder(isoLocal(new Date(Date.now()+min*60000)), para); askNotifPermission(); if(min<=15) setTimeout(fireReminders, min*60000+300);
+      const cuanto=m[1]==='media' ? (/^h/.test(m[2])?'media hora':'medio minuto') : `${v} ${/^h/.test(m[2])?(v===1?'hora':'horas'):(v===1?'minuto':'minutos')}`.replace(/^1 /,'un ');
+      return di(`Listo, te aviso en ${cuanto}.`); } }
+  m=k.match(/^(?:abri|abrime|abre|abrir) (?:el |la |mi )?(?:app )?(?:de )?(.{2,25})$/);
+  if(m && PER_WEB[m[1]]){ const u=PER_WEB[m[1]]; window.open(u, '_blank', 'noopener'); return di(`Te abro ${m[1]}.`); }
+  return false;
+}
+PER.init({
+  get:(k,d)=>LS.get(k,d), set:(k,v)=>LS.set(k,v), norm:t=>norm(t),
+  decir:(t)=>frSay(t), oyo:(text)=>{ txt.value=''; autoGrow(); bubble('yo', text); pushHistory({role:'user', content:text}); },
+  libre:()=>!busy && !isSpeaking(), nombre:()=>(S.name||'').trim(),
+  hacer:async(texto, nota)=>{ bubble('yo', texto); pushHistory({role:'user', content:texto}); ultimaQ=texto; await turn(nota); },
+  pedido:(t)=>ask(t),
+  pedir:(p)=>BUFIA.pedir(p, {gem:S.gemKey, groq:S.groqKey}, {max:260, temp:0.5}),
+  clima:()=>{ const w=weather; if(!w || !w.hours || Date.now()-w.at>3*3600000) return null; const h=new Date().getHours(); return {code:w.code, horas:w.hours.map(x=>({hora:x.h, p:x.p, en:(x.h-h+24)%24}))}; },
+  bateria:navigator.getBattery ? async()=>{ const b=await navigator.getBattery(); return {nivel:b.level, cargando:b.charging}; } : null,
+  manana:()=>{ const a=LS.get('agenda',null); if(!a || !a.ev) return []; const d=new Date(); d.setDate(d.getDate()+1); const iso=isoLocal(d).slice(0,10);
+    return a.ev.filter(e=>!e.d && String(e.i).startsWith(iso)).map(e=>{ const t=new Date(e.i); return {titulo:e.t, inicio:t.getTime(), hora:t.getHours()}; }); },
+  avisar:(texto, titulo)=>{ PER.anotar(titulo);
+    if(document.hidden){ try{ if('Notification' in window && Notification.permission==='granted') navigator.serviceWorker.ready.then(r=>r.showNotification('FRIDAY · '+titulo, {body:texto, tag:'per-'+titulo, icon:'icon-192.png'})); }catch(e){} }
+    else if(!busy && !isSpeaking()) frSay(texto); else toast(titulo, 6000); },
+  recordar:(at, texto)=>{ addReminder(at+':00', texto); },
+  sinInternet:'Se cortó internet. Igual te digo la hora y pongo temporizadores; lo que necesite pensar lo anoto y lo hago apenas vuelva.',
+});
+{ const _sp=systemPrompt; systemPrompt=function(){ return _sp.apply(this, arguments)+PER.nota(); }; }
+// deshacer y el diario: los recordatorios y lo que se hace se anotan
+{ const _ar=addReminder; addReminder=function(at, texto, rep){ const n0=reminders.length; const r=_ar.apply(this, arguments);
+    if(reminders.length>n0){ const it=reminders[reminders.length-1]; PER.anotar('⏰ Recordatorio: '+texto); PER.push('el recordatorio «'+texto+'»', ()=>{ reminders=reminders.filter(x=>x!==it); saveRems(); try{ renderRems(); }catch(e){} }); }
+    return r; }; }
+{ const _t=toast; toast=function(t){ try{ if(/^[^\wáéíóúñ¿¡«"]/i.test(String(t||''))) PER.anotar(t); }catch(e){} return _t.apply(this, arguments); }; }
+// lo de siempre: a la segunda vez que decís que sí, ofrece hacerlo sola
+function perHabito(hp){ if(!hp || !hp.clave) return; const c=LS.get('habAcepta',{}); c[hp.clave]=(c[hp.clave]||0)+1; LS.set('habAcepta',c);
+  const auto=LS.get('habAuto',{}); if(c[hp.clave]>=2 && !auto[hp.clave]) setTimeout(()=>{ PER.P.ofrece={si:()=>{ const a=LS.get('habAuto',{}); a[hp.clave]={texto:hp.texto}; LS.set('habAuto',a); frSay('Listo. De ahora en más lo hago sola a esta hora. Si un día no querés, decime «no hagas más lo de siempre».'); }, until:Date.now()+60000};
+    frSay('Ya es costumbre. ¿Querés que de ahora en más lo haga sola a esta hora, sin preguntarte?'); }, 9000); }
+function perHabitoAuto(s){ const a=LS.get('habAuto',{}); if(!a[s.clave]) return false; BUFIA.habitoOfrecido(s.clave); frSay(`Como todos los días a esta hora: ${s.texto}.`); setTimeout(()=>ask(s.texto), 1800); return true; }
+
 async function ask(text){
   text=String(text||'').trim(); if(!text) return;
   if(typeof SIESTA!=='undefined' && SIESTA.on){ txt.value=''; autoGrow(); stopVoice(); if(BLC.clave() && SIESTA.esDespertar(norm(text))) SIESTA.despertarTodo(); else SIESTA.ronquido(); return; }
   if(PANEL && await panelAsk(text)) return;
+  if(!PANEL){ const a=PER.antes(text); if(a===true){ txt.value=''; autoGrow(); return; } if(typeof a==='string') text=a;
+    if(/^(no hagas mas lo de siempre|deja de hacer lo de siempre( sola)?)$/.test(norm(text).replace(/[¿?¡!.,]/g,' ').trim())){ LS.set('habAuto',{}); LS.set('habAcepta',{}); txt.value=''; bubble('yo', text); frSay('Listo, ya no hago nada sola sin preguntarte.'); return; }
+    if(perYa(text)) return; }
   if(!PANEL){
     const nm=norm(text).replace(/[¿?¡!.,]/g,' ').replace(/\b(friday|viernes)\b/g,' ').replace(/\s+/g,' ').trim(), mt=micTabDeVoz(nm);
     if(mt==='on'){ const t=tabPeer(); txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text});
@@ -3195,7 +3400,7 @@ async function ask(text){
   }
   if(!PANEL && habitoPend){ const hp=habitoPend; habitoPend=null; const hn=norm(text);
     if(Date.now()<hp.hasta){
-      if(/^(si|dale|bueno|obvio|de una|si dale|si por favor|hacelo|porfa)\b/.test(hn) && hn.split(' ').length<=4){ bubble('yo', text); pushHistory({role:'user', content:text}); txt.value=''; return ask(hp.texto); }
+      if(/^(si|dale|bueno|obvio|de una|si dale|si por favor|hacelo|porfa)\b/.test(hn) && hn.split(' ').length<=4){ bubble('yo', text); pushHistory({role:'user', content:text}); txt.value=''; perHabito(hp); return ask(hp.texto); }
       if(/^(no|nah|ahora no|despues|mas tarde|no gracias)\b/.test(hn) && hn.split(' ').length<=4){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay('Dale, otro día.'); return; }
     } }
   if(!PANEL){ const pd=BUFIA.profeDetectar(text);
@@ -3229,6 +3434,7 @@ async function ask(text){
   const nInv=norm(text);
   if(!PANEL && INV_RE.test(nInv)){ const tema=text.replace(/^\s*(?:(?:che|friday|dale|ey),?\s*)*(investig\S*|averigu\S*( a fondo| bien)?|hac[eé] una investigaci[oó]n|quiero que investigues)\s*(sobre|de|acerca de|que|qué)?\s*/i,'').trim();
     if(tema.length>=3){ const r=await investigarCelu(tema); extra=(extra?extra+'\n':'')+r; } }
+  if(PER.P.voz && Date.now()-PER.P.voz<5000 && norm(text).split(' ').length>=3 && !isSpeaking() && LS.get('acuse',true)){ PER.P.voz=0; const pq=/^(que|como|cuando|donde|quien|cual|cuanto|por que)\b/.test(norm(text)); say(pq?'A ver…':['Dale.','Ya va.','Ahí voy.'][Math.floor(Math.random()*3)]); }
   await turn(extra || null);
 }
 // un turno del cerebro (extra = resultado de una herramienta)
@@ -3242,6 +3448,7 @@ async function turn(extra, depth=0){
   const visible=t=>t.replace(/\[\[[^\]]*(\]\]|$)/g,'').trim();
   try{
     // si el primer modelo devuelve la respuesta vacía (le pasa a gpt-oss), probamos con el siguiente
+    if(!depth){ clearTimeout(turn.tarda); turn.tarda=setTimeout(()=>{ if(busy && !full.trim()){ setStatus('ok','Tarda un poco…'); say('Estoy tardando, dame un toque.'); } }, 8000); }
     for(let desde=0; desde<2 && !full.trim(); desde++){
       for await (const c of groqStream(msgs, desde)){
         if(!full) quienFue='Groq';
@@ -3254,6 +3461,7 @@ async function turn(extra, depth=0){
     }
     if(!full.trim()) throw new Error('vacia');
   }catch(e0){ fallo=e0; }
+  clearTimeout(turn.tarda);
   if(fallo && full.trim()) fallo=null;   // se cortó a mitad de camino: nos quedamos con lo que llegó
   // Groq no pudo (sin cupo, lento, llave mala o respuesta vacía): contesta Gemini antes de rendirnos
   if(fallo && fallo.message!=='sin_internet' && S.gemKey){
@@ -3270,6 +3478,9 @@ async function turn(extra, depth=0){
       try{ let t2=''; for await (const c of BUFIA.stream(id, k, msgs)){ t2+=c; const v=visible(t2); if(v){ el.textContent=v; scrollDown(); } } if(t2.trim()){ full=t2; fallo=null; quienFue=nom; break; } }catch(e){}
     }
   }
+  if(fallo && PER.P.retomando && fallo.message!=='llave'){ PER.P.fallo=true; PER.guardar(ultimaQ,'otra vez'); PER.P.noAntes=Date.now()+3*60000; el.remove(); busy=false; orbState='idle'; setStatus('warn','Con problemas'); return; }
+  if(fallo && depth>0 && fallo.message!=='llave'){ el.textContent='Ya lo hice, pero se me trabó la cabeza para contarte cómo salió.'; say(el.textContent); busy=false; orbState='idle'; return; }
+  if(fallo && fallo.message!=='llave' && ultimaQ){ PER.guardar(ultimaQ, fallo.message); el.textContent = fallo.message==='sin_internet' ? 'Estoy sin internet: me lo anoto y lo hago apenas vuelva.' : PER.fraseCaida(); say(el.textContent); busy=false; orbState='idle'; setStatus('warn','Lo anoté para cuando vuelva'); return; }
   if(fallo){ const e=fallo;
     el.textContent = e.message==='llave' ? 'Tu llave de Groq no funciona. Revisala en Más → Cerebro.' : e.message==='sin_internet' ? 'No tengo internet ahora. Probá en un ratito.' : e.message==='tarda' ? 'Mi cerebro está tardando demasiado. Probá de nuevo en un ratito.' : e.message==='vacia' ? 'No me salió la respuesta. ¿Me lo repetís?' : 'Se me trabó algo ('+e.message+'). Probá de nuevo.';
     say(el.textContent); busy=false; orbState='idle'; setStatus('warn','Con problemas'); return;
@@ -5220,10 +5431,10 @@ async function hfSend(chunks, len, sr){
 function hfHeard(t){
   t=String(t||'').trim(); if(!t || /^(gracias\.?|subtítulos.*|amara.*|\W*)$/i.test(t) || busy || rec.on || isSpeaking()) return;
   if(PANEL && (Date.now()<hf.armed || hfRest(t)!==null)){ demoOff(); pTouch(); }
-  if(Date.now()<hf.armed){ hf.armed=0; $('heard').textContent=''; ask(t); return; }
+  if(Date.now()<hf.armed){ hf.armed=0; $('heard').textContent=''; PER.P.voz=Date.now(); ask(t); return; }
   const rest=hfRest(t); if(rest===null) return;
   ding(); buzz(30);
-  if(rest.replace(/[^a-zñáéíóú0-9]/gi,'').length>2){ ask(rest); return; }
+  if(rest.replace(/[^a-zñáéíóú0-9]/gi,'').length>2){ PER.P.voz=Date.now(); ask(rest); return; }
   // dijiste solo "Friday": te escucho lo que sigue
   hf.armed=Date.now()+8000; orbState='listen'; $('heard').textContent='Te escucho…';
   setTimeout(()=>{ if(Date.now()>=hf.armed && $('heard').textContent==='Te escucho…'){ $('heard').textContent=''; if(orbState==='listen') orbState='idle'; } }, 8200);
