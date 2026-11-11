@@ -2392,7 +2392,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='6.5';
+const VERSION='6.6';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3589,6 +3589,8 @@ function fast(text, nf){
   // la casa
   const cf=casaFast(nf);
   if(cf){ pushHist('user', text); setMode('thinking'); casaDo(cf.quien, cf.q).then(r=>{ setMode('idle'); say(r.txt, r.ok?'happy':'worried'); focusCard('casa'); }); return true; }
+  { const bl=BLMSJ.deVoz(text); if(bl && !bl.referencia){ pushHist('user', text); setMode('thinking');
+      BLMSJ.mandar(bl.cuerpo, bl.tipo).then(r=>{ setMode('idle'); const f=BLMSJ.frase(r); say(f, r.ok?'happy':'worried'); pushHist('assistant', f); }); return true; } }
   { const gm=n0.match(/^(?:mostrame|poneme|pone|mandame|tirame|buscame|quiero)? ?(?:un )?gif (?:de |del |con |sobre )?(.{2,40})$/);
     if(gm){ pushHist('user', text); if(!gifLlave()){ say('Para los GIFs me falta la llave de KLIPY.', 'confused'); return true; }
       gifDe(gm[1]).then(ok=>{ if(!ok) say('No encontré GIFs de eso.'); pushHist('assistant', ok?'[Mostré un GIF de '+gm[1]+']':'No encontré GIFs de eso.'); }).catch(e=>say('No pude: '+e.message, 'worried')); return true; } }
@@ -4037,6 +4039,54 @@ $('gifOv').addEventListener('click', gifCerrar);
 async function gifDe(q){ const gs=await gifBuscar(q, 8); const g=gs[Math.floor(Math.random()*Math.min(4, gs.length))]; if(!g) return false; gifMostrar(g.url, ''); return true; }
 $('klipyIn').value=gifLlave();
 $('klipyIn').addEventListener('change', ()=>{ S.klipyKey=$('klipyIn').value.trim(); saveS(); toast(S.klipyKey?'✔ GIFs conectados':'Sin GIFs'); });
+// ---------------------------------------------------------------- Mensajes a BufaLabs: ideas, problemas y felicitaciones
+// Van al mando de BufaLabs (/informe del servidor) y, si está la dirección del correo, al Gmail de BufaLabs
+// (un Apps Script de esa cuenta que se manda el mail a sí misma: el mail de BufaLabs no está en el código).
+// Sin nombre ni nada de la persona: solo lo que pidió mandar, la app, la versión y un número al azar del aparato.
+var BLMSJ=(()=>{
+  const CORREO='';
+  const TIPOS={idea:'💡 Idea', problema:'🐞 Problema', felicitacion:'🎉 Felicitación', mensaje:'💬 Mensaje'};
+  let A={get:(k,d)=>d, set:()=>{}, servidor:null, app:'FRIDAY', version:()=>'', id:()=>''};
+  const sinTilde=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  function tipoDe(t){ t=sinTilde(t);
+    if(/\b(no anda|anda mal|se (colg|cuelg|trab|tild|cierr|cerr)\w*|error|falla|fallo|bug|problema|no funciona|no me deja)\b/.test(t)) return 'problema';
+    if(/\b(gracias|genial|me encanta|buen trabajo|grosos|capos|son unos genios|felicitaciones|los quiero|la rompen|excelente)\b/.test(t)) return 'felicitacion';
+    if(/\b(agreg|anad|suger|idea|estaria bueno|ojala|podrian|podria|quiero que|me gustaria|que se pueda|funcion|que tenga)/.test(t)) return 'idea';
+    return 'mensaje'; }
+  const hoy=()=>new Date().toISOString().slice(0,10);
+  const cuantasHoy=()=>{ const c=A.get('blMsjCuenta',{}); return c && c.d===hoy() ? c.n : 0; };
+  async function mandar(texto, tipo){
+    texto=String(texto||'').replace(/\s+/g,' ').trim().replace(/^["«“]|["»”]$/g,'').slice(0,1500);
+    if(texto.length<4) return {ok:false, por:'vacio'};
+    if(cuantasHoy()>=8) return {ok:false, por:'cupo'};
+    tipo=TIPOS[tipo] ? tipo : tipoDe(texto);
+    let ok=false;
+    try{ const r=await A.servidor('/informe', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({app:A.app, version:A.version(), texto:TIPOS[tipo]+' (de un usuario): '+texto})}); ok=!!(r && r.ok); }catch(e){}
+    if(CORREO){ try{ await fetch(CORREO, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify({friday:'bufalabs-1', tipo, texto, app:A.app, version:A.version(), quien:A.id()})}); ok=true; }catch(e){} }
+    if(ok){ A.set('blMsjCuenta', {d:hoy(), n:cuantasHoy()+1}); const l=A.get('blMsjMios',[]) || []; l.push({at:Date.now(), tipo, texto}); A.set('blMsjMios', l.slice(-30)); }
+    return {ok, tipo, por:ok?'':'red'};
+  }
+  function frase(r){
+    if(r.ok) return r.tipo==='problema' ? 'Listo, se lo mandé a BufaLabs. Gracias por avisar: así lo arreglan.' : r.tipo==='felicitacion' ? 'Listo, se lo mandé a BufaLabs. ¡Se van a poner contentos!' : r.tipo==='idea' ? 'Listo, le mandé tu idea a BufaLabs. La van a leer.' : 'Listo, se lo mandé a BufaLabs.';
+    if(r.por==='cupo') return 'Hoy ya les mandé un montón de mensajes desde acá. Mañana les mando ese.';
+    if(r.por==='vacio') return '¿Qué querés que les diga a los de BufaLabs?';
+    return 'No pude mandárselo a BufaLabs: parece que no hay internet. Probá en un rato.';
+  }
+  // «decile a BufaLabs que…», «mandale a BufaLabs esta idea: …», «sugerile a BufaLabs que agreguen…», «mandá un mail a BufaLabs diciendo…»
+  const RE=/^(?:friday[,.]?\s+)?(?:che[,]?\s+)?(?:dec[ií]le|dec[ií]les|mand[aá]le|mand[aá]les|mand[aá]|envi[aá]le|envi[aá]les|avis[aá]le|avis[aá]les|cont[aá]le|cont[aá]les|suger[ií]le|suger[ií]les|pas[aá]le|pas[aá]les|report[aá]le|report[aá]les|escrib[ií]le|escrib[ií]les)(?:\s+(?:un|una)\s+(?:mail|correo|mensaje|gmail|reporte|nota|idea|sugerencia))?\s+(?:a|para)\s+(?:los\s+(?:chicos\s+)?de\s+|la\s+gente\s+de\s+)?(?:bufa\s?labs?|bufalab|tus\s+creadores|los\s+que\s+te\s+hicieron)\b[\s,:.]*(?:(?:diciendo|dici[eé]ndoles?|que\s+dice|que|esto|esta\s+idea|lo\s+siguiente|esta\s+sugerencia|este\s+problema)\b[\s,:]*)?(.*)$/i;
+  function deVoz(text){
+    const m=String(text||'').trim().match(RE); if(!m) return null;
+    const cuerpo=m[1].trim().replace(/^que\s+/i,'');
+    if(cuerpo.length<6 || /^(eso|esto|lo que (te )?dije|lo de antes|la idea|mi idea|lo anterior|algo)[.!]?$/i.test(cuerpo)) return {cuerpo:'', referencia:true};
+    return {cuerpo, tipo:tipoDe(text)};
+  }
+  function prompt(){
+    return 'Mensajes a BufaLabs (los que te hicieron): si te pide mandarles algo —una idea, algo que podrías hacer, un problema o un saludo— usá [[BUFALABS|idea o problema o felicitacion|el mensaje claro y completo, en sus palabras]] (sin datos personales que no haya pedido incluir) y confirmá en una frase que se lo mandaste. Si dice algo como «ojalá pudieras…» o «estaría bueno que…» sobre algo que no sabés hacer, ofrecele mandárselo a BufaLabs como idea, y usá la marca solo si te dice que sí.\n';
+  }
+  return {init:(a)=>{ A=Object.assign(A, a); }, mandar, frase, deVoz, prompt, tipoDe, hayCorreo:()=>!!CORREO, TIPOS};
+})();
+BLMSJ.init({get:(k,d)=>LS.get(k,d), set:(k,v)=>LS.set(k,v), app:'FRIDAY Casa', version:()=>VERSION, id:()=>(typeof CASA_ID!=='undefined'&&CASA_ID)||'',
+  servidor:(r,o)=>{ o=Object.assign({}, o||{}); o.headers=Object.assign({}, o.headers||{}, {'X-Friday':(typeof CASA_ID!=='undefined'&&CASA_ID)||'casa-tablet'}); return fetch(SERVIDOR_BUFALABS.replace(/\/openai\/v1$/,'')+r, o); }});
 // la búsqueda de música: expande siglas (NTVG → No Te Va Gustar) y, si en lo que pediste nombraste
 // al artista y el cerebro se lo olvidó, lo suma (así «Mañana de NTVG» no termina en otra «Mañana»)
 const MUS_SIGLAS={ntvg:'No Te Va Gustar', nvtg:'No Te Va Gustar', lpda:'La Portuaria', 'los redo':'Los Redondos', 'el flaco':'Luis Alberto Spinetta', 'la mona':'La Mona Jiménez', 'el indio':'Indio Solari', 'charly':'Charly García', 'fito':'Fito Páez', 'cerati':'Gustavo Cerati', 'bzrp':'Bizarrap', 'la k':"La K'onga"};
@@ -4320,6 +4370,7 @@ function prompt(){
   tags.push('[[COCINA|plato|porciones (opcional)]] (receta paso a paso en la pantalla, manos libres)','[[TAREA_NUEVA|qué|diaria o semanal o lun,mie,vie|HH:MM (opcional)|quiénes se turnan, separados por coma|puntos (10 si no dice)]]','[[TAREA_HECHA|cuál|quién la hizo]]','[[TAREA_BORRAR|cuál]]');
   tags.push('[[AVISAR|compu o celu o todos|mensaje]] (intercom: lo dice en voz alta en el otro aparato)','[[APP|casa o musica o llamar o intercom o estudio o compras o agenda o camara]] (muestra esa app en la pantalla)','[[ESTUDIO|tema|minutos en total (opcional)]] arranca el modo estudio (tandas de 25 y pausas); [[ESTUDIO|terminar]]','[[FICHAS|tema|cantidad]] arma fichas de estudio','[[TOMAR_FICHAS|tema (opcional)]] le toma las fichas en voz alta','[[RESUMEN_SEMANA]]');
   if(pcDev()) tags.push('[[MERCADOLIBRE|producto|precio (solo si quiere lo más barato)]] busca publicaciones REALES de Mercado Libre (con la compu)','[[PRECIO|producto|precio máximo (opcional)]] sigue el precio en Mercado Libre y avisa cuando baja');
+  tags.push('[[BUFALABS|idea o problema o felicitacion|el mensaje claro y completo]] le manda a BufaLabs (los que te hicieron) una idea, un problema o un saludo, cuando él te lo pide. Si dice «ojalá pudieras…» o «estaría bueno que…» sobre algo que no sabés hacer, ofrecé mandárselo como idea y usá la marca solo si dice que sí');
   if(gifLlave()) tags.push('[[GIF|qué buscar, 1 a 3 palabras]] muestra un GIF en la pantalla (poco: para festejar, reírse o si te lo piden; nunca en temas serios)');
   tags.push('[[CARA|feliz o risa o enamorada o sorprendida o triste o preocupada o pensativa o guiño o canchera o confundida o emocionada o orgullosa]] tu cara mientras hablás');
   L.push('Para hacer cosas agregá marcas al final de tu respuesta (no se leen en voz alta): '+tags.join(' · ')+'. Usalas solo si hace falta, y confirmá en una frase corta lo que hiciste. Si no podés algo, decilo sin vueltas.');
@@ -4412,6 +4463,7 @@ async function brain(text, extra, depth=0){
       else if(t.k==='MUSICA'){ await playMusic(musicaQuery(t.a[0], text||''), t.a[1], t.a[2]); focusCard('mus'); }
       else if(t.k==='MUSICA_CTRL') await musicCtrl(t.a[0], t.a[1]);
       else if(t.k==='GIF'){ try{ await gifDe(t.a.join(' ')); }catch(e){} }
+      else if(t.k==='BUFALABS'){ const tx=(t.a.length>1 ? t.a.slice(1) : t.a).join(' | '), r=await BLMSJ.mandar(tx, norm(t.a[0]||'')); if(r.ok) toast('📨 Se lo mandé a BufaLabs'); else notes.push('No se pudo mandar a BufaLabs: '+BLMSJ.frase(r)); }
       else if(t.k==='BUSCAR'){ const r=await search(t.a[0]); notes.push(r?`Lo que encontraste sobre "${t.a[0]}": ${r}`:`No encontraste nada sobre "${t.a[0]}": decilo, no inventes.`); }
       else if(t.k==='NOTICIAS'){ const c=t.a[0]?notiCatDe(t.a[0]):{cat:'portada'}; osOpen('noti',{auto:true}); const it=await notiAbrir(c.cat, c.q); notes.push(it.length?'Titulares '+notiTitulo()+': '+it.slice(0,6).map((x,i)=>(i+1)+') '+x.t+(x.src?' ('+x.src+')':'')).join(' | ')+'. Si quiere más de alguna, que te diga cuál.':'No pude traer las noticias'+(noti.err?' ('+noti.err+')':'')+'.'); }
       else if(t.k==='EVENTO'){ if(googleOn()) await agendaAdd(t.a[0], t.a[1], t.a[2]); else notes.push('La compu: '+await compuHacer([{accion:'evento', a1:String(t.a[1]||'').replace('T',' '), a2:t.a[0], a3:t.a[2]||'60'}])); focusCard('hoy'); }

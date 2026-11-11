@@ -1,26 +1,21 @@
 {
- "version": "5.7",
- "titulo": "YouTube Music, YouTube y GIFs",
+ "version": "5.8",
+ "titulo": "Hablale a BufaLabs",
  "items": [
   {
-   "icono": "🎵",
-   "titulo": "YouTube Music y YouTube, conectados",
-   "texto": "«Poné Soda Stereo en YouTube Music» o «poné el video de Bizarrap en YouTube»: lo busca y te lo abre ahí, listo para sonar. Sin configurar nada."
+   "icono": "💡",
+   "titulo": "«Decile a BufaLabs que…»",
+   "texto": "Si se te ocurre algo que FRIDAY podría hacer, decile «decile a BufaLabs que estaría bueno que…» y se lo manda a los que la hacemos. También problemas o un saludo."
   },
   {
-   "icono": "▶️",
-   "titulo": "O que suene acá",
-   "texto": "Si elegís «Acá en FRIDAY», suena adentro de FRIDAY con un reproductor chiquito. «Pausa», «seguí» y «pasala» andan con la voz."
+   "icono": "🙋",
+   "titulo": "Ella te lo ofrece",
+   "texto": "Si le pedís algo que todavía no sabe hacer, te pregunta si querés que se lo mande a BufaLabs como idea."
   },
   {
-   "icono": "🎞️",
-   "titulo": "Mandale GIFs",
-   "texto": "Tocá GIF al lado de donde escribís: buscás uno, lo elegís de tu teclado o de la galería. Ella lo mira, te contesta y a veces te devuelve otro."
-  },
-  {
-   "icono": "🏠",
-   "titulo": "Y a la tablet también",
-   "texto": "Si le estás hablando a la tablet, el GIF aparece grande en la pantalla de la casa."
+   "icono": "🔒",
+   "titulo": "Sin tu nombre",
+   "texto": "Va solo lo que le pediste mandar, sin tu nombre ni tu número."
   }
  ]
 }
