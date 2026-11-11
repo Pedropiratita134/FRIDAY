@@ -1,26 +1,26 @@
 {
- "version": "5.6",
- "titulo": "Más asistente, más persona",
+ "version": "5.7",
+ "titulo": "YouTube Music, YouTube y GIFs",
  "items": [
   {
-   "icono": "🧠",
-   "titulo": "Si se le traba la cabeza, no se olvida",
-   "texto": "Si se cae el cerebro o internet, se anota lo que le pediste y cuando vuelve lo hace sola. Lo delicado te lo pregunta antes."
+   "icono": "🎵",
+   "titulo": "YouTube Music y YouTube, conectados",
+   "texto": "«Poné Soda Stereo en YouTube Music» o «poné el video de Bizarrap en YouTube»: lo busca y te lo abre ahí, listo para sonar. Sin configurar nada."
   },
   {
-   "icono": "↩️",
-   "titulo": "«Deshacé eso»",
-   "texto": "Borra el recordatorio o el temporizador que acaba de poner."
+   "icono": "▶️",
+   "titulo": "O que suene acá",
+   "texto": "Si elegís «Acá en FRIDAY», suena adentro de FRIDAY con un reproductor chiquito. «Pausa», «seguí» y «pasala» andan con la voz."
   },
   {
-   "icono": "🔔",
-   "titulo": "Te aviso yo",
-   "texto": "Si va a llover en las próximas horas, si al celu le queda poca batería o si mañana arrancás temprano."
+   "icono": "🎞️",
+   "titulo": "Mandale GIFs",
+   "texto": "Tocá GIF al lado de donde escribís: buscás uno, lo elegís de tu teclado o de la galería. Ella lo mira, te contesta y a veces te devuelve otro."
   },
   {
-   "icono": "⚡",
-   "titulo": "Lo simple, al instante",
-   "texto": "La hora, el día, un temporizador, abrir Spotify o YouTube: sin pensar. Y «¿qué hiciste hoy?» te cuenta todo lo que hizo por vos."
+   "icono": "🏠",
+   "titulo": "Y a la tablet también",
+   "texto": "Si le estás hablando a la tablet, el GIF aparece grande en la pantalla de la casa."
   }
  ]
 }
