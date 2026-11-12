@@ -50,6 +50,18 @@
       ]
     },
     {
+      "name": "Dictar una nota",
+      "short_name": "Nota",
+      "description": "Abrir FRIDAY para dictarle una nota",
+      "url": "./?nota=1",
+      "icons": [
+        {
+          "src": "icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
       "name": "Mis gastos",
       "short_name": "Gastos",
       "description": "Cuánto gastaste este mes",

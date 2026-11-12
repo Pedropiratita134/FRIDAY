@@ -1,21 +1,31 @@
 {
- "version": "5.8",
- "titulo": "Hablale a BufaLabs",
+ "version": "5.9",
+ "titulo": "Se acuerda y anota sola",
  "items": [
   {
-   "icono": "💡",
-   "titulo": "«Decile a BufaLabs que…»",
-   "texto": "Si se te ocurre algo que FRIDAY podría hacer, decile «decile a BufaLabs que estaría bueno que…» y se lo manda a los que la hacemos. También problemas o un saludo."
+   "icono": "🧠",
+   "titulo": "Se acuerda de lo que dijeron",
+   "texto": "«Copiame eso», «anotá lo que dijiste», «mandale tu idea a BufaLabs» o «recordame eso mañana a las 8»: sabe qué es «eso»."
   },
   {
-   "icono": "🙋",
-   "titulo": "Ella te lo ofrece",
-   "texto": "Si le pedís algo que todavía no sabe hacer, te pregunta si querés que se lo mande a BufaLabs como idea."
+   "icono": "📝",
+   "titulo": "Notas y recordatorios hablando",
+   "texto": "«Anotá que el wifi es…», «recordame mañana a las 9 llamar a Juan». Si no le decís cuándo, te pregunta. Todo al instante, sin tocar nada."
   },
   {
-   "icono": "🔒",
-   "titulo": "Sin tu nombre",
-   "texto": "Va solo lo que le pediste mandar, sin tu nombre ni tu número."
+   "icono": "🎙️",
+   "titulo": "«Tomá nota»",
+   "texto": "Le dictás todo lo que quieras, sin tocar la pantalla, y cuando terminás decís «listo». Queda guardado como una nota."
+  },
+  {
+   "icono": "🏠",
+   "titulo": "Aparece en la tablet",
+   "texto": "Las notas y los recordatorios que le dictás al celu aparecen al toque en la tablet de la casa, y ella te avisa."
+  },
+  {
+   "icono": "🔁",
+   "titulo": "«¿Qué dijiste?»",
+   "texto": "Te repite lo último que te dijo."
   }
  ]
 }

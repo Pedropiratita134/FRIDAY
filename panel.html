@@ -2392,7 +2392,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='6.6';
+const VERSION='6.7';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -3160,7 +3160,7 @@ function renderStatus(){
   
   el.className='status '+cls; el.querySelector('span').textContent=txt;
 }
-function pushHist(role, content){ hist.push({role, content:String(content).slice(0,900)}); if(hist.length>12) hist=hist.slice(-12); LS.set('hist',hist); }
+function pushHist(role, content){ try{ MEMO.anotar(role==='user'?'yo':'ella', content); }catch(e){} hist.push({role, content:String(content).slice(0,900)}); if(hist.length>12) hist=hist.slice(-12); LS.set('hist',hist); }
 
 // ---------------------------------------------------------------- el oído conectado a la pantalla
 Ear.hooks={
@@ -3505,7 +3505,7 @@ PER.init({
   durmiendo:()=>durmiendo(),
   sinInternet:'Se cortó internet. Los timers, las notas y la lista siguen andando; lo que necesite pensar lo anoto y lo hago cuando vuelva.',
 });
-{ const _p=prompt; prompt=function(){ return _p.apply(this, arguments)+PER.nota(); }; }
+{ const _p=prompt; prompt=function(){ return _p.apply(this, arguments)+PER.nota()+MEMO.prompt(); }; }
 // deshacer y el diario
 { const _ar=addReminder; addReminder=function(at, texto){ const n0=reminders.length; const r=_ar.apply(this, arguments);
     if(reminders.length>n0){ const it=reminders[reminders.length-1]; PER.anotar('⏰ Recordatorio: '+texto); PER.push('el recordatorio «'+texto+'»', ()=>{ reminders=reminders.filter(x=>x!==it); LS.set('rems',reminders); try{ FSync.scan(); }catch(e){} render(); }); }
@@ -3520,6 +3520,7 @@ function userSaid(text, how){
   if(SIESTA.on){ SIESTA.ronquido(); return; }
   state.lastUser=Date.now(); ambOff(); bannerOff(); if(durmiendo()){ state.sleepUntil=0; LS.set('sleepUntil',0); }
   if(timerRinging()){ timerHush(); if(/^(ok|listo|ya|gracias|dale|para|basta|callate)\b/.test(norm(text))) { say('Listo.'); return; } }
+  if(ASIST.antes(text)) return;
   { const bl=BLMSJ.antes(text); if(bl){ $('you').innerHTML='<q>'+esc(text)+'</q>'; pushHist('user', text);
       if(bl.accion!=='mandar'){ say(bl.frase, 'happy'); pushHist('assistant', bl.frase); return; }
       setMode('thinking'); BLMSJ.mandar(bl.cuerpo, bl.tipo).then(r=>{ setMode('idle'); const f=BLMSJ.frase(r); say(f, r.ok?'happy':'worried'); pushHist('assistant', f); }); return; } }
@@ -4044,6 +4045,182 @@ $('klipyIn').addEventListener('change', ()=>{ S.klipyKey=$('klipyIn').value.trim
 // Van al mando de BufaLabs (/informe del servidor) y, si está la dirección del correo, al Gmail de BufaLabs
 // (un Apps Script de esa cuenta que se manda el mail a sí misma: el mail de BufaLabs no está en el código).
 // Sin nombre ni nada de la persona: solo lo que pidió mandar, la app, la versión y un número al azar del aparato.
+// ---------------------------------------------------------------- Memoria de la charla y dictado (lo mismo en la compu, el celu y la tablet)
+// MEMO: se acuerda de lo último que dijeron los dos, para entender «copiame eso», «anotá lo que dijiste»,
+//       «mandale tu idea a BufaLabs», «recordame eso mañana a las 9» o «¿qué dijiste?».
+// DICTA: notas y recordatorios dichos de una («anotá que…», «recordame … mañana a las 9»), sin cerebro.
+// CUANDO: «mañana a las 9», «en 20 minutos», «el lunes a la tarde», «a las 18:30», «pasado mañana»…
+var MEMO=(()=>{
+  const sinT=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[¿?¡!]/g,'').replace(/\s+/g,' ').trim();
+  const turnos=[];   // {de:'yo'|'ella', t, at}
+  const limpiar=t=>String(t||'').replace(/\[\[[^\]]*\]\]/g,'').replace(/\s+/g,' ').trim();
+  function anotar(de, t){ t=limpiar(t); if(!t) return; const u=turnos[turnos.length-1]; if(u && u.de===de && u.t===t) return; turnos.push({de, t, at:Date.now()}); if(turnos.length>40) turnos.shift(); }
+  // lo que dice FRIDAY por su cuenta para confirmar algo («Listo», «Anotado»…) no cuenta como «lo que dijiste»
+  const CONFIRMA=/^(listo|dale|anotado|ya (te )?lo|perdon|que queres|aja|guarde|te lo copie|no pude|hoy ya|para cuando|sigo|ok|bueno,? (listo|dale)|te escucho|se lo mande|le mande)\b/;
+  // «eso» es lo último que dijo ella; «lo que te dije» es lo último que dijiste vos
+  const REF_YO=/\b(lo que (te )?(dije|conte|pedi|escribi)|mi (idea|mensaje|pregunta|propuesta)|lo mio)\b/;
+  const REF_ELLA=/\b(eso|esto|eso ultimo|lo ultimo|lo (ultimo )?que (me )?(dijiste|contaste|explicaste|recomendaste|propusiste|sugeriste|pusiste|escribiste)|tu (idea|respuesta|recomendacion|sugerencia|propuesta|lista|receta|resumen|explicacion)|(la|esa) (respuesta|receta|lista|idea|explicacion)( de recien| que me diste)?|lo de recien)\b/;
+  const esRef=t=>{ const k=sinT(t); return REF_YO.test(k) ? 'yo' : REF_ELLA.test(k) ? 'ella' : ''; };
+  function ultimo(de, actual){
+    const ka=sinT(actual||'');
+    for(let i=turnos.length-1;i>=0;i--){ const x=turnos[i]; if(x.de!==de) continue; if(Date.now()-x.at>30*60000) break;
+      const k=sinT(x.t); if(k===ka) continue;
+      if(de==='ella' && (CONFIRMA.test(k) || k.length<12)) continue;
+      if(de==='yo' && (esRef(x.t) || k.length<6 || /^\[/.test(x.t))) continue;
+      return x.t; }
+    return '';
+  }
+  // lo que señala «eso» en este pedido (o '' si no señala nada)
+  function ref(text){ const q=esRef(text); return q ? ultimo(q, text) : ''; }
+  function ultimaRespuesta(){ for(let i=turnos.length-1;i>=0;i--) if(turnos[i].de==='ella') return turnos[i].t; return ''; }
+  // ¿quiere hacer algo con lo que se acaba de decir?
+  function accion(text){
+    const k=sinT(text).replace(/^(friday|che|dale)[, ]+/,'').replace(/[.,]+$/,'');
+    if(/^(repeti(lo|melo)?|repetimelo|que dijiste|perdon,? que dijiste|no te escuche|no te entendi,? repeti(lo)?|deci(lo|melo) de nuevo|otra vez)$/.test(k)){ const t=ultimaRespuesta(); return t ? {que:'repetir', texto:t} : null; }
+    let m=k.match(/^(?:copia(?:me|lo|melo)?|pasame|dejame copiad[oa])(?:\s+(.+?))?(?:\s+(?:al|en el) portapapeles)?$/);
+    if(m && (!m[1] || esRef(m[1]))){ const t=m[1] ? ref(m[1]) : ultimo('ella', text); return t ? {que:'copiar', texto:t} : {que:'falta', frase:'¿Qué querés que te copie? Todavía no te dije nada para copiar.'}; }
+    m=k.match(/^(?:anota(?:lo|melo|me)?|apunta(?:lo|melo)?|guarda(?:lo|melo|te)?|agrega(?:lo)?)(?:\s+(.+?))?(?:\s+(?:en|a) (?:las |mis )?notas)?$/);
+    if(m && (!m[1] || esRef(m[1]))){ const t=m[1] ? ref(m[1]) : ultimo('ella', text); return t ? {que:'anotar', texto:t} : null; }
+    return null;
+  }
+  return {anotar, ref, esRef, ultimo, ultimaRespuesta, accion, turnos,
+    prompt:()=>'Memoria de la charla: si dice «eso», «lo que dijiste» o «tu idea», se refiere a lo último que dijiste vos; si dice «lo que te dije» o «mi idea», a lo último que dijo él. Usá ese contenido tal cual, sin preguntar de nuevo.\n'};
+})();
+
+var CUANDO=(()=>{
+  const sinT=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const NUM={un:1,una:1,uno:1,dos:2,tres:3,cuatro:4,cinco:5,seis:6,siete:7,ocho:8,nueve:9,diez:10,once:11,doce:12,quince:15,veinte:20,treinta:30,cuarenta:40,cincuenta:50};
+  const DIAS=['domingo','lunes','martes','miercoles','jueves','viernes','sabado'];
+  const MES={enero:0,febrero:1,marzo:2,abril:3,mayo:4,junio:5,julio:6,agosto:7,septiembre:8,setiembre:8,octubre:9,noviembre:10,diciembre:11};
+  const n=x=>NUM[x]!=null ? NUM[x] : +x;
+  const iso=d=>{ const p=v=>String(v).padStart(2,'0'); return `${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}T${p(d.getHours())}:${p(d.getMinutes())}`; };
+  // devuelve {at:Date, iso, resto:texto sin la parte del cuándo, dicho:'mañana a las 9'} o null
+  function de(texto, ahora){
+    ahora=ahora||new Date(); let t=' '+sinT(texto)+' '; const orig=' '+String(texto)+' ', t0=t;
+    const usar=re=>{ const m=t.match(re); if(m){ t=t.slice(0,m.index)+' '.repeat(m[0].length)+t.slice(m.index+m[0].length); } return m; };
+    let d=null, hh=null, mm=0, hayDia=false, hayHora=false;
+    // relativo: «en 20 minutos», «en media hora», «en un rato», «dentro de 2 horas»
+    let m=usar(/\s(?:en|dentro de)\s+(media hora|un rato|un ratito|(\d+|un|una|dos|tres|cuatro|cinco|diez|quince|veinte|treinta|cuarenta|cincuenta)\s+(minutos?|mins?|horas?|hs|h)(?:\s+y\s+media)?)\s/);
+    if(m){ let min=0; if(/media hora/.test(m[1])) min=30; else if(/rato/.test(m[1])) min=30; else { const q=n(m[2]); min=/^h/.test(m[3]) ? q*60 : q; if(/y media/.test(m[0])) min+=30; }
+      const at=new Date(ahora.getTime()+min*60000); at.setSeconds(0,0); return fin(at, min<60 ? `en ${min} minutos` : `en ${min%60?min/60+' horas':(min/60)+(min===60?' hora':' horas')}`); }
+    // el día
+    if(usar(/\spasado\s+manana\s/)){ d=new Date(ahora); d.setDate(d.getDate()+2); hayDia=true; }
+    else if(usar(/(?<!\sla)\smanana\s/)){ d=new Date(ahora); d.setDate(d.getDate()+1); hayDia=true; }
+    else if(usar(/\shoy\s/)){ d=new Date(ahora); hayDia=true; }
+    if(!hayDia){ m=usar(/\s(?:el\s+)?(?:proximo\s+)?(domingo|lunes|martes|miercoles|jueves|viernes|sabado)(?:\s+que viene)?\s/);
+      if(m){ const w=DIAS.indexOf(m[1]); d=new Date(ahora); let add=(w-d.getDay()+7)%7; if(add===0) add=7; d.setDate(d.getDate()+add); hayDia=true; } }
+    if(!hayDia){ m=usar(/\s(?:el\s+)?(\d{1,2})(?:\s+de\s+(enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre)|\/(\d{1,2}))\s/);
+      if(m){ d=new Date(ahora); const mes=m[2]!=null ? MES[m[2]] : m[3] ? +m[3]-1 : d.getMonth(); d.setMonth(mes, +m[1]); if(d<ahora && d.toDateString()!==ahora.toDateString()) d.setFullYear(d.getFullYear()+1); hayDia=true; } }
+    // la hora
+    m=usar(/\s(?:a las|a la|para las|tipo|como a las)\s+(\d{1,2}|una|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez|once|doce)(?:[:.h](\d{2})|\s+y\s+(media|cuarto)|\s+menos\s+cuarto)?(?:\s*(hs|h|horas))?(?:\s+(de la manana|de la tarde|de la noche|am|pm|del mediodia))?\s/);
+    if(m){ hh=n(m[1]); mm=m[2]?+m[2]:m[3]==='media'?30:m[3]==='cuarto'?15:0; if(/menos cuarto/.test(m[0])){ hh=hh-1; mm=45; }
+      const p=m[5]||''; if(/tarde|noche|pm/.test(p) && hh<12) hh+=12; else if(/manana|am/.test(p) && hh===12) hh=0;
+      else if(!p && hh>=1 && hh<=7) hh+=12;   // «a las 5» es a la tarde
+      hayHora=true; }
+    else if(usar(/\s(?:al|a el)\s+mediodia\s/)){ hh=12; hayHora=true; }
+    else if(usar(/\s(?:a la\s+)?medianoche\s/)){ hh=23; mm=59; hayHora=true; }
+    else { m=usar(/\s(?:a la|por la|de)\s+(manana|tarde|noche)\s/) || usar(/\s(?:a|por)\s+la\s+(siesta)\s/);
+      if(m){ hh={manana:9, tarde:17, noche:21, siesta:15}[m[1]]; hayHora=true; } }
+    if(!hayDia && !hayHora) return null;
+    if(!d) d=new Date(ahora);
+    if(hh==null){ hh=9; mm=0; }
+    d.setHours(hh, mm, 0, 0);
+    if(!hayDia && d<=ahora) d.setDate(d.getDate()+1);   // «a las 8» y ya pasaron: mañana
+    if(d<=ahora) return null;
+    return fin(d, decir(d, ahora));
+    function fin(at, dicho){
+      const resto=(orig.length===t0.length) ? [...orig].map((c,i)=>t[i]===' ' && t0[i]!==' ' ? ' ' : c).join('') : orig;
+      return {at, iso:iso(at), resto:resto.replace(/\s+/g,' ').trim(), dicho};
+    }
+  }
+  function decir(d, ahora){
+    ahora=ahora||new Date(); const h=d.getHours(), mi=d.getMinutes();
+    const h12=h%12===0 ? 12 : h%12, min=mi ? (mi===30?' y media':mi===15?' y cuarto':':'+String(mi).padStart(2,'0')) : '';
+    const parte=h===0 ? ' de la noche' : h<6 ? ' de la madrugada' : h<12 ? '' : h===12 ? '' : h<20 ? ' de la tarde' : ' de la noche';
+    const hora=(h12===1 ? 'a la una' : 'a las '+h12)+min+parte;
+    const man=new Date(ahora); man.setDate(man.getDate()+1);
+    const dia=d.toDateString()===ahora.toDateString() ? 'hoy' : d.toDateString()===man.toDateString() ? 'mañana' : (d-ahora<6*86400000 ? 'el '+d.toLocaleDateString('es-AR',{weekday:'long'}) : 'el '+d.toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'}).replace(',',''));
+    return `${dia} ${hora}`;
+  }
+  return {de, decir, iso};
+})();
+
+var DICTA=(()=>{
+  const sinT=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+  const NOTA=/^(?:friday[,.]?\s+)?(?:anot[aá](?:me)?|apunt[aá](?:me)?|tom[aá]\s+nota(?:\s+de)?|nota:?|nueva\s+nota:?|agreg[aá]\s+(?:una\s+nota|a\s+(?:las|mis)\s+notas)|guard[aá]\s+(?:una\s+nota|en\s+(?:las|mis)\s+notas))(?:\s+que)?[\s,:]+(.{3,})$/i;
+  const RECO=/^(?:friday[,.]?\s+)?(?:(.*?)\s+)??(?:record[aá]me|acord[aá]me|hac[eé]me\s+acordar|pon[eé](?:me)?\s+un\s+recordatorio|cre[aá](?:me)?\s+un\s+recordatorio|recordatorio:?)(?:\s+(?:de|para|que|a))?[\s,:]+(.{2,})$/i;
+  const DICTADO=/^(?:friday[,.]?\s+)?(?:tom[aá]\s+nota|quiero\s+dictar(?:te)?(?:\s+una\s+nota)?|dictado|modo\s+dictado|te\s+dicto\s+una\s+nota|anot[aá]\s+lo\s+que\s+te\s+(?:digo|voy\s+a\s+decir))[.!]?$/i;
+  const cap=t=>{ t=String(t).trim().replace(/^[,:;\s-]+|[,;\s]+$/g,''); return t ? t.charAt(0).toUpperCase()+t.slice(1) : t; };
+  // → {tipo:'dictado'} · {tipo:'nota', texto} · {tipo:'recordatorio', texto, cuando} · {tipo:'recordatorio', texto, falta:'cuando'} · null
+  function de(text){
+    const t=String(text||'').trim();
+    if(DICTADO.test(t)) return {tipo:'dictado'};
+    let m=t.match(RECO);
+    if(m){ const antes=(m[1]||'').trim(), cuerpo=m[2].trim();
+      if(antes && !CUANDO.de(antes)) return null;      // «decile a mamá que me recuerde…»: no es para mí
+      const c=CUANDO.de((antes?antes+' ':'')+cuerpo);
+      let texto=c ? c.resto.replace(new RegExp('^.*?(record[aá]me|acord[aá]me|hac[eé]me\\s+acordar|recordatorio:?|un recordatorio)\\s*(de|para|que|a)?\\s*','i'),'') : cuerpo;
+      texto=cap(texto.replace(/^(que|de)\s+/i,''));
+      if(!texto || texto.length<2) return null;
+      const ref=MEMO.esRef(texto) && texto.split(' ').length<=4;
+      if(ref) return c ? {tipo:'recordatorio', ref:true, texto:'', cuando:c} : {tipo:'recordatorio', ref:true, texto:'', falta:'cuando'};
+      return c ? {tipo:'recordatorio', texto, cuando:c} : {tipo:'recordatorio', texto, falta:'cuando'};
+    }
+    m=t.match(NOTA); if(m){ const texto=cap(m[1]); if(MEMO.esRef(texto) && texto.split(' ').length<=4) return {tipo:'nota', ref:true, texto:''}; return {tipo:'nota', texto}; }
+    return null;
+  }
+  return {de, cap};
+})();
+
+// Lo que hacen las tres apps con eso: un mismo «secretario». Cada app le pasa cómo anotar, agendar, copiar y contestar.
+var ASIST=(()=>{
+  const sinT=t=>String(t||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[¿?¡!.,;:]/g,' ').replace(/\s+/g,' ').trim().replace(/^(friday|che|dale)\s+/,'');
+  let A={responder:()=>true, nota:()=>{}, recordatorio:()=>{}, copiar:async()=>false, extra:()=>'', puedeDictar:true};
+  const st={modo:'', buf:[], texto:'', intentos:0, at:0};
+  const reset=()=>{ st.modo=''; st.buf=[]; st.texto=''; st.intentos=0; };
+  const corto=t=>{ t=String(t).replace(/[.\s]+$/,''); return t.length>90 ? t.slice(0,87).replace(/\s\S*$/,'')+'…' : t; };
+  const azar=a=>a[Math.floor(Math.random()*a.length)];
+  const FIN=/^(listo|termine|ya termine|eso es todo|ya esta|guardala|guardalo|fin|nada mas|es todo|chau|terminamos)$/;
+  const CANCEL=/^(cancela|cancelalo|cancelar|borra(lo)? todo|olvidalo|olvidate|deja|dejalo|no importa|mejor no)$/;
+  function enCurso(){ return !!st.modo && Date.now()-st.at<4*60000; }
+  function antes(text){
+    const k=sinT(text); if(!k) return false;
+    if(st.modo && Date.now()-st.at>4*60000){ if(st.modo==='dictado' && st.buf.length) A.nota(st.buf.join('. ')); reset(); }
+    if(st.modo==='dictado'){ st.at=Date.now();
+      if(CANCEL.test(k)){ reset(); return A.responder(text, 'Listo, no guardé nada.'); }
+      if(FIN.test(k)){ const t=st.buf.join('. '); reset(); if(!t) return A.responder(text, 'No me dictaste nada, así que no guardé nada.'); A.nota(t); return A.responder(text, `Guardé la nota: «${corto(t)}».`+A.extra()); }
+      st.buf.push(DICTA.cap(text)); return A.responder(text, azar(['Ajá.','Sí.','Ajá, seguí.','Dale, sigo.']), true);
+    }
+    if(st.modo==='cuando'){ st.at=Date.now(); const c=CUANDO.de(text);
+      if(c){ const t=st.texto; reset(); A.recordatorio(c.iso, t); return A.responder(text, `Listo, te lo recuerdo ${c.dicho}: ${t}.`+A.extra()); }
+      if(CANCEL.test(k)){ reset(); return A.responder(text, 'Dale, no lo agendo.'); }
+      if(/^(no se|sin hora|cuando sea|ninguna|no tiene hora|da igual|no hace falta)/.test(k) || st.intentos>=1){ const t=st.texto; reset(); A.nota('Recordar: '+t); return A.responder(text, `Lo dejé en las notas: «Recordar: ${corto(t)}».`+A.extra()); }
+      if(!DICTA.de(text) && !MEMO.accion(text)){ st.intentos++; return A.responder(text, 'No te entendí la hora. Decime, por ejemplo, «mañana a las 9» o «en una hora».', true); }
+      reset();
+    }
+    const a=MEMO.accion(text);
+    if(a){
+      if(a.que==='repetir') return A.responder(text, a.texto, false, true);
+      if(a.que==='falta') return A.responder(text, a.frase);
+      if(a.que==='copiar'){ Promise.resolve(A.copiar(a.texto)).catch(()=>false).then(ok=>A.responder(text, ok===true ? 'Listo, te lo copié.' : ok==='boton' ? 'Te lo dejé acá abajo: tocá «Copiar».' : 'Acá no puedo copiar: pedímelo en la compu o en el celu.')); return true; }
+      if(a.que==='anotar'){ A.nota(a.texto); return A.responder(text, `Anotado: «${corto(a.texto)}».`+A.extra()); }
+    }
+    const d=DICTA.de(text);
+    if(!d) return false;
+    if(d.tipo==='dictado'){
+      if(!A.puedeDictar) return A.responder(text, 'Para dictarme una nota larga, hacelo desde el celu o la compu: acá aparece al toque.');
+      st.modo='dictado'; st.buf=[]; st.at=Date.now(); return A.responder(text, 'Dale, te escucho. Dictame y cuando termines decí «listo».', true);
+    }
+    let texto=d.texto;
+    if(d.ref){ texto=MEMO.ultimo('ella', text) || MEMO.ultimo('yo', text); if(!texto) return A.responder(text, d.tipo==='nota' ? '¿Qué querés que anote?' : '¿Qué querés que te recuerde?'); }
+    if(d.tipo==='nota'){ A.nota(texto); return A.responder(text, `Anotado: «${corto(texto)}».`+A.extra()); }
+    if(d.cuando){ A.recordatorio(d.cuando.iso, texto); return A.responder(text, `Listo, te lo recuerdo ${d.cuando.dicho}: ${corto(texto)}.`+A.extra()); }
+    st.modo='cuando'; st.texto=texto; st.intentos=0; st.at=Date.now();
+    return A.responder(text, `¿Para cuándo te recuerdo «${corto(texto)}»?`, true);
+  }
+  return {init:(a)=>{ A=Object.assign(A, a); }, antes, enCurso, estado:st};
+})();
+
 var BLMSJ=(()=>{
   const CORREO='https://script.google.com/macros/s/AKfycbz5AGAGJ3BZ1jaqJUs36kpAqSrfCLSiPTqLTjxQWxQcD3zZA4eeqIgV0S9yvTiVJ2Scbw/exec';
   const TIPOS={idea:'💡 Idea', problema:'🐞 Problema', felicitacion:'🎉 Felicitación', mensaje:'💬 Mensaje'};
@@ -4077,14 +4254,16 @@ var BLMSJ=(()=>{
   const VERBO='(?:dec[ií]le|dec[ií]les|mand[aá]le|mand[aá]les|mand[aá]|envi[aá]le|envi[aá]les|avis[aá]le|avis[aá]les|cont[aá]le|cont[aá]les|suger[ií]le|suger[ií]les|pas[aá]le|pas[aá]les|report[aá]le|report[aá]les|escrib[ií]le|escrib[ií]les|dej[aá]le|dej[aá]les|hac[eé]le\\s+llegar)';
   const OBJ='(?:(?:un|una|mi|esta|este|unas|unos|algo\\s+de)\\s+(?:mail|correo|mensaje|gmail|reporte|nota|ideas?|sugerencias?|recomendaci[oó]n|recomendaciones|queja|consejo|propuesta|comentario|saludo|opini[oó]n)|algo)';
   const DEST='(?:los\\s+(?:chicos\\s+)?de\\s+|la\\s+gente\\s+de\\s+)?(?:bufa\\s?labs?|bufalab|tus\\s+creadores|los\\s+que\\s+te\\s+hicieron)';
-  const RE=new RegExp('^(?:friday[,.]?\\s+)?(?:che[,]?\\s+)?'+VERBO+'(?:\\s+'+OBJ+')?\\s+(?:a|para)\\s+'+DEST+'\\b[\\s,:.]*(.*)$', 'i');
+  const REFOBJ='(?:eso|esto|eso que (?:me )?dijiste|lo que (?:te )?dije|lo que (?:me )?dijiste|lo ultimo|lo último|tu idea|mi idea|esa idea|lo de reci[eé]n)';
+  const RE=new RegExp('^(?:friday[,.]?\\s+)?(?:che[,]?\\s+)?'+VERBO+'(?:\\s+('+REFOBJ+'|'+OBJ+'))?\\s+(?:a|para)\\s+'+DEST+'\\b[\\s,:.]*(.*)$', 'i');
   const RELLENO=new RegExp('^(?:'+OBJ+'[\\s,:.]*)?(?:(?:diciendo|dici[eé]ndoles?|que\\s+dice|esto|esta\\s+idea|lo\\s+siguiente|esta\\s+sugerencia|este\\s+problema)\\b[\\s,:]*)?(?:que\\s+)?', 'i');
   const NADA=/^(eso|esto|lo que (te )?(dije|hablamos|charlamos)( antes)?|lo de antes|la idea|mi idea|lo anterior)[.!]?$/i;
   let espera=0;            // FRIDAY preguntó «¿qué querés que les diga?»: lo próximo que digas es el mensaje
   const oidos=[];          // lo último que dijo la persona (para no mandar algo que no dijo)
   function deVoz(text){
     const m=String(text||'').trim().match(RE); if(!m) return null;
-    const cuerpo=m[1].trim().replace(RELLENO,'').trim().replace(/^[:,.\-–]\s*/,'');
+    const cuerpo=m[2].trim().replace(RELLENO,'').trim().replace(/^[:,.\-–]\s*/,'');
+    if(m[1] && new RegExp('^'+REFOBJ+'$','i').test(m[1].trim()) && cuerpo.length<6) return {cuerpo:'', referencia:true};
     if(NADA.test(cuerpo)) return {cuerpo:'', referencia:true};
     if(cuerpo.length<6) return {cuerpo:'', preguntar:true};
     return {cuerpo, tipo:tipoDe(text)};
@@ -4100,7 +4279,8 @@ var BLMSJ=(()=>{
     }
     espera=0;
     const v=deVoz(t); oidos.push(t); if(oidos.length>8) oidos.shift();
-    if(!v || v.referencia) return null;
+    if(!v) return null;
+    if(v.referencia){ const r=(typeof MEMO!=='undefined') ? MEMO.ref(t) : ''; if(r) return {accion:'mandar', cuerpo:r, tipo:tipoDe(r)}; espera=Date.now(); return {accion:'preguntar', frase:'¿Qué querés que les diga a BufaLabs? No me acuerdo de qué era «eso». Decímelo y se lo mando tal cual.'}; }
     if(v.preguntar){ espera=Date.now(); return {accion:'preguntar', frase:'¿Qué querés que les diga a BufaLabs? Decímelo y se lo mando tal cual.'}; }
     return {accion:'mandar', cuerpo:v.cuerpo, tipo:v.tipo};
   }
@@ -4109,7 +4289,12 @@ var BLMSJ=(()=>{
   const VACIAS=new Set('bufalabs bufa labs friday decile deciles mandale mandales idea ideas sugerencia recomendacion mensaje esta este estaria bueno seria podria podrian quiero tengo tiene tener puede pueda hacer para porque como cuando donde algo mucho muchas muchos otra otro mail correo usuario asistente'.split(' '));
   function salioDeLaPersona(texto){
     const ws=[...new Set(palabras(texto).filter(w=>!VACIAS.has(w)))]; if(!ws.length) return false;
-    const dicho=new Set(palabras(oidos.join(' ')).filter(w=>!VACIAS.has(w)));
+    let fuente=oidos.join(' ');
+    if(typeof MEMO!=='undefined'){ const ult=MEMO.turnos.filter(x=>x.de==='yo').slice(-2).map(x=>x.t).join(' ');
+      fuente+=' '+MEMO.turnos.filter(x=>x.de==='yo').slice(-8).map(x=>x.t).join(' ');
+      const k=sinTilde(MEMO.turnos.filter(x=>x.de==='yo').slice(-1).map(x=>x.t).join(' '));
+      if(MEMO.esRef(ult) || /^(si|sii|dale|bueno|ok|okey|de una|obvio|claro|mandal|mandasel|manda|perfecto|genial|joya)\b/.test(k)) fuente+=' '+MEMO.turnos.filter(x=>x.de==='ella').slice(-3).map(x=>x.t).join(' '); }
+    const dicho=new Set(palabras(fuente).filter(w=>!VACIAS.has(w)));
     const pref=w=>[...dicho].some(d=>d.slice(0,5)===w.slice(0,5));
     return ws.filter(pref).length/ws.length >= 0.5;
   }
@@ -4123,6 +4308,23 @@ var BLMSJ=(()=>{
   }
   return {init:(a)=>{ A=Object.assign(A, a); }, mandar, mandarDelCerebro, antes, oir, frase, deVoz, prompt, tipoDe, hayCorreo:()=>!!CORREO, TIPOS};
 })();
+
+// ---------------------------------------------------------------- 6.7: el secretario y lo que llega del celu al toque
+function syncYa(){ try{ FSync.scan(); clearTimeout(FSync.pubT); FSync.flush(); }catch(e){} }
+ASIST.init({
+  responder:(text, r)=>{ $('you').innerHTML='<q>'+esc(text)+'</q>'; pushHist('user', text); say(r, 'happy'); pushHist('assistant', r); return true; },
+  nota:(t)=>{ addNota(t); syncYa(); },
+  recordatorio:(iso, t)=>{ addReminder(iso, t); syncYa(); },
+  copiar:()=>false, extra:()=>'', puedeDictar:false });
+{ const _sa=syncApply; syncApply=function(changes){
+    const nuevas=[], ahora=Date.now();
+    try{ for(const c of changes||[]){ if(c.d || !c.v) continue; const k=c.id[0], key=c.id.slice(2);
+      if(k==='o' && !notas.some(x=>x.id===key) && ahora-(c.v.at||c.t||0)<3*60000) nuevas.push({ic:'📝', t:'Nota nueva', s:c.v.t, voz:'Me llegó una nota del celu: '+c.v.t});
+      if(k==='r' && !reminders.some(r=>String(r.id)===key) && !c.v.done && ahora-(c.t||0)<3*60000){ const d=new Date(c.v.at); const cu=isNaN(d) ? '' : CUANDO.decir(d); nuevas.push({ic:'⏰', t:'Recordatorio nuevo', s:c.v.texto+(cu?' · '+cu:''), voz:'Anoté un recordatorio que llegó del celu: '+c.v.texto+(cu?', '+cu:'')+'.'}); } } }catch(e){}
+    const r=_sa.apply(this, arguments);
+    nuevas.slice(0,3).forEach((n,i)=>setTimeout(()=>{ try{ showBanner(n.ic, n.t, n.s, 9000); }catch(e){} }, i*1500));
+    if(nuevas.length){ try{ if(state.mode==='idle' && !durmiendo()) say(nuevas.length>1 ? `Me llegaron ${nuevas.length} cosas del celu: ya están anotadas.` : nuevas[0].voz, 'happy'); }catch(e){} try{ render(); }catch(e){} }
+    return r; }; }
 BLMSJ.init({get:(k,d)=>LS.get(k,d), set:(k,v)=>LS.set(k,v), app:'FRIDAY Casa', version:()=>VERSION, id:()=>(typeof CASA_ID!=='undefined'&&CASA_ID)||'',
   servidor:(r,o)=>{ o=Object.assign({}, o||{}); o.headers=Object.assign({}, o.headers||{}, {'X-Friday':(typeof CASA_ID!=='undefined'&&CASA_ID)||'casa-tablet'}); return fetch(SERVIDOR_BUFALABS.replace(/\/openai\/v1$/,'')+r, o); }});
 // la búsqueda de música: expande siglas (NTVG → No Te Va Gustar) y, si en lo que pediste nombraste
