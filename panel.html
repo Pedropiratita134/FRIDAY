@@ -3520,6 +3520,9 @@ function userSaid(text, how){
   if(SIESTA.on){ SIESTA.ronquido(); return; }
   state.lastUser=Date.now(); ambOff(); bannerOff(); if(durmiendo()){ state.sleepUntil=0; LS.set('sleepUntil',0); }
   if(timerRinging()){ timerHush(); if(/^(ok|listo|ya|gracias|dale|para|basta|callate)\b/.test(norm(text))) { say('Listo.'); return; } }
+  { const bl=BLMSJ.antes(text); if(bl){ $('you').innerHTML='<q>'+esc(text)+'</q>'; pushHist('user', text);
+      if(bl.accion!=='mandar'){ say(bl.frase, 'happy'); pushHist('assistant', bl.frase); return; }
+      setMode('thinking'); BLMSJ.mandar(bl.cuerpo, bl.tipo).then(r=>{ setMode('idle'); const f=BLMSJ.frase(r); say(f, r.ok?'happy':'worried'); pushHist('assistant', f); }); return; } }
   { const a=PER.antes(text); if(a===true){ $('you').innerHTML='<q>'+esc(text)+'</q>'; return; } if(typeof a==='string') text=a; }
   if(/^(que dia es( hoy)?|que fecha es( hoy)?|a que (dia|fecha) estamos)$/.test(norm(text).replace(/[¿?¡!.,]/g,' ').trim())){ $('you').innerHTML='<q>'+esc(text)+'</q>'; sayFast(text, 'Hoy es '+new Date().toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})+'.'); return; }
   $('you').innerHTML='<q>'+esc(text)+'</q>';
@@ -3589,8 +3592,6 @@ function fast(text, nf){
   // la casa
   const cf=casaFast(nf);
   if(cf){ pushHist('user', text); setMode('thinking'); casaDo(cf.quien, cf.q).then(r=>{ setMode('idle'); say(r.txt, r.ok?'happy':'worried'); focusCard('casa'); }); return true; }
-  { const bl=BLMSJ.deVoz(text); if(bl && !bl.referencia){ pushHist('user', text); setMode('thinking');
-      BLMSJ.mandar(bl.cuerpo, bl.tipo).then(r=>{ setMode('idle'); const f=BLMSJ.frase(r); say(f, r.ok?'happy':'worried'); pushHist('assistant', f); }); return true; } }
   { const gm=n0.match(/^(?:mostrame|poneme|pone|mandame|tirame|buscame|quiero)? ?(?:un )?gif (?:de |del |con |sobre )?(.{2,40})$/);
     if(gm){ pushHist('user', text); if(!gifLlave()){ say('Para los GIFs me falta la llave de KLIPY.', 'confused'); return true; }
       gifDe(gm[1]).then(ok=>{ if(!ok) say('No encontré GIFs de eso.'); pushHist('assistant', ok?'[Mostré un GIF de '+gm[1]+']':'No encontré GIFs de eso.'); }).catch(e=>say('No pude: '+e.message, 'worried')); return true; } }
@@ -4069,21 +4070,58 @@ var BLMSJ=(()=>{
   function frase(r){
     if(r.ok) return r.tipo==='problema' ? 'Listo, se lo mandé a BufaLabs. Gracias por avisar: así lo arreglan.' : r.tipo==='felicitacion' ? 'Listo, se lo mandé a BufaLabs. ¡Se van a poner contentos!' : r.tipo==='idea' ? 'Listo, le mandé tu idea a BufaLabs. La van a leer.' : 'Listo, se lo mandé a BufaLabs.';
     if(r.por==='cupo') return 'Hoy ya les mandé un montón de mensajes desde acá. Mañana les mando ese.';
-    if(r.por==='vacio') return '¿Qué querés que les diga a los de BufaLabs?';
+    if(r.por==='vacio' || r.por==='inventado') return '¿Qué querés que les diga a BufaLabs? Decímelo y se lo mando tal cual.';
     return 'No pude mandárselo a BufaLabs: parece que no hay internet. Probá en un rato.';
   }
-  // «decile a BufaLabs que…», «mandale a BufaLabs esta idea: …», «sugerile a BufaLabs que agreguen…», «mandá un mail a BufaLabs diciendo…»
-  const RE=/^(?:friday[,.]?\s+)?(?:che[,]?\s+)?(?:dec[ií]le|dec[ií]les|mand[aá]le|mand[aá]les|mand[aá]|envi[aá]le|envi[aá]les|avis[aá]le|avis[aá]les|cont[aá]le|cont[aá]les|suger[ií]le|suger[ií]les|pas[aá]le|pas[aá]les|report[aá]le|report[aá]les|escrib[ií]le|escrib[ií]les)(?:\s+(?:un|una)\s+(?:mail|correo|mensaje|gmail|reporte|nota|idea|sugerencia))?\s+(?:a|para)\s+(?:los\s+(?:chicos\s+)?de\s+|la\s+gente\s+de\s+)?(?:bufa\s?labs?|bufalab|tus\s+creadores|los\s+que\s+te\s+hicieron)\b[\s,:.]*(?:(?:diciendo|dici[eé]ndoles?|que\s+dice|que|esto|esta\s+idea|lo\s+siguiente|esta\s+sugerencia|este\s+problema)\b[\s,:]*)?(.*)$/i;
+  // «decile a BufaLabs que…», «mandale a BufaLabs esta idea: …», «decile una recomendación a BufaLabs» (sin decir cuál → pregunta)
+  const VERBO='(?:dec[ií]le|dec[ií]les|mand[aá]le|mand[aá]les|mand[aá]|envi[aá]le|envi[aá]les|avis[aá]le|avis[aá]les|cont[aá]le|cont[aá]les|suger[ií]le|suger[ií]les|pas[aá]le|pas[aá]les|report[aá]le|report[aá]les|escrib[ií]le|escrib[ií]les|dej[aá]le|dej[aá]les|hac[eé]le\\s+llegar)';
+  const OBJ='(?:(?:un|una|mi|esta|este|unas|unos|algo\\s+de)\\s+(?:mail|correo|mensaje|gmail|reporte|nota|ideas?|sugerencias?|recomendaci[oó]n|recomendaciones|queja|consejo|propuesta|comentario|saludo|opini[oó]n)|algo)';
+  const DEST='(?:los\\s+(?:chicos\\s+)?de\\s+|la\\s+gente\\s+de\\s+)?(?:bufa\\s?labs?|bufalab|tus\\s+creadores|los\\s+que\\s+te\\s+hicieron)';
+  const RE=new RegExp('^(?:friday[,.]?\\s+)?(?:che[,]?\\s+)?'+VERBO+'(?:\\s+'+OBJ+')?\\s+(?:a|para)\\s+'+DEST+'\\b[\\s,:.]*(.*)$', 'i');
+  const RELLENO=new RegExp('^(?:'+OBJ+'[\\s,:.]*)?(?:(?:diciendo|dici[eé]ndoles?|que\\s+dice|esto|esta\\s+idea|lo\\s+siguiente|esta\\s+sugerencia|este\\s+problema)\\b[\\s,:]*)?(?:que\\s+)?', 'i');
+  const NADA=/^(eso|esto|lo que (te )?(dije|hablamos|charlamos)( antes)?|lo de antes|la idea|mi idea|lo anterior)[.!]?$/i;
+  let espera=0;            // FRIDAY preguntó «¿qué querés que les diga?»: lo próximo que digas es el mensaje
+  const oidos=[];          // lo último que dijo la persona (para no mandar algo que no dijo)
   function deVoz(text){
     const m=String(text||'').trim().match(RE); if(!m) return null;
-    const cuerpo=m[1].trim().replace(/^que\s+/i,'');
-    if(cuerpo.length<6 || /^(eso|esto|lo que (te )?dije|lo de antes|la idea|mi idea|lo anterior|algo)[.!]?$/i.test(cuerpo)) return {cuerpo:'', referencia:true};
+    const cuerpo=m[1].trim().replace(RELLENO,'').trim().replace(/^[:,.\-–]\s*/,'');
+    if(NADA.test(cuerpo)) return {cuerpo:'', referencia:true};
+    if(cuerpo.length<6) return {cuerpo:'', preguntar:true};
     return {cuerpo, tipo:tipoDe(text)};
   }
-  function prompt(){
-    return 'Mensajes a BufaLabs (los que te hicieron): si te pide mandarles algo —una idea, algo que podrías hacer, un problema o un saludo— usá [[BUFALABS|idea o problema o felicitacion|el mensaje claro y completo, en sus palabras]] (sin datos personales que no haya pedido incluir) y confirmá en una frase que se lo mandaste. Si dice algo como «ojalá pudieras…» o «estaría bueno que…» sobre algo que no sabés hacer, ofrecele mandárselo a BufaLabs como idea, y usá la marca solo si te dice que sí.\n';
+  // lo llaman las apps con cada cosa que dice la persona, antes que nada
+  // → null (sigue normal) · {accion:'mandar', cuerpo, tipo} · {accion:'preguntar', frase} · {accion:'cancelar', frase}
+  function antes(text){
+    const t=String(text||'').trim(); if(!t) return null;
+    if(espera && Date.now()-espera<3*60000 && !deVoz(t)){
+      espera=0; oidos.push(t); if(oidos.length>8) oidos.shift();
+      if(/^(nada|no|nah|dej[aá](lo)?|olvidate|olvidalo|ninguna?|despu[eé]s|cancel[aá]|mejor no)[.!]?$/i.test(t)) return {accion:'cancelar', frase:'Dale, no les mando nada.'};
+      return {accion:'mandar', cuerpo:t.replace(/^(que|decile que|deciles que)\s+/i,''), tipo:tipoDe(t)};
+    }
+    espera=0;
+    const v=deVoz(t); oidos.push(t); if(oidos.length>8) oidos.shift();
+    if(!v || v.referencia) return null;
+    if(v.preguntar){ espera=Date.now(); return {accion:'preguntar', frase:'¿Qué querés que les diga a BufaLabs? Decímelo y se lo mando tal cual.'}; }
+    return {accion:'mandar', cuerpo:v.cuerpo, tipo:v.tipo};
   }
-  return {init:(a)=>{ A=Object.assign(A, a); }, mandar, frase, deVoz, prompt, tipoDe, hayCorreo:()=>!!CORREO, TIPOS};
+  // lo que manda el cerebro con la marca: solo si salió de lo que dijo la persona (nunca algo que inventó él)
+  const palabras=t=>sinTilde(t).match(/[a-zñ0-9]{4,}/g)||[];
+  const VACIAS=new Set('bufalabs bufa labs friday decile deciles mandale mandales idea ideas sugerencia recomendacion mensaje esta este estaria bueno seria podria podrian quiero tengo tiene tener puede pueda hacer para porque como cuando donde algo mucho muchas muchos otra otro mail correo usuario asistente'.split(' '));
+  function salioDeLaPersona(texto){
+    const ws=[...new Set(palabras(texto).filter(w=>!VACIAS.has(w)))]; if(!ws.length) return false;
+    const dicho=new Set(palabras(oidos.join(' ')).filter(w=>!VACIAS.has(w)));
+    const pref=w=>[...dicho].some(d=>d.slice(0,5)===w.slice(0,5));
+    return ws.filter(pref).length/ws.length >= 0.5;
+  }
+  async function mandarDelCerebro(texto, tipo){
+    if(!salioDeLaPersona(texto)){ espera=Date.now(); return {ok:false, por:'inventado'}; }
+    return mandar(texto, tipo);
+  }
+  function oir(t){ t=String(t||'').trim(); if(t){ oidos.push(t); if(oidos.length>8) oidos.shift(); } }
+  function prompt(){
+    return 'Mensajes a BufaLabs (los que te hicieron): si te pide mandarles algo —una idea, una recomendación, un problema o un saludo— usá [[BUFALABS|idea o problema o felicitacion|el mensaje]] con LO QUE ÉL DIJO, en sus palabras: nunca inventes ni completes el mensaje vos. Si no dijo qué mandar (por ejemplo «decile una recomendación a BufaLabs»), NO uses la marca: preguntale qué quiere que les digas. Si dice algo como «ojalá pudieras…» o «estaría bueno que…» sobre algo que no sabés hacer, ofrecele mandárselo a BufaLabs como idea, y usá la marca (con lo que él dijo) solo si te dice que sí.\n';
+  }
+  return {init:(a)=>{ A=Object.assign(A, a); }, mandar, mandarDelCerebro, antes, oir, frase, deVoz, prompt, tipoDe, hayCorreo:()=>!!CORREO, TIPOS};
 })();
 BLMSJ.init({get:(k,d)=>LS.get(k,d), set:(k,v)=>LS.set(k,v), app:'FRIDAY Casa', version:()=>VERSION, id:()=>(typeof CASA_ID!=='undefined'&&CASA_ID)||'',
   servidor:(r,o)=>{ o=Object.assign({}, o||{}); o.headers=Object.assign({}, o.headers||{}, {'X-Friday':(typeof CASA_ID!=='undefined'&&CASA_ID)||'casa-tablet'}); return fetch(SERVIDOR_BUFALABS.replace(/\/openai\/v1$/,'')+r, o); }});
@@ -4463,7 +4501,7 @@ async function brain(text, extra, depth=0){
       else if(t.k==='MUSICA'){ await playMusic(musicaQuery(t.a[0], text||''), t.a[1], t.a[2]); focusCard('mus'); }
       else if(t.k==='MUSICA_CTRL') await musicCtrl(t.a[0], t.a[1]);
       else if(t.k==='GIF'){ try{ await gifDe(t.a.join(' ')); }catch(e){} }
-      else if(t.k==='BUFALABS'){ const tx=(t.a.length>1 ? t.a.slice(1) : t.a).join(' | '), r=await BLMSJ.mandar(tx, norm(t.a[0]||'')); if(r.ok) toast('📨 Se lo mandé a BufaLabs'); else notes.push('No se pudo mandar a BufaLabs: '+BLMSJ.frase(r)); }
+      else if(t.k==='BUFALABS'){ const tx=(t.a.length>1 ? t.a.slice(1) : t.a).join(' | '), r=await BLMSJ.mandarDelCerebro(tx, norm(t.a[0]||'')); if(r.ok) toast('📨 Se lo mandé a BufaLabs'); else setTimeout(()=>say(r.por==='inventado' ? 'Perdón, me adelanté: no les mandé nada. ¿Qué querés que les diga a BufaLabs?' : BLMSJ.frase(r), 'worried'), 1500); }
       else if(t.k==='BUSCAR'){ const r=await search(t.a[0]); notes.push(r?`Lo que encontraste sobre "${t.a[0]}": ${r}`:`No encontraste nada sobre "${t.a[0]}": decilo, no inventes.`); }
       else if(t.k==='NOTICIAS'){ const c=t.a[0]?notiCatDe(t.a[0]):{cat:'portada'}; osOpen('noti',{auto:true}); const it=await notiAbrir(c.cat, c.q); notes.push(it.length?'Titulares '+notiTitulo()+': '+it.slice(0,6).map((x,i)=>(i+1)+') '+x.t+(x.src?' ('+x.src+')':'')).join(' | ')+'. Si quiere más de alguna, que te diga cuál.':'No pude traer las noticias'+(noti.err?' ('+noti.err+')':'')+'.'); }
       else if(t.k==='EVENTO'){ if(googleOn()) await agendaAdd(t.a[0], t.a[1], t.a[2]); else notes.push('La compu: '+await compuHacer([{accion:'evento', a1:String(t.a[1]||'').replace('T',' '), a2:t.a[0], a3:t.a[2]||'60'}])); focusCard('hoy'); }
