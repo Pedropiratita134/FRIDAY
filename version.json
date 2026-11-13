@@ -1,31 +1,31 @@
 {
- "version": "5.9",
- "titulo": "Se acuerda y anota sola",
+ "version": "6.0",
+ "titulo": "Mirá esta foto",
  "items": [
   {
-   "icono": "🧠",
-   "titulo": "Se acuerda de lo que dijeron",
-   "texto": "«Copiame eso», «anotá lo que dijiste», «mandale tu idea a BufaLabs» o «recordame eso mañana a las 8»: sabe qué es «eso»."
+   "icono": "📸",
+   "titulo": "Fotos, GIFs y videos",
+   "texto": "Tocá el clip y mandale fotos (hasta 4 juntas), GIFs o un video cortito. Las mira y te contesta lo que le preguntes."
   },
   {
-   "icono": "📝",
-   "titulo": "Notas y recordatorios hablando",
-   "texto": "«Anotá que el wifi es…», «recordame mañana a las 9 llamar a Juan». Si no le decís cuándo, te pregunta. Todo al instante, sin tocar nada."
+   "icono": "📍",
+   "titulo": "«¿Cómo se llamaba el bar?»",
+   "texto": "Le mandás la foto de un lugar y busca pistas: carteles, vasos, la carta, la ubicación guardada en la foto y lo que hay cerca. Te dice qué tan segura está y te deja el mapa."
   },
   {
-   "icono": "🎙️",
-   "titulo": "«Tomá nota»",
-   "texto": "Le dictás todo lo que quieras, sin tocar la pantalla, y cuando terminás decís «listo». Queda guardado como una nota."
+   "icono": "💬",
+   "titulo": "Seguí preguntando",
+   "texto": "Después de mandarle una foto podés seguir: «¿y dónde queda?», «¿qué dice el cartel?», «traducime eso»."
   },
   {
-   "icono": "🏠",
-   "titulo": "Aparece en la tablet",
-   "texto": "Las notas y los recordatorios que le dictás al celu aparecen al toque en la tablet de la casa, y ella te avisa."
+   "icono": "🔑",
+   "titulo": "Sin Gemini también",
+   "texto": "Si no tenés la llave de Gemini, las mira con Groq."
   },
   {
-   "icono": "🔁",
-   "titulo": "«¿Qué dijiste?»",
-   "texto": "Te repite lo último que te dijo."
+   "icono": "✨",
+   "titulo": "Se nota cuando piensa",
+   "texto": "Una animación nueva: unos aros que giran alrededor de su cara y te dice qué está haciendo (mirando la foto, buscando en Google…)."
   }
  ]
 }

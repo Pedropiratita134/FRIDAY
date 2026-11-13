@@ -1,5 +1,5 @@
 // FRIDAY Móvil: abre aunque no haya internet y se actualiza sola cuando sí hay.
-const CACHE='friday-movil-59';
+const CACHE='friday-movil-60';
 const DATOS='friday-datos';   // lo que el celu le deja al service worker (qué avisar y a qué hora): no se borra al actualizar
 const SHELL=['./','index.html','manifest.json','icon-192.png','icon-512.png'];
 self.addEventListener('install', e=>{ e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting())); });
