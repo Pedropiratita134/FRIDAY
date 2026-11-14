@@ -2617,9 +2617,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='6.0';
+const VERSION='6.1';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "6.0", "titulo": "Mirá esta foto", "items": [{"icono": "📸", "titulo": "Fotos, GIFs y videos", "texto": "Tocá el clip y mandale fotos (hasta 4 juntas), GIFs o un video cortito. Las mira y te contesta lo que le preguntes."}, {"icono": "📍", "titulo": "«¿Cómo se llamaba el bar?»", "texto": "Le mandás la foto de un lugar y busca pistas: carteles, vasos, la carta, la ubicación guardada en la foto y lo que hay cerca. Te dice qué tan segura está y te deja el mapa."}, {"icono": "💬", "titulo": "Seguí preguntando", "texto": "Después de mandarle una foto podés seguir: «¿y dónde queda?», «¿qué dice el cartel?», «traducime eso»."}, {"icono": "🔑", "titulo": "Sin Gemini también", "texto": "Si no tenés la llave de Gemini, las mira con Groq."}, {"icono": "✨", "titulo": "Se nota cuando piensa", "texto": "Una animación nueva: unos aros que giran alrededor de su cara y te dice qué está haciendo (mirando la foto, buscando en Google…)."}]};
+const NOVEDADES_M={"version": "6.1", "titulo": "FRIDAY, como app de Android", "items": [{"icono": "📲", "titulo": "Un APK para instalarla", "texto": "Ahora FRIDAY se baja como app de Android desde bufalabs-arg.github.io/instalar. Es la misma FRIDAY, con el motor de Chrome: la voz, el micrófono y la cámara andan igual."}, {"icono": "🙌", "titulo": "Sin barra de dirección", "texto": "Se abre a pantalla completa, con su ícono, como cualquier app. No hace falta Play Store."}, {"icono": "🔎", "titulo": "Te dice cómo instalarla", "texto": "Si entrás desde Android y todavía no la tenés, FRIDAY te ofrece el APK ahí mismo."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -3603,7 +3603,7 @@ async function infAutoCelu(){
 }
 setInterval(infAutoCelu, 60000);
 async function informeMandarCelu(){
-  const tx=BUFIA.informe('FRIDAY Móvil', VERSION, `Pantalla: ${innerWidth}×${innerHeight} · Instalada: ${matchMedia('(display-mode: standalone)').matches?'sí':'no'} · Voz: ${S.voz?'sí':'no'}`);
+  const tx=BUFIA.informe('FRIDAY Móvil', VERSION, `Pantalla: ${innerWidth}×${innerHeight} · Instalada: ${enLaApp()?'app de Android':matchMedia('(display-mode: standalone)').matches?'sí':'no'} · Voz: ${S.voz?'sí':'no'}`);
   try{ await navigator.clipboard.writeText(tx); }catch(e){}
   const link=BUFIA.informeLink('FRIDAY Móvil', VERSION, tx);
   if(navigator.share){ try{ await navigator.share({title:'Informe de FRIDAY Móvil', text:tx}); return; }catch(e){ if(e && e.name==='AbortError') return; } }
@@ -4648,11 +4648,15 @@ function instCard(mostrar){
 }
 setTimeout(()=>{ if(!$('setup') || !$('setup').classList.contains('on')) instCard(true); }, 25000);
 const standalone=()=>matchMedia('(display-mode: standalone)').matches || navigator.standalone===true;
+const ANDROID=/Android/i.test(navigator.userAgent||'');
+const APK_URL='https://bufalabs-arg.github.io/descargas/FRIDAY.apk';
+const enLaApp=()=>document.referrer.startsWith('android-app://') || /FridayApp/i.test(navigator.userAgent||'');
 function renderInstall(){
-  const txt = standalone() ? '✔ Ya la tenés como app.' :
+  const apk = ANDROID && !standalone() ? ' O bajate la <a href="' + APK_URL + '" target="_blank" rel="noopener"><b>app de Android</b></a> (un archivo .apk: Android te va a preguntar si la instalás igual, porque no viene de Play Store).' : '';
+  const txt = (standalone() ? '✔ Ya la tenés como app.' :
     IOS ? 'En iPhone, desde <b>Safari</b>: tocá <b>Compartir</b> (el cuadradito con la flecha, abajo) → <b>Agregar a inicio</b> → <b>Agregar</b>. Te queda el ícono de FRIDAY como una app.' :
     deferredInstall ? 'Tocá <b>Instalar FRIDAY</b> y queda como una app, con su ícono.' :
-    'En Chrome: menú <b>⋮</b> (arriba a la derecha) → <b>Agregar a la pantalla principal</b> (o <b>Instalar app</b>). Te queda el ícono de FRIDAY como una app.';
+    'En Chrome: menú <b>⋮</b> (arriba a la derecha) → <b>Agregar a la pantalla principal</b> (o <b>Instalar app</b>). Te queda el ícono de FRIDAY como una app.') + apk;
   ['installNote','installNote2'].forEach(id=>{ if($(id)) $(id).innerHTML=txt; });
   ['installBtn','installBtn2'].forEach(id=>{ if($(id)) $(id).hidden=!deferredInstall || standalone(); });
 }
