@@ -154,6 +154,13 @@ body:not(.writing) #send{display:none}
 .sheet h3{margin:0 0 12px;font:500 13px/1.2 var(--display);letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
 .sheet h4{margin:18px 0 6px;font-size:15px}
 .note{font-size:14px;color:var(--muted);margin:8px 0;line-height:1.45}
+.cand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;padding:46px 22px 34px}
+.cand .ic{font-size:60px;line-height:1}
+.cand h4{font-size:23px;margin:0}
+.cand p{font-size:15px;color:var(--muted);max-width:300px;line-height:1.45}
+.cand .big{max-width:320px}
+.cand .pin{display:flex;gap:9px;justify-content:center;margin-top:4px}
+.cand .pin input{width:150px;text-align:center;font-size:26px;letter-spacing:.35em;padding:11px;border-radius:13px;border:1px solid var(--line2);background:rgba(255,255,255,.05);color:var(--text)}
 .pl-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
 .pl-top h3{margin:0;text-transform:capitalize}
 .pl-top button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line2);background:rgba(255,255,255,.04);font-size:22px;line-height:1}
@@ -2424,6 +2431,14 @@ const SIESTA = (() => {
 </section>
 
 <section class="sheet" id="sh-plata"><div class="grab"></div>
+  <div class="cand" id="plCandado" hidden>
+    <div class="ic">🔒</div>
+    <h4>La plata está con candado</h4>
+    <p id="plCandTxt">Desbloqueá el celu como siempre (huella, cara, PIN o patrón) y te la muestro.</p>
+    <button class="big" id="plAbrir" type="button">Desbloquear</button>
+    <div class="pin" id="plPinBox" hidden><input id="plPin" type="password" inputmode="numeric" maxlength="8" placeholder="PIN" autocomplete="off"><button class="big sec" id="plPinOk" type="button" style="margin:0;width:auto;padding:11px 18px">Entrar</button></div>
+  </div>
+  <div id="plCuerpo">
   <div class="pl-top"><button type="button" id="plAnt" aria-label="El mes anterior">‹</button><h3 id="plMes">La plata</h3><button type="button" id="plSig" aria-label="El mes que viene">›</button></div>
   <div class="pl-tarjeta">
     <div class="pl-queda"><small id="plQuedaTit">Te queda</small><b id="plQueda">$0</b></div>
@@ -2442,7 +2457,9 @@ const SIESTA = (() => {
   <div class="addrow"><input id="plFijoIn" placeholder="Jubilación 280 mil el 10" autocomplete="off" enterkeyhint="done"><button id="plFijoAdd" type="button">Agregar</button></div>
   <p class="note">Lo que entra o se paga siempre: la jubilación, el sueldo, la luz, el alquiler. El día que toca, FRIDAY te lo recuerda y lo anotás con un toque.</p>
   <div class="row2"><button class="big sec" id="plShare" type="button">📤 Pasar el resumen</button><button class="big sec" id="plTope" type="button">🎯 Poner un tope</button></div>
+  <div class="switch" style="margin-top:14px"><div><b>🔒 Pedir el desbloqueo del celu</b><div class="note" id="plCandNota">Para abrir La plata y lo que gastaste en el súper. Usa el mismo desbloqueo de tu celu (huella, cara, PIN o patrón).</div></div><input type="checkbox" id="plCandSw"></div>
   <p class="note">Todo esto queda en tu celu y en tu cuenta de BufaLabs, cifrado: nadie de BufaLabs lo puede leer.</p>
+  </div>
 </section>
 
 <section class="sheet" id="sh-familia"><div class="grab"></div><h3>Familia</h3>
@@ -2664,9 +2681,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='6.4';
+const VERSION='6.5';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "6.4", "titulo": "La plata, también en la compu", "items": [{"icono": "🔄", "titulo": "La misma cuenta en los dos lados", "texto": "Lo que anotás en el celu aparece en la compu y al revés, por la vinculación de siempre (cifrado, de aparato a aparato). Si anotás un gasto en la calle, cuando llegás ya está."}, {"icono": "💰", "titulo": "Y en la compu también se la pedís hablando", "texto": "«¿Cuánto me queda?», «gasté 3 mil en la farmacia»: ahora le podés decir lo mismo a la FRIDAY de la compu."}]};
+const NOVEDADES_M={"version": "6.5", "titulo": "Candado en la plata", "items": [{"icono": "🔒", "titulo": "Con el desbloqueo de tu celu", "texto": "Podés pedirle a FRIDAY que para abrir La plata y lo que gastaste en el súper haya que desbloquear el celu (huella, cara, PIN o patrón, el mismo de siempre). Si alguien te agarra el celu abierto, no ve tus números."}, {"icono": "🔢", "titulo": "Y si tu celu no lo tiene, un PIN", "texto": "En celus o compus sin huella, FRIDAY te deja poner un PIN de 4 a 8 números, guardado cifrado (no se guarda el PIN, solo una huella suya)."}, {"icono": "🤐", "titulo": "Tampoco lo dice en voz alta", "texto": "Con el candado puesto, si le preguntás cuánto te queda, primero te pide que lo abras. Anotar un gasto sigue siendo de una, sin números a la vista."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -3529,6 +3546,7 @@ function gastoMonto(n){
 function gastosPeriodo(p){ const d=new Date(), ini=new Date(d.getFullYear(), d.getMonth(), p==='hoy'?d.getDate():p==='semana'?d.getDate()-((d.getDay()+6)%7):1); return gastos().filter(g=>g.at>=ini.getTime()); }
 function gastosPorRubro(l){ const r={}; l.forEach(g=>{ r[g.en]=(r[g.en]||0)+g.monto; }); return Object.entries(r).sort((a,b)=>b[1]-a[1]); }
 function gastosPrompt(){
+  if(Candado.puesto() && !Candado.abierto()) return 'LA PLATA del usuario está con candado: no tenés sus números. Si pregunta por su plata, decile que la abra desde «La plata» (Más → La plata). Si te dice un gasto, anotalo igual con [[PLATA|…]] y confirmá sin decir montos ni totales.\n';
   const r=plResumen(0); if(!r.l.length && !(plata.fijos||[]).length) return '';
   const porR={}; for(const m of r.l) if(m.t==='gasto'){ const k=plRubro(m.q); porR[k[2]]=(porR[k[2]]||0)+m.m; }
   const rub=Object.entries(porR).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>k+' '+pesos(v)).join(', ');
@@ -3571,6 +3589,14 @@ function plDeTexto(texto, manual){
 }
 function gastoDeVoz(text){
   const n=norm(text).replace(/[¿?¡!]/g,'').trim();
+  // con candado puesto no se dicen números en voz alta: primero abrilo
+  if(Candado.puesto() && !Candado.abierto()){
+    if(/\b(cuanto (me )?(queda|sobra|tengo|gaste|cobre|gastamos)|cuanta plata|mis gastos|la plata|mis cuentas)\b/.test(n)){
+      showSheet('plata'); return 'La plata está con candado. Abrila ahí y te cuento.';
+    }
+    const an=plDeTexto(text, false);
+    if(an) return 'Listo, lo anoté.';
+  }
   // mostrar la hoja
   if(/^(mostrame|abrime|abri|ver|mira|mostra)?\s*(mi |la |mis )?(plata|cuentas|gastos|billetera)$|^(como (ando|voy|estoy) (de|con la) (plata|guita))$/.test(n)){
     showSheet('plata'); const r=plResumen(0);
@@ -3611,6 +3637,70 @@ function gastoDeVoz(text){
   }
   return '';
 }
+// ================================================================ EL CANDADO
+// Para abrir La plata hay que desbloquear el aparato, con lo que ya usás: huella, cara, PIN o
+// patrón. Se hace con WebAuthn, que es lo que el navegador le pide al sistema; FRIDAY no ve ni
+// guarda tu huella ni tu PIN del celu. Si el aparato no tiene nada de eso, queda un PIN propio
+// (guardado como una huella con PBKDF2, no el PIN).
+const Candado={
+  hasta:0, intentos:0, espera:0,
+  cfg(){ return LS.get('candado', {on:false, cred:'', pin:'', sal:'', min:5}); },
+  guardar(c){ LS.set('candado', c); },
+  puesto(){ return !!this.cfg().on; },
+  abierto(){ return !this.puesto() || Date.now()<this.hasta; },
+  cerrar(){ this.hasta=0; try{ if(openSheet==='plata') renderPlata(); }catch(e){} },
+  abrirUnRato(){ this.hasta=Date.now()+(+this.cfg().min||5)*60000; this.intentos=0; },
+  hayAparato(){ return !!(window.PublicKeyCredential && navigator.credentials); },
+  b64(u8){ let x=''; for(const b of new Uint8Array(u8)) x+=String.fromCharCode(b); return btoa(x); },
+  deB64(s){ const b=atob(s), u=new Uint8Array(b.length); for(let i=0;i<b.length;i++) u[i]=b.charCodeAt(i); return u; },
+  azar(n){ return crypto.getRandomValues(new Uint8Array(n)); },
+  async huellaPin(pin, sal){
+    const base=await crypto.subtle.importKey('raw', new TextEncoder().encode(String(pin)), 'PBKDF2', false, ['deriveBits']);
+    const bits=await crypto.subtle.deriveBits({name:'PBKDF2', salt:this.deB64(sal), iterations:150000, hash:'SHA-256'}, base, 256);
+    return this.b64(bits);
+  },
+  // ¿tiene huella/cara/PIN del sistema?
+  async aparatoListo(){
+    try{ return !!(window.PublicKeyCredential && await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable()); }catch(e){ return false; }
+  },
+  async ponerAparato(){
+    const id=this.azar(16);
+    const c=await navigator.credentials.create({publicKey:{
+      challenge:this.azar(32), rp:{name:'FRIDAY'},
+      user:{id, name:'FRIDAY', displayName:'La plata de FRIDAY'},
+      pubKeyCredParams:[{type:'public-key',alg:-7},{type:'public-key',alg:-257}],
+      authenticatorSelection:{authenticatorAttachment:'platform', userVerification:'required', residentKey:'preferred'},
+      timeout:60000, attestation:'none'}});
+    if(!c) throw new Error('sin credencial');
+    const cfg=this.cfg(); cfg.on=true; cfg.cred=this.b64(c.rawId); cfg.pin=''; cfg.sal=''; this.guardar(cfg); this.abrirUnRato();
+    return true;
+  },
+  async ponerPin(pin){
+    if(!/^\d{4,8}$/.test(String(pin||''))) return false;
+    const sal=this.b64(this.azar(16)), cfg=this.cfg();
+    cfg.on=true; cfg.cred=''; cfg.sal=sal; cfg.pin=await this.huellaPin(pin, sal); this.guardar(cfg); this.abrirUnRato();
+    return true;
+  },
+  sacar(){ const cfg=this.cfg(); cfg.on=false; cfg.cred=''; cfg.pin=''; cfg.sal=''; this.guardar(cfg); this.hasta=0; },
+  async abrirConAparato(){
+    const cfg=this.cfg(); if(!cfg.cred) return false;
+    const r=await navigator.credentials.get({publicKey:{
+      challenge:this.azar(32), allowCredentials:[{type:'public-key', id:this.deB64(cfg.cred)}],
+      userVerification:'required', timeout:60000}});
+    if(!r) return false;
+    this.abrirUnRato(); return true;
+  },
+  async abrirConPin(pin){
+    const cfg=this.cfg(); if(!cfg.pin) return false;
+    if(Date.now()<this.espera) return false;
+    const h=await this.huellaPin(pin, cfg.sal);
+    if(h!==cfg.pin){ this.intentos++; if(this.intentos>=5){ this.espera=Date.now()+60000; this.intentos=0; } return false; }
+    this.abrirUnRato(); return true;
+  }
+};
+// si dejás el celu y volvés más tarde, se cierra solo
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) setTimeout(()=>{ if(document.hidden) Candado.cerrar(); }, 30000); });
+
 // ================================================================ LA PLATA
 // Lo que entra (la jubilación, el sueldo, una changa), lo que se va, y cuánto queda.
 // Los gastos siguen donde estaban (LS «gastos»); acá se suman las entradas y lo de todos los meses.
@@ -3683,7 +3773,23 @@ function plMarcar(f, anotar){
   f.ultimo=plClaveMes(hoy); plSave();
 }
 function plFmtMes(k){ const d=plMesDe(k); return d.toLocaleDateString('es-AR',{month:'long', year: d.getFullYear()!==new Date().getFullYear()?'numeric':undefined}); }
+async function plCandadoUI(){
+  const cfg=Candado.cfg(), sw=$('plCandSw'); if(sw) sw.checked=!!cfg.on;
+  const nota=$('plCandNota');
+  if(nota) nota.textContent = cfg.on
+    ? (cfg.cred ? 'Puesto: hay que desbloquear el celu (huella, cara, PIN o patrón) para abrir esto.' : 'Puesto: hay que poner tu PIN de FRIDAY para abrir esto.')
+    : 'Para abrir La plata y lo que gastaste en el súper. Usa el mismo desbloqueo de tu celu (huella, cara, PIN o patrón).';
+  const cerrado=cfg.on && !Candado.abierto();
+  $('plCandado').hidden=!cerrado; $('plCuerpo').hidden=cerrado;
+  if(cerrado){
+    $('plCandTxt').textContent = cfg.cred ? 'Desbloqueá el celu como siempre (huella, cara, PIN o patrón) y te la muestro.' : 'Poné tu PIN de FRIDAY y te la muestro.';
+    $('plAbrir').hidden=!cfg.cred; $('plPinBox').hidden=!!cfg.cred;
+  }
+  return cerrado;
+}
 function renderPlata(){
+  if(Candado.puesto() && !Candado.abierto()){ plCandadoUI(); const mt=$('plMenuTxt'); if(mt) mt.textContent='Con candado'; return; }
+  plCandadoUI();
   const r=plResumen(plMes), hoy=plMes===0;
   const nm=plFmtMes(plMes); $('plMes').textContent=nm.charAt(0).toUpperCase()+nm.slice(1);
   $('plSig').disabled=plMes>=0; $('plSig').style.opacity=plMes>=0?.3:1;
@@ -3753,6 +3859,25 @@ function plTextoResumen(){
   return `Mi plata de ${plFmtMes(plMes)}\nEntró: ${pesos(r.entro)}\nSe fue: ${pesos(r.gasto)}\nQueda: ${pesos(r.queda)}` + (top?`\n\nEn qué se fue:\n${top}`:'');
 }
 function plataIniciar(){
+  $('plAbrir').onclick=async()=>{ try{ if(await Candado.abrirConAparato()){ buzz(); renderPlata(); } else toast('No pude desbloquear'); }
+    catch(e){ toast('No se pudo desbloquear. Si el celu cambió, sacá y volvé a poner el candado.', 5000); } };
+  $('plPinOk').onclick=async()=>{ const v=$('plPin').value; $('plPin').value='';
+    if(await Candado.abrirConPin(v)){ buzz(); renderPlata(); } else toast(Date.now()<Candado.espera?'Esperá un minuto y probá de nuevo':'PIN equivocado'); };
+  $('plPin').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('plPinOk').click(); } });
+  $('plCandSw').onchange=async e=>{
+    if(!e.target.checked){ Candado.sacar(); toast('Candado sacado'); renderPlata(); return; }
+    e.target.checked=false;
+    try{
+      if(await Candado.aparatoListo()){ await Candado.ponerAparato(); toast('Listo: ahora pide el desbloqueo del celu'); }
+      else {
+        const pin=prompt('Tu celu no tiene huella ni PIN para las apps.\nPoné un PIN de 4 a 8 números para FRIDAY:');
+        if(pin===null) return;
+        if(!await Candado.ponerPin(pin)){ toast('Tienen que ser de 4 a 8 números'); return; }
+        toast('Listo: te lo voy a pedir para abrir la plata');
+      }
+      renderPlata();
+    }catch(err){ toast('No se pudo poner el candado: ' + (err && err.name==='NotAllowedError' ? 'lo cancelaste' : 'este navegador no lo deja'), 5000); }
+  };
   const anotar=()=>{ const v=$('plIn').value.trim(); if(!v) return;
     const r=plDeTexto(v, true); $('plIn').value='';
     toast(r || 'No entendí el monto. Probá «gasté 3500 en el súper».'); };
@@ -6502,7 +6627,21 @@ $('shShare').onclick=async()=>{ const p=compras.filter(x=>!x.h); if(!p.length){ 
 let chango=Object.assign({items:[], pres:0, desde:0}, LS.get('chango',{}));
 const cmGuardar=()=>{ LS.set('chango', chango); };
 let cmVista='lista';
-function cmVer(v){ cmVista=v; for(const k of ['lista','chango','hist']){ $('cm-'+k).hidden=k!==v; } document.querySelectorAll('.cm-seg [data-cm]').forEach(b=>b.setAttribute('aria-selected', b.dataset.cm===v));
+async function cmAbrir(v){
+  const cfg=Candado.cfg();
+  if(!cfg.cred && !cfg.pin) return false;
+  try{
+    if(cfg.cred){ if(await Candado.abrirConAparato()){ cmVer(v); return true; } }
+    else { const pin=prompt('Tu PIN de FRIDAY:'); if(pin===null) return true;
+      if(await Candado.abrirConPin(pin)){ cmVer(v); return true; } }
+    toast('No pude desbloquear');
+  }catch(e){ toast('No se pudo desbloquear'); }
+  return true;
+}
+function cmVer(v){
+  // el changuito y lo que gastaste son plata: con candado puesto, primero desbloqueás
+  if((v==='chango' || v==='hist') && Candado.puesto() && !Candado.abierto()){ cmAbrir(v); return; }
+  cmVista=v; for(const k of ['lista','chango','hist']){ $('cm-'+k).hidden=k!==v; } document.querySelectorAll('.cm-seg [data-cm]').forEach(b=>b.setAttribute('aria-selected', b.dataset.cm===v));
   if(v==='lista') renderCompras(); else if(v==='chango') cmPintar(); else cmHist(); $('sh-compras').scrollTop=0; }
 document.querySelector('.cm-seg').addEventListener('click', e=>{ const b=e.target.closest('[data-cm]'); if(b){ buzz(6); cmVer(b.dataset.cm); } });
 $('cmIr').onclick=()=>{ if(!chango.desde){ chango.desde=Date.now(); cmGuardar(); } cmVer('chango'); };

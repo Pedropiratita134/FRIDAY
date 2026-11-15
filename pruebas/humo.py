@@ -84,6 +84,36 @@ async def main():
     ok('Plata: la manda a los otros aparatos', r2['g'] >= 4 and r2['fijo'] and r2['entra'], r2)
     ok('Plata: recibe lo que anotaron en la compu', r2['gastoNuevo'] == 1 and r2['fijoNuevo'] == 1, r2)
     ok('Plata: la cuenta sigue cerrando', r2['queda'] == 259500, r2['queda'])
+    r3 = await p.evaluate("""async()=>{
+      const out={};
+      out.sinCandado = Candado.abierto();                       // sin candado, todo abierto
+      await Candado.ponerPin('2468');                           // como si el celu no tuviera huella
+      out.puesto = Candado.puesto();
+      out.guardaPin = (LS.get('candado',{}).pin||'').length>20 && !JSON.stringify(LS.get('candado',{})).includes('2468');
+      Candado.cerrar();
+      out.cerrado = !Candado.abierto();
+      renderPlata();
+      out.tapa = !document.getElementById('plCandado').hidden && document.getElementById('plCuerpo').hidden;
+      out.menuMudo = (document.getElementById('plMenuTxt')||{}).textContent;
+      out.vozMuda = gastoDeVoz('¿cuánto me queda?');
+      out.anota = gastoDeVoz('gasté 2 mil en el kiosco');
+      out.cerebroMudo = gastosPrompt().includes('candado') && !gastosPrompt().includes('$');
+      out.malPin = await Candado.abrirConPin('1111');
+      out.buenPin = await Candado.abrirConPin('2468');
+      renderPlata();
+      out.abierta = document.getElementById('plCandado').hidden;
+      Candado.sacar(); renderPlata();
+      return out;
+    }""")
+    ok('Candado: sin candado, la plata se ve', r3['sinCandado'])
+    ok('Candado: guarda una huella del PIN, no el PIN', r3['guardaPin'], r3['guardaPin'])
+    ok('Candado: con candado tapa la hoja', r3['tapa'] and r3['cerrado'])
+    ok('Candado: el menú no muestra el saldo', r3['menuMudo'] == 'Con candado', r3['menuMudo'])
+    ok('Candado: por voz no dice números', 'candado' in (r3['vozMuda'] or '').lower(), r3['vozMuda'])
+    ok('Candado: igual te anota el gasto, sin montos', r3['anota'] == 'Listo, lo anoté.', r3['anota'])
+    ok('Candado: el cerebro tampoco los ve', r3['cerebroMudo'])
+    ok('Candado: un PIN equivocado no abre', r3['malPin'] is False)
+    ok('Candado: el PIN correcto abre', r3['buenPin'] and r3['abierta'])
     ok('Móvil: sin errores de JS', not errs, errs[:3])
     await c.close()
     # la tablet
