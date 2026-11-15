@@ -1,21 +1,16 @@
 {
- "version": "6.5",
- "titulo": "Candado en la plata",
+ "version": "6.6",
+ "titulo": "El candado, como vos quieras",
  "items": [
   {
    "icono": "🔒",
-   "titulo": "Con el desbloqueo de tu celu",
-   "texto": "Podés pedirle a FRIDAY que para abrir La plata y lo que gastaste en el súper haya que desbloquear el celu (huella, cara, PIN o patrón, el mismo de siempre). Si alguien te agarra el celu abierto, no ve tus números."
+   "titulo": "También las compras",
+   "texto": "Ahora el candado puede tapar la hoja de Compras entera, no solo el changuito y lo que gastaste. Lo elegís vos: «solo la plata» o «la plata y las compras»."
   },
   {
-   "icono": "🔢",
-   "titulo": "Y si tu celu no lo tiene, un PIN",
-   "texto": "En celus o compus sin huella, FRIDAY te deja poner un PIN de 4 a 8 números, guardado cifrado (no se guarda el PIN, solo una huella suya)."
-  },
-  {
-   "icono": "🤐",
-   "titulo": "Tampoco lo dice en voz alta",
-   "texto": "Con el candado puesto, si le preguntás cuánto te queda, primero te pide que lo abras. Anotar un gasto sigue siendo de una, sin números a la vista."
+   "icono": "⏱️",
+   "titulo": "Una vez cada tanto",
+   "texto": "Una vez que lo abriste, queda abierto cinco minutos (y se cierra solo si dejás el celu). No te lo pide a cada rato mientras hacés las compras."
   }
  ]
 }

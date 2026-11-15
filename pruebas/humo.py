@@ -114,6 +114,22 @@ async def main():
     ok('Candado: el cerebro tampoco los ve', r3['cerebroMudo'])
     ok('Candado: un PIN equivocado no abre', r3['malPin'] is False)
     ok('Candado: el PIN correcto abre', r3['buenPin'] and r3['abierta'])
+    r3 = await p.evaluate("""async()=>{
+      // candado con PIN puesto, tapando también las compras
+      await Candado.ponerPin('123456'); const cfg=Candado.cfg(); cfg.que='todo'; Candado.guardar(cfg); Candado.cerrar();
+      showSheet('compras'); const tapadaC = !$('cmCandado').hidden && $('cmCuerpo').hidden;
+      // «solo la plata»: las compras se abren igual
+      const c2=Candado.cfg(); c2.que='plata'; Candado.guardar(c2); cmCandadoUI();
+      const abiertaC = $('cmCandado').hidden && !$('cmCuerpo').hidden;
+      const plataIgual = Candado.protege('plata');
+      const ok = await Candado.abrirConPin('123456');
+      Candado.sacar();
+      return {tapadaC, abiertaC, plataIgual, ok};
+    }""")
+    ok('Candado: puede tapar también las compras', r3['tapadaC'], r3)
+    ok('Candado: si elegís solo la plata, las compras se abren', r3['abiertaC'], r3)
+    ok('Candado: la plata siempre queda tapada', r3['plataIgual'], r3)
+    ok('Candado: el PIN abre', r3['ok'], r3)
     ok('Móvil: sin errores de JS', not errs, errs[:3])
     await c.close()
     # la tablet

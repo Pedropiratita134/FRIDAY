@@ -2256,6 +2256,13 @@ const SIESTA = (() => {
 
 <!-- LISTA DE COMPRAS -->
 <section class="sheet" id="sh-compras"><div class="grab"></div>
+  <div class="cand" id="cmCandado" hidden>
+    <div class="ic">🔒</div>
+    <h4>Las compras están con candado</h4>
+    <p id="cmCandTxt">Desbloqueá el celu como siempre (huella, cara, PIN o patrón) y te las muestro.</p>
+    <button class="big" id="cmAbrirBtn" type="button">Desbloquear</button>
+  </div>
+  <div id="cmCuerpo">
   <div class="cm-top"><h3>Compras</h3>
     <div class="cm-seg" role="tablist" aria-label="Compras"><button type="button" data-cm="lista" role="tab" aria-selected="true">📝 Lista</button><button type="button" data-cm="chango" role="tab" aria-selected="false">🛒 Changuito<span class="cm-b" id="cmBadge"></span></button><button type="button" data-cm="hist" role="tab" aria-selected="false">🧾 Historial</button></div></div>
   <div id="cm-lista">
@@ -2280,6 +2287,7 @@ const SIESTA = (() => {
     <p class="note">Sacale una foto a la etiqueta del precio, al cartel del descuento o al producto con su precio: leo el nombre, el precio y la promo, y te voy sumando. Las promos tipo 2x1 o «2da al 70%» las calculo según cuántos lleves.</p>
   </div>
   <div id="cm-hist" hidden><div id="cmHist"></div></div>
+  </div>
 </section>
 
 <!-- AVISOS -->
@@ -2458,6 +2466,7 @@ const SIESTA = (() => {
   <p class="note">Lo que entra o se paga siempre: la jubilación, el sueldo, la luz, el alquiler. El día que toca, FRIDAY te lo recuerda y lo anotás con un toque.</p>
   <div class="row2"><button class="big sec" id="plShare" type="button">📤 Pasar el resumen</button><button class="big sec" id="plTope" type="button">🎯 Poner un tope</button></div>
   <div class="switch" style="margin-top:14px"><div><b>🔒 Pedir el desbloqueo del celu</b><div class="note" id="plCandNota">Para abrir La plata y lo que gastaste en el súper. Usa el mismo desbloqueo de tu celu (huella, cara, PIN o patrón).</div></div><input type="checkbox" id="plCandSw"></div>
+  <div class="reps" id="plCandQue" role="radiogroup" aria-label="Qué tapa el candado" hidden><button type="button" data-que="plata">Solo la plata</button><button type="button" data-que="todo">La plata y las compras</button></div>
   <p class="note">Todo esto queda en tu celu y en tu cuenta de BufaLabs, cifrado: nadie de BufaLabs lo puede leer.</p>
   </div>
 </section>
@@ -2681,9 +2690,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='6.5';
+const VERSION='6.6';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "6.5", "titulo": "Candado en la plata", "items": [{"icono": "🔒", "titulo": "Con el desbloqueo de tu celu", "texto": "Podés pedirle a FRIDAY que para abrir La plata y lo que gastaste en el súper haya que desbloquear el celu (huella, cara, PIN o patrón, el mismo de siempre). Si alguien te agarra el celu abierto, no ve tus números."}, {"icono": "🔢", "titulo": "Y si tu celu no lo tiene, un PIN", "texto": "En celus o compus sin huella, FRIDAY te deja poner un PIN de 4 a 8 números, guardado cifrado (no se guarda el PIN, solo una huella suya)."}, {"icono": "🤐", "titulo": "Tampoco lo dice en voz alta", "texto": "Con el candado puesto, si le preguntás cuánto te queda, primero te pide que lo abras. Anotar un gasto sigue siendo de una, sin números a la vista."}]};
+const NOVEDADES_M={"version": "6.6", "titulo": "El candado, como vos quieras", "items": [{"icono": "🔒", "titulo": "También las compras", "texto": "Ahora el candado puede tapar la hoja de Compras entera, no solo el changuito y lo que gastaste. Lo elegís vos: «solo la plata» o «la plata y las compras»."}, {"icono": "⏱️", "titulo": "Una vez cada tanto", "texto": "Una vez que lo abriste, queda abierto cinco minutos (y se cierra solo si dejás el celu). No te lo pide a cada rato mientras hacés las compras."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -2880,7 +2889,8 @@ let openSheet=null;
 let volverA=null;
 let plListo=false;
 function showSheet(name){ if(name==='tablet') try{ renderTablet(); }catch(e){}
-  if(name==='plata') try{ if(!plListo){ plataIniciar(); plListo=true; } plMes=0; renderPlata(); }catch(e){} const antes=openSheet; closeSheets(true); const el=$('sh-'+name); if(!el) return; volverA=(antes && antes!==name)?antes:(['vinc','avisos'].includes(name)?'menu':null); openSheet=name; el.scrollTop=0; marcarTab(); el.classList.add('on'); $('shade').classList.add('on'); buzz();
+  if(name==='plata') try{ if(!plListo){ plataIniciar(); plListo=true; } plMes=0; renderPlata(); }catch(e){}
+  if(name==='compras') try{ cmCandadoIniciar(); cmCandadoUI(); }catch(e){} const antes=openSheet; closeSheets(true); const el=$('sh-'+name); if(!el) return; volverA=(antes && antes!==name)?antes:(['vinc','avisos'].includes(name)?'menu':null); openSheet=name; el.scrollTop=0; marcarTab(); el.classList.add('on'); $('shade').classList.add('on'); buzz();
   ({rems:renderRems, musica:musAbrir, gif:gifAbrir, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc, compras:()=>cmVer(chango.items.length&&cmVista!=='hist'?'chango':cmVista)})[name]?.(); }
 function closeSheets(keep){ document.querySelectorAll('.sheet.on').forEach(s=>s.classList.remove('on')); if(!keep) $('shade').classList.remove('on'); if(openSheet==='menu') readMenu(); if(openSheet==='vinc') scanStop(); openSheet=null; clearInterval(spState.t); if(!keep){ marcarTab(); try{ renderHoy(); }catch(e){} } }
 $('shade').onclick=()=>closeSheets();
@@ -3644,7 +3654,9 @@ function gastoDeVoz(text){
 // (guardado como una huella con PBKDF2, no el PIN).
 const Candado={
   hasta:0, intentos:0, espera:0,
-  cfg(){ return LS.get('candado', {on:false, cred:'', pin:'', sal:'', min:5}); },
+  cfg(){ const c=LS.get('candado', {on:false, cred:'', pin:'', sal:'', min:5}); if(!c.que) c.que='todo'; return c; },
+  // qué tapa: siempre La plata; las compras, solo si lo elegiste
+  protege(hoja){ if(!this.puesto()) return false; return hoja==='plata' || (hoja==='compras' && this.cfg().que==='todo'); },
   guardar(c){ LS.set('candado', c); },
   puesto(){ return !!this.cfg().on; },
   abierto(){ return !this.puesto() || Date.now()<this.hasta; },
@@ -3779,6 +3791,8 @@ async function plCandadoUI(){
   if(nota) nota.textContent = cfg.on
     ? (cfg.cred ? 'Puesto: hay que desbloquear el celu (huella, cara, PIN o patrón) para abrir esto.' : 'Puesto: hay que poner tu PIN de FRIDAY para abrir esto.')
     : 'Para abrir La plata y lo que gastaste en el súper. Usa el mismo desbloqueo de tu celu (huella, cara, PIN o patrón).';
+  const que=$('plCandQue');
+  if(que){ que.hidden=!cfg.on; que.querySelectorAll('[data-que]').forEach(b=>b.classList.toggle('on', b.dataset.que===(cfg.que||'todo'))); }
   const cerrado=cfg.on && !Candado.abierto();
   $('plCandado').hidden=!cerrado; $('plCuerpo').hidden=cerrado;
   if(cerrado){
@@ -3858,12 +3872,40 @@ function plTextoResumen(){
   const top=Object.entries(porR).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`${k}: ${pesos(v)}`).join('\n');
   return `Mi plata de ${plFmtMes(plMes)}\nEntró: ${pesos(r.entro)}\nSe fue: ${pesos(r.gasto)}\nQueda: ${pesos(r.queda)}` + (top?`\n\nEn qué se fue:\n${top}`:'');
 }
+// la hoja de compras, tapada o no
+function cmCandadoUI(){
+  const tapada=Candado.protege('compras') && !Candado.abierto();
+  const t=$('cmCandado'), c=$('cmCuerpo'); if(!t || !c) return tapada;
+  t.hidden=!tapada; c.hidden=tapada;
+  if(tapada){
+    const cfg=Candado.cfg();
+    $('cmCandTxt').textContent = cfg.cred ? 'Desbloqueá el celu como siempre (huella, cara, PIN o patrón) y te las muestro.' : 'Poné tu PIN de FRIDAY y te las muestro.';
+  }
+  return tapada;
+}
+function cmCandadoIniciar(){
+  const b=$('cmAbrirBtn'); if(!b || b._listo) return; b._listo=true;
+  b.onclick=async()=>{
+    const cfg=Candado.cfg();
+    try{
+      let ok=false;
+      if(cfg.cred) ok=await Candado.abrirConAparato();
+      else { const pin=prompt('Tu PIN de FRIDAY:'); if(pin===null) return; ok=await Candado.abrirConPin(pin); }
+      if(ok){ buzz(); cmCandadoUI(); cmVer(cmVista); } else toast('No pude desbloquear');
+    }catch(e){ toast('No se pudo desbloquear'); }
+  };
+}
 function plataIniciar(){
   $('plAbrir').onclick=async()=>{ try{ if(await Candado.abrirConAparato()){ buzz(); renderPlata(); } else toast('No pude desbloquear'); }
     catch(e){ toast('No se pudo desbloquear. Si el celu cambió, sacá y volvé a poner el candado.', 5000); } };
   $('plPinOk').onclick=async()=>{ const v=$('plPin').value; $('plPin').value='';
     if(await Candado.abrirConPin(v)){ buzz(); renderPlata(); } else toast(Date.now()<Candado.espera?'Esperá un minuto y probá de nuevo':'PIN equivocado'); };
   $('plPin').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('plPinOk').click(); } });
+  $('plCandQue').addEventListener('click', e=>{
+    const b=e.target.closest('[data-que]'); if(!b) return;
+    const cfg=Candado.cfg(); cfg.que=b.dataset.que; Candado.guardar(cfg); plCandadoUI(); buzz(6);
+    toast(cfg.que==='todo' ? 'Listo: también pido el desbloqueo para las compras' : 'Listo: las compras se abren sin candado');
+  });
   $('plCandSw').onchange=async e=>{
     if(!e.target.checked){ Candado.sacar(); toast('Candado sacado'); renderPlata(); return; }
     e.target.checked=false;
