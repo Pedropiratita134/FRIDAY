@@ -2690,9 +2690,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='6.6';
+const VERSION='6.7';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "6.6", "titulo": "El candado, como vos quieras", "items": [{"icono": "🔒", "titulo": "También las compras", "texto": "Ahora el candado puede tapar la hoja de Compras entera, no solo el changuito y lo que gastaste. Lo elegís vos: «solo la plata» o «la plata y las compras»."}, {"icono": "⏱️", "titulo": "Una vez cada tanto", "texto": "Una vez que lo abriste, queda abierto cinco minutos (y se cierra solo si dejás el celu). No te lo pide a cada rato mientras hacés las compras."}]};
+const NOVEDADES_M={"version": "6.7", "titulo": "«¿Cómo venimos?»", "items": [{"icono": "🌅", "titulo": "El día entero, en una pregunta", "texto": "Decile «¿cómo venimos?» y te cuenta el día: el clima, lo que tenés hoy, cómo viene la plata del mes, qué pagos se vienen y qué falta del changuito. Es la misma pregunta que en la compu."}, {"icono": "💰", "titulo": "El buen día ahora sabe de plata", "texto": "El saludo de la mañana también te dice cómo venís con la plata y qué te falta comprar. Si tenés el candado puesto, no dice ningún número."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -4878,6 +4878,7 @@ async function ask(text){
     if(/^(modo auto|modo manejo|modo auto(movil)?|estoy manejando|voy manejando|voy a manejar|modo conducir)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); autoPoner(true); frSay('Modo auto: te escucho solita después de cada respuesta. Cuando llegues, decí «salí del modo auto».'); return; }
     if(autoModo && /\b(sali|salir|termina|apaga)( del)? modo (auto|manejo)\b|^(llegue|ya llegue)$/.test(nm2)){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); autoPoner(false); frSay('Listo, llegaste. Salí del modo auto.'); return; }
     const cv=changoDeVoz(nm2); if(cv){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(cv); return; }
+    if(diaDeVoz(text)){ txt.value=''; autoGrow(); bubble('yo', text); return; }
     const gv=gastoDeVoz(text); if(gv){ txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text}); frSay(gv); return; }
   }
   if(!PANEL && autoPend && Date.now()-autoPend.at<60000){ const ap=autoPend; autoPend=null; txt.value=''; bubble('yo', text); pushHistory({role:'user', content:text});
@@ -6515,6 +6516,25 @@ $('vScan').onclick=()=>{ scanSt ? scanStop() : scanStart(); };
 
 // ================================================================ buen día
 const wait=ms=>new Promise(r=>setTimeout(r,ms));
+// cómo viene la plata y el changuito, para contarlo (si el candado lo deja)
+function diaPlataTxt(){
+  const out=[];
+  if(Candado.protege('plata') && !Candado.abierto()) return ['la plata está con candado, así que no le digas ningún número ni total (si pregunta, decile que la abra en La plata)'];
+  try{
+    const r=plResumen(0);
+    if(r.entro || r.gasto) out.push(`la plata de este mes: entraron ${pesos(r.entro)}, gastó ${pesos(r.gasto)}, le quedan ${pesos(r.queda)}`);
+    if(r.tope && r.gasto>=r.tope*0.8) out.push(`ya usó el ${Math.round(r.gasto/r.tope*100)} por ciento del tope de ${pesos(r.tope)}`);
+    const f=plPendientes().slice(0,3);
+    if(f.length) out.push('pagos de todos los meses que faltan: '+f.map(x=>`${x.q} ${pesos(x.m)} el ${x.dia}`).join('; '));
+  }catch(e){}
+  try{
+    if(!(Candado.protege('compras') && !Candado.abierto())){
+      const p=(LS.get('compras',[])||[]).filter(x=>!x.h);
+      if(p.length) out.push(`faltan ${p.length} cosa${p.length===1?'':'s'} del changuito: ${p.slice(0,6).map(x=>x.t).join(', ')}`);
+    }
+  }catch(e){}
+  return out;
+}
 async function buenDia(){
   if(!S.groqKey || busy) return;
   LS.set('bdLast', todayISO());
@@ -6531,11 +6551,18 @@ async function buenDia(){
     (remsHoy?`, sus recordatorios de hoy (${remsHoy})`:'')+
     (cumHoy.length?`, que hoy cumple ${cumHoy.join(' y ')} (ofrecele ayudarlo con el saludo)`:'')+
     (envHoy.length?`, que hoy le llega: ${envHoy.join(', ')}`:'')+
+    (diaPlataTxt().length?`, cómo viene con la plata y las compras (${diaPlataTxt().join('; ')})`:'')+
     (tit?`, y estos titulares, una frase cada uno: ${tit}`:'')+
     `. Terminá ${spOnline()?'ofreciéndole poner música':'preguntándole qué necesita'}. No uses herramientas.`;
   await turn(extra);
 }
 $('bdChip').onclick=()=>{ closeSheets(); unlockAudio(); buenDia(); };
+const DIA_RE=/^(?:friday,? )?(?:como (?:venimos|vengo|vamos|viene (?:el|mi) dia|esta (?:el|mi) dia)|que (?:tengo|hay) (?:para )?hoy|contame (?:el|mi) dia|resumen del dia|mi dia|que onda hoy|buen dia friday)\b/;
+function diaDeVoz(text){
+  const n=norm(text).replace(/[¿?¡!.]/g,'').trim();
+  if(!DIA_RE.test(n)) return false;
+  closeSheets(); unlockAudio(); buenDia(); return true;
+}
 
 // ================================================================ rutinas, cumpleaños y envíos (los maneja la compu; acá se ven y se piden)
 let autos=LS.get('autos',[]), cumplesP=LS.get('cumples',[]), notasC=LS.get('notasC',[]);   // notasC: las notas de la casa (las mismas de la tablet y la compu)

@@ -130,6 +130,23 @@ async def main():
     ok('Candado: si elegís solo la plata, las compras se abren', r3['abiertaC'], r3)
     ok('Candado: la plata siempre queda tapada', r3['plataIgual'], r3)
     ok('Candado: el PIN abre', r3['ok'], r3)
+    r4 = await p.evaluate("""()=>{
+      plata={entradas:[], fijos:[]}; LS.set('gastos',[]); LS.set('plata',plata);
+      plDeTexto('cobré 300 mil de la jubilación', false); plDeTexto('gasté 20 mil en el súper', false);
+      LS.set('compras',[{id:'1',t:'leche',h:false},{id:'2',t:'pan',h:true}]);
+      const abierto=diaPlataTxt().join(' | ');
+      Candado.cerrar();
+      const out={abierto, dispara:DIA_RE.test('como venimos') && DIA_RE.test('que tengo hoy') && !DIA_RE.test('como estas')};
+      return out;
+    }""")
+    ok('El día: junta la plata y el changuito', '$280.000' in r4['abierto'] and 'changuito' in r4['abierto'], r4['abierto'])
+    ok('El día: entiende «¿cómo venimos?»', r4['dispara'])
+    r5 = await p.evaluate("""async()=>{
+      await Candado.ponerPin('123456'); Candado.cerrar();
+      const t=diaPlataTxt().join(' | '); Candado.sacar();
+      return {t, mudo: t.includes('candado') && !t.includes('280.000')};
+    }""")
+    ok('El día: con candado no dice la plata', r5['mudo'], r5['t'])
     ok('Móvil: sin errores de JS', not errs, errs[:3])
     await c.close()
     # la tablet

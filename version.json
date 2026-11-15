@@ -1,16 +1,16 @@
 {
- "version": "6.6",
- "titulo": "El candado, como vos quieras",
+ "version": "6.7",
+ "titulo": "«¿Cómo venimos?»",
  "items": [
   {
-   "icono": "🔒",
-   "titulo": "También las compras",
-   "texto": "Ahora el candado puede tapar la hoja de Compras entera, no solo el changuito y lo que gastaste. Lo elegís vos: «solo la plata» o «la plata y las compras»."
+   "icono": "🌅",
+   "titulo": "El día entero, en una pregunta",
+   "texto": "Decile «¿cómo venimos?» y te cuenta el día: el clima, lo que tenés hoy, cómo viene la plata del mes, qué pagos se vienen y qué falta del changuito. Es la misma pregunta que en la compu."
   },
   {
-   "icono": "⏱️",
-   "titulo": "Una vez cada tanto",
-   "texto": "Una vez que lo abriste, queda abierto cinco minutos (y se cierra solo si dejás el celu). No te lo pide a cada rato mientras hacés las compras."
+   "icono": "💰",
+   "titulo": "El buen día ahora sabe de plata",
+   "texto": "El saludo de la mañana también te dice cómo venís con la plata y qué te falta comprar. Si tenés el candado puesto, no dice ningún número."
   }
  ]
 }
