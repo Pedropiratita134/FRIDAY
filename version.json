@@ -1,21 +1,16 @@
 {
- "version": "6.1",
- "titulo": "FRIDAY, como app de Android",
+ "version": "6.2",
+ "titulo": "Oído fino",
  "items": [
   {
-   "icono": "📲",
-   "titulo": "Un APK para instalarla",
-   "texto": "Ahora FRIDAY se baja como app de Android desde bufalabs-arg.github.io/instalar. Es la misma FRIDAY, con el motor de Chrome: la voz, el micrófono y la cámara andan igual."
+   "icono": "🤫",
+   "titulo": "Si no está segura, se calla",
+   "texto": "Con la tele prendida o alguien hablando al lado, a veces escuchaba mal y contestaba cualquier cosa. Ahora mide qué tan segura está de lo que escuchó y, si no lo está, lo deja pasar sin decir nada."
   },
   {
-   "icono": "🙌",
-   "titulo": "Sin barra de dirección",
-   "texto": "Se abre a pantalla completa, con su ícono, como cualquier app. No hace falta Play Store."
-  },
-  {
-   "icono": "🔎",
-   "titulo": "Te dice cómo instalarla",
-   "texto": "Si entrás desde Android y todavía no la tenés, FRIDAY te ofrece el APK ahí mismo."
+   "icono": "🔊",
+   "titulo": "Menos ruido, menos gasto",
+   "texto": "Lo que parecía voz pero era ruido ya no se manda a entender: gasta menos de tu cupo y se equivoca menos."
   }
  ]
 }

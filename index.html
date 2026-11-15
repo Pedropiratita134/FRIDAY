@@ -2617,9 +2617,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='6.1';
+const VERSION='6.2';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "6.1", "titulo": "FRIDAY, como app de Android", "items": [{"icono": "📲", "titulo": "Un APK para instalarla", "texto": "Ahora FRIDAY se baja como app de Android desde bufalabs-arg.github.io/instalar. Es la misma FRIDAY, con el motor de Chrome: la voz, el micrófono y la cámara andan igual."}, {"icono": "🙌", "titulo": "Sin barra de dirección", "texto": "Se abre a pantalla completa, con su ícono, como cualquier app. No hace falta Play Store."}, {"icono": "🔎", "titulo": "Te dice cómo instalarla", "texto": "Si entrás desde Android y todavía no la tenés, FRIDAY te ofrece el APK ahí mismo."}]};
+const NOVEDADES_M={"version": "6.2", "titulo": "Oído fino", "items": [{"icono": "🤫", "titulo": "Si no está segura, se calla", "texto": "Con la tele prendida o alguien hablando al lado, a veces escuchaba mal y contestaba cualquier cosa. Ahora mide qué tan segura está de lo que escuchó y, si no lo está, lo deja pasar sin decir nada."}, {"icono": "🔊", "titulo": "Menos ruido, menos gasto", "texto": "Lo que parecía voz pero era ruido ya no se manda a entender: gasta menos de tu cupo y se equivoca menos."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -6461,16 +6461,36 @@ async function hfSend(chunks, len, sr){
   if(day.n>=700 && !PANEL){ hfStop(); toast('Manos libres se apagó: hoy escuchó demasiado ruido. Probá de nuevo mañana o con "El reconocimiento del celu".', 6000); return; }
   day.n++; LS.set('hfDay',day); hf.calls.push(now); hf.sending++;
   try{
-    const fd=new FormData(); fd.append('file', hfWav(chunks,len,sr), 'voz.wav'); fd.append('model','whisper-large-v3-turbo'); fd.append('language','es'); fd.append('temperature','0');
+    const fd=new FormData(); fd.append('file', hfWav(chunks,len,sr), 'voz.wav'); fd.append('model','whisper-large-v3-turbo'); fd.append('language','es'); fd.append('temperature','0'); fd.append('response_format','verbose_json');
     fd.append('prompt', now<hf.armed ? 'Pedido para FRIDAY, en español rioplatense.' : 'Friday, ¿qué hora es? Friday, poné música. Friday, recordame…');
     const r=await fetch(API.groq+'/audio/transcriptions',{method:'POST', headers:{Authorization:'Bearer '+S.groqKey}, body:fd});
     if(!r.ok){ if(r.status===401){ hfStop(); toast('Tu llave de Groq no anda: revisala en Ajustes.'); } return; }
-    hfHeard(String((await r.json()).text||''));
+    const d=await r.json();
+    if(!hfSeguro(d)) return;                       // escuchó algo, pero no está segura de qué: mejor callarse
+    hfHeard(String(d.text||''));
   }catch(e){}
   finally{ hf.sending--; }
 }
+// Whisper cuenta, por cada pedacito, qué tan seguro está (avg_logprob), si le pareció que no había voz
+// (no_speech_prob) y si se repitió a sí mismo (compression_ratio: cuando inventa, repite).
+function hfSeguro(d){
+  const segs=Array.isArray(d && d.segments) ? d.segments : [];
+  if(!segs.length) return true;                  // sin datos: que siga como siempre
+  let dur=0, lp=0, ns=0, comp=0;
+  for(const x of segs){
+    const t=Math.max(0.2, (x.end||0)-(x.start||0));
+    dur+=t; lp+=(x.avg_logprob||0)*t;
+    ns=Math.max(ns, x.no_speech_prob||0); comp=Math.max(comp, x.compression_ratio||0);
+  }
+  const prob = dur ? lp/dur : 0;
+  const pal = String(d.text||'').trim().split(/\s+/).filter(Boolean).length;
+  if(ns>0.65 || comp>=2.5 || prob<-1.0) return false;
+  if(pal<=3 && prob<-0.85) return false;
+  return true;
+}
+const HF_RUIDO=/^(gracias\.?|subtítulos.*|amara.*|suscr[ií]b\w*.*|gracias por ver.*|hasta la pr[óo]xima.*|\(m[úu]sica\)|\(aplausos\)|\(risas\)|m+h+|e+h+|a+h+|o+h+|\W*)$/i;
 function hfHeard(t){
-  t=String(t||'').trim(); if(!t || /^(gracias\.?|subtítulos.*|amara.*|\W*)$/i.test(t) || busy || rec.on || isSpeaking()) return;
+  t=String(t||'').trim(); if(!t || HF_RUIDO.test(t) || busy || rec.on || isSpeaking()) return;
   if(PANEL && (Date.now()<hf.armed || hfRest(t)!==null)){ demoOff(); pTouch(); }
   if(Date.now()<hf.armed){ hf.armed=0; $('heard').textContent=''; PER.P.voz=Date.now(); ask(t); return; }
   const rest=hfRest(t); if(rest===null) return;
@@ -6485,7 +6505,10 @@ function hfSR(){
   if(!hf.on || hf.motor!=='celu' || hf.sr) return;
   if(document.hidden){ setTimeout(hfSR, 1500); return; }
   const r=new SRC(); hf.sr=r; r.lang='es-AR'; r.continuous=true; r.interimResults=false; r.maxAlternatives=1;
-  r.onresult=e=>{ for(let i=e.resultIndex;i<e.results.length;i++) if(e.results[i].isFinal) hfHeard(e.results[i][0].transcript); };
+  r.onresult=e=>{ for(let i=e.resultIndex;i<e.results.length;i++){ if(!e.results[i].isFinal) continue;
+    const a=e.results[i][0], c=a.confidence;
+    if(typeof c==='number' && c>0 && c<0.5 && Date.now()>=hf.armed) continue;   // entendió a medias y no te estaba esperando: lo deja pasar
+    hfHeard(a.transcript); } };
   r.onerror=e=>{ if(e.error==='not-allowed' || e.error==='service-not-allowed'){ toast('El celu no deja escuchar todo el tiempo: probá con Whisper en Ajustes.', 5000); hfStop(); } };
   r.onend=()=>{ hf.sr=null; if(hf.on) setTimeout(hfSR, 350); };
   try{ r.start(); }catch(e){ hf.sr=null; setTimeout(hfSR, 1200); }
