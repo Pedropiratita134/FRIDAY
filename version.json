@@ -1,16 +1,26 @@
 {
- "version": "6.2",
- "titulo": "Oído fino",
+ "version": "6.3",
+ "titulo": "La plata",
  "items": [
   {
-   "icono": "🤫",
-   "titulo": "Si no está segura, se calla",
-   "texto": "Con la tele prendida o alguien hablando al lado, a veces escuchaba mal y contestaba cualquier cosa. Ahora mide qué tan segura está de lo que escuchó y, si no lo está, lo deja pasar sin decir nada."
+   "icono": "💰",
+   "titulo": "Lo que entra y lo que se va",
+   "texto": "Anotá lo que cobrás (la jubilación, el sueldo, una changa) y lo que gastás, y FRIDAY te dice cuánto te queda este mes. Todo hablando: «cobré la jubilación», «gasté 3 mil en la farmacia», «¿cuánto me queda?»."
   },
   {
-   "icono": "🔊",
-   "titulo": "Menos ruido, menos gasto",
-   "texto": "Lo que parecía voz pero era ruido ya no se manda a entender: gasta menos de tu cupo y se equivoca menos."
+   "icono": "📅",
+   "titulo": "Lo de todos los meses",
+   "texto": "Cargá una vez la jubilación o la luz con el día que toca, y FRIDAY te lo recuerda y lo anota con un toque."
+  },
+  {
+   "icono": "📊",
+   "titulo": "En qué se te va",
+   "texto": "Ordena solo lo que gastás: comida, remedios, servicios, transporte… Así ves de una en qué se te va la plata."
+  },
+  {
+   "icono": "🔒",
+   "titulo": "Es tuya y de nadie más",
+   "texto": "Queda en tu celu y en tu cuenta de BufaLabs, cifrada. Nadie de BufaLabs puede verla."
   }
  ]
 }

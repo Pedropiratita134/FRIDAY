@@ -154,6 +154,35 @@ body:not(.writing) #send{display:none}
 .sheet h3{margin:0 0 12px;font:500 13px/1.2 var(--display);letter-spacing:.22em;text-transform:uppercase;color:var(--accent)}
 .sheet h4{margin:18px 0 6px;font-size:15px}
 .note{font-size:14px;color:var(--muted);margin:8px 0;line-height:1.45}
+.pl-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.pl-top h3{margin:0;text-transform:capitalize}
+.pl-top button{width:42px;height:42px;border-radius:50%;border:1px solid var(--line2);background:rgba(255,255,255,.04);font-size:22px;line-height:1}
+.pl-tarjeta{border:1px solid var(--line2);border-radius:18px;padding:16px;background:rgba(255,255,255,.03)}
+.pl-queda{text-align:center}
+.pl-queda small,.pl-dos small{display:block;font-size:13px;color:var(--muted);margin-bottom:2px}
+.pl-queda b{font-size:40px;font-weight:800;letter-spacing:-.02em;line-height:1.1;display:block}
+.pl-dos{display:flex;gap:10px;margin-top:14px}
+.pl-dos>div{flex:1;text-align:center;padding:10px 6px;border-radius:13px;background:rgba(255,255,255,.04)}
+.pl-dos b{font-size:19px;font-weight:700}
+.pl-verde{color:#5ff2a8}.pl-rojo{color:#ff9a8b}
+.pl-barra{height:9px;border-radius:999px;background:rgba(255,255,255,.08);margin-top:14px;overflow:hidden}
+.pl-barra i{display:block;height:100%;background:linear-gradient(90deg,#5ff2a8,#ffd166 70%,#ff9a8b);border-radius:999px;transition:width .4s}
+.pl-pie{display:block;margin-top:9px;font-size:13.5px;color:var(--muted);text-align:center}
+.pl-chips{display:flex;gap:8px;overflow-x:auto;padding:12px 0 2px;scrollbar-width:none}
+.pl-chips::-webkit-scrollbar{display:none}
+.pl-dia{font-size:13px;color:var(--muted);margin:14px 0 4px;font-weight:600}
+.pl-mov{display:flex;align-items:center;gap:11px;padding:11px 12px;border:1px solid var(--line2);border-radius:14px;margin-bottom:7px;background:rgba(255,255,255,.03)}
+.pl-mov .pl-ic{font-size:20px;flex:none}
+.pl-mov .pl-tx{flex:1;min-width:0}
+.pl-mov .pl-tx b{display:block;font-size:15.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-mov .pl-tx small{color:var(--muted);font-size:12.5px}
+.pl-mov .pl-m{font-weight:700;font-size:16px;flex:none}
+.pl-mov button{flex:none;width:34px;height:34px;border-radius:50%;border:1px solid var(--line2);background:transparent;color:var(--muted)}
+.pl-rub{display:flex;align-items:center;gap:10px;margin:7px 0}
+.pl-rub .pl-rn{width:128px;flex:none;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pl-rub .pl-rb{flex:1;height:10px;border-radius:999px;background:rgba(255,255,255,.07);overflow:hidden}
+.pl-rub .pl-rb i{display:block;height:100%;background:rgba(var(--accent-rgb),.75);border-radius:999px}
+.pl-rub .pl-rv{flex:none;font-size:13.5px;color:var(--muted);min-width:76px;text-align:right}
 .note b{color:var(--text)}
 .field{display:flex;flex-direction:column;gap:5px;margin:10px 0}
 .field label{font-size:13px;color:var(--muted)}
@@ -2394,6 +2423,28 @@ const SIESTA = (() => {
   <div class="hg-caja" id="hgRmFam"></div>
 </section>
 
+<section class="sheet" id="sh-plata"><div class="grab"></div>
+  <div class="pl-top"><button type="button" id="plAnt" aria-label="El mes anterior">‹</button><h3 id="plMes">La plata</h3><button type="button" id="plSig" aria-label="El mes que viene">›</button></div>
+  <div class="pl-tarjeta">
+    <div class="pl-queda"><small id="plQuedaTit">Te queda</small><b id="plQueda">$0</b></div>
+    <div class="pl-dos"><div><small>Entró</small><b id="plEntro" class="pl-verde">$0</b></div><div><small>Se fue</small><b id="plGasto" class="pl-rojo">$0</b></div></div>
+    <div class="pl-barra"><i id="plBarra" style="width:0"></i></div>
+    <small class="pl-pie" id="plPie"></small>
+  </div>
+  <div class="pl-chips" id="plChips"></div>
+  <div class="addrow" style="margin-top:12px"><input id="plIn" placeholder="Gasté 3.500 en el súper" autocomplete="off" enterkeyhint="done"><button id="plAdd" type="button">Anotar</button></div>
+  <p class="note">Decíselo y listo: <b>«gasté 3 mil en la farmacia»</b>, <b>«cobré la jubilación»</b>, <b>«¿cuánto me queda?»</b>.</p>
+  <div id="plLista"></div>
+  <h4>En qué se te va</h4>
+  <div id="plRubros"></div>
+  <h4>Todos los meses</h4>
+  <div id="plFijos"></div>
+  <div class="addrow"><input id="plFijoIn" placeholder="Jubilación 280 mil el 10" autocomplete="off" enterkeyhint="done"><button id="plFijoAdd" type="button">Agregar</button></div>
+  <p class="note">Lo que entra o se paga siempre: la jubilación, el sueldo, la luz, el alquiler. El día que toca, FRIDAY te lo recuerda y lo anotás con un toque.</p>
+  <div class="row2"><button class="big sec" id="plShare" type="button">📤 Pasar el resumen</button><button class="big sec" id="plTope" type="button">🎯 Poner un tope</button></div>
+  <p class="note">Todo esto queda en tu celu y en tu cuenta de BufaLabs, cifrado: nadie de BufaLabs lo puede leer.</p>
+</section>
+
 <section class="sheet" id="sh-familia"><div class="grab"></div><h3>Familia</h3>
   <div id="hgFamBox"></div>
 </section>
@@ -2445,6 +2496,7 @@ const SIESTA = (() => {
   <h4>Casa, familia y estudio</h4>
   <div class="grupo">
     <button class="fila" data-sheet="hogar"><span class="fi">✨</span><span class="ft"><b>Casa, familia y estudio</b><small>Cocina, remedios, cuentos, juegos, la tarea</small></span><span class="chev" aria-hidden="true"></span></button>
+    <button class="fila" data-sheet="plata"><span class="fi">💰</span><span class="ft"><b>La plata</b><small id="plMenuTxt">Lo que entra, lo que se va y cuánto te queda</small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="familia"><span class="fi">👨‍👩‍👧</span><span class="ft"><b>Familia</b><small>Recados y lista compartida</small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="siri"><span class="fi">🎙️</span><span class="ft"><b>Siri</b><small>«Oye Siri, Friday» en el auto</small></span><span class="chev" aria-hidden="true"></span></button>
     <button class="fila" data-sheet="tele"><span class="fi">📺</span><span class="ft"><b>La tele</b><small>FRIDAY Tele para teles LG</small></span><span class="chev" aria-hidden="true"></span></button>
@@ -2497,11 +2549,6 @@ const SIESTA = (() => {
     <select id="cfTheme" hidden><option value="jarvis">Celeste (JARVIS)</option><option value="friday">Dorado (FRIDAY)</option></select>
   </div>
 
-  <h4>Gastos</h4>
-  <div class="grupo pad">
-    <p class="note" id="gastoRes">Decime «gasté 3500 en el súper» y llevo la cuenta del mes.</p>
-    <div id="gastoLista"></div>
-  </div>
 
   <h4>Atajos</h4>
   <div class="grupo pad">
@@ -2617,9 +2664,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='6.2';
+const VERSION='6.3';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "6.2", "titulo": "Oído fino", "items": [{"icono": "🤫", "titulo": "Si no está segura, se calla", "texto": "Con la tele prendida o alguien hablando al lado, a veces escuchaba mal y contestaba cualquier cosa. Ahora mide qué tan segura está de lo que escuchó y, si no lo está, lo deja pasar sin decir nada."}, {"icono": "🔊", "titulo": "Menos ruido, menos gasto", "texto": "Lo que parecía voz pero era ruido ya no se manda a entender: gasta menos de tu cupo y se equivoca menos."}]};
+const NOVEDADES_M={"version": "6.3", "titulo": "La plata", "items": [{"icono": "💰", "titulo": "Lo que entra y lo que se va", "texto": "Anotá lo que cobrás (la jubilación, el sueldo, una changa) y lo que gastás, y FRIDAY te dice cuánto te queda este mes. Todo hablando: «cobré la jubilación», «gasté 3 mil en la farmacia», «¿cuánto me queda?»."}, {"icono": "📅", "titulo": "Lo de todos los meses", "texto": "Cargá una vez la jubilación o la luz con el día que toca, y FRIDAY te lo recuerda y lo anota con un toque."}, {"icono": "📊", "titulo": "En qué se te va", "texto": "Ordena solo lo que gastás: comida, remedios, servicios, transporte… Así ves de una en qué se te va la plata."}, {"icono": "🔒", "titulo": "Es tuya y de nadie más", "texto": "Queda en tu celu y en tu cuenta de BufaLabs, cifrada. Nadie de BufaLabs puede verla."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -2814,7 +2861,9 @@ document.addEventListener('click', e=>{
 // ================================================================ hojas
 let openSheet=null;
 let volverA=null;
-function showSheet(name){ if(name==='tablet') try{ renderTablet(); }catch(e){} const antes=openSheet; closeSheets(true); const el=$('sh-'+name); if(!el) return; volverA=(antes && antes!==name)?antes:(['vinc','avisos'].includes(name)?'menu':null); openSheet=name; el.scrollTop=0; marcarTab(); el.classList.add('on'); $('shade').classList.add('on'); buzz();
+let plListo=false;
+function showSheet(name){ if(name==='tablet') try{ renderTablet(); }catch(e){}
+  if(name==='plata') try{ if(!plListo){ plataIniciar(); plListo=true; } plMes=0; renderPlata(); }catch(e){} const antes=openSheet; closeSheets(true); const el=$('sh-'+name); if(!el) return; volverA=(antes && antes!==name)?antes:(['vinc','avisos'].includes(name)?'menu':null); openSheet=name; el.scrollTop=0; marcarTab(); el.classList.add('on'); $('shade').classList.add('on'); buzz();
   ({rems:renderRems, musica:musAbrir, gif:gifAbrir, menu:fillMenu, avisos:renderAvisos, vinc:renderVinc, compras:()=>cmVer(chango.items.length&&cmVista!=='hist'?'chango':cmVista)})[name]?.(); }
 function closeSheets(keep){ document.querySelectorAll('.sheet.on').forEach(s=>s.classList.remove('on')); if(!keep) $('shade').classList.remove('on'); if(openSheet==='menu') readMenu(); if(openSheet==='vinc') scanStop(); openSheet=null; clearInterval(spState.t); if(!keep){ marcarTab(); try{ renderHoy(); }catch(e){} } }
 $('shade').onclick=()=>closeSheets();
@@ -3261,6 +3310,9 @@ Herramientas: agregá la marca al final, en una línea aparte (no se leen):
 [[RECORDATORIO_BORRAR|de qué era]]
 [[RECORDAR|dato del usuario en tercera persona]] si te cuenta algo de sí que conviene recordar. [[OLVIDAR|dato]] si te pide que lo olvides.
 [[COMPRAS|agregar|leche; pan; 2 kg de papa]], [[COMPRAS|quitar|leche]], [[COMPRAS|comprado|pan]] (lo tacha), [[COMPRAS|vaciar]] (borra lo comprado), [[COMPRAS|ver]] (la muestra en pantalla).
+[[PLATA|gasto|monto|en qué]] anota un gasto y [[PLATA|entra|monto|de qué]] anota algo que cobró (la jubilación, el sueldo, una changa). El monto va en números, sin puntos: 12500.
+[[PLATA|fijo|entra|Jubilación|280000|10]] o [[PLATA|fijo|gasto|Luz|8500|15]] para lo de todos los meses (lo último es el día). [[PLATA|ver]] le muestra la hoja de la plata.
+Usalas solo si te lo dice de verdad («gasté…», «cobré…»), nunca por las dudas. Después contale corto cómo va el mes.
 [[CLIMA]] para mostrar el pronóstico en pantalla cuando pregunta por el clima (además contalo corto).
 [[NOTICIAS|tema opcional]] cuando pide noticias o titulares: decí "dame un segundo" y esperá los titulares.
 [[BUSCAR|consulta precisa]] para cualquier cosa actual o que no sabés seguro (resultados, precios, horarios, quién es tal): decí "dame un segundo, lo busco".
@@ -3476,20 +3528,77 @@ function gastoMonto(n){
 }
 function gastosPeriodo(p){ const d=new Date(), ini=new Date(d.getFullYear(), d.getMonth(), p==='hoy'?d.getDate():p==='semana'?d.getDate()-((d.getDay()+6)%7):1); return gastos().filter(g=>g.at>=ini.getTime()); }
 function gastosPorRubro(l){ const r={}; l.forEach(g=>{ r[g.en]=(r[g.en]||0)+g.monto; }); return Object.entries(r).sort((a,b)=>b[1]-a[1]); }
-function gastosPrompt(){ const l=gastosPeriodo('mes'); if(!l.length) return ''; const t=l.reduce((a,g)=>a+g.monto,0);
-  return `Gastos de este mes (los anotó por voz): total ${pesos(t)}${LS.get('gastoLimite',0)?' de un límite de '+pesos(LS.get('gastoLimite',0)):''}; ${gastosPorRubro(l).slice(0,6).map(([k,v])=>k+' '+pesos(v)).join(', ')}.\n`; }
+function gastosPrompt(){
+  const r=plResumen(0); if(!r.l.length && !(plata.fijos||[]).length) return '';
+  const porR={}; for(const m of r.l) if(m.t==='gasto'){ const k=plRubro(m.q); porR[k[2]]=(porR[k[2]]||0)+m.m; }
+  const rub=Object.entries(porR).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>k+' '+pesos(v)).join(', ');
+  const fij=(plata.fijos||[]).map(f=>`${f.q} ${pesos(f.m)} ${f.t==='entra'?'entra':'se paga'} el ${f.dia}`).join('; ');
+  return `LA PLATA de este mes (lo anotó el usuario, es suya y es privada): entró ${pesos(r.entro)}, se fue ${pesos(r.gasto)}, le queda ${pesos(r.queda)}${r.tope?` (tope que se puso: ${pesos(r.tope)})`:''}.`
+    + (rub?` En qué se fue: ${rub}.`:'') + (fij?` Todos los meses: ${fij}.`:'')
+    + ` Si te pregunta por su plata, contestá con estos números (no inventes otros). Para anotar algo usá [[PLATA|…]].\n`; }
+// De lo que decís («gasté 3 mil en la farmacia», «cobré la jubilación») a un movimiento anotado.
+function plQueDe(text, entra){
+  const n=norm(text).replace(/[¿?¡!.]/g,' ').replace(/\s+/g,' ').trim();
+  let q=(n.match(/\b(?:en|de|del|para|por)\s+(?:el |la |los |las |un |una |mi |mis )?([a-zñ ]{3,32})$/)||[])[1]
+     || (n.match(/^(?:hoy |ayer |recien )?(?:cobre|cobramos|compre|pague|abone|cargue|recibi)\s+(?:el |la |los |las |un |una |mi |mis )?([a-zñ ]{3,28}?)(?:\s+(?:de|por|en|a)\b|$)/)||[])[1] || '';
+  q=q.replace(/\b(pesos|peso|mil|lucas?|luca|palos?|millon(es)?|hoy|ayer|recien|de plata|guita)\b/g,'').replace(/\s+/g,' ').trim();
+  return q || (entra?'plata':'varios');
+}
+function plDeTexto(texto, manual){
+  const n=norm(texto).replace(/[¿?¡!]/g,'').trim();
+  const entra=/^(hoy |ayer |recien )?(cobre|cobramos|me entro|me entraron|me pagaron|me deposit|ingrese|recibi|entro)\b/.test(n) || /\bya cobre\b/.test(n);
+  const gasta=/^(hoy |ayer |recien )?(gaste|me gaste|pague|abone|compre|saque|puse|cargue|gastamos|pagamos)\b/.test(n);
+  if(!entra && !gasta && !manual) return '';
+  let monto=gastoMonto(String(texto).toLowerCase());
+  let que=plQueDe(texto, entra);
+  // «cobré la jubilación», sin decir cuánto: el monto que ya está cargado todos los meses
+  if(!(monto>0) && entra){
+    const fs=(plata.fijos||[]).filter(x=>x.t==='entra');
+    const f=fs.find(x=>norm(que).includes(norm(x.q))||norm(x.q).includes(norm(que))) || (fs.length===1?fs[0]:null);
+    if(f){ monto=f.m; que=f.q; plMarcar(f, false); }
+  }
+  if(!(monto>0)) return '';
+  const cuando=/\bayer\b/.test(n) ? Date.now()-86400000 : Date.now();
+  const mov=plAnotar(entra?'entra':'gasto', monto, que, cuando);
+  if(!mov) return '';
+  const r=plResumen(0);
+  if(entra) return `Anotado: entraron ${pesos(monto)} de ${que}. Este mes te queda ${pesos(r.queda)}.`;
+  let t=`Anotado: ${pesos(monto)} en ${que}. Este mes llevás gastado ${pesos(r.gasto)}`;
+  t += r.entro ? ` y te queda ${pesos(r.queda)}.` : '.';
+  if(r.tope){ if(r.gasto>=r.tope) t+=` Ojo que te pasaste del tope de ${pesos(r.tope)}.`; else if(r.gasto>=r.tope*0.8) t+=` Ya usaste el ${Math.round(r.gasto/r.tope*100)} por ciento del tope.`; }
+  return t;
+}
 function gastoDeVoz(text){
   const n=norm(text).replace(/[¿?¡!]/g,'').trim();
+  // mostrar la hoja
+  if(/^(mostrame|abrime|abri|ver|mira|mostra)?\s*(mi |la |mis )?(plata|cuentas|gastos|billetera)$|^(como (ando|voy|estoy) (de|con la) (plata|guita))$/.test(n)){
+    showSheet('plata'); const r=plResumen(0);
+    return r.l.length ? `Ahí la tenés: este mes entró ${pesos(r.entro)}, se fue ${pesos(r.gasto)} y te queda ${pesos(r.queda)}.` : 'Ahí te la abro. Anotá lo que cobrás y lo que gastás y te llevo la cuenta.';
+  }
+  // cuánto me queda / cuánto cobré
+  if(/\b(cuanto (me )?(queda|sobra|tengo)|me queda plata|cuanta plata (me )?(queda|tengo))\b/.test(n)){
+    const r=plResumen(0);
+    if(!r.entro && !r.gasto) return 'Todavía no anotaste nada este mes. Decime «cobré la jubilación» y «gasté tanto en tal cosa» y te llevo la cuenta.';
+    if(!r.entro) return `No anotaste nada que haya entrado este mes; gastaste ${pesos(r.gasto)}.`;
+    return `Este mes entraron ${pesos(r.entro)}, se fueron ${pesos(r.gasto)} y te quedan ${pesos(r.queda)}.`;
+  }
+  if(/\bcuanto (cobre|me entro|entro|cobramos|gane)\b/.test(n)){
+    const r=plResumen(/\bmes pasado\b/.test(n)?-1:0);
+    return r.entro ? `${/\bmes pasado\b/.test(n)?'El mes pasado':'Este mes'} entraron ${pesos(r.entro)}.` : 'No tengo anotado nada que te haya entrado.';
+  }
+  // cuánto gasté en tal cosa
+  const mr=n.match(/\bcuanto (?:gaste|gastamos|llevo gastado|se me fue|se fue)\s+(?:en|de)\s+([a-zñ ]{3,28})$/);
+  if(mr){
+    const ru=plRubro(mr[1]), r=plResumen(0);
+    const t=r.l.filter(x=>x.t==='gasto' && (plRubro(x.q)[0]===ru[0] || norm(x.q).includes(norm(mr[1])))).reduce((a,x)=>a+x.m,0);
+    return t ? `Este mes gastaste ${pesos(t)} en ${mr[1].trim()}.` : `No tengo gastos de ${mr[1].trim()} este mes.`;
+  }
   // anotar
-  if(/^(hoy |ayer |recien )?(gaste|me gaste|pague|abone|compre|saque|puse|cargue)\b/.test(n) && /\d/.test(n)){
-    const monto=gastoMonto(String(text).toLowerCase()); if(!(monto>0)) return '';
-    let en=(n.match(/\b(?:en|de|del|para|por)\s+(?:el |la |los |las |un |una )?([a-zñ ]{3,30})$/)||[])[1]||(n.match(/^(?:hoy |ayer )?(?:compre|pague|abone|cargue)\s+(?:el |la |los |las |un |una )?([a-zñ ]{3,25}?)\s+(?:a|por|en)?\s*\$?\d/)||[])[1]||'varios';
-    en=en.replace(/\b(pesos|mil|lucas?|hoy|ayer)\b/g,'').trim()||'varios';
-    const l=gastos(); l.push({monto, en, at:Date.now()}); while(l.length>500) l.shift(); LS.set('gastos', l);
-    const mes=gastosPeriodo('mes').reduce((a,g)=>a+g.monto,0), lim=+LS.get('gastoLimite',0)||0;
-    let t=`Anotado: ${pesos(monto)} en ${en}. Este mes llevás ${pesos(mes)}.`;
-    if(lim){ if(mes>=lim) t+=` Ojo: te pasaste del límite de ${pesos(lim)}.`; else if(mes>=lim*.8) t+=` Ya usaste el ${Math.round(mes/lim*100)} por ciento de tu límite.`; }
-    return t;
+  { const an=plDeTexto(text, false); if(an) return an; }
+  // lo de todos los meses: «la jubilación la cobro el 10», «la luz vence el 15»
+  if(/\b(todos los meses|cada mes|por mes|el \d{1,2} de cada mes|siempre)\b/.test(n) && /\d/.test(n) && /\b(cobro|cobra|pago|paga|vence|me entra|sale)\b/.test(n)){
+    const f=plFijoNuevo(text.replace(/^\s*(anota|anotame|guarda|acordate|recorda)( que)?\s*/i,''));
+    if(f) return `Listo: ${f.q}, ${pesos(f.m)}, ${f.t==='entra'?'entra':'se paga'} el ${f.dia} de cada mes. Te lo voy a recordar.`;
   }
   if(/\b(limite|presupuesto|tope)\b/.test(n) && /\d/.test(n) && /\b(pone|poneme|mi|de|es|fija|fijame)\b/.test(n)){ const v=gastoMonto(String(text).toLowerCase()); if(v>0){ LS.set('gastoLimite', v); return `Listo, tu límite es de ${pesos(v)} por mes. Te aviso cuando llegues al 80 por ciento.`; } }
   if(/\b(borra|anula|saca|elimina)(me)? (el )?ultimo gasto\b/.test(n)){ const l=gastos(); const g=l.pop(); LS.set('gastos', l); return g?`Listo, borré ${pesos(g.monto)} en ${g.en}.`:'No tenés gastos anotados.'; }
@@ -3501,7 +3610,166 @@ function gastoDeVoz(text){
   }
   return '';
 }
+// ================================================================ LA PLATA
+// Lo que entra (la jubilación, el sueldo, una changa), lo que se va, y cuánto queda.
+// Los gastos siguen donde estaban (LS «gastos»); acá se suman las entradas y lo de todos los meses.
+let plata=LS.get('plata',{entradas:[], fijos:[]});
+let plMes=0;   // 0 = este mes, -1 = el anterior…
+function plSave(){ LS.set('plata', plata); if(openSheet==='plata') renderPlata(); }
+const plId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+const plMesDe=k=>{ const d=new Date(); return new Date(d.getFullYear(), d.getMonth()+k, 1); };
+function plRango(k){ const a=plMesDe(k), b=plMesDe(k+1); return [a.getTime(), b.getTime()]; }
+function plDelMes(k){
+  const [a,b]=plRango(k);
+  const g=gastos().filter(x=>x.at>=a && x.at<b).map(x=>({t:'gasto', id:'g'+x.at, at:x.at, m:+x.monto||0, q:x.en||'algo'}));
+  const e=(plata.entradas||[]).filter(x=>x.at>=a && x.at<b).map(x=>({t:'entra', id:x.id, at:x.at, m:+x.m||0, q:x.q||'plata'}));
+  return g.concat(e).sort((x,y)=>y.at-x.at);
+}
+// los rubros: para saber en qué se va la plata sin tener que elegir nada a mano
+const RUBROS=[
+  ['comida','🛒','Comida y súper','Comida',/super|mercado|almacen|verduler|carnicer|panader|fiamb|kiosco|comida|delivery|rappi|pedidos ?ya|feria|chino|coto|dia|carrefour|jumbo|vea|disco/],
+  ['remedios','💊','Remedios y salud','Remedios',/farmacia|remedio|medicament|pastilla|doctor|medic|dentista|obra social|prepaga|analisis|optica|lentes|kinesio|psicolog/],
+  ['servicios','💡','Servicios e impuestos','Servicios',/luz|gas|agua|internet|cable|wifi|telefono|celular|expensas|alquiler|abl|rentas|municipal|seguro|patente|monotributo|edenor|edesur|metrogas|aysa|personal|movistar|claro|netflix|spotify/],
+  ['transporte','🚌','Transporte','Transporte',/colectivo|bondi|sube|tren|subte|taxi|uber|cabify|remis|nafta|combustible|gasoil|peaje|estacionamiento|mecanico|gomeria|cubierta|vtv/],
+  ['casa','🏠','La casa','La casa',/ferreter|pintura|mueble|electrodomestico|arreglo|plomer|electricista|limpieza|bazar|sodimac|easy|cocina|colchon/],
+  ['salidas','🍻','Salidas y gustos','Salidas',/bar|resto|restaurant|cafe|cine|teatro|futbol|cancha|helado|pizza|asado|salida|birra|cerveza|fiesta|regalo|cumple|vacacion|hotel/],
+  ['ropa','👕','Ropa','Ropa',/ropa|zapatilla|zapato|campera|pantalon|remera|vestido|calzado|indumentaria|zara|hym/],
+  ['mascota','🐾','La mascota','La mascota',/veterinari|balanceado|alimento para (perro|gato)|perro|gato|mascota/],
+  ['otros','💸','Otras cosas','Otras cosas',/./]];
+function plRubro(q){ const n=norm(String(q||'')); for(const r of RUBROS) if(r[4].test(n)) return r; return RUBROS[RUBROS.length-1]; }
+const plSuma=(l,t)=>l.filter(x=>x.t===t).reduce((a,x)=>a+x.m,0);
+function plResumen(k){
+  const l=plDelMes(k||0), entro=plSuma(l,'entra'), gasto=plSuma(l,'gasto');
+  return {l, entro, gasto, queda:entro-gasto, tope:+LS.get('gastoLimite',0)||0};
+}
+// anotar
+function plAnotar(t, monto, que, cuando){
+  monto=Math.round(+monto||0); if(!(monto>0)) return null;
+  que=String(que||'').trim() || (t==='entra'?'plata':'algo');
+  const at=cuando||Date.now();
+  if(t==='entra'){ plata.entradas=(plata.entradas||[]).concat([{id:plId(), at, m:monto, q:que}]).slice(-600); plSave(); }
+  else { const l=gastos(); l.push({monto, en:que, at}); while(l.length>500) l.shift(); LS.set('gastos', l); if(openSheet==='plata') renderPlata(); }
+  try{ renderGastos(); }catch(e){}
+  return {t, m:monto, q:que, at};
+}
+function plBorrar(mov){
+  if(mov.t==='entra'){ plata.entradas=(plata.entradas||[]).filter(x=>x.id!==mov.id); plSave(); }
+  else { LS.set('gastos', gastos().filter(x=>x.at!==mov.at)); if(openSheet==='plata') renderPlata(); }
+  try{ renderGastos(); }catch(e){}
+}
+// lo de todos los meses: «Jubilación 280 mil el 10», «Luz 8500 el 15»
+function plFijoNuevo(texto){
+  const t=String(texto||'').trim(); if(!t) return null;
+  const monto=gastoMonto(t.toLowerCase()); if(!(monto>0)) return null;
+  const dia=(t.match(/\bel\s+(\d{1,2})\b(?!\s*(mil|lucas))/i)||[])[1];
+  const n=norm(t);
+  const entra=/\b(jubilacion|pension|sueldo|cobro|cobra|aguinaldo|changa|alquiler que me pagan|me pagan|asignacion|beca|ingreso)\b/.test(n);
+  let que=t.replace(/\$?\s*[\d.,]+\s*(mil|lucas?|k|palos?|millones?|millon)?/i,'').replace(/\bel\s+\d{1,2}\b/i,'')
+           .replace(/\b(de|del|cada|todos los meses|por mes|al mes|mensual)\b/ig,' ').replace(/\s+/g,' ').trim();
+  que=que.charAt(0).toUpperCase()+que.slice(1);
+  const f={id:plId(), t:entra?'entra':'gasto', q:que||(entra?'Lo que cobro':'Un pago'), m:monto, dia:Math.min(28, Math.max(1, +dia||1)), ultimo:''};
+  plata.fijos=(plata.fijos||[]).concat([f]); plSave(); return f;
+}
+const plClaveMes=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+// los que tocan ahora: desde el día que vencen hasta fin de mes, si no se anotaron todavía
+function plPendientes(){
+  const hoy=new Date(), mesK=plClaveMes(hoy);
+  return (plata.fijos||[]).filter(f=>f.ultimo!==mesK && hoy.getDate()>=f.dia-1);
+}
+function plMarcar(f, anotar){
+  const hoy=new Date();
+  if(anotar!==false) plAnotar(f.t, f.m, f.q);
+  f.ultimo=plClaveMes(hoy); plSave();
+}
+function plFmtMes(k){ const d=plMesDe(k); return d.toLocaleDateString('es-AR',{month:'long', year: d.getFullYear()!==new Date().getFullYear()?'numeric':undefined}); }
+function renderPlata(){
+  const r=plResumen(plMes), hoy=plMes===0;
+  const nm=plFmtMes(plMes); $('plMes').textContent=nm.charAt(0).toUpperCase()+nm.slice(1);
+  $('plSig').disabled=plMes>=0; $('plSig').style.opacity=plMes>=0?.3:1;
+  $('plQuedaTit').textContent=hoy?'Te queda':'Quedó';
+  $('plQueda').textContent=pesos(r.queda);
+  $('plQueda').className=r.queda<0?'pl-rojo':'';
+  $('plEntro').textContent=pesos(r.entro); $('plGasto').textContent=pesos(r.gasto);
+  const base=r.entro||r.tope||0;
+  $('plBarra').style.width=(base?Math.min(100, Math.round(r.gasto/base*100)):0)+'%';
+  $('plPie').textContent = !r.l.length ? 'Todavía no anotaste nada de este mes.'
+    : r.entro ? `Gastaste el ${Math.round(r.gasto/r.entro*100)} por ciento de lo que entró.`
+    : r.tope ? `De un tope de ${pesos(r.tope)}.`
+    : `${r.l.filter(x=>x.t==='gasto').length} gastos anotados.`;
+  // lo que toca pagar o cobrar
+  const ch=$('plChips'); ch.innerHTML='';
+  if(hoy) for(const f of plPendientes()){
+    const b=document.createElement('button'); b.type='button'; b.className='chip';
+    b.innerHTML=(f.t==='entra'?'💰 ¿Ya cobraste? · ':'📄 ¿Ya pagaste? · ')+esc(f.q)+' '+esc(pesos(f.m));
+    b.onclick=()=>{ buzz(); plMarcar(f); toast((f.t==='entra'?'Anotado: entró ':'Anotado: pagaste ')+pesos(f.m)); };
+    ch.appendChild(b);
+  }
+  // los movimientos, por día
+  const box=$('plLista'); box.innerHTML='';
+  if(!r.l.length) box.innerHTML='<div class="vacio">Anotá tu primer movimiento acá arriba, o decile a FRIDAY «cobré la jubilación» o «gasté 2 mil en el súper».</div>';
+  let dia='';
+  for(const m of r.l){
+    const d=new Date(m.at), dk=d.toDateString();
+    if(dk!==dia){ dia=dk; const h=document.createElement('div'); h.className='pl-dia';
+      h.textContent=(dk===new Date().toDateString()?'Hoy':d.toLocaleDateString('es-AR',{weekday:'long', day:'numeric', month:'long'})); box.appendChild(h); }
+    const ru=plRubro(m.q), it=document.createElement('div'); it.className='pl-mov';
+    it.innerHTML='<span class="pl-ic"></span><div class="pl-tx"><b></b><small></small></div><span class="pl-m"></span><button aria-label="Borrar">✕</button>';
+    it.querySelector('.pl-ic').textContent=m.t==='entra'?'💰':ru[1];
+    it.querySelector('b').textContent=m.q.charAt(0).toUpperCase()+m.q.slice(1);
+    it.querySelector('small').textContent=(m.t==='entra'?'Entró':ru[2])+' · '+d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false});
+    const v=it.querySelector('.pl-m'); v.textContent=(m.t==='entra'?'+':'−')+pesos(m.m).slice(1); v.className='pl-m '+(m.t==='entra'?'pl-verde':'');
+    it.querySelector('button').onclick=()=>{ buzz(8); plBorrar(m); toast('Borrado'); };
+    box.appendChild(it);
+  }
+  // en qué se te va
+  const rb=$('plRubros'); rb.innerHTML='';
+  const porR={};
+  for(const m of r.l) if(m.t==='gasto'){ const k=plRubro(m.q); porR[k[0]]=porR[k[0]]||{k, v:0}; porR[k[0]].v+=m.m; }
+  const lista=Object.values(porR).sort((a,b)=>b.v-a.v).slice(0,6), top=lista[0]?lista[0].v:0;
+  if(!lista.length) rb.innerHTML='<p class="note">Cuando anotes gastos, acá vas a ver en qué se te va.</p>';
+  for(const x of lista){ const d=document.createElement('div'); d.className='pl-rub';
+    d.innerHTML=`<span class="pl-rn">${x.k[1]} ${esc(x.k[3])}</span><span class="pl-rb"><i style="width:${Math.round(x.v/top*100)}%"></i></span><span class="pl-rv">${esc(pesos(x.v))}</span>`;
+    rb.appendChild(d); }
+  // todos los meses
+  const fb=$('plFijos'); fb.innerHTML='';
+  if(!(plata.fijos||[]).length) fb.innerHTML='<p class="note">Nada cargado. Poné abajo, por ejemplo, «Jubilación 280 mil el 10».</p>';
+  for(const f of (plata.fijos||[])){
+    const it=document.createElement('div'); it.className='pl-mov';
+    it.innerHTML='<span class="pl-ic"></span><div class="pl-tx"><b></b><small></small></div><span class="pl-m"></span><button aria-label="Borrar">✕</button>';
+    it.querySelector('.pl-ic').textContent=f.t==='entra'?'💰':plRubro(f.q)[1];
+    it.querySelector('b').textContent=f.q;
+    it.querySelector('small').textContent=(f.t==='entra'?'Entra':'Se paga')+' el '+f.dia+' de cada mes'+(f.ultimo===plClaveMes(new Date())?' · ya está este mes':'');
+    it.querySelector('.pl-m').textContent=pesos(f.m);
+    it.querySelector('button').onclick=()=>{ buzz(8); plata.fijos=plata.fijos.filter(x=>x.id!==f.id); plSave(); };
+    fb.appendChild(it);
+  }
+  const mt=$('plMenuTxt'); if(mt) mt.textContent = r.l.length ? `Este mes te queda ${pesos(r.queda)}` : 'Lo que entra, lo que se va y cuánto te queda';
+}
+function plTextoResumen(){
+  const r=plResumen(plMes);
+  const porR={}; for(const m of r.l) if(m.t==='gasto'){ const k=plRubro(m.q); porR[k[2]]=(porR[k[2]]||0)+m.m; }
+  const top=Object.entries(porR).sort((a,b)=>b[1]-a[1]).slice(0,4).map(([k,v])=>`${k}: ${pesos(v)}`).join('\n');
+  return `Mi plata de ${plFmtMes(plMes)}\nEntró: ${pesos(r.entro)}\nSe fue: ${pesos(r.gasto)}\nQueda: ${pesos(r.queda)}` + (top?`\n\nEn qué se fue:\n${top}`:'');
+}
+function plataIniciar(){
+  const anotar=()=>{ const v=$('plIn').value.trim(); if(!v) return;
+    const r=plDeTexto(v, true); $('plIn').value='';
+    toast(r || 'No entendí el monto. Probá «gasté 3500 en el súper».'); };
+  $('plAdd').onclick=anotar;
+  $('plIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); anotar(); } });
+  $('plAnt').onclick=()=>{ plMes--; renderPlata(); buzz(8); };
+  $('plSig').onclick=()=>{ if(plMes<0){ plMes++; renderPlata(); buzz(8); } };
+  $('plFijoAdd').onclick=()=>{ const v=$('plFijoIn').value.trim(); const f=plFijoNuevo(v);
+    $('plFijoIn').value=''; toast(f?`Listo: ${f.q}, ${pesos(f.m)} el ${f.dia} de cada mes`:'Poné el nombre, el monto y el día. Ej: «Luz 8500 el 15».'); };
+  $('plFijoIn').addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); $('plFijoAdd').click(); } });
+  $('plShare').onclick=async()=>{ const t=plTextoResumen();
+    try{ if(navigator.share){ await navigator.share({text:t}); return; } }catch(e){ return; }
+    try{ await navigator.clipboard.writeText(t); toast('Copiado: pegalo donde quieras'); }catch(e){ toast('No pude copiarlo'); } };
+  $('plTope').onclick=()=>{ const v=prompt('¿Cuánto querés gastar como mucho por mes?', LS.get('gastoLimite',0)||'');
+    if(v===null) return; const m=gastoMonto(String(v).toLowerCase()); LS.set('gastoLimite', m>0?m:0); renderPlata(); toast(m>0?'Tope: '+pesos(m):'Sin tope'); };
+}
 function renderGastos(){
+  if(!$('gastoRes')) return;   // ahora todo esto vive en la hoja «La plata»
   const l=gastosPeriodo('mes'), t=l.reduce((a,g)=>a+g.monto,0), lim=+LS.get('gastoLimite',0)||0;
   $('gastoRes').textContent = l.length ? `Este mes: ${pesos(t)}${lim?' de '+pesos(lim):''}.` : 'Decime «gasté 3500 en el súper» y llevo la cuenta del mes.';
   const box=$('gastoLista'); box.innerHTML='';
@@ -4562,6 +4830,12 @@ async function runTags(full){
       } else if(k==='demo'){ if(PANEL) setTimeout(()=>demoOn(true), 2500);
       } else if(k==='panel' && p[1]){
         if(FSync.on()){ const tx=p.slice(1).join(' '), de=S.name?`${S.name} (desde el celu)`:'el celu', tb=FSync.peersOf('tablet')[0]; FSync.send(Object.assign({k:'aviso', icom:true, de, t:'Mensaje de '+de, s:tx, v:`Mensaje de ${S.name||'el celu'}: ${tx}`, i:'📢', u:true}, tb?{to:tb.dev}:{})); toast('📢 Lo dice la tablet'); }
+      } else if(k==='plata' && p[1]){
+        const q=norm(p[1]);
+        if(/^ver|mostr/.test(q)){ showSheet('plata'); }
+        else if(/^fijo/.test(q) && p[4]){ const f=plFijoNuevo(`${p[3]} ${p[4]} el ${p[5]||1}`); if(f){ f.t=/entra|cobr/.test(norm(p[2]||''))?'entra':'gasto'; plSave(); toast('💰 '+f.q+' · '+pesos(f.m)+' el '+f.dia); } }
+        else { const m=plAnotar(/entra|cobr/.test(q)?'entra':'gasto', gastoMonto(String(p[2]||'').toLowerCase()), p.slice(3).join(' '));
+          if(m){ toast((m.t==='entra'?'💰 Entró ':'💸 ')+pesos(m.m)+(m.q?' · '+m.q:'')); notes.push(`Quedó anotado: ${m.t==='entra'?'entraron':'se fueron'} ${pesos(m.m)} (${m.q}). Este mes le queda ${pesos(plResumen(0).queda)}.`); } }
       } else if(k==='compras' && p[1]){
         const r=shopDo(p[1], p.slice(2).join(' ')); if(r) toast('🛒 '+r); if(/ver|mostr|list/.test(norm(p[1]))) showSheet('compras');
       } else if(k==='recordar' && p[1]) addMemory(p.slice(1).join(' '));
@@ -6532,6 +6806,7 @@ function handleHash(){
   if(h==='#hablar'){ clear(); needTap('🎤','Tocá y hablame', ()=>recStart(false)); return true; }
   if(h==='#manoslibres'){ clear(); needTap('🙌','Tocá para activar manos libres', hfStart); return true; }
   if(h==='#compras'){ clear(); showSheet('compras'); return true; }
+  if(h==='#plata' || h==='#gastos'){ clear(); showSheet('plata'); return true; }
   if(h==='#guardia' || h==='#tablet'){ clear(); setTimeout(()=>showSheet('tablet'), 400); return true; }
   if(h==='#manejo'){ clear(); needTap('🚗','Tocá para el modo manejo', ()=>$('autoChip').click()); return true; }
   return false;

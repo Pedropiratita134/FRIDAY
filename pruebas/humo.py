@@ -44,6 +44,34 @@ async def main():
     ok(f'Móvil {v} arranca', await p.evaluate("!!document.getElementById('face')"))
     ok('Móvil: versión igual a version.json', v == vj['version'], (v, vj['version']))
     ok('Móvil: novedades de esta versión', await p.evaluate('NOVEDADES_M.version') == v)
+    # la plata: anotar hablando, lo de todos los meses y las cuentas
+    r = await p.evaluate("""()=>{
+      localStorage.removeItem('fm.plata'); localStorage.removeItem('fm.gastos');
+      plata={entradas:[], fijos:[]};
+      const out={};
+      out.gasto = plDeTexto('gasté 3 mil en el súper', false);
+      out.farmacia = plDeTexto('pagué 12.500 en la farmacia', false);
+      out.fijo = !!plFijoNuevo('Jubilación 280 mil el 10');
+      out.cobre = plDeTexto('cobré la jubilación', false);
+      const r = plResumen(0);
+      out.entro=r.entro; out.gasto_total=r.gasto; out.queda=r.queda;
+      out.rubro = plRubro('farmacia san juan')[0];
+      out.queda_txt = gastoDeVoz('¿cuánto me queda?');
+      out.en_remedios = gastoDeVoz('cuánto gasté en remedios');
+      out.nada = plDeTexto('qué lindo día', false);
+      return out;
+    }""")
+    ok('Plata: anota un gasto hablando', '3.000' in (r['gasto'] or ''), r['gasto'])
+    ok('Plata: entiende 12.500', r['gasto_total'] == 15500, r['gasto_total'])
+    ok('Plata: carga lo de todos los meses', r['fijo'])
+    ok('Plata: «cobré la jubilación» usa el monto de siempre', r['entro'] == 280000, r['cobre'])
+    ok('Plata: saca la cuenta de lo que queda', r['queda'] == 264500, r['queda'])
+    ok('Plata: ordena por rubro', r['rubro'] == 'remedios', r['rubro'])
+    ok('Plata: contesta cuánto queda', '264.500' in (r['queda_txt'] or ''), r['queda_txt'])
+    ok('Plata: contesta por rubro', '12.500' in (r['en_remedios'] or ''), r['en_remedios'])
+    ok('Plata: no anota cualquier cosa', r['nada'] == '', r['nada'])
+    await p.evaluate("showSheet('plata')"); await p.wait_for_timeout(600)
+    ok('Plata: la hoja se abre y muestra el mes', await p.evaluate("document.querySelectorAll('#plLista .pl-mov').length") == 3)
     ok('Móvil: sin errores de JS', not errs, errs[:3])
     await c.close()
     # la tablet
