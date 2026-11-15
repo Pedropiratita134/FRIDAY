@@ -72,6 +72,18 @@ async def main():
     ok('Plata: no anota cualquier cosa', r['nada'] == '', r['nada'])
     await p.evaluate("showSheet('plata')"); await p.wait_for_timeout(600)
     ok('Plata: la hoja se abre y muestra el mes', await p.evaluate("document.querySelectorAll('#plLista .pl-mov').length") == 3)
+    r2 = await p.evaluate("""()=>{
+      const o=syncLocal(); const g=Object.keys(o).filter(k=>k[0]==='g');
+      const antesG=gastos().length, antesF=(plata.fijos||[]).length;
+      syncApply([{id:'g:abc123', v:{t:'gasto', m:5000, q:'el kiosco', at:Date.now()}},
+                 {id:'g:fZZ9', v:{fijo:1, t:'entra', q:'Sueldo', m:500000, dia:5, ultimo:''}}]);
+      return {g:g.length, fijo:g.some(k=>k.startsWith('g:f')), entra:g.some(k=>o[k].t==='entra'),
+              gastoNuevo:gastos().length-antesG, fijoNuevo:(plata.fijos||[]).length-antesF,
+              queda:plResumen(0).queda};
+    }""")
+    ok('Plata: la manda a los otros aparatos', r2['g'] >= 4 and r2['fijo'] and r2['entra'], r2)
+    ok('Plata: recibe lo que anotaron en la compu', r2['gastoNuevo'] == 1 and r2['fijoNuevo'] == 1, r2)
+    ok('Plata: la cuenta sigue cerrando', r2['queda'] == 259500, r2['queda'])
     ok('Móvil: sin errores de JS', not errs, errs[:3])
     await c.close()
     # la tablet

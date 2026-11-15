@@ -2664,9 +2664,9 @@ const SIESTA = (() => {
 
 <script>
 'use strict';
-const VERSION='6.3';
+const VERSION='6.4';
 // Lo nuevo de esta versión: lo muestra la mini presentación y, publicado en version.json, el aviso de actualización
-const NOVEDADES_M={"version": "6.3", "titulo": "La plata", "items": [{"icono": "💰", "titulo": "Lo que entra y lo que se va", "texto": "Anotá lo que cobrás (la jubilación, el sueldo, una changa) y lo que gastás, y FRIDAY te dice cuánto te queda este mes. Todo hablando: «cobré la jubilación», «gasté 3 mil en la farmacia», «¿cuánto me queda?»."}, {"icono": "📅", "titulo": "Lo de todos los meses", "texto": "Cargá una vez la jubilación o la luz con el día que toca, y FRIDAY te lo recuerda y lo anota con un toque."}, {"icono": "📊", "titulo": "En qué se te va", "texto": "Ordena solo lo que gastás: comida, remedios, servicios, transporte… Así ves de una en qué se te va la plata."}, {"icono": "🔒", "titulo": "Es tuya y de nadie más", "texto": "Queda en tu celu y en tu cuenta de BufaLabs, cifrada. Nadie de BufaLabs puede verla."}]};
+const NOVEDADES_M={"version": "6.4", "titulo": "La plata, también en la compu", "items": [{"icono": "🔄", "titulo": "La misma cuenta en los dos lados", "texto": "Lo que anotás en el celu aparece en la compu y al revés, por la vinculación de siempre (cifrado, de aparato a aparato). Si anotás un gasto en la calle, cuando llegás ya está."}, {"icono": "💰", "titulo": "Y en la compu también se la pedís hablando", "texto": "«¿Cuánto me queda?», «gasté 3 mil en la farmacia»: ahora le podés decir lo mismo a la FRIDAY de la compu."}]};
 const PANEL=!!window.__PANEL;   // panel.html: la tablet de la casa (todo por voz)
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fm.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
@@ -3538,10 +3538,11 @@ function gastosPrompt(){
     + ` Si te pregunta por su plata, contestá con estos números (no inventes otros). Para anotar algo usá [[PLATA|…]].\n`; }
 // De lo que decís («gasté 3 mil en la farmacia», «cobré la jubilación») a un movimiento anotado.
 function plQueDe(text, entra){
-  const n=norm(text).replace(/[¿?¡!.]/g,' ').replace(/\s+/g,' ').trim();
-  let q=(n.match(/\b(?:en|de|del|para|por)\s+(?:el |la |los |las |un |una |mi |mis )?([a-zñ ]{3,32})$/)||[])[1]
-     || (n.match(/^(?:hoy |ayer |recien )?(?:cobre|cobramos|compre|pague|abone|cargue|recibi)\s+(?:el |la |los |las |un |una |mi |mis )?([a-zñ ]{3,28}?)(?:\s+(?:de|por|en|a)\b|$)/)||[])[1] || '';
-  q=q.replace(/\b(pesos|peso|mil|lucas?|luca|palos?|millon(es)?|hoy|ayer|recien|de plata|guita)\b/g,'').replace(/\s+/g,' ').trim();
+  const t=String(text||'').replace(/[¿?¡!.]/g,' ').replace(/\s+/g,' ').trim();
+  const re1=/\b(?:en|de|del|para|por)\s+((?:el |la |los |las |un |una |mi |mis )?[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]{3,32})$/i;
+  const re2=/^(?:hoy |ayer |reci[eé]n )?(?:cobr[eé]|cobramos|compr[eé]|pagu[eé]|abon[eé]|cargu[eé]|recib[ií])\s+((?:el |la |los |las |un |una |mi |mis )?[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]{3,28}?)(?:\s+(?:de|por|en|a)\b|$)/i;
+  let q=((t.match(re1)||[])[1] || (t.match(re2)||[])[1] || '').trim();
+  q=q.replace(/\b(pesos?|mil|lucas?|luca|palos?|millones?|mill[oó]n|hoy|ayer|reci[eé]n|guita)\b/ig,'').replace(/\s+/g,' ').trim();
   return q || (entra?'plata':'varios');
 }
 function plDeTexto(texto, manual){
@@ -6161,6 +6162,10 @@ function syncLocal(){
   for(const m of memory){ const t=String(m).trim(); if(t) o['m:'+FSync.hash(t)]=t; }
   for(const r of reminders){ if(r.done && now-new Date(r.at).getTime()>2*86400000) continue; o['r:'+r.id]={at:String(r.at).slice(0,16), texto:r.texto, rep:r.rep||null, done:!!r.done, push:!!r.push}; }
   for(const x of compras) o['l:'+x.id]={t:x.t, h:!!x.h};
+  // la plata: los gastos, lo que entró y lo de todos los meses (lo mismo que ve la compu)
+  for(const g of gastos()) if(now-g.at<400*86400000) o['g:x'+g.at]={t:'gasto', m:g.monto, q:g.en, at:g.at};
+  for(const e of (plata.entradas||[])) if(now-e.at<400*86400000) o['g:'+e.id]={t:'entra', m:e.m, q:e.q, at:e.at};
+  for(const f of (plata.fijos||[])) o['g:f'+f.id]={fijo:1, t:f.t, q:f.q, m:f.m, dia:f.dia, ultimo:f.ultimo||''};
   for(const a of autos) o['u:'+a.id]={hora:a.hora, dias:a.dias, que:a.que, on:a.on!==false};
   for(const c of cumplesP) o['b:'+c.id]={n:c.nombre, f:c.fecha};
   for(const n of notasC) o['o:'+n.id]={t:n.t, at:n.at};
@@ -6168,7 +6173,7 @@ function syncLocal(){
   return o;
 }
 function syncApply(changes){
-  let memCh=false, remCh=false, shopCh=false, ecoCh=false, now=Date.now();
+  let memCh=false, remCh=false, shopCh=false, ecoCh=false, plataCh=false, now=Date.now();
   for(const c of changes){
     const k=c.id[0], key=c.id.slice(2);
     if(k==='m'){
@@ -6192,6 +6197,31 @@ function syncApply(changes){
       if(!c.v || !c.v.t) continue;
       if(i>=0) Object.assign(compras[i],{t:c.v.t, h:!!c.v.h}); else compras.push({id:key, t:c.v.t, h:!!c.v.h});
       shopCh=true;
+    } else if(k==='g'){
+      // la plata que llega de la compu (o de otro aparato tuyo)
+      if(key[0]==='f' && c.v && c.v.fijo){
+        const id=key.slice(1), i=(plata.fijos||[]).findIndex(x=>x.id===id);
+        if(c.d){ if(i>=0){ plata.fijos.splice(i,1); plataCh=true; } continue; }
+        const f={id, t:c.v.t==='entra'?'entra':'gasto', q:String(c.v.q||''), m:+c.v.m||0, dia:+c.v.dia||1, ultimo:c.v.ultimo||''};
+        if(i>=0) Object.assign(plata.fijos[i], f); else (plata.fijos=plata.fijos||[]).push(f);
+        plataCh=true; continue;
+      }
+      if(key[0]==='f') continue;
+      if(!c.v || !(+c.v.m>0)){
+        if(c.d && key[0]==='x'){ const at=+key.slice(1); const l=gastos().filter(g=>g.at!==at); LS.set('gastos', l); plataCh=true; }
+        else if(c.d){ plata.entradas=(plata.entradas||[]).filter(x=>x.id!==key); plataCh=true; }
+        continue;
+      }
+      if(c.v.t==='entra'){
+        const i=(plata.entradas||[]).findIndex(x=>x.id===key);
+        const e={id:key, m:+c.v.m, q:String(c.v.q||'plata'), at:+c.v.at||now};
+        if(i>=0) Object.assign(plata.entradas[i], e); else (plata.entradas=plata.entradas||[]).push(e);
+      } else {
+        const at=key[0]==='x' ? +key.slice(1) : (+c.v.at||now);
+        const l=gastos();
+        if(!l.some(g=>g.at===at)){ l.push({monto:+c.v.m, en:String(c.v.q||'algo'), at}); LS.set('gastos', l.slice(-500)); }
+      }
+      plataCh=true;
     } else if(k==='u'){
       const i=autos.findIndex(x=>x.id===key);
       if(c.d){ if(i>=0) autos.splice(i,1); }
@@ -6228,6 +6258,7 @@ function syncApply(changes){
   }
   if(memCh) LS.set('memory',memory);
   if(shopCh){ LS.set('compras',compras); if(openSheet==='compras'){ if(cmVista==='chango') cmPintar(); else if(cmVista==='lista') renderCompras(); } }
+  if(plataCh){ LS.set('plata', plata); if(openSheet==='plata') renderPlata(); try{ renderGastos(); }catch(e){} }
   if(ecoCh && openSheet==='rems') renderRems();
   if(remCh){ saveRems(); if(openSheet==='rems') renderRems(); setTimeout(schedulePushes, 400); }
 }
@@ -6275,7 +6306,7 @@ function pedirEvento(cuando, titulo, min, lugar){
 async function syncBoot(){
   if(!(window.crypto && crypto.subtle)) return;
   const name=PANEL ? 'Panel de la casa' : (IOS?'iPhone':/Android/i.test(navigator.userAgent)?'Android':'Celu')+(S.name?' de '+S.name:'');
-  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, kind:PANEL?'tablet':'celu', ver:'Móvil '+VERSION, url:spRedirect(), kinds:['m','r','p','l','u','b','o'], pollMs:PANEL?60000:20000,
+  await FSync.init({ store:(k,v)=>LS.set(k,v), load:k=>LS.get(k,null), dev:SYNC_DEV, name, kind:PANEL?'tablet':'celu', ver:'Móvil '+VERSION, url:spRedirect(), kinds:['m','r','p','l','u','b','o','g'], pollMs:PANEL?60000:20000,
     live:true, onMsg:o=>PANEL?panelMsg(o):celuMsg(o),
     paused:()=>document.hidden && !PANEL, local:syncLocal, apply:syncApply,
     onPeer:(d,p,first)=>{ if(first && FSync.kindOf(d)==='pc'){ toast('💻 ¡Vinculada con tu compu!', 4500); buzz([60,40,60]); } if(openSheet==='vinc') renderVinc(); },

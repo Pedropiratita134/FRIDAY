@@ -1,26 +1,16 @@
 {
- "version": "6.3",
- "titulo": "La plata",
+ "version": "6.4",
+ "titulo": "La plata, también en la compu",
  "items": [
   {
+   "icono": "🔄",
+   "titulo": "La misma cuenta en los dos lados",
+   "texto": "Lo que anotás en el celu aparece en la compu y al revés, por la vinculación de siempre (cifrado, de aparato a aparato). Si anotás un gasto en la calle, cuando llegás ya está."
+  },
+  {
    "icono": "💰",
-   "titulo": "Lo que entra y lo que se va",
-   "texto": "Anotá lo que cobrás (la jubilación, el sueldo, una changa) y lo que gastás, y FRIDAY te dice cuánto te queda este mes. Todo hablando: «cobré la jubilación», «gasté 3 mil en la farmacia», «¿cuánto me queda?»."
-  },
-  {
-   "icono": "📅",
-   "titulo": "Lo de todos los meses",
-   "texto": "Cargá una vez la jubilación o la luz con el día que toca, y FRIDAY te lo recuerda y lo anota con un toque."
-  },
-  {
-   "icono": "📊",
-   "titulo": "En qué se te va",
-   "texto": "Ordena solo lo que gastás: comida, remedios, servicios, transporte… Así ves de una en qué se te va la plata."
-  },
-  {
-   "icono": "🔒",
-   "titulo": "Es tuya y de nadie más",
-   "texto": "Queda en tu celu y en tu cuenta de BufaLabs, cifrada. Nadie de BufaLabs puede verla."
+   "titulo": "Y en la compu también se la pedís hablando",
+   "texto": "«¿Cuánto me queda?», «gasté 3 mil en la farmacia»: ahora le podés decir lo mismo a la FRIDAY de la compu."
   }
  ]
 }
