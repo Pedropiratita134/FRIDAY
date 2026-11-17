@@ -1,7 +1,8 @@
-name: Prototipo de ventana propia
-# Compila y prueba la ventana propia de FRIDAY (WebKitGTK) en un escritorio de mentira, para
-# contestar tres preguntas antes de hacerlo en serio: si la ventana lleva nuestra identidad (la
-# barra de tareas), si podemos darle el micrófono desde el código, y si va a andar la música.
+name: La ventana propia de FRIDAY
+# Compila la ventana propia (WebKitGTK) y la prueba en un escritorio de mentira: que lleve nuestra
+# identidad (es lo que mira la barra de tareas), que le entre el micrófono desde el código, y que
+# obedezca cuando FRIDAY le dice que se minimice o se muestre.
+# El programa compilado queda en la rama «muestras» para poder bajarlo y probarlo en serio.
 on:
   workflow_dispatch:
   push:
@@ -10,9 +11,9 @@ on:
 permissions:
   contents: write
 jobs:
-  probar:
+  construir:
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
@@ -23,7 +24,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libwebkit2gtk-4.1-dev libgtk-3-dev pkg-config \
-            xvfb x11-utils xdotool \
+            xvfb x11-utils xdotool socat \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
             gstreamer1.0-plugins-bad gstreamer1.0-libav
           pkg-config --modversion webkit2gtk-4.1
@@ -31,12 +32,32 @@ jobs:
       - name: Compilar
         working-directory: ventana
         run: |
-          CGO_ENABLED=1 go build -o friday-ventana .
+          CGO_ENABLED=1 go build -trimpath -ldflags="-s -w" -o friday-ventana .
           ls -la friday-ventana
 
       - name: Probarla en un escritorio de mentira
         working-directory: ventana
         run: |
+          set -x
+          # una página de mentira que hace de FRIDAY: pide el micrófono y cuenta qué pudo hacer
+          cat > prueba.html <<'HTML'
+          <!doctype html><meta charset="utf-8"><title>FRIDAY</title>
+          <body style="background:#0b1020;color:#e8eefc;font:16px system-ui"><h1 id=t>…</h1>
+          <script>(async()=>{const r={};
+            const q=(k,f)=>{try{r[k]=f()}catch(e){r[k]='ERROR '+e}};
+            q('audioWorklet',()=>'audioWorklet' in AudioContext.prototype);
+            q('MediaSource',()=>!!window.MediaSource);
+            q('opus',()=>MediaSource.isTypeSupported('audio/webm; codecs="opus"'));
+            q('guardado',()=>{localStorage.setItem('x','1');return localStorage.getItem('x')==='1'});
+            try{const s=await navigator.mediaDevices.getUserMedia({audio:true});
+                r.microfono='abrió '+s.getAudioTracks().length+' pista(s)';
+                s.getTracks().forEach(t=>t.stop());}catch(e){r.microfono='no: '+e.name}
+            document.getElementById('t').textContent=JSON.stringify(r);
+            await fetch('/listo?r='+encodeURIComponent(JSON.stringify(r)));
+          })()</script>
+          HTML
+          python3 -m http.server 8799 --bind 127.0.0.1 >servidor.txt 2>&1 &
+          sleep 1
           Xvfb :99 -screen 0 1280x800x24 >/dev/null 2>&1 &
           sleep 2
           export DISPLAY=:99
@@ -44,185 +65,60 @@ jobs:
           export WEBKIT_DISABLE_COMPOSITING_MODE=1
           export WEBKIT_DISABLE_DMABUF_RENDERER=1
           export LIBGL_ALWAYS_SOFTWARE=1
-          ./friday-ventana > salida.txt 2>&1 &
+          ./friday-ventana --url http://127.0.0.1:8799/prueba.html --socket /tmp/fv.sock > salida.txt 2>&1 &
           APP=$!
-          sleep 12
-          echo "=== La identidad de la ventana (esto es lo que mira la barra de tareas) ==="
-          xdotool search --name FRIDAY 2>/dev/null | while read -r id; do xprop -id "$id" WM_CLASS WM_NAME 2>/dev/null || true; done
-          xprop -root _NET_CLIENT_LIST 2>/dev/null | head -2 || true
-          wait $APP || true
-          echo
+          sleep 15
+
+          echo "=== 1. La identidad de la ventana (esto es lo que mira la barra de tareas) ==="
+          CLASE=$(xdotool search --name FRIDAY 2>/dev/null | while read -r id; do xprop -id "$id" WM_CLASS 2>/dev/null; done | head -1)
+          echo "clase: $CLASE"
+          echo "$CLASE" | grep -qi 'FRIDAY' || { echo "FALLA: la ventana no se presenta como FRIDAY"; cat salida.txt; kill $APP; exit 1; }
+
+          echo "=== 2. Que obedezca a FRIDAY ==="
+          hablar(){ printf '%s\n' "$1" | socat - UNIX-CONNECT:/tmp/fv.sock; }
+          hablar ping | grep -q friday-ventana || { echo "FALLA: no contesta el socket"; kill $APP; exit 1; }
+          hablar minimizar; sleep 2
+          hablar estado | tee est1.txt | grep -q '"minimizada":true' || { echo "FALLA: no se minimizó"; cat est1.txt; kill $APP; exit 1; }
+          hablar mostrar; sleep 2
+          hablar estado | tee est2.txt | grep -q '"minimizada":false' || { echo "FALLA: no volvió"; cat est2.txt; kill $APP; exit 1; }
+
+          echo "=== 3. Lo que pudo hacer la página (micrófono, música, guardado) ==="
+          python3 - <<'PY' > capacidades.txt
+          import re, urllib.parse
+          t = open('servidor.txt', encoding='utf-8', errors='replace').read()
+          m = re.search(r'listo\?r=(\S+)', t)
+          print(urllib.parse.unquote(m.group(1)) if m else 'NADA')
+          PY
+          cat capacidades.txt
+          grep -q '"audioWorklet": *true' capacidades.txt || { echo "FALLA: sin AudioWorklet no puede escuchar"; kill $APP; exit 1; }
+          grep -q 'abrió 1 pista' capacidades.txt || { echo "FALLA: no le entró el micrófono"; kill $APP; exit 1; }
+
+          echo "=== 4. Que se vaya cuando le decimos ==="
+          hablar chau
+          for i in $(seq 1 20); do kill -0 $APP 2>/dev/null || break; sleep 1; done
+          kill -0 $APP 2>/dev/null && { echo "FALLA: no se cerró"; kill $APP; exit 1; }
+          echo TODO OK
           cat salida.txt
 
-      - name: Que quede el resultado a mano
+      - name: Dejar el programa a mano para bajarlo
+        if: success()
+        run: |
+          git config --global user.name  'FRIDAY'
+          git config --global user.email 'friday@bufalabs.invalid'
+          mkdir -p /tmp/m && cp ventana/friday-ventana /tmp/m/
+          cd /tmp/m
+          sha256sum friday-ventana > friday-ventana.sha256
+          git init -q && git checkout -q -b muestras
+          git add -A && git commit -q -m "friday-ventana compilada ($GITHUB_SHA)"
+          git push -q -f "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}" muestras
+
+      - name: Que queden las pruebas a mano
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: resultado
+          name: ventana
           path: |
             ventana/salida.txt
-            ventana/resultado.json
+            ventana/capacidades.txt
+            ventana/friday-ventana
           if-no-files-found: ignore
-
-  elena:
-    # ¿Se puede pedir Elena con el método simple y de toda la vida, sin librerías de nadie?
-    # Si anda, lo implementamos nosotros (en el Worker) y no dependemos de ningún paquete.
-    runs-on: ubuntu-24.04
-    timeout-minutes: 10
-    steps:
-      - name: Probar el pedido a mano
-        run: |
-          cat > elena.mjs <<'EOF'
-          import crypto from 'node:crypto';
-          import WebSocket from 'ws';
-          import fs from 'node:fs';
-          const TOKEN = '6A5AA1D4EAFF4E9FB37E23D68491D6F4';
-          const WIN_EPOCH = 11644473600, S_TO_NS = 1e9;
-          function gec() {
-            let t = Math.floor(Date.now() / 1000) + WIN_EPOCH;
-            t -= t % 300;
-            const v = String(t * (S_TO_NS / 100)) + TOKEN;
-            return crypto.createHash('sha256').update(v).digest('hex').toUpperCase();
-          }
-          const id = crypto.randomUUID().replace(/-/g, '');
-          const url = 'wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1'
-            + '?TrustedClientToken=' + TOKEN + '&Sec-MS-GEC=' + gec() + '&Sec-MS-GEC-Version=1-130.0.2849.68&ConnectionId=' + id;
-          const ws = new WebSocket(url, { headers: {
-            'Origin': 'chrome-extension://jdiccldimpdaibmpdkjnbmckianbfold',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36 Edg/130.0.0.0',
-            'Pragma': 'no-cache', 'Cache-Control': 'no-cache',
-          }});
-          const trozos = []; let palabras = 0;
-          const ts = () => new Date().toString();
-          ws.on('open', () => {
-            ws.send('X-Timestamp:' + ts() + '\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n'
-              + JSON.stringify({context:{synthesis:{audio:{metadataoptions:{sentenceBoundaryEnabled:'false',wordBoundaryEnabled:'true'},outputFormat:'audio-24khz-48kbitrate-mono-mp3'}}}}));
-            const texto = 'Buen día, Pedro. Son las nueve y veinte y están veintiún grados.';
-            ws.send('X-RequestId:' + id + '\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:' + ts() + 'Z\r\nPath:ssml\r\n\r\n'
-              + `<speak version='1.0' xmlns='http://www.w3.org/2001/10/synthesis' xml:lang='es-AR'><voice name='Microsoft Server Speech Text to Speech Voice (es-AR, ElenaNeural)'><prosody pitch='+0Hz' rate='+0%' volume='+0%'>${texto}</prosody></voice></speak>`);
-          });
-          ws.on('message', (d, bin) => {
-            if (!bin) { const s = d.toString(); if (s.includes('Path:audio.metadata')) palabras++; if (s.includes('Path:turn.end')) ws.close(); return; }
-            const n = (d[0] << 8) | d[1];
-            trozos.push(d.subarray(2 + n));
-          });
-          ws.on('close', () => {
-            const b = Buffer.concat(trozos);
-            fs.writeFileSync('elena-a-mano.mp3', b);
-            console.log('RESULTADO: audio=' + b.length + ' bytes, marcas de palabra=' + palabras);
-            process.exit(b.length > 5000 ? 0 : 1);
-          });
-          ws.on('error', e => { console.log('RESULTADO: falló → ' + e.message); process.exit(1); });
-          setTimeout(() => { console.log('RESULTADO: no contestó a tiempo'); process.exit(1); }, 25000);
-          EOF
-          sed -i 's/^          //' elena.mjs
-          npm install --silent ws
-          node elena.mjs
-          ls -la elena-a-mano.mp3
-
-  voces:
-    # Daniela (Piper) no convence. Acá se arman muestras de todas las opciones reales para que
-    # Pedro elija con el oído, que es la única forma seria de decidir esto.
-    runs-on: ubuntu-24.04
-    timeout-minutes: 25
-    steps:
-      - name: Preparar
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng python3-pip
-          pip install --quiet --break-system-packages edge-tts kokoro soundfile || pip install --quiet edge-tts kokoro soundfile
-          mkdir -p out
-
-      - name: 1) Elena, la de siempre, pero sin Edge
-        continue-on-error: true
-        run: |
-          F="Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media. Este mes te quedan doscientos setenta y nueve mil pesos."
-          edge-tts --voice es-AR-ElenaNeural --text "$F" --write-media out/1-elena.mp3
-          edge-tts --voice es-AR-TomasNeural --text "$F" --write-media out/2-tomas.mp3
-          ls -la out/
-
-      - name: 2) Kokoro, la mejor de las que corren en tu compu
-        continue-on-error: true
-        run: |
-          cat > koko.py <<'EOF'
-          import soundfile as sf, numpy as np
-          from kokoro import KPipeline
-          F = "Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media. Este mes te quedan doscientos setenta y nueve mil pesos."
-          p = KPipeline(lang_code='e')
-          for v, n in [('ef_dora','3-kokoro-dora'), ('em_alex','4-kokoro-alex')]:
-              a = np.concatenate([x.audio.numpy() for x in p(F, voice=v)])
-              sf.write(f'out/{n}.wav', a, 24000)
-              print('ok', n, len(a)/24000, 'seg')
-          EOF
-          sed -i 's/^          //' koko.py
-          python3 koko.py
-          ls -la out/
-
-      - name: 3) Otras voces de Piper, por las dudas
-        continue-on-error: true
-        run: |
-          curl -sSL -o piper.tar.gz https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
-          tar xf piper.tar.gz
-          F="Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media. Este mes te quedan doscientos setenta y nueve mil pesos."
-          base=https://huggingface.co/rhasspy/piper-voices/resolve/main/es
-          probar() {
-            curl -sSL -o m.onnx "$2" && curl -sSL -o m.onnx.json "$2.json" || return 0
-            echo "$F" | ./piper/piper --model m.onnx --output_file "out/$1.wav" || true
-          }
-          probar 5-piper-sharvard "$base/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx"
-          probar 6-piper-davefx   "$base/es_ES/davefx/medium/es_ES-davefx-medium.onnx"
-          probar 7-piper-claude   "$base/es_MX/claude/high/es_MX-claude-high.onnx"
-          ls -la out/
-
-      - name: Pasarlas todas a mp3 y dejarlas en la rama «muestras»
-        run: |
-          cd out
-          for f in *.wav; do [ -e "$f" ] && ffmpeg -v error -i "$f" -c:a libmp3lame -q:a 3 "${f%.wav}.mp3" && rm "$f"; done
-          ls -la
-          git init -q && git checkout -q -b muestras
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A && git commit -q -m "Muestras de voces en español"
-          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" muestras
-
-  voz:
-    # ¿Cómo va a hablar FRIDAY en su propia ventana? WebKitGTK no trae voces del sistema, así que
-    # habla Daniela (Piper), que ya está integrada. Acá se arma una muestra para escucharla.
-    runs-on: ubuntu-24.04
-    timeout-minutes: 15
-    steps:
-      - name: Bajar Piper y la voz Daniela (lo mismo que baja FRIDAY)
-        run: |
-          curl -sSL -o piper.tar.gz https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
-          tar xf piper.tar.gz
-          curl -sSL -o daniela.onnx      https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_AR/daniela/high/es_AR-daniela-high.onnx
-          curl -sSL -o daniela.onnx.json https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_AR/daniela/high/es_AR-daniela-high.onnx.json
-          ls -la piper/piper daniela.onnx
-
-      - name: Hacerla hablar
-        run: |
-          sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
-          decir() { echo "$2" | ./piper/piper --model daniela.onnx --output_file "$1"; }
-          decir 1-saludo.wav "Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media, y llamar a Marta a la tarde."
-          decir 2-plata.wav  "Este mes entraron trescientos diez mil pesos y gastaste treinta mil novecientos. Te quedan doscientos setenta y nueve mil cien. El dieciocho pagás la luz."
-          decir 3-corta.wav  "Sí. Dale, lo anoto. Listo, ya está. ¿Querés que te lo recuerde mañana?"
-          decir 4-tareas.wav "A Sofi le toca juntar la caca del perro, y vos llevás tres días seguidos cumpliendo. Mamá va ganando por cinco puntos."
-          for f in *.wav; do ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" | xargs printf '%s  %s segundos\n' "$f"; done
-          ffmpeg -v error -i 1-saludo.wav -i 2-plata.wav -i 3-corta.wav -i 4-tareas.wav \
-            -filter_complex "[0][1][2][3]concat=n=4:v=0:a=1[a]" -map "[a]" -c:a libmp3lame -q:a 2 daniela-muestra.mp3
-          ls -la daniela-muestra.mp3
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: voz-daniela
-          path: daniela-muestra.mp3
-
-      - name: Dejarla en la rama «muestras» (los artefactos no se pueden bajar desde acá)
-        run: |
-          mkdir -p envio && cp daniela-muestra.mp3 envio/
-          cd envio
-          git init -q && git checkout -q -b muestras
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A && git commit -q -m "Muestra de la voz de Daniela"
-          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" muestras
