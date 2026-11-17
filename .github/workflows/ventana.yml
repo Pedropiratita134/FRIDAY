@@ -64,6 +64,71 @@ jobs:
             ventana/resultado.json
           if-no-files-found: ignore
 
+  voces:
+    # Daniela (Piper) no convence. Acá se arman muestras de todas las opciones reales para que
+    # Pedro elija con el oído, que es la única forma seria de decidir esto.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - name: Preparar
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg espeak-ng python3-pip
+          pip install --quiet --break-system-packages edge-tts kokoro soundfile || pip install --quiet edge-tts kokoro soundfile
+          mkdir -p out
+
+      - name: 1) Elena, la de siempre, pero sin Edge
+        continue-on-error: true
+        run: |
+          F="Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media. Este mes te quedan doscientos setenta y nueve mil pesos."
+          edge-tts --voice es-AR-ElenaNeural --text "$F" --write-media out/1-elena.mp3
+          edge-tts --voice es-AR-TomasNeural --text "$F" --write-media out/2-tomas.mp3
+          ls -la out/
+
+      - name: 2) Kokoro, la mejor de las que corren en tu compu
+        continue-on-error: true
+        run: |
+          cat > koko.py <<'EOF'
+          import soundfile as sf, numpy as np
+          from kokoro import KPipeline
+          F = "Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media. Este mes te quedan doscientos setenta y nueve mil pesos."
+          p = KPipeline(lang_code='e')
+          for v, n in [('ef_dora','3-kokoro-dora'), ('em_alex','4-kokoro-alex')]:
+              a = np.concatenate([x.audio.numpy() for x in p(F, voice=v)])
+              sf.write(f'out/{n}.wav', a, 24000)
+              print('ok', n, len(a)/24000, 'seg')
+          EOF
+          sed -i 's/^          //' koko.py
+          python3 koko.py
+          ls -la out/
+
+      - name: 3) Otras voces de Piper, por las dudas
+        continue-on-error: true
+        run: |
+          curl -sSL -o piper.tar.gz https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
+          tar xf piper.tar.gz
+          F="Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media. Este mes te quedan doscientos setenta y nueve mil pesos."
+          base=https://huggingface.co/rhasspy/piper-voices/resolve/main/es
+          probar() {
+            curl -sSL -o m.onnx "$2" && curl -sSL -o m.onnx.json "$2.json" || return 0
+            echo "$F" | ./piper/piper --model m.onnx --output_file "out/$1.wav" || true
+          }
+          probar 5-piper-sharvard "$base/es_ES/sharvard/medium/es_ES-sharvard-medium.onnx"
+          probar 6-piper-davefx   "$base/es_ES/davefx/medium/es_ES-davefx-medium.onnx"
+          probar 7-piper-claude   "$base/es_MX/claude/high/es_MX-claude-high.onnx"
+          ls -la out/
+
+      - name: Pasarlas todas a mp3 y dejarlas en la rama «muestras»
+        run: |
+          cd out
+          for f in *.wav; do [ -e "$f" ] && ffmpeg -v error -i "$f" -c:a libmp3lame -q:a 3 "${f%.wav}.mp3" && rm "$f"; done
+          ls -la
+          git init -q && git checkout -q -b muestras
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A && git commit -q -m "Muestras de voces en español"
+          git push -q --force "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git" muestras
+
   voz:
     # ¿Cómo va a hablar FRIDAY en su propia ventana? WebKitGTK no trae voces del sistema, así que
     # habla Daniela (Piper), que ya está integrada. Acá se arma una muestra para escucharla.
