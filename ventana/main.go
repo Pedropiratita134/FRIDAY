@@ -55,6 +55,11 @@ static WebKitWebView *armar(const char *uri) {
     return web;
 }
 
+// el macro de WebKit no se puede llamar desde Go, así que lo envolvemos
+static int es_micro(WebKitPermissionRequest *req) {
+    return WEBKIT_IS_USER_MEDIA_PERMISSION_REQUEST(req) ? 1 : 0;
+}
+
 static const char *version_webkit(void) {
     static char buf[64];
     g_snprintf(buf, sizeof buf, "%d.%d.%d", webkit_get_major_version(), webkit_get_minor_version(), webkit_get_micro_version());
@@ -79,7 +84,7 @@ var permisos []string
 func irPermiso(w *C.WebKitWebView, req *C.WebKitPermissionRequest, user C.gpointer) C.gboolean {
 	// Esto es lo que hoy no podemos hacer con el navegador: decirle que sí al micrófono desde acá.
 	tipo := "otro"
-	if C.g_type_check_instance_is_a((*C.GTypeInstance)(unsafe.Pointer(req)), C.webkit_user_media_permission_get_type()) != 0 {
+	if C.es_micro(req) != 0 {
 		tipo = "micrófono/cámara"
 	}
 	permisos = append(permisos, tipo)
