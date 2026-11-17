@@ -187,6 +187,7 @@ func main() {
 		m["webkit"] = C.GoString(C.version_webkit())
 		m["permisos_que_llegaron"] = permisos
 		b, _ := json.MarshalIndent(m, "", " ")
+		os.WriteFile("resultado.json", b, 0o644) // que quede aunque la salida se corte
 		fmt.Println("=== RESULTADO ===")
 		fmt.Println(string(b))
 		fmt.Println("=== FIN ===")

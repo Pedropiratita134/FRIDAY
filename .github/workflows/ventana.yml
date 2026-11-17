@@ -38,6 +38,10 @@ jobs:
           Xvfb :99 -screen 0 1280x800x24 >/dev/null 2>&1 &
           sleep 2
           export DISPLAY=:99
+          # en un servidor sin placa de video, WebKit se cae si intenta componer con la GPU
+          export WEBKIT_DISABLE_COMPOSITING_MODE=1
+          export WEBKIT_DISABLE_DMABUF_RENDERER=1
+          export LIBGL_ALWAYS_SOFTWARE=1
           ./friday-ventana > salida.txt 2>&1 &
           APP=$!
           sleep 12
@@ -53,5 +57,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: resultado
-          path: ventana/salida.txt
+          path: |
+            ventana/salida.txt
+            ventana/resultado.json
           if-no-files-found: ignore
