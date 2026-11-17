@@ -34,12 +34,12 @@ static gboolean cb_politica(WebKitWebView *w, WebKitPolicyDecision *d, WebKitPol
 }
 static gboolean cb_latido(gpointer user) { return irLatido(user); }
 
-// Nuestra identidad. Es lo que mira la barra de tareas para saber que esta ventana es FRIDAY y no
-// otra cosa; va antes de gtk_init() o no vale.
-static void identidad(const char *prg, const char *clase) {
-    g_set_prgname(prg);
-    gdk_set_program_class(clase);
-}
+// Nuestra identidad: es lo que mira la barra de tareas para saber que esta ventana es FRIDAY y no
+// otra cosa. Va en dos tiempos, y el orden importa: el nombre del programa, antes de arrancar GTK
+// (después revienta), y la clase, DESPUÉS (si no, al arrancar GTK se la pisa con una versión suya
+// sacada del nombre, y la ventana terminaba diciendo «Friday» en vez de «FRIDAY»).
+static void nombre_programa(const char *prg) { g_set_prgname(prg); }
+static void clase_ventana(const char *clase) { gdk_set_program_class(clase); }
 
 static GtkWidget *ventana = NULL;
 
@@ -349,8 +349,9 @@ func main() {
 	prg, cl := cs("friday"), cs(*clase)
 	defer C.free(unsafe.Pointer(prg))
 	defer C.free(unsafe.Pointer(cl))
-	C.identidad(prg, cl)
+	C.nombre_programa(prg)
 	C.gtk_init(nil, nil)
+	C.clase_ventana(cl)
 
 	cu, ct, cd, cc, ci := cs(*uri), cs(*titulo), cs(*datos), cs(cache), cs(*icono)
 	for _, p := range []*C.char{cu, ct, cd, cc, ci} {
