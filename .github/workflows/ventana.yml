@@ -61,3 +61,35 @@ jobs:
             ventana/salida.txt
             ventana/resultado.json
           if-no-files-found: ignore
+
+  voz:
+    # ¿Cómo va a hablar FRIDAY en su propia ventana? WebKitGTK no trae voces del sistema, así que
+    # habla Daniela (Piper), que ya está integrada. Acá se arma una muestra para escucharla.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Bajar Piper y la voz Daniela (lo mismo que baja FRIDAY)
+        run: |
+          curl -sSL -o piper.tar.gz https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz
+          tar xf piper.tar.gz
+          curl -sSL -o daniela.onnx      https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_AR/daniela/high/es_AR-daniela-high.onnx
+          curl -sSL -o daniela.onnx.json https://huggingface.co/rhasspy/piper-voices/resolve/main/es/es_AR/daniela/high/es_AR-daniela-high.onnx.json
+          ls -la piper/piper daniela.onnx
+
+      - name: Hacerla hablar
+        run: |
+          sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg
+          decir() { echo "$2" | ./piper/piper --model daniela.onnx --output_file "$1"; }
+          decir 1-saludo.wav "Buen día, Pedro. Son las nueve y veinte, están veintiún grados y hay sol. Hoy tenés que tomar la pastilla a las once y media, y llamar a Marta a la tarde."
+          decir 2-plata.wav  "Este mes entraron trescientos diez mil pesos y gastaste treinta mil novecientos. Te quedan doscientos setenta y nueve mil cien. El dieciocho pagás la luz."
+          decir 3-corta.wav  "Sí. Dale, lo anoto. Listo, ya está. ¿Querés que te lo recuerde mañana?"
+          decir 4-tareas.wav "A Sofi le toca juntar la caca del perro, y vos llevás tres días seguidos cumpliendo. Mamá va ganando por cinco puntos."
+          for f in *.wav; do ffprobe -v error -show_entries format=duration -of default=nw=1:nk=1 "$f" | xargs printf '%s  %s segundos\n' "$f"; done
+          ffmpeg -v error -i 1-saludo.wav -i 2-plata.wav -i 3-corta.wav -i 4-tareas.wav \
+            -filter_complex "[0][1][2][3]concat=n=4:v=0:a=1[a]" -map "[a]" -c:a libmp3lame -q:a 2 daniela-muestra.mp3
+          ls -la daniela-muestra.mp3
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: voz-daniela
+          path: daniela-muestra.mp3
