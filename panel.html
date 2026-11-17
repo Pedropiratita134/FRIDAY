@@ -607,6 +607,36 @@ body.inapp.talking .win{bottom:calc(var(--dock) + 110px)}
 .podio{display:flex;flex-direction:column;gap:14px;margin-top:8px}
 .pod{display:grid;grid-template-columns:110px 1fr 60px;align-items:center;gap:12px}.pod span{font:600 19px var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pod i{height:18px;border-radius:9px;background:linear-gradient(90deg,#A16207,#FACC15);min-width:8px}.pod b{font:640 24px var(--disp);text-align:right}
 .pod.gold i{box-shadow:0 0 16px rgba(250,204,21,.6)}
+/* ---------- tareas 6.9 ---------- */
+.tsec{margin-top:24px}.tsec:first-child{margin-top:0}
+.tsec h3{display:flex;align-items:baseline;gap:10px}
+.tsec h3 em{font-style:normal;font-size:16px;color:var(--ink-2);font-weight:400}
+.tar .av{position:relative;font-size:28px;background:linear-gradient(150deg,#1d2b45,#16233a);color:#fff;border:1px solid var(--edge-2)}
+.tar .av .who{position:absolute;right:-5px;bottom:-5px;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;font:700 12px/1 var(--text);color:#06101e;border:2px solid #0A1424}
+.tar .meta{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.tar .pill{font-size:13px;padding:2px 9px;border-radius:999px;background:rgba(255,255,255,.08);color:var(--ink-2);white-space:nowrap}
+.tar .pill.yo{background:var(--friday-soft);color:var(--ink)}
+.tar .pill.racha{background:rgba(250,204,21,.18);color:#FDE68A}
+.tar.lista{opacity:.62}
+.tar .mini{border:0;border-radius:14px;padding:9px 14px;font:600 15px var(--text);background:rgba(255,255,255,.1);color:var(--ink);cursor:pointer}
+.tnue{border:1px dashed var(--edge-2);background:none;color:var(--ink-2);border-radius:22px;padding:13px;width:100%;font:600 17px var(--text);cursor:pointer;margin-top:12px}
+.tnue:hover{color:var(--ink);border-color:var(--friday)}
+.tgrupo{margin-top:14px}.tgrupo > b{display:flex;align-items:center;gap:8px;font:600 16px var(--text);color:var(--ink-2);margin-bottom:4px}
+.tgrupo > b i{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font:700 11px/1 var(--text);color:#06101e;font-style:normal}
+/* la fichita para arreglar una tarea */
+.tedbox{width:min(720px,94vw)!important;text-align:left!important;max-height:92vh;overflow:auto}
+.tedbox label{display:block;margin:13px 0 6px;font:600 15px var(--text);color:var(--ink-2)}
+.tedbox input[type=text],.tedbox input[type=time]{width:100%;box-sizing:border-box;padding:13px 16px;border-radius:16px;border:1px solid var(--edge-2);background:var(--card-2);color:var(--ink);font:500 19px var(--text)}
+.tpick{display:flex;flex-wrap:wrap;gap:8px}
+.tpick button{border:1px solid var(--edge-2);background:var(--card-2);color:var(--ink);border-radius:999px;padding:9px 16px;font:600 16px var(--text);cursor:pointer}
+.tpick button.on{background:var(--friday);border-color:var(--friday);color:#04121f}
+.tpick.icos{flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.tpick.icos button{font-size:24px;padding:6px 10px;border-radius:16px;line-height:1.1;flex:0 0 auto}
+.tpts{display:flex;align-items:center;gap:14px}
+.tpts button{width:52px;height:52px;border-radius:50%;border:1px solid var(--edge-2);background:var(--card-2);color:var(--ink);font-size:26px;cursor:pointer}
+.tpts b{font:640 30px var(--disp);min-width:62px;text-align:center}
+.tedbox .eact{display:flex;gap:10px;justify-content:flex-end;margin-top:18px;flex-wrap:wrap;position:sticky;bottom:-26px;background:linear-gradient(180deg,rgba(10,20,36,0),#0A1424 22%);padding:16px 0 4px}
+.tedbox .eact .del{margin-right:auto;color:var(--alert);border-color:rgba(255,107,125,.4)}
 /* ---------- aviso grande ---------- */
 .banner{visibility:hidden;position:fixed;left:50%;top:16px;z-index:30;display:flex;align-items:center;gap:18px;padding:16px 28px 16px 16px;border-radius:28px;background:rgba(17,30,52,.95);box-shadow:0 30px 60px -20px #000, 0 0 0 1px var(--edge-2);
   transform:translate(-50%,-160%);transition:transform .6s cubic-bezier(.2,.9,.25,1.15);max-width:min(860px,92vw)}
@@ -2789,7 +2819,7 @@ Si hay algo, respondé UNA o dos frases cortas, hablándole directo, como lo dir
 // ================================================================ FRIDAY Casa: la tablet de la casa
 // App propia (no necesita la compu). Con la compu prendida suma lo que la compu sabe (avisos, lo que suena),
 // y si no armaste el servicio de Cloudflare, las luces van por la compu.
-const VERSION='6.8';
+const VERSION='6.9';
 const $=id=>document.getElementById(id);
 const LS={ get(k,d){ try{ const v=localStorage.getItem('fp.'+k); return v==null?d:JSON.parse(v); }catch(e){ return d; } },
            set(k,v){ try{ localStorage.setItem('fp.'+k, JSON.stringify(v)); }catch(e){} },
@@ -5026,7 +5056,7 @@ function prompt(){
   if(memory.length) L.push('Lo que sabés de la familia: '+memory.slice(-25).join('; '));
   if(autos.length) L.push('Rutinas con horario (compartidas con la compu y el celu): '+autos.map(a=>`${autoCuando(a)}: ${a.que}${a.on===false?' (pausada)':''}`).join(' · '));
   { const qp=quienPrompt(); if(qp) L.push(qp); }
-  if(tareas.length){ const pt=puntosSemana(); L.push('Tareas de la casa (con turnos y puntos): '+tareas.map(t=>`${t.t} (${t.cada||'diaria'}${t.hora?' '+t.hora:''}; ${tareaToca(t)?(tareaHechaHoy(t)?'hoy ya está hecha':'hoy le toca a '+(tareaTurno(t)||'cualquiera')):'hoy no toca'}; ${t.pts} puntos)`).join('; ')+'. Puntos de la semana: '+(pt.length?pt.map(([n,v])=>n+' '+v).join(', '):'nadie sumó todavía')+'. Si alguien dice que hizo una tarea, marcala con TAREA_HECHA (si no sabés quién fue, preguntá antes).'); }
+  if(tareas.length){ const pt=puntosSemana(); L.push('Tareas de la casa (con turnos y puntos): '+tareas.map(t=>`${t.t} (${t.cada||'diaria'}${t.hora?' '+t.hora:''}; ${tareaToca(t)?(tareaHechaHoy(t)?'hoy ya está hecha':'hoy le toca a '+(tareaTurno(t)||'cualquiera')):'hoy no toca'}; ${t.pts} puntos)`).join('; ')+'. Puntos de la semana: '+(pt.length?pt.map(([n,v])=>n+' '+v).join(', '):'nadie sumó todavía')+'. Si alguien dice que hizo una tarea, marcala con TAREA_HECHA (si no sabés quién fue, preguntá antes). Cuando te pidan anotar una tarea, SIEMPRE poné en TAREA_NUEVA de quién es: si te lo dijeron, el nombre (o los nombres si se turnan); si no te lo dijeron, preguntá "¿de quién es?" ANTES de anotarla, salvo que digan que la hace cualquiera. Si te dictan varias tareas de una, anotá una TAREA_NUEVA por cada una, cada una con su dueño. También pueden arreglarlas a mano tocándolas en la pantalla de Tareas.'); }
   if(cocina) L.push(`MODO COCINA: están haciendo ${cocina.titulo} para ${cocina.porciones} (paso ${cocina.i+1} de ${cocina.pasos.length}${cocina.i>=0?': '+cocina.pasos[cocina.i].t:''}). Si preguntan algo de la receta (reemplazos, cantidades, cómo se hace algo), ayudá como una buena cocinera, corto.`);
   if(est.on) L.push(`MODO ESTUDIO andando: ${est.tema} (${est.pausado?'en pausa':est.fase==='foco'?'tanda '+est.ciclo:'pausa entre tandas'}). Si preguntan algo del tema, explicá como una buena profe: simple y con un ejemplo.`);
   if(fichas.length) L.push(`Fichas de estudio: ${fichas.length} (${fichasHoy().length} para repasar hoy; temas: ${[...new Set(fichas.map(f=>f.tema).filter(Boolean))].slice(0,6).join(', ')}).`);
@@ -5041,7 +5071,7 @@ function prompt(){
   tags.push('[[BUSCAR|consulta]] para datos actuales (resultados, precios, horarios, noticias de algo puntual): no inventes','[[NOTICIAS]] para los titulares de hoy, o [[NOTICIAS|sección o tema]] (deportes, mundo, economía, tecnología, espectáculos, tu ciudad, o un tema como Boca o el dólar): contalos breve, numerados y con el diario');
   if(googleOn() || pcDev()) tags.push('[[EVENTO|título|AAAA-MM-DDTHH:MM|minutos]] para anotar en la agenda','[[EVENTO_BORRAR|cuál]]','[[EVENTO_MOVER|cuál|AAAA-MM-DDTHH:MM o HH:MM]]');
   if(pcDev()) tags.push('[[TELE_LG|prender o apagar o volumen 0-100 o subir o bajar o app Netflix o hdmi 2 o anunciar texto]] (la tele LG la maneja la compu, tiene que estar prendida)');
-  tags.push('[[COCINA|plato|porciones (opcional)]] (receta paso a paso en la pantalla, manos libres)','[[TAREA_NUEVA|qué|diaria o semanal o lun,mie,vie|HH:MM (opcional)|quiénes se turnan, separados por coma|puntos (10 si no dice)]]','[[TAREA_HECHA|cuál|quién la hizo]]','[[TAREA_BORRAR|cuál]]');
+  tags.push('[[COCINA|plato|porciones (opcional)]] (receta paso a paso en la pantalla, manos libres)','[[TAREA_NUEVA|qué|diaria o semanal o lun,mie,vie|HH:MM (opcional)|de quién es: un nombre, o varios separados por coma si se turnan, o "cualquiera"|puntos (10 si no dice)]]','[[TAREA_HECHA|cuál|quién la hizo]]','[[TAREA_BORRAR|cuál]]');
   tags.push('[[AVISAR|compu o celu o todos|mensaje]] (intercom: lo dice en voz alta en el otro aparato)','[[APP|casa o musica o llamar o intercom o estudio o compras o agenda o camara]] (muestra esa app en la pantalla)','[[ESTUDIO|tema|minutos en total (opcional)]] arranca el modo estudio (tandas de 25 y pausas); [[ESTUDIO|terminar]]','[[FICHAS|tema|cantidad]] arma fichas de estudio','[[TOMAR_FICHAS|tema (opcional)]] le toma las fichas en voz alta','[[RESUMEN_SEMANA]]');
   if(pcDev()) tags.push('[[MERCADOLIBRE|producto|precio (solo si quiere lo más barato)]] busca publicaciones REALES de Mercado Libre (con la compu)','[[PRECIO|producto|precio máximo (opcional)]] sigue el precio en Mercado Libre y avisa cuando baja');
   tags.push('[[BUFALABS|idea o problema o felicitacion|el mensaje claro y completo]] le manda a BufaLabs (los que te hicieron) una idea, un problema o un saludo, cuando él te lo pide. Si dice «ojalá pudieras…» o «estaría bueno que…» sobre algo que no sabés hacer, ofrecé mandárselo como idea y usá la marca solo si dice que sí');
@@ -5605,7 +5635,7 @@ function syncLocal(){
   for(const a of autos) o['u:'+a.id]={hora:a.hora, dias:a.dias, que:a.que, on:a.on!==false};
   for(const x of segs) o['f:'+x.id]={f:x.f, q:x.q, done:!!x.done};
   for(const f of fichas) o['y:'+f.id]={q:f.q, a:f.a, tema:f.tema||'', box:f.box||1, due:f.due||''};
-  for(const t of tareas) o['z:'+t.id]={t:t.t, cada:t.cada||'diaria', hora:t.hora||'', rota:t.rota||[], pts:t.pts||10, turno:t.turno||0, hechos:(t.hechos||[]).slice(-40)};
+  for(const t of tareas) o['z:'+t.id]={t:t.t, ic:t.ic||'', cada:t.cada||'diaria', hora:t.hora||'', rota:t.rota||[], pts:t.pts||10, turno:t.turno||0, hechos:(t.hechos||[]).slice(-40)};
   for(const p of precios) o['w:'+p.id]={q:p.q, max:p.max||0, last:p.last||0, min:p.min||0, title:p.title||'', url:p.url||'', img:p.img||'', at:p.at||0, hist:(p.hist||[]).slice(-10)};
   return o;
 }
@@ -6635,17 +6665,65 @@ function semIni(d){ d=new Date(d||Date.now()); d.setHours(0,0,0,0); d.setDate(d.
 function tareaToca(t, d){ d=d||new Date(); const c=norm(t.cada||'diaria'); if(/diar|todos/.test(c)) return true; if(/seman/.test(c)) return true; return c.split(/[ ,]+/).some(x=>DIAS_C.indexOf(x.slice(0,3))===d.getDay()); }
 function tareaHechaHoy(t, d){ d=d||new Date(); const c=norm(t.cada||''); const ini=/seman/.test(c)?semIni(d):new Date(d).setHours(0,0,0,0); return (t.hechos||[]).some(h=>h[1]>=ini); }
 const tareaTurno=t=>(t.rota&&t.rota.length)?t.rota[(t.turno||0)%t.rota.length]:'';
+// un dibujito para cada tarea, sacado de lo que dice (se puede cambiar a mano tocándola)
+const TAR_ICOS=[[/\b(perr|caca|mascota|gat|pase[ao]|pasear)/,'🐶'],[/\b(plato|vajilla|lavar la loza|fregadero)/,'🍽️'],[/\b(cama|sabana|acostar|almohada)/,'🛏️'],[/\b(ropa|lavarropa|tender|doblar|plancha|lavar la ropa)/,'👕'],[/\b(basura|tacho|residuo|reciclaj)/,'🗑️'],[/\b(barrer|piso|trapear|baldear|aspirar|limpiar|ordenar|acomodar)/,'🧹'],[/\b(bano|inodoro|ducha|toalla)/,'🚽'],[/\b(planta|regar|jardin|pasto|cesped|flores)/,'🪴'],[/\b(auto|nafta|lavar el coche)/,'🚗'],[/\b(mesa|poner la mesa|levantar la mesa|servir)/,'🍴'],[/\b(estudiar|deberes|escuela|leer|repasar)/,'📚'],[/\b(compra|super|mandado|almacen)/,'🛒'],[/\b(pecera|pajaro|jaula|conejo)/,'🐾'],[/\b(diente|cepillar)/,'🪥'],[/\b(juguete|pieza|cuarto|habitacion)/,'🧸'],[/\b(paquete|correo|encomienda)/,'📦'],[/\b(mate|cebar|termo)/,'🧉'],[/\b(cocinar|comida|cena|almuerzo|merienda)/,'🍳'],[/\b(heladera|freezer|alacena)/,'🧊'],[/\b(abuel|visita|llamar)/,'📞']];
+const TAR_PALETA=['🧽','🐶','🍽️','🛏️','👕','🗑️','🧹','🚽','🪴','🚗','🍴','📚','🛒','🐾','🧸','📦','🧉','🍳','🧊','📞','💧','🔌','🪟','🧺'];
+function tareaIco(t){ if(t && t.ic) return t.ic; const n=norm((t&&t.t)||''); for(const [re,e] of TAR_ICOS) if(re.test(n)) return e; return '🧽'; }
+// un color propio para cada uno, siempre el mismo
+function tarColor(n){ let h=0; const x=norm(n||''); for(let i=0;i<x.length;i++) h=(h*31+x.charCodeAt(i))%360; return `hsl(${h} 72% 62%)`; }
+function tareaQuienTxt(t){ const r=t.rota||[]; if(!r.length) return 'Cualquiera'; if(r.length===1) return r[0]; const q=tareaTurno(t); return `${q} (se turnan ${listaY(r)})`; }
+// cuántos días seguidos se viene cumpliendo
+function tareaRacha(t){
+  const h=(t.hechos||[]).map(x=>{ const d=new Date(x[1]); d.setHours(0,0,0,0); return d.getTime(); });
+  if(!h.length) return 0;
+  const dias=[...new Set(h)].sort((a,b)=>b-a), hoy=new Date(); hoy.setHours(0,0,0,0);
+  let n=0, d=hoy.getTime();
+  if(dias[0]!==d){ d-=86400000; if(dias[0]!==d) return 0; }
+  for(const x of dias){ if(x===d){ n++; d-=86400000; } else if(x<d) break; }
+  return n;
+}
+function tareaUltimo(t){ const h=(t.hechos||[]); return h.length?h[h.length-1]:null; }
+function tareasHechasHoy(){ return tareas.filter(t=>tareaToca(t) && tareaHechaHoy(t)); }
+function tareasOtrosDias(){ return tareas.filter(t=>!tareaToca(t)); }
+// deshacer: me equivoqué y la marqué
+function tareaDesmarcar(t){
+  const h=(t.hechos||[]); if(!h.length) return; h.pop(); t.turno=Math.max(0,(t.turno||0)-1); tareasSave(); renderApps();
+}
 function tareasHoy(){ return tareas.filter(t=>tareaToca(t) && !tareaHechaHoy(t)); }
 function tareasDe(n){ return tareasHoy().filter(t=>norm(tareaTurno(t))===norm(n)); }
 function tareaBuscar(q){ const n=norm(q); return tareas.find(t=>norm(t.t)===n) || tareas.find(t=>norm(t.t).includes(n)||n.includes(norm(t.t))) || tareas.map(t=>[t, simil(t.t, q)]).filter(x=>x[1]>=0.5).sort((a,b)=>b[1]-a[1]).map(x=>x[0])[0]; }
+// de quién es la tarea, cuando viene metido en el propio texto («la caca del perro la hace Sofi»)
+function tareaGenteDe(texto){
+  const f=FAM(); if(!f.miembros.length) return {texto, rota:[]};
+  const nombres=f.miembros.map(m=>norm(m)).join('|');
+  const re=new RegExp('\\s*(?:,|\\.|;)?\\s*\\b(?:que )?(?:la |lo |las |los )?(?:hace|hacen|haga|hagan|le toca a|les toca a|toca a|es de|son de|para|entre|se turnan|turnan|a cargo de|responsable:?)\\s+((?:'+nombres+')(?:\\s*(?:,|y|e)\\s*(?:'+nombres+'))*)\\s*$','i');
+  const n=norm(texto), m=n.match(re);
+  if(!m) return {texto, rota:[]};
+  const rota=m[1].split(/\s*(?:,|\by\b|\be\b)\s*/).map(x=>x.trim()).filter(Boolean)
+    .map(x=>f.miembros.find(mm=>norm(mm)===x)).filter(Boolean);
+  if(!rota.length) return {texto, rota:[]};
+  // le sacamos esa parte al texto, respetando los acentos del original
+  const corte=n.length-m[0].length;
+  return {texto:String(texto).slice(0, corte).replace(/[\s,.;]+$/,'').trim() || texto, rota:[...new Set(rota)]};
+}
 function tareaNueva(texto, cada, hora, personas, pts){
   texto=String(texto||'').trim(); if(!texto) return 'No entendí la tarea.';
-  const f=FAM(); let rota=String(personas||'').split(/,|\by\b/).map(s=>s.trim()).filter(Boolean).map(p=>f.miembros.find(m=>norm(m)===norm(p))||p.charAt(0).toUpperCase()+p.slice(1));
-  if(!rota.length && /todos|familia/.test(norm(personas||''))) rota=f.miembros.slice();
+  const f=FAM(), crudo=norm(personas||'');
+  // «cualquiera», «todos» y compañía no son nombres de nadie
+  const NADIE=/^(cualquiera|nadie|quien pueda|el que pueda|la que pueda|sin dueno|ninguno|-)$/;
+  const TODOS=/^(todos|todas|la familia|familia|entre todos)$/;
+  let rota=String(personas||'').split(/,|y/).map(x=>x.trim()).filter(Boolean)
+    .filter(p=>!NADIE.test(norm(p)) && !TODOS.test(norm(p)))
+    .map(p=>f.miembros.find(m=>norm(m)===norm(p))||p.charAt(0).toUpperCase()+p.slice(1));
+  if(!rota.length && TODOS.test(crudo)) rota=f.miembros.slice();
+  // si no dijeron de quién es, puede estar metido en el propio texto («...la hace Sofi»)
+  if(!rota.length && !NADIE.test(crudo) && !TODOS.test(crudo)){ const g=tareaGenteDe(texto); if(g.rota.length){ texto=g.texto; rota=g.rota; } }
   const h=(String(hora||'').match(/(\d{1,2})(?::(\d{2}))?/)||[]); const hh=h[1]?z2(Math.min(23,+h[1]))+':'+(h[2]||'00'):'';
   const ex=tareaBuscar(texto); const t=ex||{id:'z'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), hechos:[], turno:0};
   Object.assign(t, {t:texto.charAt(0).toUpperCase()+texto.slice(1), cada:cada||'diaria', hora:hh, rota, pts:Math.max(1,Math.min(100,parseInt(pts)||10))}); if(!ex) tareas.push(t);
-  tareasSave(); return `Anoté «${t.t}»${rota.length?`: se turnan ${listaY(rota)}`:''}${hh?`, a las ${hh}`:''}, y vale ${t.pts} puntos.`;
+  tareasSave();
+  const dq = rota.length>1 ? `: se turnan ${listaY(rota)}` : rota.length===1 ? `: la hace ${rota[0]}` : ': la puede hacer cualquiera';
+  return `Anoté «${t.t}»${dq}${hh?`, a las ${hh}`:''}, y vale ${t.pts} puntos.${rota.length?'':' Si es de alguien en particular, decímelo y la cambio.'}`;
 }
 function tareaMarcar(t, n){
   const f=FAM(); n=n?(f.miembros.find(m=>norm(m)===norm(n))||n):tareaTurno(t)||quien.cur||'Alguien';
@@ -6666,12 +6744,139 @@ function tareasFast(text, nf){
   if(/\b(que (me )?toca( hacer)?( hoy)?|mis tareas|que tareas hay)\b/.test(nf)){ const n=quien.cur, l=n?tareasDe(n):tareasHoy(); sayFast(text, l.length?(n?`${n}, hoy te toca ${listaY(l.map(x=>x.t.toLowerCase()))}.`:'Hoy toca: '+l.map(x=>`${x.t.toLowerCase()}${tareaTurno(x)?' ('+tareaTurno(x)+')':''}`).join(', ')+'.'):(n?`${n}, hoy no tenés nada. ¡Libre!`:'Hoy no queda ninguna tarea.'), 'happy'); focusCard('tareas'); return true; }
   return false;
 }
+// una tarjeta de tarea, con su dibujo y de quién es
+function tarCard(t, hecha){
+  const q=tareaTurno(t), r=t.rota||[], yo=q && quien.cur && norm(q)===norm(quien.cur);
+  const col=q?tarColor(q):'', racha=tareaRacha(t), u=tareaUltimo(t);
+  const pills=[];
+  const mismaPersona = hecha && u && q && norm(u[0])===norm(q);
+  if(r.length && !mismaPersona) pills.push(`<span class="pill${yo&&!hecha?' yo':''}">${yo&&!hecha?'Te toca a vos':'Le toca a '+esc(q)}${r.length>1?' · se turnan':''}</span>`);
+  else if(!r.length) pills.push('<span class="pill">Cualquiera</span>');
+  if(t.hora) pills.push(`<span class="pill">${esc(t.hora)}</span>`);
+  pills.push(`<span class="pill">${t.pts} puntos</span>`);
+  if(racha>=2 && !hecha) pills.push(`<span class="pill racha">🔥 ${racha} días seguidos</span>`);
+  if(hecha && u) pills.push(`<span class="pill">La hizo ${esc(u[0])}</span>`);
+  return `<div class="tar${hecha?' lista':''}" data-tedit="${esc(t.id)}">
+    <span class="av">${tareaIco(t)}${q?`<i class="who" style="background:${col}">${esc(q[0].toUpperCase())}</i>`:''}</span>
+    <div><b>${esc(t.t)}</b><div class="meta">${pills.join('')}</div></div>
+    ${hecha
+      ? `<button class="mini" type="button" data-tundo="${esc(t.id)}">Deshacer</button>`
+      : `<button class="big-btn" type="button" data-tdone="${esc(t.id)}" style="background:#FACC15;color:#1f1802">Hecha</button>`}
+  </div>`;
+}
 function renderTareas(){
-  const el=$('pTar'); if(!el) return; const hoy=tareasHoy(), p=puntosSemana(), max=Math.max(1,...p.map(x=>x[1]));
-  const html=`<div class="cols"><div><h3>Hoy</h3>${hoy.length?`<div class="tars">${hoy.map(t=>{ const q=tareaTurno(t); return `<div class="tar"><span class="av">${esc((q||'?')[0])}</span><div><b>${esc(t.t)}</b><small>${q?'Le toca a '+esc(q):'Cualquiera'}${t.hora?' · '+t.hora:''} · ${t.pts} puntos</small></div><button class="big-btn" type="button" data-tdone="${esc(t.id)}" style="background:#FACC15;color:#1f1802">Hecha</button></div>`; }).join('')}</div>`:`<p class="empty">${tareas.length?'¡Todo hecho por hoy! 🎉':'Todavía no hay tareas. Decí <q>Agregá la tarea lavar los platos todos los días a las 21, entre Sofi y Pedro</q>.'}</p>`}
-      ${tareas.length?`<h3 style="margin-top:22px">Todas</h3><div class="tall">${tareas.map(t=>`<div class="trow"><span>${esc(t.t)}</span><small>${esc(t.cada||'diaria')}${t.hora?' '+t.hora:''}${t.rota&&t.rota.length?' · '+esc(t.rota.join(', ')):''}</small><button type="button" data-tdel="${esc(t.id)}" aria-label="Borrar">×</button></div>`).join('')}</div>`:''}</div>
-    <div class="box"><h3>Puntos de la semana</h3>${p.length?`<div class="podio">${p.map(([n,v],i)=>`<div class="pod${i===0?' gold':''}"><span>${i===0?'👑':''}${esc(n)}</span><i style="width:${Math.round(v/max*100)}%"></i><b>${v}</b></div>`).join('')}</div>`:'<p class="empty">Nadie sumó todavía esta semana. Cada tarea hecha suma puntos; si hacés la de otro, ¡5 de yapa! El domingo se anuncia quién ganó.</p>'}</div></div>`;
+  const el=$('pTar'); if(!el) return;
+  const hoy=tareasHoy(), listas=tareasHechasHoy(), otras=tareasOtrosDias();
+  const p=puntosSemana(), max=Math.max(1,...p.map(x=>x[1])), f=FAM();
+  // «Todas», agrupadas por de quién son
+  const grupos=[];
+  for(const m of f.miembros){ const l=tareas.filter(t=>(t.rota||[]).some(x=>norm(x)===norm(m))); if(l.length) grupos.push([m, l]); }
+  const sinDue=tareas.filter(t=>!(t.rota||[]).length);
+  if(sinDue.length) grupos.push(['', sinDue]);
+
+  const secHoy = `<div class="tsec"><h3>Hoy ${hoy.length?`<em>${hoy.length} ${hoy.length===1?'tarea':'tareas'}</em>`:''}</h3>${
+    hoy.length ? `<div class="tars">${hoy.map(t=>tarCard(t,false)).join('')}</div>`
+    : `<p class="empty">${tareas.length?(listas.length?'¡Listo todo por hoy! 🎉':'Hoy no toca ninguna.'):'Todavía no hay tareas. Tocá «Agregar una tarea», o decime <q>Agregá la tarea lavar los platos todos los días a las 21, la hacen Sofi y Pedro</q>.'}</p>`}
+    <button class="tnue" type="button" data-tnew="1">＋ Agregar una tarea</button></div>`;
+
+  const secListas = listas.length ? `<div class="tsec"><h3>Ya está hecho <em>${listas.length}</em></h3><div class="tars">${listas.map(t=>tarCard(t,true)).join('')}</div></div>` : '';
+
+  const secOtras = otras.length ? `<div class="tsec"><h3>Otros días <em>${otras.length}</em></h3><div class="tars">${otras.map(t=>{
+      const q=tareaTurno(t);
+      return `<div class="tar lista" data-tedit="${esc(t.id)}"><span class="av">${tareaIco(t)}${q?`<i class="who" style="background:${tarColor(q)}">${esc(q[0].toUpperCase())}</i>`:''}</span><div><b>${esc(t.t)}</b><div class="meta"><span class="pill">${esc(tareaCuandoTxt(t))}</span>${q?`<span class="pill">${esc(q)}</span>`:''}</div></div></div>`;
+    }).join('')}</div></div>` : '';
+
+  const secTodas = tareas.length ? `<div class="tsec"><h3>Todas <em>tocá una para arreglarla</em></h3>${grupos.map(([m,l])=>`
+      <div class="tgrupo"><b>${m?`<i style="background:${tarColor(m)}">${esc(m[0].toUpperCase())}</i>${esc(m)}`:'Sin dueño'} · ${l.length}</b>
+      <div class="tall">${l.map(t=>`<div class="trow" data-tedit="${esc(t.id)}"><span>${tareaIco(t)} ${esc(t.t)}</span><small>${esc(tareaCuandoTxt(t))} · ${t.pts} pts</small><button type="button" data-tdel="${esc(t.id)}" aria-label="Borrar">×</button></div>`).join('')}</div></div>`).join('')}</div>` : '';
+
+  const podio = p.length
+    ? `<div class="podio">${p.map(([n,v],i)=>`<div class="pod${i===0?' gold':''}"><span>${['👑 ','🥈 ','🥉 '][i]||''}${esc(n)}</span><i style="width:${Math.round(v/max*100)}%;background:${i===0?'linear-gradient(90deg,#A16207,#FACC15)':tarColor(n)}"></i><b>${v}</b></div>`).join('')}${
+        p.length>1 && p[0][1]>p[1][1] ? `<p class="empty" style="margin-top:6px">${esc(p[1][0])} está a ${p[0][1]-p[1][1]} puntos de alcanzar a ${esc(p[0][0])}.</p>` : ''}</div>`
+    : '<p class="empty">Nadie sumó todavía esta semana. Cada tarea hecha suma puntos; si hacés la de otro, ¡5 de yapa! El domingo se anuncia quién ganó.</p>';
+
+  const html=`<div class="cols"><div>${secHoy}${secListas}${secOtras}${secTodas}</div>
+    <div class="box"><h3>Puntos de la semana</h3>${podio}</div></div>`;
   if(el.dataset.h!==html){ el.dataset.h=html; el.innerHTML=html; }
+}
+function tareaCuandoTxt(t){
+  const c=String(t.cada||'diaria'), n=norm(c);
+  const base = /diar|todos/.test(n) ? 'Todos los días' : /seman/.test(n) ? 'Una vez por semana'
+    : c.split(/[ ,]+/).filter(Boolean).map(x=>({lun:'lunes',mar:'martes',mie:'miércoles',jue:'jueves',vie:'viernes',sab:'sábado',dom:'domingo'})[norm(x).slice(0,3)]||x).join(', ');
+  return base + (t.hora?' a las '+t.hora:'');
+}
+
+// ---------------------------------------------------------------- la fichita para arreglar una tarea
+let ted=null;
+function tedShow(id){
+  const t = id ? tareas.find(x=>x.id===id) : null;
+  ted = t ? {id:t.id, t:t.t, ic:t.ic||'', cada:t.cada||'diaria', hora:t.hora||'', rota:(t.rota||[]).slice(), pts:t.pts||10}
+          : {id:'', t:'', ic:'', cada:'diaria', hora:'', rota:[], pts:10};
+  let d=$('ted');
+  if(!d){ d=document.createElement('div'); d.id='ted'; d.className='enr'; document.body.appendChild(d);
+    d.addEventListener('click', e=>{ if(e.target===d) tedCerrar(); }); }
+  tedPaint();
+}
+function tedCerrar(){ const d=$('ted'); if(d) d.remove(); ted=null; }
+function tedPaint(){
+  const d=$('ted'); if(!d||!ted) return;
+  const f=FAM(), dias=[['lun','L'],['mar','M'],['mie','M'],['jue','J'],['vie','V'],['sab','S'],['dom','D']];
+  const n=norm(ted.cada), esDias=!/diar|todos|seman/.test(n), sueltos=esDias?ted.cada.split(/[ ,]+/).map(x=>norm(x).slice(0,3)).filter(Boolean):[];
+  d.innerHTML=`<div class="ebox tedbox">
+    <h3>${ted.id?'Arreglar la tarea':'Una tarea nueva'}</h3>
+    <label for="tedT">¿Qué hay que hacer?</label>
+    <input type="text" id="tedT" value="${esc(ted.t)}" placeholder="Juntar la caca del perro" autocomplete="off">
+    <label>El dibujito</label>
+    <div class="tpick icos" id="tedIc">${TAR_PALETA.map(e=>`<button type="button" data-ic="${e}" class="${(ted.ic||tareaIco({t:ted.t}))===e?'on':''}">${e}</button>`).join('')}</div>
+    <label>¿De quién es?</label>
+    <div class="tpick" id="tedQ">
+      <button type="button" data-q="" class="${ted.rota.length?'':'on'}">Cualquiera</button>
+      ${f.miembros.map(m=>`<button type="button" data-q="${esc(m)}" class="${ted.rota.some(x=>norm(x)===norm(m))?'on':''}">${esc(m)}</button>`).join('')}
+    </div>
+    ${f.miembros.length?`<p class="empty" style="margin:6px 0 0">${ted.rota.length>1?'Se van a turnar en ese orden.':ted.rota.length?'Siempre le toca a '+esc(ted.rota[0])+'.':'La puede hacer cualquiera y suma igual.'}</p>`:'<p class="empty" style="margin:6px 0 0">Para repartirlas, primero agregá a la familia en Ajustes.</p>'}
+    <label>¿Cada cuánto?</label>
+    <div class="tpick" id="tedC">
+      <button type="button" data-c="diaria" class="${/diar|todos/.test(n)?'on':''}">Todos los días</button>
+      <button type="button" data-c="semanal" class="${/seman/.test(n)?'on':''}">Una vez por semana</button>
+      ${dias.map(([k,l])=>`<button type="button" data-cd="${k}" class="${sueltos.includes(k)?'on':''}">${l}</button>`).join('')}
+    </div>
+    <label for="tedH">¿A qué hora te la recuerdo? (si no, no te la recuerdo)</label>
+    <input type="time" id="tedH" value="${esc(ted.hora)}">
+    <label>¿Cuántos puntos vale?</label>
+    <div class="tpts"><button type="button" data-pts="-5">−</button><b id="tedP">${ted.pts}</b><button type="button" data-pts="5">＋</button>
+      <span class="empty">Las más pesadas, más puntos.</span></div>
+    <div class="eact">
+      ${ted.id?'<button class="big-btn alt del" type="button" id="tedDel">Borrar</button>':''}
+      <button class="big-btn alt" type="button" id="tedX">Cancelar</button>
+      <button class="big-btn" type="button" id="tedOk" style="background:#FACC15;color:#1f1802">Guardar</button>
+    </div></div>`;
+  $('tedT').oninput=e=>{ ted.t=e.target.value; };
+  $('tedH').onchange=e=>{ ted.hora=e.target.value||''; };
+  $('tedIc').onclick=e=>{ const b=e.target.closest('[data-ic]'); if(!b) return; ted.ic=b.dataset.ic; tedPaint(); };
+  $('tedQ').onclick=e=>{ const b=e.target.closest('[data-q]'); if(!b) return; const v=b.dataset.q;
+    if(!v) ted.rota=[]; else { const i=ted.rota.findIndex(x=>norm(x)===norm(v)); if(i>=0) ted.rota.splice(i,1); else ted.rota.push(v); }
+    tedPaint(); };
+  $('tedC').onclick=e=>{ const b=e.target.closest('[data-c],[data-cd]'); if(!b) return;
+    if(b.dataset.c) ted.cada=b.dataset.c;
+    else { const k=b.dataset.cd, act=norm(ted.cada), l=/diar|todos|seman/.test(act)?[]:ted.cada.split(/[ ,]+/).map(x=>norm(x).slice(0,3)).filter(Boolean);
+      const i=l.indexOf(k); if(i>=0) l.splice(i,1); else l.push(k);
+      ted.cada = l.length ? ['lun','mar','mie','jue','vie','sab','dom'].filter(x=>l.includes(x)).join(',') : 'diaria'; }
+    tedPaint(); };
+  d.querySelector('.tpts').onclick=e=>{ const b=e.target.closest('[data-pts]'); if(!b) return;
+    ted.pts=Math.max(5, Math.min(100, ted.pts + (+b.dataset.pts))); $('tedP').textContent=ted.pts; };
+  $('tedX').onclick=tedCerrar;
+  $('tedOk').onclick=tedGuardar;
+  const del=$('tedDel'); if(del) del.onclick=()=>{ const x=ted.id; tedCerrar(); tareas=tareas.filter(y=>y.id!==x); tareasSave(); toast('Borré la tarea'); };
+  setTimeout(()=>{ try{ if(!ted.id) $('tedT').focus(); }catch(e){} }, 60);
+}
+function tedGuardar(){
+  if(!ted) return;
+  const txt=String(ted.t||'').trim();
+  if(!txt){ toast('Poné qué hay que hacer'); try{ $('tedT').focus(); }catch(e){} return; }
+  let t = ted.id ? tareas.find(x=>x.id===ted.id) : null;
+  if(!t){ t={id:'z'+Date.now().toString(36)+Math.random().toString(36).slice(2,5), hechos:[], turno:0}; tareas.push(t); }
+  Object.assign(t, {t:txt.charAt(0).toUpperCase()+txt.slice(1), ic:ted.ic||'', cada:ted.cada||'diaria', hora:ted.hora||'', rota:ted.rota.slice(), pts:Math.max(1,Math.min(100,ted.pts||10))});
+  tareasSave(); renderApps(); tedCerrar(); toast('Listo');
 }
 
 // ---------------------------------------------------------------- toques
@@ -6683,8 +6888,11 @@ document.addEventListener('click', e=>{
     else if(a==='ant') cocPaso(cocina.i-1); else if(a==='rep'){ if(cocina.i<0) cocinaIngredientes(); else cocPaso(cocina.i); } else if(a==='timer') say(cocTimer()); return; }
   const pr=t.closest('[data-porc]'); if(pr && cocina){ cocina.porciones=Math.max(1, Math.min(30, cocina.porciones+(+pr.dataset.porc))); cocSave(); renderCocina(); return; }
   const ig=t.closest('[data-ing]'); if(ig && cocina){ const x=cocina.ingredientes[+ig.dataset.ing]; if(x){ x.ok=!x.ok; cocSave(); renderCocina(); } return; }
-  const td=t.closest('[data-tdone]'); if(td){ const x=tareas.find(y=>y.id===td.dataset.tdone); if(x){ const r=tareaMarcar(x); say(`¡Bien, ${r.n}! Sumaste ${r.pts} puntos.`, 'excited'); } return; }
-  const tx=t.closest('[data-tdel]'); if(tx){ tareas=tareas.filter(y=>y.id!==tx.dataset.tdel); tareasSave(); return; }
+  const td=t.closest('[data-tdone]'); if(td){ e.stopPropagation(); const x=tareas.find(y=>y.id===td.dataset.tdone); if(x){ const r=tareaMarcar(x); say(`¡Bien, ${r.n}! Sumaste ${r.pts} puntos.`, 'excited'); } return; }
+  const tu=t.closest('[data-tundo]'); if(tu){ e.stopPropagation(); const x=tareas.find(y=>y.id===tu.dataset.tundo); if(x){ tareaDesmarcar(x); toast('Listo, la puse de nuevo en Hoy'); } return; }
+  const tx=t.closest('[data-tdel]'); if(tx){ e.stopPropagation(); tareas=tareas.filter(y=>y.id!==tx.dataset.tdel); tareasSave(); return; }
+  const tn=t.closest('[data-tnew]'); if(tn){ tedShow(''); return; }
+  const te=t.closest('[data-tedit]'); if(te){ tedShow(te.dataset.tedit); return; }
   const ec=t.closest('[data-enr-cara]'); if(ec){ setsShow(false); enrShow(ec.dataset.enrCara, 'cara'); return; }
   const ev=t.closest('[data-enr-voz]'); if(ev){ setsShow(false); enrShow(ev.dataset.enrVoz, 'voz'); return; }
   const ed=t.closest('[data-enr-del]'); if(ed){ delete quien.caras[ed.dataset.enrDel]; delete quien.voces[ed.dataset.enrDel]; quienSave(); quienRender(); toast('Olvidé la cara y la voz de '+ed.dataset.enrDel); return; }

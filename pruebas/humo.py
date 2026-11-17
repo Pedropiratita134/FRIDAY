@@ -155,6 +155,52 @@ async def main():
     ok(f'Casa {v} arranca', await p.evaluate("!!document.getElementById('dock')"))
     await p.evaluate("try{ document.getElementById('tap').click(); }catch(e){}"); await p.wait_for_timeout(2500)
     ok('Casa: escenas en el inicio', await p.evaluate("document.querySelectorAll('#ctl .esc').length") > 0)
+    # las tareas de la casa (6.9): de quién es cada una, las secciones y la fichita
+    t = await p.evaluate("""()=>{
+      const out={};
+      S.familia={apellido:'Bufalo', miembros:['Pedro','Sofi','Mamá']}; saveS();
+      tareas=[]; LS.set('tareas',[]);
+      // dictada con el dueño adentro del texto, que es como habla la gente
+      tareaNueva('juntar la caca del perro la hace Sofi', 'diaria', '', '', 10);
+      const t1=tareas[0];
+      out.saca = t1.t==='Juntar la caca del perro' && (t1.rota||[]).join()==='Sofi';
+      // y con el campo de siempre, turnándose
+      tareaNueva('lavar los platos', 'diaria', '21', 'Pedro, Sofi', 20);
+      const t2=tareaBuscar('lavar los platos');
+      out.turnan = (t2.rota||[]).join()==='Pedro,Sofi' && t2.hora==='21:00' && t2.pts===20;
+      // «cualquiera» se respeta
+      tareaNueva('regar las plantas', 'semanal', '', 'cualquiera', 10);
+      out.cualquiera = (tareaBuscar('regar las plantas').rota||[]).length===0;
+      // el dibujito sale solo de lo que dice la tarea
+      out.ico = tareaIco(t1)==='🐶' && tareaIco(t2)==='🍽️' && tareaIco({t:'cualquier cosa'})==='🧽';
+      // la pantalla, con sus secciones
+      osOpen('tareas'); renderTareas();
+      const h=document.getElementById('pTar').textContent;
+      out.secciones = h.includes('Hoy') && h.includes('Todas') && h.includes('Sofi');
+      out.sinInterrogante = !h.includes('?');
+      // marcar y deshacer
+      const antes=tareas.find(x=>x.id===t1.id).hechos.length;
+      tareaMarcar(t1, 'Sofi'); const medio=t1.hechos.length;
+      tareaDesmarcar(t1);
+      out.deshacer = antes===0 && medio===1 && t1.hechos.length===0 && t1.turno===0;
+      // la fichita
+      tedShow(t1.id);
+      out.ficha = !!document.getElementById('tedT') && document.getElementById('tedT').value==='Juntar la caca del perro'
+        && document.querySelectorAll('#tedQ button').length===4;
+      ted.rota=['Mamá']; ted.pts=25; tedGuardar();
+      const t1b=tareas.find(x=>x.id===t1.id);
+      out.guarda = (t1b.rota||[]).join()==='Mamá' && t1b.pts===25 && !document.getElementById('ted');
+      return out;
+    }""")
+    ok('Casa: saca de quién es del texto dictado', t['saca'])
+    ok('Casa: anota turnos, hora y puntos', t['turnan'])
+    ok('Casa: respeta «cualquiera»', t['cualquiera'])
+    ok('Casa: cada tarea con su dibujito', t['ico'])
+    ok('Casa: las tareas van por secciones', t['secciones'])
+    ok('Casa: ya no quedan con «?»', t['sinInterrogante'])
+    ok('Casa: se puede deshacer una tarea marcada', t['deshacer'])
+    ok('Casa: la fichita abre con lo que había', t['ficha'])
+    ok('Casa: y guarda de quién es y los puntos', t['guarda'])
     ok('Casa: sin errores de JS', not errs, errs[:3])
     await c.close(); await b.close(); await pw.stop()
 
