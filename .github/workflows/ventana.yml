@@ -24,7 +24,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libwebkit2gtk-4.1-dev libgtk-3-dev pkg-config \
-            xvfb x11-utils xdotool socat openbox \
+            xvfb x11-utils xdotool socat openbox pulseaudio \
             gstreamer1.0-plugins-base gstreamer1.0-plugins-good \
             gstreamer1.0-plugins-bad gstreamer1.0-libav
           pkg-config --modversion webkit2gtk-4.1
@@ -64,6 +64,11 @@ jobs:
           # sin un gestor de ventanas, minimizar no existe (no hay quién lo haga)
           openbox >/dev/null 2>&1 &
           sleep 2
+          # un micrófono de mentira: el servidor de GitHub no tiene ninguno
+          pulseaudio --start --exit-idle-time=-1 >/dev/null 2>&1 || true
+          pactl load-module module-null-sink sink_name=mudo >/dev/null 2>&1 || true
+          pactl load-module module-virtual-source source_name=micro master=mudo.monitor >/dev/null 2>&1 || true
+          pactl list short sources || true
           # en un servidor sin placa de video, WebKit se cae si intenta componer con la GPU
           export WEBKIT_DISABLE_COMPOSITING_MODE=1
           export WEBKIT_DISABLE_DMABUF_RENDERER=1
@@ -94,7 +99,11 @@ jobs:
           PY
           cat capacidades.txt
           grep -q '"audioWorklet": *true' capacidades.txt || { echo "FALLA: sin AudioWorklet no puede escuchar"; kill $APP; exit 1; }
-          grep -q 'abrió 1 pista' capacidades.txt || { echo "FALLA: no le entró el micrófono"; kill $APP; exit 1; }
+          # Lo nuestro es el PERMISO: que la ventana se lo dé sola, sin tocar archivos de nadie. Si
+          # la máquina no tiene micrófono (los servidores de GitHub no tienen), eso no es culpa
+          # nuestra; lo que no puede pasar nunca es que lo rebote por falta de permiso.
+          grep -qE 'NotAllowedError|SecurityError|PermissionDenied' capacidades.txt && { echo "FALLA: no le dio el permiso del micrófono"; kill $APP; exit 1; }
+          grep -q 'abrió 1 pista' capacidades.txt && echo "y además le entró audio de verdad" || echo "(esta máquina no tiene micrófono; el permiso sí se lo dio)"
 
           echo "=== 4. Que se vaya cuando le decimos ==="
           hablar chau

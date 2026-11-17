@@ -346,7 +346,10 @@ func main() {
 	}
 
 	cs := func(s string) *C.char { return C.CString(s) }
-	prg, cl := cs("friday"), cs(*clase)
+	// El nombre va en mayúsculas a propósito: GTK saca de él la «clase» de la ventana (lo que mira
+	// la barra de tareas) y la escribe con la primera letra sola en mayúscula. Poniéndolo así, la
+	// clase queda FRIDAY tal cual, que es lo que dice nuestro .desktop.
+	prg, cl := cs(*clase), cs(*clase)
 	defer C.free(unsafe.Pointer(prg))
 	defer C.free(unsafe.Pointer(cl))
 	C.nombre_programa(prg)
