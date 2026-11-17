@@ -170,8 +170,8 @@ func main() {
 	prg, clase := C.CString("friday"), C.CString("FRIDAY")
 	defer C.free(unsafe.Pointer(prg))
 	defer C.free(unsafe.Pointer(clase))
-	C.gtk_init(nil, nil)
 	C.identidad(prg, clase)
+	C.gtk_init(nil, nil)
 
 	cu := C.CString(uri)
 	defer C.free(unsafe.Pointer(cu))

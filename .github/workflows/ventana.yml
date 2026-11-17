@@ -38,7 +38,6 @@ jobs:
           Xvfb :99 -screen 0 1280x800x24 >/dev/null 2>&1 &
           sleep 2
           export DISPLAY=:99
-          export WEBKIT_MOCK_CAPTURE_DEVICES=1   # un micrófono de mentira, que el servidor no tiene placa de sonido
           ./friday-ventana > salida.txt 2>&1 &
           APP=$!
           sleep 12
