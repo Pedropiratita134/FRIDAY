@@ -97,36 +97,51 @@ const diag = `<!doctype html><meta charset="utf-8"><title>FRIDAY</title>
 <h1>Probando la ventana propia…</h1><pre id="o"></pre>
 <script>
 (async () => {
-  const r = {}, add = (k, v) => { r[k] = v; document.getElementById('o').textContent = JSON.stringify(r, null, 1); };
-  add('agente', navigator.userAgent);
-  // 2) el micrófono: ¿existe la API y llega el pedido de permiso al programa?
-  add('mediaDevices', !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
-  try {
+  const r = {};
+  const pre = document.getElementById('o');
+  // cada pregunta por separado: si una explota, las demás se contestan igual
+  const add = (k, fn) => { try { r[k] = typeof fn === 'function' ? fn() : fn; } catch (e) { r[k] = 'ERROR: ' + e; } pre.textContent = JSON.stringify(r, null, 1); };
+  const addA = async (k, fn) => { try { r[k] = await fn(); } catch (e) { r[k] = 'no: ' + (e && e.name || e); } pre.textContent = JSON.stringify(r, null, 1); };
+
+  add('agente', () => navigator.userAgent);
+
+  // 1) el oído: así escucha FRIDAY hoy (AudioWorklet + getUserMedia)
+  add('mediaDevices', () => !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia));
+  add('AudioWorklet', () => typeof AudioWorklet !== 'undefined');
+  add('audioWorklet_en_contexto', () => typeof AudioContext !== 'undefined' && ('audioWorklet' in AudioContext.prototype));
+  add('AudioContext', () => typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined');
+  add('ScriptProcessor', () => typeof AudioContext !== 'undefined' && ('createScriptProcessor' in AudioContext.prototype));
+  await addA('microfono', async () => {
     const st = await navigator.mediaDevices.getUserMedia({audio:true});
-    add('microfono', 'abrió ' + st.getAudioTracks().length + ' pista(s)');
-    st.getTracks().forEach(t => t.stop());
-  } catch (e) { add('microfono', 'no: ' + e.name + ' (en el servidor de pruebas no hay placa de sonido; lo que importa es si el permiso llegó al programa)'); }
-  try { add('aparatos', (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'audioinput').length); } catch (e) { add('aparatos', 'error'); }
-  // 3) la música: YouTube necesita MediaSource y estos codecs
-  const ms = window.MediaSource ? (t => { try { return MediaSource.isTypeSupported(t); } catch (e) { return false; } }) : () => false;
-  add('MediaSource', !!window.MediaSource);
-  add('codecs', {
-    'mp4/h264': ms('video/mp4; codecs="avc1.42E01E"'),
-    'webm/vp9': ms('video/webm; codecs="vp9"'),
-    'webm/vp8': ms('video/webm; codecs="vp8"'),
-    'aac':      ms('audio/mp4; codecs="mp4a.40.2"'),
-    'opus':     ms('audio/webm; codecs="opus"')
+    const n = st.getAudioTracks().length; st.getTracks().forEach(t => t.stop());
+    return 'abrió ' + n + ' pista(s)';
   });
-  // lo demás que FRIDAY necesita
-  add('audio', typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined');
-  add('worklet', !!(window.AudioContext && AudioContext.prototype.audioWorklet !== undefined));
-  add('guardado', (() => { try { localStorage.setItem('x','1'); localStorage.removeItem('x'); return true; } catch (e) { return false; } })());
-  add('voces', (window.speechSynthesis ? (speechSynthesis.getVoices() || []).length : -1));
-  add('reconocedor', !!(window.SpeechRecognition || window.webkitSpeechRecognition));
-  add('avisos', typeof Notification !== 'undefined');
-  add('wasm', typeof WebAssembly !== 'undefined');
+  await addA('aparatos_de_audio', async () => (await navigator.mediaDevices.enumerateDevices()).filter(d => d.kind === 'audioinput').length);
+  add('MediaRecorder', () => typeof MediaRecorder !== 'undefined');
+
+  // 2) la música: YouTube necesita MediaSource y estos codecs
+  add('MediaSource', () => !!window.MediaSource);
+  add('codecs', () => {
+    const ms = t => { try { return !!(window.MediaSource && MediaSource.isTypeSupported(t)); } catch (e) { return 'ERROR'; } };
+    return { 'mp4/h264': ms('video/mp4; codecs="avc1.42E01E"'), 'webm/vp9': ms('video/webm; codecs="vp9"'),
+             'webm/vp8': ms('video/webm; codecs="vp8"'), 'aac': ms('audio/mp4; codecs="mp4a.40.2"'),
+             'opus': ms('audio/webm; codecs="opus"'), 'mp3': ms('audio/mpeg') };
+  });
+  add('canPlay', () => { const a = document.createElement('audio');
+    return { mp3: a.canPlayType('audio/mpeg'), wav: a.canPlayType('audio/wav'), ogg: a.canPlayType('audio/ogg; codecs="vorbis"') }; });
+
+  // 3) lo demás que FRIDAY necesita para andar
+  add('guardado', () => { localStorage.setItem('x','1'); localStorage.removeItem('x'); return true; });
+  add('indexedDB', () => typeof indexedDB !== 'undefined');
+  add('voces_del_sistema', () => window.speechSynthesis ? (speechSynthesis.getVoices() || []).length : -1);
+  add('reconocedor_del_navegador', () => !!(window.SpeechRecognition || window.webkitSpeechRecognition));
+  add('avisos', () => typeof Notification !== 'undefined');
+  add('wasm', () => typeof WebAssembly !== 'undefined');
+  add('crypto_subtle', () => !!(window.crypto && crypto.subtle));
+  add('fetch', () => typeof fetch !== 'undefined');
+
   await fetch('/listo', {method:'POST', body: JSON.stringify(r)});
-})();
+})().catch(e => fetch('/listo', {method:'POST', body: JSON.stringify({explotó: String(e)})}));
 </script>`
 
 func main() {
@@ -155,8 +170,8 @@ func main() {
 	prg, clase := C.CString("friday"), C.CString("FRIDAY")
 	defer C.free(unsafe.Pointer(prg))
 	defer C.free(unsafe.Pointer(clase))
-	C.identidad(prg, clase)
 	C.gtk_init(nil, nil)
+	C.identidad(prg, clase)
 
 	cu := C.CString(uri)
 	defer C.free(unsafe.Pointer(cu))
